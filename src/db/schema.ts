@@ -9,7 +9,7 @@ export const users = sqliteTable('users', {
   emailVerified: integer('email_verified', { mode: 'boolean' }).notNull(),
   image: text('image'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updateAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
 })
@@ -21,7 +21,7 @@ export const sessions = sqliteTable('sessions', {
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
   token: text('token').notNull().unique(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updateAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
   ipAddress: text('ip_address'),
@@ -52,7 +52,7 @@ export const accounts = sqliteTable('accounts', {
   scope: text('scope'),
   password: text('password'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-  updateAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
 })
@@ -65,7 +65,7 @@ export const verifications = sqliteTable('verifications', {
   value: text('value').notNull(),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }),
-  updateAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
 })
