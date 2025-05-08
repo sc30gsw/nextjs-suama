@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { ReactScan } from '~/components/react-scan'
+import { Toast } from '~/components/ui/intent-ui/toast'
 import { Providers } from '~/components/ui/providers/providers'
 import { Root } from '~/hooks/use-confirm'
 
@@ -34,6 +35,7 @@ export default function RootLayout({
       >
         <Providers>
           <Root />
+          <Toast />
           {children}
         </Providers>
       </body>
