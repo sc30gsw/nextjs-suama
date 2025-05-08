@@ -1,12 +1,9 @@
-import { ConfirmButton } from '~/features/homo/compoennts/confirm-button'
+import { Heading } from '~/components/ui/intent-ui/heading'
 
 export default function Home() {
-  // const url = client.api.foo.api.$url()
-  // const res = await upfetch<string>(url)
-
   return (
-    <div>
-      <ConfirmButton />
+    <div className="p-4 lg:p-6">
+      <Heading>Basic</Heading>
     </div>
   )
 }
