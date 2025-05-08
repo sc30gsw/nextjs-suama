@@ -173,7 +173,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             <SidebarDisclosure id={8}>
               <SidebarDisclosureTrigger>
                 <IconPackage />
-                <SidebarLabel>アプールポイントカテゴリー</SidebarLabel>
+                <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
                 <SidebarItem href="#" tooltip="Warehouse">
