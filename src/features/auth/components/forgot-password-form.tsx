@@ -3,8 +3,6 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconTriangleExclamation } from '@intentui/icons'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -12,43 +10,43 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { signInAction } from '~/features/auth/actions/sign-in-action'
+import { forgotPasswordAction } from '~/features/auth/actions/forgot-password-action'
 import {
   type SignInInputSchema,
   signInInputSchema,
 } from '~/features/auth/types/schemas/sing-in-input-schema'
-
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-export function SignInForm({
-  children,
-  notHaveAccountArea,
-}: { children: ReactNode; notHaveAccountArea: ReactNode }) {
-  const router = useRouter()
-
+export function ForgotPasswordForm({ children }: { children: ReactNode }) {
   const [lastResult, action, isPending] = useActionState(
-    withCallbacks(signInAction, {
+    withCallbacks(forgotPasswordAction, {
       onSuccess() {
-        toast.success('サインインしました')
-        router.push('/')
+        toast.success('パスワードリセット画面にリダイレクトします')
       },
-      onError() {
-        toast.error('サインインに失敗しました')
+      onError(result) {
+        if (result?.error && Array.isArray(result.error.message)) {
+          toast.error(result.error.message.join(', '))
+
+          return
+        }
+
+        toast.error('パスワードリセット画面にリダイレクトできませんでした')
       },
     }),
     null,
   )
 
-  const [form, fields] = useSafeForm<SignInInputSchema>({
-    constraint: getZodConstraint(signInInputSchema),
+  const [form, fields] = useSafeForm<Pick<SignInInputSchema, 'email'>>({
+    constraint: getZodConstraint(signInInputSchema.pick({ email: true })),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: signInInputSchema })
+      return parseWithZod(formData, {
+        schema: signInInputSchema.pick({ email: true }),
+      })
     },
     defaultValue: {
       email: '',
-      password: '',
     },
   })
 
@@ -86,23 +84,6 @@ export function SignInForm({
               {fields.email.errors}
             </span>
           </div>
-          <div className="flex flex-col">
-            <TextField
-              {...getInputProps(fields.password, { type: 'password' })}
-              placeholder="パスワード"
-              isDisabled={isPending}
-              errorMessage={''}
-            />
-            <span id={fields.password.errorId} className="text-sm text-red-500">
-              {fields.password.errors}
-            </span>
-            <Link
-              href={'/forgot-password'}
-              className="text-blue-500 hover:text-blue-500/80 mt-2"
-            >
-              パスワードをお忘れですか？
-            </Link>
-          </div>
         </Card.Content>
         <Card.Footer className="flex flex-col items-start gap-y-4 w-full">
           <Button
@@ -110,31 +91,9 @@ export function SignInForm({
             className="w-full relative"
             isDisabled={isPending}
           >
-            サインイン
+            パスワードリセット画面へ
             {isPending && <Loader className="absolute top-3 right-2" />}
           </Button>
-          {/* ? Social Connectionによる認証が必要な場合追加 */}
-          {/* <Button
-            intent="secondary"
-            className="w-full relative"
-            isDisabled={isPending || isPasskeyPending || isOauthSignInPending}
-            onPress={() => {
-              startTransition(async () => {
-                await authClient.signIn.social({
-                  provider: 'github',
-                  // biome-ignore lint/style/useNamingConvention: This is a property of the better auth
-                  callbackURL: '/',
-                })
-              })
-            }}
-          >
-            <IconBrandGoogle />
-            Sign In with Google
-            {isOauthSignInPending && (
-              <Loader className="absolute top-3 right-2" />
-            )}
-          </Button> */}
-          {notHaveAccountArea}
         </Card.Footer>
       </Form>
     </Card>
