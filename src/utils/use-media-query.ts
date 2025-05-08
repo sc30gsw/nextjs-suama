@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-export function useMediaQuery(query: string) {
+export const useMediaQuery = (query: string) => {
   const [value, setValue] = useState(false)
 
   useEffect(() => {

@@ -13,6 +13,8 @@ touch .env
 NEXT_PUBLIC_APP_URL = http://localhost:3000
 TURSO_DATABASE_URLL = {NotePMにて共有}
 TURSO_AUTH_TOKEN = {NotePMにて共有}
+BETTER_AUTH_SECRET = openssl rand -base64 32
+BETTER_AUTH_URL = http://localhost:3000
 ```
 
 ### 3. 依存関係のインストール
@@ -125,7 +127,7 @@ bun dev
   |  ├ db 
   |  |  └ schema.ts : テーブルSchema定義
   |  ├ hooks : アプリ全体で使われるカスタムフック(use-***.ts)
-  |  ├ libs :アプリ全体で使用されるライブラリの設定定義や共通ヘルパー関数
+  |  ├ lib :アプリ全体で使用されるライブラリの設定定義や共通ヘルパー関数
   |  ├ env.ts : @t3-oss/env-nextjs による環境変数定義
   |  ├ index.ts : Drizzle ORM のDB定義
   |  └ utils : アプリ全体で使われるユーティリティ実装
@@ -152,6 +154,23 @@ bun dev
 - [Remeda](https://remedajs.com/): TypeScriptのユーティリティライブラリ
 - [date-fns](https://date-fns.org/docs/Getting-Started): 日付操作ライブラリ
 - [react-call](https://github.com/desko27/react-call): Confirmダイアログ管理ライブラリ
+
+## Better Auth CLIによるSchema生成
+```sh
+bunx @better-auth/cli generate
+```
+
+## drizzle-kitによるTurso migration
+```sh
+bunx drizzle-kit push
+```
+
+or
+
+```sh
+bunx drizzle-kit generate
+bunx drizzle-kit migrate
+```
 
 ## Learn More
 

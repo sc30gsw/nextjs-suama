@@ -59,7 +59,14 @@
       }
     },
     {
-      "include": ["env.ts", "./src/features/**/types/schema/*.ts", "*.d.ts"],
+      "include": [
+        "env.ts",
+        "./src/features/**/types/schemas/*.ts",
+        "*.d.ts",
+        "db/schema.ts",
+        "auth-schema.ts",
+        "auth-client.ts"
+      ],
       "linter": {
         "rules": {
           "style": {
@@ -87,11 +94,17 @@
       }
     },
     {
-      "include": ["./src/components/ui/*.tsx"],
+      "include": ["./src/components/ui/intent-ui/*.tsx"],
       "linter": {
         "rules": {
           "correctness": { "noUndeclaredDependencies": "off" },
-          "style": { "noNamespaceImport": "off" }
+          "style": {
+            "noNamespaceImport": "off",
+            "noNonNullAssertion": "off",
+            "useNamingConvention": "off"
+          },
+          "a11y": { "noSvgWithoutTitle": "off", "useSemanticElements": "off" },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" }
         }
       }
     },
