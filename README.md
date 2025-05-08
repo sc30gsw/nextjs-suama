@@ -64,7 +64,7 @@ bun dev
 ディレクトリ構成は[bulletproof-react](https://github.com/alan2207/bulletproof-react)に従い、以下の構成とします。
 
 ```
-/2025-april-fools-day-claves
+/nextjs-suama
   ├ public : 画像などアセット類
   ├ src
   |  ├ app: ルーティング定義
