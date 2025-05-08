@@ -3,14 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { ReactScan } from '~/components/react-scan'
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '~/components/ui/intent-ui/sidebar'
+import {} from '~/components/ui/intent-ui/sidebar'
 import { Toast } from '~/components/ui/intent-ui/toast'
 import { Providers } from '~/components/ui/providers/providers'
-import { AppSidebar } from '~/components/ui/sidebar/app-sidebar'
-import { AppSidebarNav } from '~/components/ui/sidebar/app-sidebar-nav'
 import { Root } from '~/hooks/use-confirm'
 
 const geistSans = Geist({
@@ -42,13 +37,7 @@ export default function RootLayout({
         <Providers>
           <Root />
           <Toast />
-          <SidebarProvider>
-            <AppSidebar collapsible="dock" />
-            <SidebarInset>
-              <AppSidebarNav />
-              {children}
-            </SidebarInset>
-          </SidebarProvider>
+          {children}
         </Providers>
       </body>
     </html>
