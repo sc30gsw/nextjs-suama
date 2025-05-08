@@ -20,7 +20,7 @@ import {
 import { twJoin, twMerge } from 'tailwind-merge'
 import { Button, type ButtonProps } from '~/components/ui/intent-ui//button'
 import { useMediaQuery } from '~/hooks/use-media-query'
-import { composeTailwindRenderProps } from '~/libs/primitive'
+import { composeTailwindRenderProps } from '~/lib/primitive'
 // import { composeTailwindRenderProps } from '~/lib/primitive'
 
 const Dialog = ({
