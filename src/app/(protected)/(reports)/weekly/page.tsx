@@ -1,3 +1,4 @@
+import { fromDate, getLocalTimeZone } from '@internationalized/date'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
@@ -37,7 +38,10 @@ export default async function WeeklyPage({
       <div className="grid lg:grid-cols-4 md:grid-cols-2 gird-cols-1 grid-rows-2 gap-8 mx-auto py-2">
         {selectedWeeksByMonth.weeks.map((week) => (
           <div key={week.weekNumber}>
-            <WeekRangeCalendar week={week} />
+            <WeekRangeCalendar
+              start={fromDate(week.startDay, getLocalTimeZone())}
+              end={fromDate(week.endDay, getLocalTimeZone())}
+            />
             <div className="flex justify-end items-center">
               <Button size="extra-small" className="mt-2">
                 <Link
