@@ -43,7 +43,7 @@ import { Breadcrumbs } from '~/components/ui/intent-ui/breadcrumbs'
 //   { path: '/appeals/register', name: 'アピールポイントカテゴリー登録' },
 // ] as const satisfies readonly Record<'path' | 'name', string>[]
 
-export function AppBreadCrumps({
+export function AppBreadcrumbs({
   items,
 }: { items: readonly Record<'path' | 'name', string>[] }) {
   const pathname = usePathname()

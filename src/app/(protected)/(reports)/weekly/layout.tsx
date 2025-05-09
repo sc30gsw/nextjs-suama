@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { AppBreadCrumps } from '~/components/ui/app-bread-crumps'
+import { AppBreadcrumbs } from '~/components/ui/app-breadcrumbs'
 import {
   SidebarInset,
   SidebarProvider,
@@ -23,7 +23,7 @@ export default function WeeklyLayout({ children }: { children: ReactNode }) {
       <AppSidebar collapsible="dock" />
       <SidebarInset>
         <AppSidebarNav>
-          <AppBreadCrumps items={ITEMS} />
+          <AppBreadcrumbs items={ITEMS} />
         </AppSidebarNav>
         {children}
       </SidebarInset>
