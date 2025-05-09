@@ -30,7 +30,7 @@ export function SignUpForm({
     withCallbacks(signUpAction, {
       onSuccess() {
         toast.success('サインアップしました')
-        router.push('/')
+        router.push('/daily')
       },
       onError(result) {
         if (result?.error && Array.isArray(result.error.message)) {

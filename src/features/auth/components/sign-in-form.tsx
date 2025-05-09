@@ -31,7 +31,7 @@ export function SignInForm({
     withCallbacks(signInAction, {
       onSuccess() {
         toast.success('サインインしました')
-        router.push('/')
+        router.push('/daily')
       },
       onError() {
         toast.error('サインインに失敗しました')
