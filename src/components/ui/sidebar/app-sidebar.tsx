@@ -3,6 +3,7 @@
 import {
   IconBookOpen,
   IconBuilding,
+  IconCalendarDays,
   IconCircleQuestionmark,
   IconDotsHorizontal,
   IconMessage,
@@ -66,12 +67,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
             <SidebarDisclosure id={2}>
               <SidebarDisclosureTrigger>
-                <IconPackage />
+                <IconCalendarDays />
                 <SidebarLabel>週報</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
+                <SidebarItem href="/weekly" tooltip="今年の週報">
+                  <IconCalendarDays />
                   <SidebarLabel>今年の週報</SidebarLabel>
                 </SidebarItem>
               </SidebarDisclosurePanel>
@@ -139,6 +140,23 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             <SidebarDisclosure id={6}>
               <SidebarDisclosureTrigger>
                 <IconPackage />
+                <SidebarLabel>プロジェクト</SidebarLabel>
+              </SidebarDisclosureTrigger>
+              <SidebarDisclosurePanel>
+                <SidebarItem href="#" tooltip="Warehouse">
+                  <IconBuilding />
+                  <SidebarLabel>プロジェクト一覧</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem href="#" tooltip="Warehouse">
+                  <IconBuilding />
+                  <SidebarLabel>プロジェクト登録</SidebarLabel>
+                </SidebarItem>
+              </SidebarDisclosurePanel>
+            </SidebarDisclosure>
+
+            <SidebarDisclosure id={7}>
+              <SidebarDisclosureTrigger>
+                <IconPackage />
                 <SidebarLabel>ミッション</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
@@ -153,7 +171,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               </SidebarDisclosurePanel>
             </SidebarDisclosure>
 
-            <SidebarDisclosure id={7}>
+            <SidebarDisclosure id={8}>
               <SidebarDisclosureTrigger>
                 <IconPackage />
                 <SidebarLabel>困っていることカテゴリー</SidebarLabel>
@@ -170,7 +188,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               </SidebarDisclosurePanel>
             </SidebarDisclosure>
 
-            <SidebarDisclosure id={8}>
+            <SidebarDisclosure id={9}>
               <SidebarDisclosureTrigger>
                 <IconPackage />
                 <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
