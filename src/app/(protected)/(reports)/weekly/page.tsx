@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Button } from '~/components/ui/intent-ui/button'
-import { Heading } from '~/components/ui/intent-ui/heading'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { MonthSelector } from '~/features/reports/weekly/components/month-selector'
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
@@ -32,9 +31,6 @@ export default async function WeeklyPage({
           }))}
         />
       </div>
-      <Heading level={2} className="text-muted-fg text-center">
-        {selectedWeeksByMonth.year}年{selectedWeeksByMonth.month}月の週報
-      </Heading>
       <div className="grid lg:grid-cols-4 md:grid-cols-2 gird-cols-1 grid-rows-2 gap-8 mx-auto py-2">
         {selectedWeeksByMonth.weeks.map((week) => (
           <div key={week.weekNumber}>

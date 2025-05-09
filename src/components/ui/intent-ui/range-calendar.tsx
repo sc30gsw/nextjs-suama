@@ -21,26 +21,18 @@ import {
 interface RangeCalendarProps<T extends DateValue>
   extends RangeCalendarPrimitiveProps<T> {
   errorMessage?: string
-  isHeadingHidden?: boolean
-  isDirectionHidden?: boolean
 }
 
 const RangeCalendar = <T extends DateValue>({
   errorMessage,
   className,
   visibleDuration = { months: 1 },
-  isHeadingHidden,
-  isDirectionHidden,
   ...props
 }: RangeCalendarProps<T>) => {
   const now = today(getLocalTimeZone())
   return (
     <RangeCalendarPrimitive visibleDuration={visibleDuration} {...props}>
-      <CalendarHeader
-        isRange={true}
-        isHeadingHidden={isHeadingHidden}
-        isDirectionHidden={isDirectionHidden}
-      />
+      <CalendarHeader isRange={true} />
       <div className="flex snap-x items-start justify-stretch gap-6 overflow-auto sm:gap-10">
         {Array.from({ length: visibleDuration?.months ?? 1 }).map(
           (_, index) => {

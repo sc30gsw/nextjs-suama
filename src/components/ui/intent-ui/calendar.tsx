@@ -80,14 +80,10 @@ const Calendar = <T extends DateValue>({
 
 const CalendarHeader = ({
   isRange,
-  isHeadingHidden,
-  isDirectionHidden,
+
   className,
   ...props
-}: ComponentProps<'header'> &
-  Partial<
-    Record<'isRange' | 'isHeadingHidden' | 'isDirectionHidden', boolean>
-  >) => {
+}: ComponentProps<'header'> & { isRange?: boolean }) => {
   const { direction } = useLocale()
   const state = use(CalendarStateContext)!
 
@@ -108,18 +104,12 @@ const CalendarHeader = ({
       )}
       <Heading
         className={twMerge(
-          isHeadingHidden
-            ? 'hidden'
-            : 'mr-2 flex-1 text-left font-medium text-muted-fg sm:text-sm',
+          'mr-2 flex-1 text-left font-medium text-muted-fg sm:text-sm',
           !isRange && 'sr-only',
           className,
         )}
       />
-      <div
-        className={twMerge(
-          isDirectionHidden ? 'hidden' : 'flex items-center gap-1',
-        )}
-      >
+      <div className="flex items-center gap-1">
         <Button
           size="square-petite"
           className="size-8 **:data-[slot=icon]:text-fg sm:size-7"

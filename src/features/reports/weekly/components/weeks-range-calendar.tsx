@@ -18,8 +18,6 @@ export function WeekRangeCalendar({
         end: fromDate(endDay, getLocalTimeZone()),
       }}
       isReadOnly={true}
-      isHeadingHidden={true}
-      isDirectionHidden={true}
     />
   )
 }
