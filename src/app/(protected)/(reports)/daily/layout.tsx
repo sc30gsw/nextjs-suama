@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { AppBreadCrumps } from '~/components/ui/app-bread-crumps'
 import {
   SidebarInset,
   SidebarProvider,
@@ -6,12 +7,20 @@ import {
 import { AppSidebar } from '~/components/ui/sidebar/app-sidebar'
 import { AppSidebarNav } from '~/components/ui/sidebar/app-sidebar-nav'
 
-export default function ProtectedLayout({ children }: { children: ReactNode }) {
+export const experimental_ppr = true
+
+const ITEMS = [
+  { path: '/daily', name: '日報作成' },
+] as const satisfies readonly Record<'path' | 'name', string>[]
+
+export default function DailyLayout({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar collapsible="dock" />
       <SidebarInset>
-        <AppSidebarNav />
+        <AppSidebarNav>
+          <AppBreadCrumps items={ITEMS} />
+        </AppSidebarNav>
         {children}
       </SidebarInset>
     </SidebarProvider>
