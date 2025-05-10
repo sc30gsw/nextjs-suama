@@ -80,103 +80,112 @@ export function ReportContentInputEntries({
       >
         <IconPlus />
       </Button>
-      {entries.map((entry) => (
-        <div
-          key={entry.id}
-          className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2"
-        >
-          <ComboBox
-            label="プロジェクト"
-            placeholder="プロジェクトを選択"
-            onSelectionChange={(key) => {
-              setEntries((prev) =>
-                prev.map((e) =>
-                  e.id === entry.id ? { ...e, project: key } : e,
-                ),
-              )
-            }}
-            selectedKey={entry.project}
-            className="col-span-2"
-          >
-            <ComboBox.Input />
-            <ComboBox.List items={projects}>
-              {(project) => (
-                <ComboBox.Option id={project.id}>
-                  {project.todo}
-                </ComboBox.Option>
-              )}
-            </ComboBox.List>
-          </ComboBox>
-          <ComboBox
-            label="ミッション"
-            placeholder="ミッションを選択"
-            onSelectionChange={(key) => {
-              setEntries((prev) =>
-                prev.map((e) =>
-                  e.id === entry.id ? { ...e, mission: key } : e,
-                ),
-              )
-            }}
-            selectedKey={entry.mission}
-            className="col-span-2"
-          >
-            <ComboBox.Input />
-            <ComboBox.List items={missions}>
-              {(mission) => (
-                <ComboBox.Option id={mission.id}>
-                  {mission.title}
-                </ComboBox.Option>
-              )}
-            </ComboBox.List>
-          </ComboBox>
-          <NumberField
-            label="時間"
-            value={entry.hours}
-            onChange={(val) =>
-              setEntries((prev) =>
-                prev.map((e) => (e.id === entry.id ? { ...e, hours: val } : e)),
-              )
-            }
-            className="col-span-2"
-          />
-          <TextField
-            label="内容"
-            placeholder="タスク内容を入力"
-            value={entry.content}
-            onChange={(val) =>
-              setEntries((prev) =>
-                prev.map((e) =>
-                  e.id === entry.id ? { ...e, content: val } : e,
-                ),
-              )
-            }
-            className="col-span-4"
-          />
-          <Button
-            size="square-petite"
-            intent="danger"
-            onPress={() => {
-              setEntries((prev) => {
-                const updated = prev.filter((e) => e.id !== entry.id)
+      {entries.map((entry) => {
+        // TODO: ミッションが選択されている場合、プロジェクトをfilter（findだとComboBox.Listのitemsの型エラーとなる）
+        // const filteredProject = entry.mission ? projects.filter((project) => project.missionId === entry.mission) : projects
+        // TODO: プロジェクトが選択されていない場合は、ミッションをfilter
+        // const filteredMissions = entry.project ? missions.filter((mission) => mission.projectId === entry.project) : missions
 
-                if (updated.length > 0) {
-                  return updated
-                }
-
-                return [entry]
-              })
-
-              setCount((prev) => {
-                const newCount = prev.count > 1 ? prev.count - 1 : 1
-                return { count: newCount }
-              })
-            }}
-            className="rounded-full mt-6 col-span-1"
+        return (
+          <div
+            key={entry.id}
+            className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2"
           >
-            <IconMinus />
-          </Button>
-        </div>
-      ))}
+            <ComboBox
+              label="プロジェクト"
+              placeholder="プロジェクトを選択"
+              onSelectionChange={(key) => {
+                setEntries((prev) =>
+                  prev.map((e) =>
+                    e.id === entry.id ? { ...e, project: key } : e,
+                  ),
+                )
+              }}
+              selectedKey={entry.project}
+              className="col-span-2"
+            >
+              <ComboBox.Input />
+              <ComboBox.List items={projects}>
+                {(project) => (
+                  <ComboBox.Option id={project.id}>
+                    {project.todo}
+                  </ComboBox.Option>
+                )}
+              </ComboBox.List>
+            </ComboBox>
+            <ComboBox
+              label="ミッション"
+              placeholder="ミッションを選択"
+              onSelectionChange={(key) => {
+                setEntries((prev) =>
+                  prev.map((e) =>
+                    e.id === entry.id ? { ...e, mission: key } : e,
+                  ),
+                )
+              }}
+              selectedKey={entry.mission}
+              className="col-span-2"
+            >
+              <ComboBox.Input />
+              <ComboBox.List items={missions}>
+                {(mission) => (
+                  <ComboBox.Option id={mission.id}>
+                    {mission.title}
+                  </ComboBox.Option>
+                )}
+              </ComboBox.List>
+            </ComboBox>
+            <NumberField
+              label="時間"
+              value={entry.hours}
+              onChange={(val) =>
+                setEntries((prev) =>
+                  prev.map((e) =>
+                    e.id === entry.id ? { ...e, hours: val } : e,
+                  ),
+                )
+              }
+              className="col-span-2"
+            />
+            <TextField
+              label="内容"
+              placeholder="タスク内容を入力"
+              value={entry.content}
+              onChange={(val) =>
+                setEntries((prev) =>
+                  prev.map((e) =>
+                    e.id === entry.id ? { ...e, content: val } : e,
+                  ),
+                )
+              }
+              className="col-span-4"
+            />
+            <Button
+              size="square-petite"
+              intent="danger"
+              onPress={() => {
+                setEntries((prev) => {
+                  const updated = prev.filter((e) => e.id !== entry.id)
+
+                  if (updated.length > 0) {
+                    return updated
+                  }
+
+                  return [entry]
+                })
+
+                setCount((prev) => {
+                  const newCount = prev.count > 1 ? prev.count - 1 : 1
+                  return { count: newCount }
+                })
+              }}
+              className="rounded-full mt-6 col-span-1"
+            >
+              <IconMinus />
+            </Button>
+          </div>
+        )
+      })}
 
       <Separator orientation="horizontal" />
       {/* ? https://qiita.com/curry__30/items/24e7c144123a9fc15fa3#ui%E4%BD%9C%E6%88%90 */}
