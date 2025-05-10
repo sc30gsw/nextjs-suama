@@ -6,8 +6,11 @@ import { useQueryStates } from 'nuqs'
 import { useState } from 'react'
 import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
+import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
+import { Heading } from '~/components/ui/intent-ui/heading'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
+import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
@@ -43,6 +46,13 @@ export function ReportContentInputEntries({
       content: '',
     })),
   )
+
+  const totalHours = entries.reduce((acc, entry) => {
+    if (entry.hours > 0) {
+      return acc + entry.hours
+    }
+    return acc
+  }, 0)
 
   return (
     <>
@@ -167,6 +177,17 @@ export function ReportContentInputEntries({
           </Button>
         </div>
       ))}
+
+      <Separator orientation="horizontal" />
+      {/* ? https://qiita.com/curry__30/items/24e7c144123a9fc15fa3#ui%E4%BD%9C%E6%88%90 */}
+      <div className="my-4">
+        <Checkbox className="cursor-pointer">リモート勤務</Checkbox>
+      </div>
+      <Separator orientation="horizontal" />
+      <div className="flex items-center gap-x-2 my-4">
+        <span className="text-sm">合計時間:</span>
+        <Heading className="text-muted-fg text-lg">{totalHours}時間</Heading>
+      </div>
     </>
   )
 }
