@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { DatePicker } from '~/components/ui/intent-ui/date-picker'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Separator } from '~/components/ui/intent-ui/separator'
+import { TextField } from '~/components/ui/intent-ui/text-field'
 
 type CreateDailyFormProps = {
   children: ReactNode
@@ -43,6 +44,10 @@ export function CreateDailyForm({
         className="max-w-3xs"
       />
       {children}
+      <Separator orientation="horizontal" />
+      <div className="my-4">
+        <TextField label="所感" />
+      </div>
       <Separator orientation="horizontal" />
       {troubleHeadings}
       {troubles}
