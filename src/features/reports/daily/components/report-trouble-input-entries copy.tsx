@@ -35,7 +35,7 @@ export function ReportTroubleInputEntries({
       resolved: boolean
     }[]
   >(() =>
-    Array.from({ length: troubleCount > 0 ? troubleCount : 1 }, () => ({
+    Array.from({ length: troubleCount > 0 ? troubleCount : 0 }, () => ({
       id: crypto.randomUUID(),
       content: '',
       trouble: null,
@@ -121,7 +121,7 @@ export function ReportTroubleInputEntries({
 
               setCount((prev) => {
                 const newCount =
-                  prev.troubleCount > 1 ? prev.troubleCount - 1 : 1
+                  prev.troubleCount > 1 ? prev.troubleCount - 1 : 0
                 return { troubleCount: newCount }
               })
             }}

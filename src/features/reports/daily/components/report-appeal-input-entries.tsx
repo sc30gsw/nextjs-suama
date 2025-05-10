@@ -34,7 +34,7 @@ export function ReportAppealInputEntries({
       resolved: boolean
     }[]
   >(() =>
-    Array.from({ length: appealCount > 0 ? appealCount : 1 }, () => ({
+    Array.from({ length: appealCount > 0 ? appealCount : 0 }, () => ({
       id: crypto.randomUUID(),
       content: '',
       appeal: null,
@@ -116,7 +116,7 @@ export function ReportAppealInputEntries({
               })
 
               setCount((prev) => {
-                const newCount = prev.appealCount > 1 ? prev.appealCount - 1 : 1
+                const newCount = prev.appealCount > 1 ? prev.appealCount - 1 : 0
                 return { appealCount: newCount }
               })
             }}

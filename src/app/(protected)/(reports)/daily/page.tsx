@@ -1,7 +1,11 @@
+import { IconPlus } from '@intentui/icons'
 import { unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
+import { Button } from '~/components/ui/intent-ui/button'
+import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Heading } from '~/components/ui/intent-ui/heading'
+import { Separator } from '~/components/ui/intent-ui/separator'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getAppeals } from '~/features/appeals/server/fetcher'
 import { getMissions } from '~/features/missions/server/fetcher'
@@ -24,7 +28,8 @@ export default async function Home({
     unauthorized()
   }
 
-  const { count } = await inputCountSearchParamsCache.parse(searchParams)
+  const { count, troubleCount, appealCount } =
+    await inputCountSearchParamsCache.parse(searchParams)
 
   const promises = Promise.all([
     getProjects(session.user.id),
@@ -42,7 +47,26 @@ export default async function Home({
         }
         troubles={
           <Suspense
-            fallback={<Skeleton className="size-9 rounded-full mt-6" />}
+            fallback={
+              <>
+                <Button size="square-petite" className="rounded-full mt-4">
+                  <IconPlus />
+                </Button>
+                {Array.from({
+                  length: troubleCount > 0 ? troubleCount : 0,
+                }).map(() => (
+                  <div
+                    key={crypto.randomUUID()}
+                    className="grid grid-cols-12 grid-rows-1 items-center gap-4 mx-auto py-2"
+                  >
+                    <Skeleton className="col-span-3 h-16" />
+                    <Skeleton className="col-span-2 h-7" />
+                    <Skeleton className="col-span-1 h-7" />
+                    <Skeleton className="col-span-1 size-9 rounded-full" />
+                  </div>
+                ))}
+              </>
+            }
           >
             {getTroubles(session.user.id).then((res) => (
               <ReportTroubleInputEntries troubles={res} />
@@ -56,7 +80,26 @@ export default async function Home({
         }
         appeals={
           <Suspense
-            fallback={<Skeleton className="size-9 rounded-full mt-6" />}
+            fallback={
+              <>
+                <Button size="square-petite" className="rounded-full mt-4">
+                  <IconPlus />
+                </Button>
+                {Array.from({
+                  length: appealCount > 0 ? appealCount : 0,
+                }).map(() => (
+                  <div
+                    key={crypto.randomUUID()}
+                    className="grid grid-cols-12 grid-rows-1 items-center gap-4 mx-auto py-2"
+                  >
+                    <Skeleton className="col-span-3 h-16" />
+                    <Skeleton className="col-span-2 h-7" />
+                    <Skeleton className="col-span-1 h-7" />
+                    <Skeleton className="col-span-1 size-9 rounded-full" />
+                  </div>
+                ))}
+              </>
+            }
           >
             {getAppeals(session.user.id).then((res) => (
               <ReportAppealInputEntries appeals={res} />
@@ -67,7 +110,9 @@ export default async function Home({
         <Suspense
           fallback={
             <>
-              <Skeleton className="size-9 rounded-full mt-8" />
+              <Button size="square-petite" className="rounded-full mt-4">
+                <IconPlus />
+              </Button>
               {Array.from({ length: count > 0 ? count : 1 }).map(() => (
                 <div
                   key={crypto.randomUUID()}
@@ -80,6 +125,16 @@ export default async function Home({
                   <Skeleton className="col-span-1 size-9 rounded-full" />
                 </div>
               ))}
+              <Separator orientation="horizontal" />
+
+              <div className="my-4">
+                <Checkbox className="cursor-pointer">リモート勤務</Checkbox>
+              </div>
+              <Separator orientation="horizontal" />
+              <div className="flex items-center gap-x-2 my-4">
+                <span className="text-sm">合計時間:</span>
+                <Heading className="text-muted-fg text-lg">0時間</Heading>
+              </div>
             </>
           }
         >
