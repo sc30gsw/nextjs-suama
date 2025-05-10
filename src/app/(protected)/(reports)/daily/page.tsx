@@ -35,15 +35,29 @@ export default async function Home({
     <div className="p-4 lg:p-6 flex flex-col gap-y-2">
       <Heading>日報作成</Heading>
       <CreateDailyForm
+        troubleHeadings={
+          <div className="flex items-center mt-4">
+            <Heading level={3}>困っていること</Heading>
+          </div>
+        }
         troubles={
-          <Suspense>
+          <Suspense
+            fallback={<Skeleton className="size-9 rounded-full mt-6" />}
+          >
             {getTroubles(session.user.id).then((res) => (
               <ReportTroubleInputEntries troubles={res} />
             ))}
           </Suspense>
         }
+        appealHeadings={
+          <div className="flex items-center mt-4">
+            <Heading level={3}>工夫したこと</Heading>
+          </div>
+        }
         appeals={
-          <Suspense>
+          <Suspense
+            fallback={<Skeleton className="size-9 rounded-full mt-6" />}
+          >
             {getAppeals(session.user.id).then((res) => (
               <ReportAppealInputEntries appeals={res} />
             ))}

@@ -8,7 +8,6 @@ import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
-import { Heading } from '~/components/ui/intent-ui/heading'
 import { Textarea } from '~/components/ui/intent-ui/textarea'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
@@ -46,9 +45,6 @@ export function ReportTroubleInputEntries({
 
   return (
     <>
-      <div className="flex items-center mt-4">
-        <Heading level={3}>困っていること</Heading>
-      </div>
       <Button
         size="square-petite"
         onPress={() => {

@@ -9,13 +9,17 @@ import { Separator } from '~/components/ui/intent-ui/separator'
 
 type CreateDailyFormProps = {
   children: ReactNode
+  troubleHeadings: JSX.Element
   troubles: JSX.Element
+  appealHeadings: JSX.Element
   appeals: JSX.Element
 }
 
 export function CreateDailyForm({
   children,
+  troubleHeadings,
   troubles,
+  appealHeadings,
   appeals,
 }: CreateDailyFormProps) {
   const now = today(getLocalTimeZone())
@@ -39,8 +43,10 @@ export function CreateDailyForm({
       />
       {children}
       <Separator orientation="horizontal" />
+      {troubleHeadings}
       {troubles}
       <Separator orientation="horizontal" />
+      {appealHeadings}
       {appeals}
       <Separator orientation="horizontal" />
       <div className="flex items-center justify-end gap-x-2 my-4">
