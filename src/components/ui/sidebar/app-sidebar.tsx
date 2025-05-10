@@ -5,11 +5,11 @@ import {
   IconBuilding,
   IconCalendarDays,
   IconCircleQuestionmark,
-  IconDotsHorizontal,
   IconMessage,
   IconPackage,
   IconTicket,
 } from '@intentui/icons'
+import { IconReport } from '@tabler/icons-react'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import {
@@ -35,7 +35,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <Link
           className="flex items-center gap-x-2 group-data-[collapsible=dock]:size-10 group-data-[collapsible=dock]:justify-center"
-          href="/"
+          href="/daily"
         >
           <IconBookOpen className="size-5" />
           <SidebarLabel className="font-medium">SUAMA</SidebarLabel>
@@ -46,7 +46,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
           <SidebarDisclosureGroup defaultExpandedKeys={[1]}>
             <SidebarDisclosure id={1}>
               <SidebarDisclosureTrigger>
-                <IconDotsHorizontal />
+                <IconReport stroke={1} size={20} className="mr-1" />
                 <SidebarLabel>日報</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
