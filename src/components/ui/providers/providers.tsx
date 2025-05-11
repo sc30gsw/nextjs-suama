@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { RouterProvider } from 'react-aria-components'
 import { ThemeProvider } from '~/components/ui/intent-ui/theme-provider'
 import { NuqsProvider } from '~/components/ui/providers/nuqs-provider'
@@ -16,6 +16,17 @@ declare module 'react-aria-components' {
 
 export function Providers({ children }: { children: ReactNode }) {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setMounted(true)
+    }
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <RouterProvider navigate={router.push}>
