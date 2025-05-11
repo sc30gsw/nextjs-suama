@@ -1,122 +1,144 @@
 'use client'
-
-import { IconDotsVertical } from '@intentui/icons'
-import { NumberFormatter } from '@internationalized/number'
-import { Menu } from '~/components/ui/intent-ui/menu'
+import { IconDocumentEdit, IconFileText, IconTrashEmpty } from '@intentui/icons'
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import type { InferResponseType } from 'hono'
+import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
+import type { client } from '~/lib/rpc'
 
 type DailyReportForToday = {
+  id: string
   date: string
   username: string
   totalHour: number
-  impression: number
-  status: string
-  progress: number
+  impression: string
+  isRemote: boolean
+  isTurnedIn: boolean
+  operate: string
 }
 
-export function DailyReportsTableForToday() {
-  const formatter = new NumberFormatter('en-US', {
-    style: 'currency',
-    currency: 'USD',
+const columnHelper = createColumnHelper<DailyReportForToday>()
+
+const COLUMNS = [
+  columnHelper.accessor('date', {
+    header: '日付',
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor('username', {
+    header: 'ユーザー名',
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor('totalHour', {
+    header: '合計時間',
+    cell: (info) => `${info.getValue()} 時間`,
+  }),
+  columnHelper.accessor('impression', {
+    header: '所感',
+    cell: (info) => `${info.getValue()} / 5`,
+  }),
+  columnHelper.accessor('isRemote', {
+    header: 'リモート勤務',
+    cell: ({ row }) => {
+      return row.original.isRemote ? 'リモート' : '出社'
+    },
+  }),
+  columnHelper.accessor('isTurnedIn', {
+    header: '提出',
+    cell: ({ row }) => {
+      return row.original.isTurnedIn ? '提出済み' : '下書き'
+    },
+  }),
+  columnHelper.accessor('operate', {
+    header: '操作',
+    cell: ({ row }) => {
+      const report = row.original
+      // TODO: ここで実際のユーザー情報を取得して、現在のユーザーと比較するロジックを実装する
+      const isCurrentUser = report.isRemote
+
+      return (
+        <div className="flex items-center gap-2">
+          <Button size="small">
+            職務内容
+            <IconFileText />
+          </Button>
+          {isCurrentUser && (
+            <div className="flex gap-2">
+              <Button intent="outline" size="small">
+                修正
+                <IconDocumentEdit />
+              </Button>
+              <Button intent="danger" size="small">
+                削除
+                <IconTrashEmpty />
+              </Button>
+            </div>
+          )}
+        </div>
+      )
+    },
+  }),
+]
+
+type DailyReportsTableForTodayProps = {
+  // TODO: 適切な型に修正（API側の修正でできるかも）
+  reports: InferResponseType<typeof client.api.dailies.today.$get, 200>
+}
+
+export function DailyReportsTableForToday({
+  reports,
+}: DailyReportsTableForTodayProps) {
+  const initialData: DailyReportForToday[] = reports.users.map((user) => ({
+    id: user.id.toString(),
+    date: user.birthDate,
+    username: user.username,
+    totalHour: user.age,
+    impression: user.email,
+    isRemote: user.role === 'admin',
+    isTurnedIn: user.role === 'moderator',
+    operate: '',
+  }))
+
+  const table = useReactTable({
+    data: initialData,
+    columns: COLUMNS,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
   })
 
-  const priceFormat = (price: number) => formatter.format(price)
-
   return (
-    <Table aria-label="Products">
+    <Table aria-label="Daily Reports">
       <Table.Header>
-        <Table.Column className="w-0">#</Table.Column>
-        <Table.Column isRowHeader={true}>Name</Table.Column>
-        <Table.Column>Category</Table.Column>
-        <Table.Column>Price</Table.Column>
-        <Table.Column>Stock</Table.Column>
-        <Table.Column />
-      </Table.Header>
-      <Table.Body items={products}>
-        {(item) => (
-          <Table.Row id={item.id}>
-            <Table.Cell>{item.id}</Table.Cell>
-            <Table.Cell>{item.name}</Table.Cell>
-            <Table.Cell>{item.category}</Table.Cell>
-            <Table.Cell>{priceFormat(item.price)}</Table.Cell>
-            <Table.Cell>{item.stock}</Table.Cell>
-            <Table.Cell>
-              <div className="flex justify-end">
-                <Menu>
-                  <Menu.Trigger>
-                    <IconDotsVertical />
-                  </Menu.Trigger>
-                  <Menu.Content aria-label="Actions" placement="left top">
-                    <Menu.Item>View</Menu.Item>
-                    <Menu.Item>Edit</Menu.Item>
-                    <Menu.Separator />
-                    <Menu.Item isDanger={true}>Delete</Menu.Item>
-                  </Menu.Content>
-                </Menu>
-              </div>
-            </Table.Cell>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <Table.Row key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <Table.Column key={header.id} isRowHeader={true}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+              </Table.Column>
+            ))}
           </Table.Row>
-        )}
+        ))}
+      </Table.Header>
+      <Table.Body>
+        {table.getRowModel().rows.map((row) => (
+          <Table.Row key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <Table.Cell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Table.Cell>
+            ))}
+          </Table.Row>
+        ))}
       </Table.Body>
     </Table>
   )
 }
-
-export const products = [
-  {
-    id: '1',
-    name: 'iPhone 13',
-    category: 'Electronics',
-    price: 799,
-    brand: 'Apple',
-    stock: 150,
-  },
-  {
-    id: '2',
-    name: 'Galaxy S21',
-    category: 'Electronics',
-    price: 699,
-    brand: 'Samsung',
-    stock: 200,
-  },
-  {
-    id: '3',
-    name: 'MacBook Pro',
-    category: 'Computers',
-    price: 1299,
-    brand: 'Apple',
-    stock: 80,
-  },
-  {
-    id: '4',
-    name: 'Dell XPS 13',
-    category: 'Computers',
-    price: 999,
-    brand: 'Dell',
-    stock: 50,
-  },
-  {
-    id: '5',
-    name: 'Sony WH-1000XM4',
-    category: 'Headphones',
-    price: 349,
-    brand: 'Sony',
-    stock: 120,
-  },
-  {
-    id: '6',
-    name: 'AirPods Pro',
-    category: 'Headphones',
-    price: 249,
-    brand: 'Apple',
-    stock: 180,
-  },
-  {
-    id: '7',
-    name: 'Fitbit Charge 5',
-    category: 'Wearables',
-    price: 179,
-    brand: 'Fitbit',
-    stock: 75,
-  },
-]

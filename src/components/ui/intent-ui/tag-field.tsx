@@ -1,6 +1,11 @@
 'use client'
 
-import { ReactNode, useCallback, useState } from 'react'
+import {
+  type KeyboardEvent,
+  type ReactNode,
+  useCallback,
+  useState,
+} from 'react'
 
 import type { Key } from 'react-aria-components'
 import { Group, TextField } from 'react-aria-components'
@@ -61,11 +66,11 @@ const TagField = ({
 }: TagFieldProps) => {
   const [isInvalid, setIsInvalid] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  
+
   const existingTagCount = list.items.length
   const maxTags = props.max !== undefined ? props.max : Number.POSITIVE_INFINITY
   const maxTagsToAdd = maxTags - existingTagCount
-  
+
   const insertTag = () => {
     const tagNames = inputValue.split(TAG_NAMES_REGEX)
     if (maxTagsToAdd <= 0) {
@@ -120,7 +125,7 @@ const TagField = ({
     clearInvalidFeedback()
   }
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
+  const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault()
       insertTag()
@@ -162,7 +167,7 @@ const TagField = ({
               <TagList
                 items={list.items}
                 className={twJoin(
-                  list.items.length !== 0
+                  list.items.length > 0
                     ? appearance === 'outline' && 'gap-1.5 px-1 py-1.5'
                     : 'gap-0',
                   props.shape === 'square' &&
