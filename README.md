@@ -154,6 +154,9 @@ bun dev
 - [Remeda](https://remedajs.com/): TypeScriptのユーティリティライブラリ
 - [date-fns](https://date-fns.org/docs/Getting-Started): 日付操作ライブラリ
 - [react-call](https://github.com/desko27/react-call): Confirmダイアログ管理ライブラリ
+- [TanStack Query](https://tanstack.com/query/latest): クライアントfetch ライブラリ
+- [TanStack Table](https://tanstack.com/table/latest): Unstyled UI tableライブラリ
+- [React Virtuoso](https://virtuoso.dev/): 仮想化レンダリングライブラリ
 
 ## Better Auth CLIによるSchema生成
 ```sh
