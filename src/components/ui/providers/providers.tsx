@@ -5,6 +5,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { RouterProvider } from 'react-aria-components'
 import { ThemeProvider } from '~/components/ui/intent-ui/theme-provider'
 import { NuqsProvider } from '~/components/ui/providers/nuqs-provider'
+import { QueryProvider } from '~/components/ui/providers/query-provider'
 
 declare module 'react-aria-components' {
   interface RouterConfig {
@@ -31,9 +32,11 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <RouterProvider navigate={router.push}>
       <NuqsProvider>
-        <ThemeProvider enableSystem={true} attribute="class">
-          {children}
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider enableSystem={true} attribute="class">
+            {children}
+          </ThemeProvider>
+        </QueryProvider>
       </NuqsProvider>
     </RouterProvider>
   )
