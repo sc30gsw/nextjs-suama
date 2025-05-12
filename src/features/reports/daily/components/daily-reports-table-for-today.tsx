@@ -9,6 +9,7 @@ import {
 import type { InferResponseType } from 'hono'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
+import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
 
 type DailyReportForToday = {
@@ -20,6 +21,13 @@ type DailyReportForToday = {
   isRemote: boolean
   isTurnedIn: boolean
   operate: string
+  workContents: {
+    id: string
+    project: string
+    mission: string
+    workTime: number
+    workContent: string
+  }[]
 }
 
 const columnHelper = createColumnHelper<DailyReportForToday>()
@@ -62,10 +70,12 @@ const COLUMNS = [
 
       return (
         <div className="flex items-center gap-2">
-          <Button size="small">
-            職務内容
-            <IconFileText />
-          </Button>
+          <DailyReportWorkContentPopover contents={report.workContents}>
+            <Button size="small">
+              職務内容
+              <IconFileText />
+            </Button>
+          </DailyReportWorkContentPopover>
           {isCurrentUser && (
             <div className="flex gap-2">
               <Button intent="outline" size="small">
@@ -101,6 +111,13 @@ export function DailyReportsTableForToday({
     isRemote: user.role === 'admin',
     isTurnedIn: user.role === 'moderator',
     operate: '',
+    workContents: Array.from({ length: 5 }, (_, i) => ({
+      id: `${user.id}-${i}`,
+      project: `プロジェクト${i + 1}`,
+      mission: `ミッション${i + 1}`,
+      workTime: Number((Math.random() * 3 + 1).toFixed(1)),
+      workContent: `作業内容のダミー${i + 1}`,
+    })),
   }))
 
   const table = useReactTable({
