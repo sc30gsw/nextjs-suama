@@ -30,8 +30,13 @@ export default async function Home({
     unauthorized()
   }
 
-  const { count, troubleCount, appealCount } =
+  const { appealsAndTroublesEntry } =
     await inputCountSearchParamsCache.parse(searchParams)
+  console.log('🚀 ~ appealsAndTroublesEntry:', appealsAndTroublesEntry)
+
+  const troubleCount = appealsAndTroublesEntry.troubles.count
+  const appealCount = appealsAndTroublesEntry.appeals.count
+  const count = Math.max(troubleCount, appealCount)
 
   const promises = Promise.all([
     getProjects(session.user.id),
@@ -73,6 +78,7 @@ export default async function Home({
             {getTroubles(session.user.id).then((res) => (
               <ReportAppealAndTroubleInputEntries<TroubleResponse['troubles']>
                 items={res}
+                kind="trouble"
               />
             ))}
           </Suspense>
@@ -108,6 +114,7 @@ export default async function Home({
             {getAppeals(session.user.id).then((res) => (
               <ReportAppealAndTroubleInputEntries<AppealResponse['appeals']>
                 items={res}
+                kind="appeal"
               />
             ))}
           </Suspense>

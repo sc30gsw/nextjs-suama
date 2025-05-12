@@ -2,7 +2,6 @@
 
 import { IconMinus, IconPlus } from '@intentui/icons'
 import { useQueryStates } from 'nuqs'
-import { useState } from 'react'
 import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
@@ -17,12 +16,13 @@ type ReportAppealAndTroublesInputEntriesProps<
   T extends AppealResponse['appeals'] | TroubleResponse['troubles'],
 > = {
   items: T
+  kind: 'appeal' | 'trouble'
 }
 
 export function ReportAppealAndTroubleInputEntries<
   T extends AppealResponse['appeals'] | TroubleResponse['troubles'],
->({ items }: ReportAppealAndTroublesInputEntriesProps<T>) {
-  const [{ appealCount }, setCount] = useQueryStates(
+>({ items, kind }: ReportAppealAndTroublesInputEntriesProps<T>) {
+  const [{ appealsAndTroublesEntry }, setReportState] = useQueryStates(
     inputCountSearchParamsParsers,
     {
       history: 'push',
@@ -30,43 +30,181 @@ export function ReportAppealAndTroubleInputEntries<
     },
   )
 
-  const [entries, setEntries] = useState<
-    {
-      id: string
-      content: string
-      item: Key | null
-      resolved: boolean
-    }[]
-  >(() =>
-    Array.from({ length: appealCount > 0 ? appealCount : 0 }, () => ({
+  const entries =
+    kind === 'appeal'
+      ? appealsAndTroublesEntry.appeals.entries
+      : appealsAndTroublesEntry.troubles.entries
+
+  const handleAdd = () => {
+    const newEntry = {
       id: crypto.randomUUID(),
       content: '',
       item: null,
       resolved: false,
-    })),
-  )
+    }
+
+    setReportState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      if (kind === 'appeal') {
+        return {
+          ...prev,
+          appealsAndTroublesEntry: {
+            ...prev.appealsAndTroublesEntry,
+            appeals: {
+              count: prev.appealsAndTroublesEntry.appeals.count + 1,
+              entries: [
+                ...prev.appealsAndTroublesEntry.appeals.entries,
+                newEntry,
+              ],
+            },
+          },
+        }
+      }
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            count: prev.appealsAndTroublesEntry.troubles.count + 1,
+            entries: [
+              ...prev.appealsAndTroublesEntry.troubles.entries,
+              newEntry,
+            ],
+          },
+        },
+      }
+    })
+  }
+
+  const handleRemove = (id: string) => {
+    setReportState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      if (kind === 'appeal') {
+        const filteredEntries =
+          prev.appealsAndTroublesEntry.appeals.entries.filter(
+            (e) => e.id !== id,
+          )
+
+        return {
+          ...prev,
+          appealsAndTroublesEntry: {
+            ...prev.appealsAndTroublesEntry,
+            appeals: {
+              count: filteredEntries.length,
+              entries: filteredEntries,
+            },
+          },
+        }
+      }
+
+      const filteredEntries =
+        prev.appealsAndTroublesEntry.troubles.entries.filter((e) => e.id !== id)
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            count: filteredEntries.length,
+            entries: filteredEntries,
+          },
+        },
+      }
+    })
+  }
+
+  const handleChangeContent = (id: string, newContent: string) => {
+    setReportState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      if (kind === 'appeal') {
+        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map(
+          (e) => (e.id === id ? { ...e, content: newContent } : e),
+        )
+
+        return {
+          ...prev,
+          appealsAndTroublesEntry: {
+            ...prev.appealsAndTroublesEntry,
+            appeals: {
+              count: updatedEntries.length,
+              entries: updatedEntries,
+            },
+          },
+        }
+      }
+
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map(
+        (e) => (e.id === id ? { ...e, content: newContent } : e),
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            count: updatedEntries.length,
+            entries: updatedEntries,
+          },
+        },
+      }
+    })
+  }
+
+  const handleChangeItem = (id: string, newItem: Key | null) => {
+    setReportState((prev) => {
+      if (!(prev && newItem)) {
+        return prev
+      }
+
+      if (kind === 'appeal') {
+        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map(
+          (e) => (e.id === id ? { ...e, item: Number(newItem) } : e),
+        )
+
+        return {
+          ...prev,
+          appealsAndTroublesEntry: {
+            ...prev.appealsAndTroublesEntry,
+            appeals: {
+              count: updatedEntries.length,
+              entries: updatedEntries,
+            },
+          },
+        }
+      }
+
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map(
+        (e) => (e.id === id ? { ...e, item: Number(newItem) } : e),
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            count: updatedEntries.length,
+            entries: updatedEntries,
+          },
+        },
+      }
+    })
+  }
 
   return (
     <>
       <Button
         size="square-petite"
-        onPress={() => {
-          setCount((prev) => {
-            const newCount = prev.appealCount > 0 ? prev.appealCount + 1 : 1
-
-            setEntries((prev) => [
-              ...prev,
-              {
-                id: crypto.randomUUID(),
-                content: '',
-                item: null,
-                resolved: false,
-              },
-            ])
-
-            return { appealCount: newCount }
-          })
-        }}
+        onPress={handleAdd}
         className="rounded-full mt-4"
       >
         <IconPlus />
@@ -80,26 +218,14 @@ export function ReportAppealAndTroubleInputEntries<
             label="内容"
             placeholder="内容を入力"
             value={entry.content}
-            onChange={(val) =>
-              setEntries((prev) =>
-                prev.map((e) =>
-                  e.id === entry.id ? { ...e, content: val } : e,
-                ),
-              )
-            }
+            onChange={(val) => handleChangeContent(entry.id, val)}
             className="col-span-3"
           />
           <ComboBox
             label="工夫したこと"
             placeholder="カテゴリーを選択"
-            onSelectionChange={(key) => {
-              setEntries((prev) =>
-                prev.map((e) =>
-                  e.id === entry.id ? { ...e, appeal: key } : e,
-                ),
-              )
-            }}
             selectedKey={entry.item}
+            onSelectionChange={(key) => handleChangeItem(entry.id, key)}
             className="col-span-2"
           >
             <ComboBox.Input />
@@ -112,18 +238,7 @@ export function ReportAppealAndTroubleInputEntries<
           <Button
             size="square-petite"
             intent="danger"
-            onPress={() => {
-              setEntries((prev) => {
-                const updated = prev.filter((e) => e.id !== entry.id)
-
-                return updated
-              })
-
-              setCount((prev) => {
-                const newCount = prev.appealCount > 1 ? prev.appealCount - 1 : 0
-                return { appealCount: newCount }
-              })
-            }}
+            onPress={() => handleRemove(entry.id)}
             className="rounded-full mt-6 col-span-1"
           >
             <IconMinus />
