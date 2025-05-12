@@ -34,6 +34,7 @@ export function DailyReportsSearchUserForToday() {
           userNames: userNames.filter((name) => name !== key?.name),
         })
       }}
+      className="max-w-2xl"
     />
   )
 }
