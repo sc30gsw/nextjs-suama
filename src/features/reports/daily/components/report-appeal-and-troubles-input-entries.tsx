@@ -1,23 +1,27 @@
 'use client'
 
 import { IconMinus, IconPlus } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { useState } from 'react'
 import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { Textarea } from '~/components/ui/intent-ui/textarea'
+import type {
+  AppealResponse,
+  TroubleResponse,
+} from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
-import type { client } from '~/lib/rpc'
 
-type ReportTroublesInputEntriesProps = {
-  appeals: InferResponseType<typeof client.api.projects.$get, 200>['todos']
+type ReportAppealAndTroublesInputEntriesProps<
+  T extends AppealResponse['appeals'] | TroubleResponse['troubles'],
+> = {
+  items: T
 }
 
-export function ReportAppealInputEntries({
-  appeals,
-}: ReportTroublesInputEntriesProps) {
+export function ReportAppealAndTroubleInputEntries<
+  T extends AppealResponse['appeals'] | TroubleResponse['troubles'],
+>({ items }: ReportAppealAndTroublesInputEntriesProps<T>) {
   const [{ appealCount }, setCount] = useQueryStates(
     inputCountSearchParamsParsers,
     {
@@ -30,14 +34,14 @@ export function ReportAppealInputEntries({
     {
       id: string
       content: string
-      appeal: Key | null
+      item: Key | null
       resolved: boolean
     }[]
   >(() =>
     Array.from({ length: appealCount > 0 ? appealCount : 0 }, () => ({
       id: crypto.randomUUID(),
       content: '',
-      appeal: null,
+      item: null,
       resolved: false,
     })),
   )
@@ -55,7 +59,7 @@ export function ReportAppealInputEntries({
               {
                 id: crypto.randomUUID(),
                 content: '',
-                appeal: null,
+                item: null,
                 resolved: false,
               },
             ])
@@ -95,13 +99,13 @@ export function ReportAppealInputEntries({
                 ),
               )
             }}
-            selectedKey={entry.appeal}
+            selectedKey={entry.item}
             className="col-span-2"
           >
             <ComboBox.Input />
-            <ComboBox.List items={appeals}>
-              {(appeal) => (
-                <ComboBox.Option id={appeal.id}>{appeal.todo}</ComboBox.Option>
+            <ComboBox.List items={items}>
+              {(item) => (
+                <ComboBox.Option id={item.id}>{item.todo}</ComboBox.Option>
               )}
             </ComboBox.List>
           </ComboBox>

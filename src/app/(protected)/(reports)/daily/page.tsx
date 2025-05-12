@@ -11,10 +11,12 @@ import { getAppeals } from '~/features/appeals/server/fetcher'
 import { getMissions } from '~/features/missions/server/fetcher'
 import { getProjects } from '~/features/projects/server/fetcher'
 import { CreateDailyForm } from '~/features/reports/daily/components/create-daily-form'
-import { ReportAppealInputEntries } from '~/features/reports/daily/components/report-appeal-input-entries'
-
+import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/components/report-appeal-and-troubles-input-entries'
 import { ReportContentInputEntries } from '~/features/reports/daily/components/report-content-input-entries'
-import { ReportTroubleInputEntries } from '~/features/reports/daily/components/report-trouble-input-entries'
+import type {
+  AppealResponse,
+  TroubleResponse,
+} from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsCache } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { getTroubles } from '~/features/troubles/server/fetcher'
 import { getServerSession } from '~/lib/get-server-session'
@@ -69,7 +71,9 @@ export default async function Home({
             }
           >
             {getTroubles(session.user.id).then((res) => (
-              <ReportTroubleInputEntries troubles={res} />
+              <ReportAppealAndTroubleInputEntries<TroubleResponse['troubles']>
+                items={res}
+              />
             ))}
           </Suspense>
         }
@@ -102,7 +106,9 @@ export default async function Home({
             }
           >
             {getAppeals(session.user.id).then((res) => (
-              <ReportAppealInputEntries appeals={res} />
+              <ReportAppealAndTroubleInputEntries<AppealResponse['appeals']>
+                items={res}
+              />
             ))}
           </Suspense>
         }
