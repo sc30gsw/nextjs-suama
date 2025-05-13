@@ -160,7 +160,7 @@ export function ReportAppealAndTroubleInputEntries<
 
   const handleChangeItem = (id: string, newItem: Key | null) => {
     setAppealsAndTroublesState((prev) => {
-      if (!(prev && newItem)) {
+      if (!prev) {
         return prev
       }
 

@@ -90,7 +90,7 @@ export function ReportContentInputEntries({
     kind: 'project' | 'mission',
   ) => {
     setReportState((prev) => {
-      if (!(prev && newItem)) {
+      if (!prev) {
         return prev
       }
 
