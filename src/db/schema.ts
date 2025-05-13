@@ -1,4 +1,5 @@
 import { index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { relations } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -72,7 +73,10 @@ export const clients = sqliteTable('clients', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-});
+}, (table) => [
+  index('index_clients_on_name').on(table.name),
+  index('index_clients_on_like_keywords').on(table.likeKeywords),
+]);
 
 export const projects = sqliteTable('projects', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -90,6 +94,8 @@ export const projects = sqliteTable('projects', {
   ),
 }, (table) => [
   index('index_projects_on_client_id').on(table.clientId),
+  index('index_projects_on_name').on(table.name),
+  index('index_projects_on_like_keywords').on(table.likeKeywords),
 ]);
 
 export const missions = sqliteTable('missions', {
@@ -107,6 +113,8 @@ export const missions = sqliteTable('missions', {
   ),
 }, (table) => [
   index('index_missions_on_project_id').on(table.projectId),
+  index('index_missions_on_name').on(table.name),
+  index('index_missions_on_like_keywords').on(table.likeKeywords),
 ]);
 
 export const dailyReports = sqliteTable('daily_reports', {
@@ -126,6 +134,7 @@ export const dailyReports = sqliteTable('daily_reports', {
   ),
 }, (table) => [
   index('index_daily_reports_on_user_id').on(table.userId),
+  index('index_daily_reports_on_report_date').on(table.reportDate),
 ]);
 
 export const dailyReportMissions = sqliteTable('daily_report_missions', {
@@ -204,6 +213,7 @@ export const weeklyReports = sqliteTable('weekly_reports', {
   ),
 }, (table) => [
   index('index_weekly_reports_on_user_id').on(table.userId),
+  index('index_weekly_reports_on_year_and_week').on(table.year, table.week),
 ]);
 
 export const weeklyReportMissions = sqliteTable('weekly_report_missions', {
@@ -246,6 +256,7 @@ export const troubles = sqliteTable('troubles', {
 }, (table) => [
   index('index_troubles_on_category_of_trouble_id').on(table.categoryOfTroubleId),
   index('index_troubles_on_user_id').on(table.userId),
+  index('index_troubles_on_resolved').on(table.resolved),
 ]);
 
 export const troubleReplies = sqliteTable('trouble_replies', {
@@ -277,8 +288,9 @@ export const categoriesOfTrouble = sqliteTable('categories_of_trouble', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-});
-
+}, (table) => [
+  index('index_categories_of_trouble_on_name').on(table.name),
+]);
 
 export const appeals = sqliteTable('appeals', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -333,4 +345,83 @@ export const categoriesOfAppeal = sqliteTable('categories_of_appeal', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(
     () => new Date(),
   ),
-});
+}, (table) => [
+  index('index_categories_of_appeal_on_name').on(table.name),
+]);
+
+export const usersRelations = relations(users, ({ many }) => ({
+  dailyReports: many(dailyReports),
+  weeklyReports: many(weeklyReports),
+  troubles: many(troubles),
+  appeals: many(appeals),
+  comments: many(comments),
+  accounts: many(accounts),
+  sessions: many(sessions),
+}));
+
+export const clientsRelations = relations(clients, ({ many }) => ({
+  projects: many(projects),
+}));
+
+export const projectsRelations = relations(projects, ({ one, many }) => ({
+  client: one(clients, {
+    fields: [projects.clientId],
+    references: [clients.id],
+  }),
+  missions: many(missions),
+}));
+
+export const missionsRelations = relations(missions, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [missions.projectId],
+    references: [projects.id],
+  }),
+  dailyReportMissions: many(dailyReportMissions),
+  weeklyReportMissions: many(weeklyReportMissions),
+}));
+
+export const dailyReportsRelations = relations(dailyReports, ({ one, many }) => ({
+  user: one(users, {
+    fields: [dailyReports.userId],
+    references: [users.id],
+  }),
+  dailyReportMissions: many(dailyReportMissions),
+  appeals: many(appeals),
+  comments: many(comments),
+}));
+
+export const troublesRelations = relations(troubles, ({ one, many }) => ({
+  user: one(users, {
+    fields: [troubles.userId],
+    references: [users.id],
+  }),
+  categoryOfTrouble: one(categoriesOfTrouble, {
+    fields: [troubles.categoryOfTroubleId],
+    references: [categoriesOfTrouble.id],
+  }),
+  troubleReplies: many(troubleReplies),
+}));
+
+export const appealsRelations = relations(appeals, ({ one, many }) => ({
+  user: one(users, {
+    fields: [appeals.userId],
+    references: [users.id],
+  }),
+  categoryOfAppeal: one(categoriesOfAppeal, {
+    fields: [appeals.categoryOfAppealId],
+    references: [categoriesOfAppeal.id],
+  }),
+  dailyReport: one(dailyReports, {
+    fields: [appeals.dailyReportId],
+    references: [dailyReports.id],
+  }),
+  appealReplies: many(appealReplies),
+}));
+
+export const weeklyReportsRelations = relations(weeklyReports, ({ one, many }) => ({
+  user: one(users, {
+    fields: [weeklyReports.userId],
+    references: [users.id],
+  }),
+  weeklyReportMissions: many(weeklyReportMissions),
+}));
