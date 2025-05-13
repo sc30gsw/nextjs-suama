@@ -1,10 +1,11 @@
 import { Hono } from 'hono'
 import { filter } from 'remeda'
 import { upfetchForDummy } from '~/lib/fetcher'
+import { sessionMiddleware } from '~/lib/session-middleware'
 
 const MAX_LIMIT = 500
 
-const app = new Hono().get('/', async (c) => {
+const app = new Hono().get('/', sessionMiddleware, async (c) => {
   const { skip, limit, names } = c.req.query()
 
   const skipNumber = Number(skip) || 0
