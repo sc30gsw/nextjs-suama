@@ -22,13 +22,11 @@ type ReportAppealAndTroublesInputEntriesProps<
 export function ReportAppealAndTroubleInputEntries<
   T extends AppealResponse['appeals'] | TroubleResponse['troubles'],
 >({ items, kind }: ReportAppealAndTroublesInputEntriesProps<T>) {
-  const [{ appealsAndTroublesEntry }, setReportState] = useQueryStates(
-    inputCountSearchParamsParsers,
-    {
+  const [{ appealsAndTroublesEntry }, setAppealsAndTroublesState] =
+    useQueryStates(inputCountSearchParamsParsers, {
       history: 'push',
       shallow: false,
-    },
-  )
+    })
 
   const entries =
     kind === 'appeal'
@@ -40,10 +38,10 @@ export function ReportAppealAndTroubleInputEntries<
       id: crypto.randomUUID(),
       content: '',
       item: null,
-      resolved: false,
-    }
+      resolved: kind === 'appeal' ? undefined : false,
+    } as const satisfies (typeof appealsAndTroublesEntry.appeals.entries)[number]
 
-    setReportState((prev) => {
+    setAppealsAndTroublesState((prev) => {
       if (!prev) {
         return prev
       }
@@ -81,7 +79,7 @@ export function ReportAppealAndTroubleInputEntries<
   }
 
   const handleRemove = (id: string) => {
-    setReportState((prev) => {
+    setAppealsAndTroublesState((prev) => {
       if (!prev) {
         return prev
       }
@@ -121,7 +119,7 @@ export function ReportAppealAndTroubleInputEntries<
   }
 
   const handleChangeContent = (id: string, newContent: string) => {
-    setReportState((prev) => {
+    setAppealsAndTroublesState((prev) => {
       if (!prev) {
         return prev
       }
@@ -161,7 +159,7 @@ export function ReportAppealAndTroubleInputEntries<
   }
 
   const handleChangeItem = (id: string, newItem: Key | null) => {
-    setReportState((prev) => {
+    setAppealsAndTroublesState((prev) => {
       if (!(prev && newItem)) {
         return prev
       }

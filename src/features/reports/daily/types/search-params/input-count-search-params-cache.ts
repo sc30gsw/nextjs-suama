@@ -1,26 +1,44 @@
 import { createSearchParamsCache, parseAsJson } from 'nuqs/server'
 import { z } from 'zod'
 
-const entrySchema = z.object({
+const reportEntrySchema = z.object({
+  id: z.string(),
+  project: z.number().nullable(),
+  mission: z.number().nullable(),
+  hours: z.number(),
+  content: z.string(),
+})
+
+const appealsAndTroublesEntrySchema = z.object({
   id: z.string(),
   content: z.string(),
   item: z.number().nullable(),
-  resolved: z.boolean(),
+  resolved: z.boolean().optional(),
 })
 
 const inputStateSchema = z.object({
   count: z.number(),
-  entries: z.array(entrySchema),
+  entries: z.array(appealsAndTroublesEntrySchema),
 })
 
-export const reportStateSchema = z.object({
+export const appealsAndTroublesStateSchema = z.object({
   appeals: inputStateSchema,
   troubles: inputStateSchema,
 })
 
+export const reportStateSchema = z.object({
+  count: z.number(),
+  entries: z.array(reportEntrySchema),
+})
+
 export const inputCountSearchParamsParsers = {
-  // count: parseAsInteger.withDefault(1),
-  appealsAndTroublesEntry: parseAsJson(reportStateSchema.parse).withDefault({
+  reportEntry: parseAsJson(reportStateSchema.parse).withDefault({
+    count: 0,
+    entries: [],
+  }),
+  appealsAndTroublesEntry: parseAsJson(
+    appealsAndTroublesStateSchema.parse,
+  ).withDefault({
     appeals: { count: 0, entries: [] },
     troubles: { count: 0, entries: [] },
   }),

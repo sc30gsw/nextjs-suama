@@ -30,13 +30,12 @@ export default async function Home({
     unauthorized()
   }
 
-  const { appealsAndTroublesEntry } =
+  const { reportEntry, appealsAndTroublesEntry } =
     await inputCountSearchParamsCache.parse(searchParams)
-  console.log('🚀 ~ appealsAndTroublesEntry:', appealsAndTroublesEntry)
 
+  const count = reportEntry.count
   const troubleCount = appealsAndTroublesEntry.troubles.count
   const appealCount = appealsAndTroublesEntry.appeals.count
-  const count = Math.max(troubleCount, appealCount)
 
   const promises = Promise.all([
     getProjects(session.user.id),
