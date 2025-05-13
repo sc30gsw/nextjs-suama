@@ -74,8 +74,7 @@ export const clients = sqliteTable('clients', {
     () => new Date(),
   ),
 }, (table) => [
-  index('index_clients_on_name').on(table.name),
-  index('index_clients_on_like_keywords').on(table.likeKeywords),
+  index('index_clients_on_name_and_like_keywords').on(table.name, table.likeKeywords),
 ]);
 
 export const projects = sqliteTable('projects', {
@@ -94,8 +93,7 @@ export const projects = sqliteTable('projects', {
   ),
 }, (table) => [
   index('index_projects_on_client_id').on(table.clientId),
-  index('index_projects_on_name').on(table.name),
-  index('index_projects_on_like_keywords').on(table.likeKeywords),
+  index('index_projects_on_name_and_like_keywords').on(table.name, table.likeKeywords),
 ]);
 
 export const missions = sqliteTable('missions', {
@@ -113,8 +111,7 @@ export const missions = sqliteTable('missions', {
   ),
 }, (table) => [
   index('index_missions_on_project_id').on(table.projectId),
-  index('index_missions_on_name').on(table.name),
-  index('index_missions_on_like_keywords').on(table.likeKeywords),
+  index('index_missions_on_name_and_like_keywords').on(table.name, table.likeKeywords),
 ]);
 
 export const dailyReports = sqliteTable('daily_reports', {
