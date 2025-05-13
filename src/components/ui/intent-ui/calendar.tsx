@@ -171,9 +171,8 @@ const SelectMonth = ({ state }: { state: CalendarState }) => {
             key={crypto.randomUUID()}
             id={(index + 1).toString()}
             textValue={month}
-            className="text-sm"
           >
-            <Select.Label>{month}</Select.Label>
+            <Select.Label className="md:text-xs text-sm">{month}</Select.Label>
           </Select.Option>
         ))}
       </Select.List>
@@ -213,9 +212,10 @@ const SelectYear = ({ state }: { state: CalendarState }) => {
             key={crypto.randomUUID()}
             id={i}
             textValue={year.formatted}
-            className="text-sm"
           >
-            <Select.Label>{year.formatted}</Select.Label>
+            <Select.Label className="md:text-xs text-sm">
+              {year.formatted}
+            </Select.Label>
           </Select.Option>
         ))}
       </Select.List>
