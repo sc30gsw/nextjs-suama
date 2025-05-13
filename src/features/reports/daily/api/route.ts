@@ -7,9 +7,10 @@ const MAX_LIMIT = 500
 
 // TODO: 実際の本日の日報を取得して、フィルターすること
 const app = new Hono().get('/today', sessionMiddleware, async (c) => {
-  const { skip, userNames } = c.req.query()
+  const { skip, limit, userNames } = c.req.query()
 
   const skipNumber = Number(skip) || 0
+  const limitNumber = Number(limit) || 10
 
   const userNamesArray = userNames
     ? userNames.split(',').map((name) => name.trim())
@@ -51,14 +52,17 @@ const app = new Hono().get('/today', sessionMiddleware, async (c) => {
         )
       : userList.users
 
-  const paginatedUsers = filteredUsers.slice(skipNumber, skipNumber + 10)
+  const paginatedUsers = filteredUsers.slice(
+    skipNumber,
+    skipNumber + limitNumber,
+  )
 
   return c.json(
     {
       users: paginatedUsers,
       total: filteredUsers.length,
       skip: skipNumber,
-      limit: 10,
+      limit: limitNumber,
     },
     200,
   )

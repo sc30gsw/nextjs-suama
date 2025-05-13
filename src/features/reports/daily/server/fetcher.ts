@@ -6,7 +6,7 @@ import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getReportsForToday(
-  params: { skip: number; userNames?: string[] },
+  params: { skip: number; limit: number; userNames?: string[] },
   userId?: string,
 ) {
   'use cache'

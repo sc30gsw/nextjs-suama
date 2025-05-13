@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
+import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { DailyReportsSearchUserForToday } from '~/features/reports/daily/components/daily-reports-search-user-for-today'
 import { DailyReportsTableForToday } from '~/features/reports/daily/components/daily-reports-table-for-today'
 import { DailyReportsTablePaginationForToday } from '~/features/reports/daily/components/daily-reports-table-pagination-for-today'
@@ -11,6 +12,10 @@ import { getReportsForToday } from '~/features/reports/daily/server/fetcher'
 import { dailyReportForTodaySearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-for-today-search-params-cache'
 
 import { getServerSession } from '~/lib/get-server-session'
+import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+
+const MAX_ROWS_PER_PAGE = 100
+const MIN_ROWS_PER_PAGE = 10
 
 export default async function DailyOfTodayPage({
   searchParams,
@@ -21,24 +26,36 @@ export default async function DailyOfTodayPage({
     unauthorized()
   }
 
-  const { page, userNames } =
-    await dailyReportForTodaySearchParamsCache.parse(searchParams)
+  const [{ userNames }, { page, rowsPerPage }] = await Promise.all([
+    dailyReportForTodaySearchParamsCache.parse(searchParams),
+    paginationSearchParamsCache.parse(searchParams),
+  ])
 
   const reportsPromise = getReportsForToday(
-    { skip: page <= 1 ? 0 : (page - 1) * 10, userNames },
+    {
+      skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
+      limit:
+        rowsPerPage > MAX_ROWS_PER_PAGE
+          ? MAX_ROWS_PER_PAGE
+          : rowsPerPage < MIN_ROWS_PER_PAGE
+            ? MIN_ROWS_PER_PAGE
+            : rowsPerPage,
+      userNames,
+    },
     session.user.id,
   )
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-y-2">
       <Heading>本日の日報</Heading>
-      <div>
+      <div className="flex flex-row md:flex-col items-center md:items-start gap-x-4 md:gap-y-4">
         <DailyReportsSearchUserForToday />
+        <RowsPerPageSelect />
       </div>
       <Card className="py-2 mt-4 max-w-full">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, userNames })}
+            key={JSON.stringify({ page, rowsPerPage, userNames })}
             fallback={
               <table className="w-full text-sm text-left font-normal">
                 <thead className="bg-muted">
@@ -53,7 +70,7 @@ export default async function DailyOfTodayPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {Array.from({ length: 10 }, () => (
+                  {Array.from({ length: rowsPerPage }, () => (
                     <tr key={crypto.randomUUID()} className="border-b">
                       <th scope="row" className="p-4">
                         <Skeleton className="w-20 h-4" />
@@ -107,10 +124,12 @@ export default async function DailyOfTodayPage({
             }
           >
             {reportsPromise.then((res) => {
-              const pageCount = Math.ceil(res.total / 10)
+              const pageCount = Math.ceil(res.total / rowsPerPage)
 
               if (page > pageCount) {
-                redirect(`/daily/today?page=${pageCount}`)
+                redirect(
+                  `/daily/today?page=${pageCount}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`,
+                )
               }
 
               return (

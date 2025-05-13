@@ -7,10 +7,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
+import { useQueryStates } from 'nuqs'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
+import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type DailyReportForToday = {
   id: string
@@ -120,11 +122,17 @@ export function DailyReportsTableForToday({
     })),
   }))
 
+  const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
+    history: 'push',
+    shallow: false,
+  })
+
   const table = useReactTable({
     data: initialData,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
+    pageCount: Math.ceil(reports.total / rowsPerPage),
   })
 
   return (
