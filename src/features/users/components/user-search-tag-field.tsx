@@ -14,7 +14,7 @@ export function UserSearchTagField() {
   const selectedItems = useListData({
     initialItems: userNames.map((name, i) => ({
       id: i,
-      name: name,
+      name,
     })),
   })
 
@@ -22,6 +22,7 @@ export function UserSearchTagField() {
     <TagField
       appearance="outline"
       label="ユーザー名"
+      placeholder={'ユーザー名（複数選択可）で検索できます'}
       list={selectedItems}
       onItemInserted={(key) => {
         setQuery({ userNames: [...userNames, key.name] })
