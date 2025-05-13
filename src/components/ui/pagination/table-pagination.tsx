@@ -2,21 +2,18 @@
 
 import { useQueryStates } from 'nuqs'
 import { Pagination } from '~/components/ui/intent-ui/pagination'
-import { dailyReportForTodaySearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-today-search-params-cache'
+import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-export function DailyReportsTablePaginationForToday({
+export function TablePagination({
   pageCount,
   page,
 }: Record<'pageCount' | 'page', number>) {
   const pageIndex = page <= 1 ? 0 : page - 1
-  const [{ userNames }] = useQueryStates(
-    dailyReportForTodaySearchParamsParsers,
-    {
-      history: 'push',
-      shallow: false,
-    },
-  )
+  const [{ userNames }] = useQueryStates(userSearchParamsParsers, {
+    history: 'push',
+    shallow: false,
+  })
   const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
     history: 'push',
     shallow: false,
