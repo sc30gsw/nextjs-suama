@@ -2,7 +2,6 @@
 
 import {
   IconBookOpen,
-  IconBuilding,
   IconCalendarDays,
   IconCirclePerson,
   IconCircleQuestionmark,
@@ -10,7 +9,12 @@ import {
   IconPackage,
   IconPeople,
 } from '@intentui/icons'
-import { IconCalendarEvent, IconReport } from '@tabler/icons-react'
+import {
+  IconBuilding,
+  IconBuildings,
+  IconCalendarEvent,
+  IconReport,
+} from '@tabler/icons-react'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import {
@@ -123,17 +127,13 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
             <SidebarDisclosure id={5}>
               <SidebarDisclosureTrigger>
-                <IconPackage />
+                <IconBuilding stroke={1} size={20} className="mr-1" />
                 <SidebarLabel>クライアント</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
+                <SidebarItem href="/client/list" tooltip="クライアント一覧">
+                  <IconBuildings stroke={1} size={20} className="mr-1" />
                   <SidebarLabel>クライアント一覧</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
-                  <SidebarLabel>クライアント登録</SidebarLabel>
                 </SidebarItem>
               </SidebarDisclosurePanel>
             </SidebarDisclosure>
