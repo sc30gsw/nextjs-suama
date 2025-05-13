@@ -1,7 +1,10 @@
 import { up } from 'up-fetch'
-import { env } from '~/env'
 
 export const upfetch = up(fetch, () => ({
-  baseUrl: env.NEXT_PUBLIC_APP_URL,
+  timeout: 30000,
+}))
+
+export const upfetchForDummy = up(fetch, () => ({
+  baseUrl: 'https://dummyjson.com',
   timeout: 30000,
 }))

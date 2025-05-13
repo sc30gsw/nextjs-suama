@@ -172,7 +172,7 @@ const SelectMonth = ({ state }: { state: CalendarState }) => {
             id={(index + 1).toString()}
             textValue={month}
           >
-            <Select.Label>{month}</Select.Label>
+            <Select.Label className="md:text-xs text-sm">{month}</Select.Label>
           </Select.Option>
         ))}
       </Select.List>
@@ -213,7 +213,9 @@ const SelectYear = ({ state }: { state: CalendarState }) => {
             id={i}
             textValue={year.formatted}
           >
-            <Select.Label>{year.formatted}</Select.Label>
+            <Select.Label className="md:text-xs text-sm">
+              {year.formatted}
+            </Select.Label>
           </Select.Option>
         ))}
       </Select.List>

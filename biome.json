@@ -62,6 +62,7 @@
       "include": [
         "env.ts",
         "./src/features/**/types/schemas/*.ts",
+        "./src/features/**/server/fetcher.ts",
         "*.d.ts",
         "db/schema.ts",
         "auth-schema.ts",
