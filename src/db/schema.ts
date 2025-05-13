@@ -2,7 +2,9 @@ import { index, integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core
 import { relations } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   emailVerified: integer('email_verified', { mode: 'boolean' }).notNull(),
@@ -14,7 +16,9 @@ export const users = sqliteTable('users', {
 })
 
 export const sessions = sqliteTable('sessions', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
   token: text('token').notNull().unique(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
@@ -23,16 +27,18 @@ export const sessions = sqliteTable('sessions', {
   ),
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
-  userId: integer('user_id')
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
 })
 
 export const accounts = sqliteTable('accounts', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  accountId: integer('account_id').notNull(),
-  providerId: integer('provider_id').notNull(),
-  userId: integer('user_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  accountId: text('account_id').notNull(),
+  providerId: text('provider_id').notNull(),
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   accessToken: text('access_token'),
@@ -53,7 +59,9 @@ export const accounts = sqliteTable('accounts', {
 })
 
 export const verifications = sqliteTable('verifications', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
@@ -64,7 +72,9 @@ export const verifications = sqliteTable('verifications', {
 })
 
 export const clients = sqliteTable('clients', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   likeKeywords: text('like_keywords').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' })
@@ -78,11 +88,13 @@ export const clients = sqliteTable('clients', {
 ]);
 
 export const projects = sqliteTable('projects', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   likeKeywords: text('like_keywords').notNull(),
   isArchived: integer('is_archived', { mode: 'boolean' }).notNull().default(false),
-  clientId: integer('client_id')
+  clientId: text('client_id')
     .notNull()
     .references(() => clients.id, { onDelete: 'cascade' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
@@ -97,10 +109,12 @@ export const projects = sqliteTable('projects', {
 ]);
 
 export const missions = sqliteTable('missions', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   likeKeywords: text('like_keywords').notNull(),
-  projectId: integer('project_id')
+  projectId: text('project_id')
     .notNull()
     .references(() => projects.id, { onDelete: 'cascade' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
@@ -115,10 +129,12 @@ export const missions = sqliteTable('missions', {
 ]);
 
 export const dailyReports = sqliteTable('daily_reports', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   reportDate: integer('report_date', { mode: 'timestamp' }),
   impression: text('impression'),
-  userId: integer('user_id')
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   release: integer('release', { mode: 'boolean' }).notNull().default(false),
@@ -135,12 +151,14 @@ export const dailyReports = sqliteTable('daily_reports', {
 ]);
 
 export const dailyReportMissions = sqliteTable('daily_report_missions', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   workContent: text('work_content').notNull(),
-  missionId: integer('mission_id')
+  missionId: text('mission_id')
     .notNull()
     .references(() => missions.id, { onDelete: 'cascade' }),
-  dailyReportId: integer('daily_report_id')
+  dailyReportId: text('daily_report_id')
     .notNull()
     .references(() => dailyReports.id, { onDelete: 'cascade' }),
   hours: real('hours'),
@@ -156,11 +174,13 @@ export const dailyReportMissions = sqliteTable('daily_report_missions', {
 ]);
 
 export const comments = sqliteTable('comments', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  dailyReportId: integer('daily_report_id')
+  dailyReportId: text('daily_report_id')
     .notNull()
     .references(() => dailyReports.id, { onDelete: 'cascade' }),
   comment: text('comment').notNull(),
@@ -176,12 +196,14 @@ export const comments = sqliteTable('comments', {
 ]);
 
 export const notifications = sqliteTable('notifications', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   read: integer('read', { mode: 'boolean' }).notNull().default(false),
-  userId: integer('user_id')
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  commentId: integer('comment_id')
+  commentId: text('comment_id')
     .notNull()
     .references(() => comments.id, { onDelete: 'cascade' }),
   createdAt: integer('created_at', { mode: 'timestamp' })
@@ -196,8 +218,10 @@ export const notifications = sqliteTable('notifications', {
 ]);
 
 export const weeklyReports = sqliteTable('weekly_reports', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   year: integer('year').notNull(),
@@ -214,11 +238,13 @@ export const weeklyReports = sqliteTable('weekly_reports', {
 ]);
 
 export const weeklyReportMissions = sqliteTable('weekly_report_missions', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  weeklyReportId: integer('weekly_report_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  weeklyReportId: text('weekly_report_id')
     .notNull()
     .references(() => weeklyReports.id, { onDelete: 'cascade' }),
-  missionId: integer('mission_id')
+  missionId: text('mission_id')
     .notNull()
     .references(() => missions.id, { onDelete: 'cascade' }),
   hours: real('hours').notNull(),
@@ -235,11 +261,13 @@ export const weeklyReportMissions = sqliteTable('weekly_report_missions', {
 ]);
 
 export const troubles = sqliteTable('troubles', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  categoryOfTroubleId: integer('category_of_trouble_id')
+  categoryOfTroubleId: text('category_of_trouble_id')
     .notNull()
     .references(() => categoriesOfTrouble.id, { onDelete: 'cascade' }),
   trouble: text('trouble').notNull(),
@@ -257,11 +285,13 @@ export const troubles = sqliteTable('troubles', {
 ]);
 
 export const troubleReplies = sqliteTable('trouble_replies', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  troubleId: integer('trouble_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  troubleId: text('trouble_id')
     .notNull()
     .references(() => troubles.id, { onDelete: 'cascade' }),
-  userId: integer('user_id')
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   trouble: text('trouble').notNull(),
@@ -277,7 +307,9 @@ export const troubleReplies = sqliteTable('trouble_replies', {
 ]);
 
 export const categoriesOfTrouble = sqliteTable('categories_of_trouble', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
@@ -290,14 +322,16 @@ export const categoriesOfTrouble = sqliteTable('categories_of_trouble', {
 ]);
 
 export const appeals = sqliteTable('appeals', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  categoryOfAppealId: integer('category_of_appeal_id')
+  categoryOfAppealId: text('category_of_appeal_id')
     .notNull()
     .references(() => categoriesOfAppeal.id, { onDelete: 'cascade' }),
-  dailyReportId: integer('daily_report_id')
+  dailyReportId: text('daily_report_id')
     .notNull()
     .references(() => dailyReports.id, { onDelete: 'cascade' }),
   appeal: text('appeal').notNull(),
@@ -314,11 +348,13 @@ export const appeals = sqliteTable('appeals', {
 ]);
 
 export const appealReplies = sqliteTable('appeal_replies', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  appealId: integer('appeal_id')
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  appealId: text('appeal_id')
     .notNull()
     .references(() => appeals.id, { onDelete: 'cascade' }),
-  userId: integer('user_id')
+  userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   appeal: text('appeal').notNull(),
@@ -334,7 +370,9 @@ export const appealReplies = sqliteTable('appeal_replies', {
 ]);
 
 export const categoriesOfAppeal = sqliteTable('categories_of_appeal', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
