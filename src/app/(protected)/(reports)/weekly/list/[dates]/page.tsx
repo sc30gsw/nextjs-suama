@@ -36,7 +36,7 @@ export default async function WeeklyReportsPage({
         <Heading level={2}>
           {startDate} 〜 {endDate}
         </Heading>
-        <Link href={'/weekly/register'} prefetch={false}>
+        <Link href={'/weekly/register'} prefetch={false} className="max-w-fit">
           <Button>
             次週の予定を追加
             <LinkLoadingIndicator>
