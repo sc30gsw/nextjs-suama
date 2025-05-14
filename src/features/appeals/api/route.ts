@@ -17,7 +17,7 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
 
   const todoList = await upfetchForDummy<Response>('/todos')
 
-  return c.json(todoList, 200)
+  return c.json({ ...todoList, appeals: todoList.todos }, 200)
 })
 
 export default app
