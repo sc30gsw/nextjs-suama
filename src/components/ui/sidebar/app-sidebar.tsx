@@ -7,9 +7,8 @@ import {
   IconCircleQuestionmark,
   IconMessage,
   IconPackage,
-  IconTicket,
 } from '@intentui/icons'
-import { IconReport } from '@tabler/icons-react'
+import { IconCalendarEvent, IconReport } from '@tabler/icons-react'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import {
@@ -50,8 +49,8 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                 <SidebarLabel>日報</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
-                <SidebarItem href="#" tooltip="Tickets">
-                  <IconTicket />
+                <SidebarItem href="/daily/today" tooltip="本日の日報">
+                  <IconCalendarEvent stroke={1} size={20} className="mr-1" />
                   <SidebarLabel>本日の日報</SidebarLabel>
                 </SidebarItem>
                 <SidebarItem href="#" tooltip="Chat Support">

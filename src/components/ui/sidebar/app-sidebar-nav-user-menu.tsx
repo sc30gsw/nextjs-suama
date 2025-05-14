@@ -1,11 +1,5 @@
-import {
-  IconLogout,
-  IconMoon,
-  IconSettings,
-  IconShield,
-  IconSun,
-} from '@intentui/icons'
-import { IconReport } from '@tabler/icons-react'
+import { IconLogout, IconMoon, IconSettings, IconSun } from '@intentui/icons'
+import { IconCalendarEvent, IconReport } from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
@@ -46,8 +40,8 @@ export function AppSidebarNavUserMenu() {
           <IconSettings />
           自分の日報
         </Menu.Item>
-        <Menu.Item href="#security">
-          <IconShield />
+        <Menu.Item href="/daily/today">
+          <IconCalendarEvent stroke={1} size={20} className="mr-1" />
           本日の日報
         </Menu.Item>
         <Menu.Separator />
