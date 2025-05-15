@@ -96,14 +96,14 @@ const COLUMNS = [
   }),
 ]
 
-type DailyReportsTableForTodayProps = {
+type DailyReportsTableProps<T extends 'today' | 'mine'> = {
   // TODO: 適切な型に修正（API側の修正でできるかも）
-  reports: InferResponseType<typeof client.api.dailies.today.$get, 200>
+  reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
 }
 
-export function DailyReportsTableForToday({
+export function DailyReportsTable<T extends 'today' | 'mine'>({
   reports,
-}: DailyReportsTableForTodayProps) {
+}: DailyReportsTableProps<T>) {
   const initialData: DailyReportForToday[] = reports.users.map((user) => ({
     id: user.id.toString(),
     date: user.birthDate,

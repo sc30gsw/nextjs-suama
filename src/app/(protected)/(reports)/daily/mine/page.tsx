@@ -1,6 +1,9 @@
+import { IconSearch } from '@intentui/icons'
+import Form from 'next/form'
 import { redirect, unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
+import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
@@ -8,28 +11,28 @@ import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-sele
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
 import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
-import { getReportsForToday } from '~/features/reports/daily/server/fetcher'
-import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
-import { userSearchParamsCache } from '~/features/users/types/search-params/user-search-params-cache'
-
+import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
+import { getReportsForMine } from '~/features/reports/daily/server/fetcher'
+import { dailyReportForMineSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
-export default async function DailyOfTodayPage({
+export default async function MyDailyPage({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
     unauthorized()
   }
 
-  const [{ userNames }, { page, rowsPerPage }] = await Promise.all([
-    userSearchParamsCache.parse(searchParams),
+  const [{ startDate, endDate }, { page, rowsPerPage }] = await Promise.all([
+    dailyReportForMineSearchParamsCache.parse(searchParams),
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const reportsPromise = getReportsForToday(
+  const reportsPromise = getReportsForMine(
     {
       skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
       limit:
@@ -38,22 +41,28 @@ export default async function DailyOfTodayPage({
           : rowsPerPage < MIN_ROWS_PER_PAGE
             ? MIN_ROWS_PER_PAGE
             : rowsPerPage,
-      userNames,
+      startDate: startDate ?? undefined,
+      endDate: endDate ?? undefined,
     },
     session.user.id,
   )
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
-      <Heading>本日の日報</Heading>
-      <div className="flex flex-row md:flex-col items-center md:items-start gap-x-4 md:gap-y-4">
-        <UserSearchTagField />
-        <RowsPerPageSelect />
-      </div>
+    <div className="p-4 lg:p-6 flex flex-col gap-y-4">
+      <Heading>{session.user.name}の日報</Heading>
+      <Form action="/daily/mine" className="flex gap-x-2">
+        <DailySearchDateRangePicker />
+        <Button type="submit">
+          検索
+          <IconSearch />
+        </Button>
+      </Form>
+      <RowsPerPageSelect />
+
       <Card className="py-2 mt-4 max-w-full">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, rowsPerPage, userNames })}
+            key={JSON.stringify({ page, rowsPerPage, startDate, endDate })}
             fallback={
               <table className="w-full text-sm text-left font-normal">
                 <thead className="bg-muted">
@@ -100,7 +109,7 @@ export default async function DailyOfTodayPage({
             }
           >
             {reportsPromise.then((res) => (
-              <DailyReportsTable<'today'> reports={res} />
+              <DailyReportsTable<'mine'> reports={res} />
             ))}
           </Suspense>
         </Card.Content>
@@ -126,7 +135,7 @@ export default async function DailyOfTodayPage({
 
               if (page > pageCount) {
                 redirect(
-                  `/daily/today?page=${pageCount}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`,
+                  `/daily/mine?page=${pageCount}&rowsPerPage=${rowsPerPage}&startDate=${startDate}&endDate=${endDate}`,
                 )
               }
 
