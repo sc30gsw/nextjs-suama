@@ -5,8 +5,7 @@ import { sessionMiddleware } from '~/lib/session-middleware'
 
 const MAX_LIMIT = 500
 
-// TODO: 実際の本日の日報を取得して、フィルターすること
-const app = new Hono().get('/today', sessionMiddleware, async (c) => {
+const app = new Hono().get('/', sessionMiddleware, async (c) => {
   const { skip, limit, userNames } = c.req.query()
 
   const skipNumber = Number(skip) || 0

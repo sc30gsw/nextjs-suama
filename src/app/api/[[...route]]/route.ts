@@ -6,6 +6,7 @@ import projects from '~/features/projects/api/route'
 import dailies from '~/features/reports/daily/api/route'
 import weeklies from '~/features/reports/weekly/api/route'
 import troubles from '~/features/troubles/api/route'
+import users from '~/features/users/api/route'
 
 export const runtime = 'edge'
 
@@ -18,6 +19,7 @@ const route = app
   .route('/missions', missions)
   .route('/troubles', troubles)
   .route('/appeals', appeals)
+  .route('/users', users)
 
 export type AppType = typeof route
 
