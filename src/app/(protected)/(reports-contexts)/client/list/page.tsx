@@ -1,8 +1,6 @@
-import { IconPlus } from '@intentui/icons'
 import { redirect, unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
-import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
@@ -63,7 +61,7 @@ export default async function ClientListPage({
       <Card className="py-2 mt-4 max-w-full">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page })}
+            key={JSON.stringify({ page, rowsPerPage, names })}
             fallback={
               <table className="w-full text-sm text-left font-normal">
                 <thead className="bg-muted">
@@ -93,7 +91,7 @@ export default async function ClientListPage({
             }
           >
             {clientsPromise.then((res) => (
-              <ClientsTable clients={res} />
+              <ClientsTable data={res} />
             ))}
           </Suspense>
         </Card.Content>
@@ -119,7 +117,7 @@ export default async function ClientListPage({
 
               if (page > pageCount) {
                 redirect(
-                  `/clients?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`,
+                  `/client/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`,
                 )
               }
 

@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { LIKE_KEYWORDS_REGEX } from '~/constants'
 
-export const createClientInputSchema = z.object({
+export const editClientInputSchema = z.object({
+  id: z.string({ required_error: 'クライアントIDを入力してください' }),
   name: z
     .string({ required_error: 'クライアント名を入力してください' })
     .max(128, {
@@ -29,4 +30,4 @@ export const createClientInputSchema = z.object({
     ),
 })
 
-export type CreateClientInputSchema = z.infer<typeof createClientInputSchema>
+export type EditClientInputSchema = z.infer<typeof editClientInputSchema>
