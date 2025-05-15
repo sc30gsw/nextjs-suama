@@ -53,6 +53,7 @@ export function CreateClientModal() {
 
     return
   }
+
   return (
     <Modal>
       <Button intent="outline" onPress={toggle}>
