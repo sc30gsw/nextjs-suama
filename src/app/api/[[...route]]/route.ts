@@ -7,7 +7,6 @@ import projects from '~/features/report-contexts/projects/api/route'
 import troubles from '~/features/report-contexts/troubles/api/route'
 import dailies from '~/features/reports/daily/api/route'
 import weeklies from '~/features/reports/weekly/api/route'
-import troubles from '~/features/troubles/api/route'
 import users from '~/features/users/api/route'
 
 export const runtime = 'edge'
