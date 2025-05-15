@@ -36,6 +36,7 @@ bun dev
 - slotsの概念やComposition Patternを活用し、Client Module Graphを小さくし、Clientに送信されるJSバンドルを小さくすること（RSC内に移せる記述は移し、Server Module Graphを大きくする方針とする）
 - 本プロジェクトでは[React Compiler](https://ja.react.dev/learn/react-compiler)を使用しているため、原則、`useMemo`や`useCallback`などのメモ化のhooksは不要とします
 - PR前に実装者は`bun run build`または`bun run build:clean`を実行し、ビルドが通ることを確認すること
+- 開発でDBに変更が必要な場合は、Tursoの「ブランチング」機能を活用し、環境を切り替えること
 
 ### 命名について
 - ファイル名・フォルダ名（dynamic routesを除く）はケバブケースを、変数名や関数名はキャメルケースを使用する
@@ -173,6 +174,17 @@ or
 ```sh
 bunx drizzle-kit generate
 bunx drizzle-kit migrate
+```
+
+## Tursoによるブランチング
+```sh
+# 既存データベース old-db から新しいブランチ new-db を作成
+turso db create new-db --from-db old-db
+```
+
+```sh
+# 不要になったブランチは手動で削除
+turso db destroy new-db
 ```
 
 ## Learn More
