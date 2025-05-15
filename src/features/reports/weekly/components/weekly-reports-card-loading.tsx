@@ -49,10 +49,10 @@ function WeeklyReportsTableLoading() {
     <table className="w-full text-sm text-left">
       <thead className="bg-muted">
         <tr>
-          <th className="w-80 p-3">プロジェクト名</th>
-          <th className="w-80 p-3">ミッション名</th>
+          <th className="w-md p-3">プロジェクト名</th>
+          <th className="w-md p-3">ミッション名</th>
           <th className="w-20 p-3">時間数</th>
-          <th className="w-87 p-3">職務内容</th>
+          <th className="w-md p-3">職務内容</th>
         </tr>
       </thead>
       <tbody>

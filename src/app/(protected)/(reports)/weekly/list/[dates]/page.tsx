@@ -7,12 +7,11 @@ import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { WeeklyReportsCard } from '~/features/reports/weekly/components/weekly-reports-card'
 
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 
 export default async function WeeklyReportsPage({
   params,
-}: {
-  params: Promise<{ dates: string }>
-}) {
+}: NextPageProps<Record<'dates', string>>) {
   const session = await getServerSession()
 
   if (!session) {
@@ -36,7 +35,7 @@ export default async function WeeklyReportsPage({
         <Heading level={2}>
           {startDate} 〜 {endDate}
         </Heading>
-        <Link href={'/weekly/register'} prefetch={false}>
+        <Link href={'/weekly/register'} prefetch={false} className="max-w-fit">
           <Button>
             次週の予定を追加
             <LinkLoadingIndicator>

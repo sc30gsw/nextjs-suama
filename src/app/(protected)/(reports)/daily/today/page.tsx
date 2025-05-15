@@ -11,13 +11,13 @@ import { DailyReportsTableForToday } from '~/features/reports/daily/components/d
 import { getReportsForToday } from '~/features/reports/daily/server/fetcher'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { userSearchParamsCache } from '~/features/users/types/search-params/user-search-params-cache'
-
 import { getServerSession } from '~/lib/get-server-session'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+import type { NextPageProps } from '~/types'
 
 export default async function DailyOfTodayPage({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
