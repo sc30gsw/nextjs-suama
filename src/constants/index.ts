@@ -1,2 +1,5 @@
 export const MAX_ROWS_PER_PAGE = 100
 export const MIN_ROWS_PER_PAGE = 10
+
+export const LIKE_KEYWORDS_REGEX =
+  /^([\wぁ-んァ-ヶー一-龠]+)(\s*,\s*[\wぁ-んァ-ヶー一-龠]+)*$/

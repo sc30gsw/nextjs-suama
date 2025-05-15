@@ -52,12 +52,7 @@ export default async function ClientListPage({
       <div className="flex justify-between">
         <Heading>クライアント一覧</Heading>
         <div className="flex flex-col gap-2">
-          <CreateClientModal>
-            <Button intent="outline">
-              クライアントを追加
-              <IconPlus />
-            </Button>
-          </CreateClientModal>
+          <CreateClientModal />
           <ReportContextMenu label="クライアント" />
         </div>
       </div>
