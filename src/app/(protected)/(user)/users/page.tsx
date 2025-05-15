@@ -12,11 +12,12 @@ import { UsersTable } from '~/features/users/components/users-table'
 import { getUsers } from '~/features/users/server/fetcher'
 import { userSearchParamsCache } from '~/features/users/types/search-params/user-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
 export default async function UsersPage({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
