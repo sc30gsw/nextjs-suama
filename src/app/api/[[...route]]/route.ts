@@ -1,8 +1,10 @@
 import { Hono } from 'hono'
 import { handle } from 'hono/vercel'
-import appeals from '~/features/appeals/api/route'
-import missions from '~/features/missions/api/route'
-import projects from '~/features/projects/api/route'
+import appeals from '~/features/report-contexts/appeals/api/route'
+import clients from '~/features/report-contexts/clients/api/route'
+import missions from '~/features/report-contexts/missions/api/route'
+import projects from '~/features/report-contexts/projects/api/route'
+import troubles from '~/features/report-contexts/troubles/api/route'
 import dailies from '~/features/reports/daily/api/route'
 import weeklies from '~/features/reports/weekly/api/route'
 import troubles from '~/features/troubles/api/route'
@@ -15,6 +17,7 @@ const app = new Hono().basePath('/api')
 const route = app
   .route('/dailies', dailies)
   .route('/weeklies', weeklies)
+  .route('/clients', clients)
   .route('/projects', projects)
   .route('/missions', missions)
   .route('/troubles', troubles)

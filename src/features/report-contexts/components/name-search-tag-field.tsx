@@ -3,16 +3,16 @@
 import { useQueryStates } from 'nuqs'
 import { useListData } from 'react-stately'
 import { TagField } from '~/components/ui/intent-ui/tag-field'
-import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
+import { nameSearchParamsParsers } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 
-export function UserSearchTagField() {
-  const [{ userNames }, setQuery] = useQueryStates(userSearchParamsParsers, {
+export function NameSearchTagField({ label }: Record<'label', string>) {
+  const [{ names }, setQuery] = useQueryStates(nameSearchParamsParsers, {
     history: 'push',
     shallow: false,
   })
 
   const selectedItems = useListData({
-    initialItems: userNames.map((name, i) => ({
+    initialItems: names.map((name, i) => ({
       id: i,
       name,
     })),
@@ -21,17 +21,17 @@ export function UserSearchTagField() {
   return (
     <TagField
       appearance="outline"
-      label="ユーザー名"
+      label={label}
       placeholder={
-        userNames.length > 0 ? '' : 'ユーザー名（複数選択可）で検索できます'
+        names.length > 0 ? '' : `${label}（複数選択可）で検索できます`
       }
       list={selectedItems}
       onItemInserted={(key) => {
-        setQuery({ userNames: [...userNames, key.name] })
+        setQuery({ names: [...names, key.name] })
       }}
       onItemCleared={(key) => {
         setQuery({
-          userNames: userNames.filter((name) => name !== key?.name),
+          names: names.filter((name) => name !== key?.name),
         })
       }}
       className="max-w-2xl"

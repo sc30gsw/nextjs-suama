@@ -1,6 +1,4 @@
 'use client'
-
-import { IconDocumentEdit, IconTrashEmpty } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -9,68 +7,59 @@ import {
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
-import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
+import { ClientDeleteButton } from '~/features/report-contexts/clients/components/client-delete-button'
+import { EditClientModal } from '~/features/report-contexts/clients/components/edit-client-modal'
 import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-type UserTableData = {
-  id: string
-  username: string
-  operate: string
-  currentUserId: string
-}
+type ClientTableData = Pick<
+  InferResponseType<typeof client.api.clients.$get, 200>['clients'][number],
+  'id' | 'name' | 'likeKeywords'
+> &
+  Record<'operate', string>
 
-const columnHelper = createColumnHelper<UserTableData>()
+const columnHelper = createColumnHelper<ClientTableData>()
 
 const COLUMNS = [
   columnHelper.accessor('id', {
-    header: 'ユーザーID',
+    header: 'クライアントID',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('username', {
-    header: 'ユーザー名',
+  columnHelper.accessor('name', {
+    header: 'クライアント名',
     cell: (info) => info.getValue(),
   }),
 
   columnHelper.accessor('operate', {
     header: '操作',
     cell: ({ row }) => {
-      // TODO: ここで実際のユーザー情報を取得して、現在のユーザーと比較するロジックを実装する
-      const isCurrentUser = row.original.id !== row.original.currentUserId
-
       return (
         <div className="flex items-center gap-2">
-          {isCurrentUser && (
-            <div className="flex gap-2">
-              <Button size="small">
-                修正
-                <IconDocumentEdit />
-              </Button>
-              <Button intent="danger" size="small">
-                削除
-                <IconTrashEmpty />
-              </Button>
-            </div>
-          )}
+          <div className="flex gap-2">
+            <EditClientModal
+              id={row.original.id}
+              name={row.original.name}
+              likeKeywords={row.original.likeKeywords}
+            />
+            <ClientDeleteButton id={row.original.id} />
+          </div>
         </div>
       )
     },
   }),
 ]
 
-type UsersTableProps = {
-  // TODO: 適切な型に修正（API側の修正でできるかも）
-  users: InferResponseType<typeof client.api.users.$get, 200>
-  currentUserId: string
+type ClientsTableProps = {
+  data: InferResponseType<typeof client.api.clients.$get, 200>
 }
 
-export function UsersTable({ users, currentUserId }: UsersTableProps) {
-  const initialData: UserTableData[] = users.users.map((user) => ({
-    id: user.id.toString(),
-    username: user.username,
+export function ClientsTable({ data }: ClientsTableProps) {
+  const initialData: ClientTableData[] = data.clients.map((client) => ({
+    id: client.id,
+    name: client.name,
+    likeKeywords: client.likeKeywords,
     operate: '',
-    currentUserId,
   }))
 
   const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
@@ -83,7 +72,7 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: Math.ceil(users.total / rowsPerPage),
+    pageCount: Math.ceil(data.total / rowsPerPage),
   })
 
   return (

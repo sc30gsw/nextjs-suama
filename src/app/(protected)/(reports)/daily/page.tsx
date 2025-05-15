@@ -7,18 +7,19 @@ import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
-import { getAppeals } from '~/features/appeals/server/fetcher'
-import { getMissions } from '~/features/missions/server/fetcher'
-import { getProjects } from '~/features/projects/server/fetcher'
+import { getAppeals } from '~/features/report-contexts/appeals/server/fetcher'
+import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
+import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
+import { getTroubles } from '~/features/report-contexts/troubles/server/fetcher'
 import { CreateDailyForm } from '~/features/reports/daily/components/create-daily-form'
 import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/components/report-appeal-and-troubles-input-entries'
+
 import { ReportContentInputEntries } from '~/features/reports/daily/components/report-content-input-entries'
 import type {
   AppealResponse,
   TroubleResponse,
 } from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsCache } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
-import { getTroubles } from '~/features/troubles/server/fetcher'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 
