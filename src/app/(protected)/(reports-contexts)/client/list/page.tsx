@@ -16,11 +16,12 @@ import { ReportContextMenu } from '~/features/report-contexts/components/report-
 import { ReportContextTablePagination } from '~/features/report-contexts/components/report-context-table-pagination'
 import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
 export default async function ClientListPage({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
