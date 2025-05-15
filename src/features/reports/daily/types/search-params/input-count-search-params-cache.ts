@@ -33,8 +33,16 @@ export const reportStateSchema = z.object({
 
 export const inputCountSearchParamsParsers = {
   reportEntry: parseAsJson(reportStateSchema.parse).withDefault({
-    count: 0,
-    entries: [],
+    count: 1,
+    entries: [
+      {
+        id: crypto.randomUUID(),
+        project: null,
+        mission: null,
+        hours: 0,
+        content: '',
+      },
+    ],
   }),
   appealsAndTroublesEntry: parseAsJson(
     appealsAndTroublesStateSchema.parse,
