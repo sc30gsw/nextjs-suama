@@ -11,10 +11,11 @@ import { getReportsForToday } from '~/features/reports/daily/server/fetcher'
 import { dailyReportForTodaySearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-for-today-search-params-cache'
 
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 
 export default async function DailyOfTodayPage({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {

@@ -11,10 +11,11 @@ import { MonthSelector } from '~/features/reports/weekly/components/month-select
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
 import { monthSelectSearchParamsCache } from '~/features/reports/weekly/types/search-params/month-select-search-params-cache'
 import { getWeeksByMonth } from '~/features/reports/weekly/utils/get-weeks-by-month'
+import type { NextPageProps } from '~/types'
 
 export default async function WeeklyPage({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const { month } = await monthSelectSearchParamsCache.parse(searchParams)
 
   const selectedWeeksByMonth = getWeeksByMonth().find(
