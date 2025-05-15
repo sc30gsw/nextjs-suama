@@ -20,6 +20,7 @@ import { withCallbacks } from '~/utils/with-callbacks'
 
 export function CreateClientModal() {
   const [open, toggle] = useToggle(false)
+
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createClientAction, {
       onSuccess() {
