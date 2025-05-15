@@ -53,7 +53,7 @@ export default async function UsersPage({
       <Card className="py-2 mt-4 max-w-full">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page })}
+            key={JSON.stringify({ page, rowsPerPage, userNames })}
             fallback={
               <table className="w-full text-sm text-left font-normal">
                 <thead className="bg-muted">
