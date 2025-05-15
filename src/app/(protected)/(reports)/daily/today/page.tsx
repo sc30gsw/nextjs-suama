@@ -13,11 +13,12 @@ import { UserSearchTagField } from '~/features/users/components/user-search-tag-
 import { userSearchParamsCache } from '~/features/users/types/search-params/user-search-params-cache'
 
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
 export default async function DailyOfTodayPage({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {

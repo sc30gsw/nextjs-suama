@@ -24,3 +24,8 @@ export type NextPageProps<
     ? Promise<SearchParams>
     : never
 }
+
+export type NextErrorProps = {
+  error: Error & { digest?: string }
+  reset: () => void
+}

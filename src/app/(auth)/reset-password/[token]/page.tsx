@@ -1,9 +1,10 @@
 import { Card } from '~/components/ui/intent-ui/card'
 import { ResetPasswordForm } from '~/features/auth/components/reset-password-form'
+import type { NextPageProps } from '~/types'
 
 export default async function ResetPasswordPage({
   params,
-}: { params: Promise<Record<'token', string>> }) {
+}: NextPageProps<Record<'token', string>>) {
   const { token } = await params
 
   return (
