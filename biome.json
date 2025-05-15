@@ -63,10 +63,12 @@
         "env.ts",
         "./src/features/**/types/schemas/*.ts",
         "./src/features/**/server/fetcher.ts",
+        "./src/features/**/client/fetcher.ts",
         "*.d.ts",
         "db/schema.ts",
         "auth-schema.ts",
-        "auth-client.ts"
+        "auth-client.ts",
+        "./src/features/reports/weekly/components/weekly-reports-card.tsx"
       ],
       "linter": {
         "rules": {

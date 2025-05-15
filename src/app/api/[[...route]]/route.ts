@@ -4,6 +4,7 @@ import appeals from '~/features/appeals/api/route'
 import missions from '~/features/missions/api/route'
 import projects from '~/features/projects/api/route'
 import dailies from '~/features/reports/daily/api/route'
+import weeklies from '~/features/reports/weekly/api/route'
 import troubles from '~/features/troubles/api/route'
 
 export const runtime = 'edge'
@@ -12,6 +13,7 @@ const app = new Hono().basePath('/api')
 
 const route = app
   .route('/dailies', dailies)
+  .route('/weeklies', weeklies)
   .route('/projects', projects)
   .route('/missions', missions)
   .route('/troubles', troubles)

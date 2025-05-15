@@ -1,4 +1,7 @@
+import { IconChevronLgRight } from '@intentui/icons'
 import {} from '@internationalized/date'
+import { format } from 'date-fns'
+import { ja } from 'date-fns/locale'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
@@ -23,7 +26,7 @@ export default async function WeeklyPage({
   }
 
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
       <div className="w-full flex items-center justify-center my-4">
         <MonthSelector
           months={getWeeksByMonth().map(({ month }) => ({
@@ -38,13 +41,15 @@ export default async function WeeklyPage({
             <div className="flex justify-end items-center">
               <Button size="extra-small" className="mt-2">
                 <Link
-                  href={`/reports/weekly/${week.weekNumber}`}
+                  href={`/weekly/list/${format(week.startDay, 'yyyy-MM-dd', { locale: ja })}-${format(week.endDay, 'yyyy-MM-dd', { locale: ja })}`}
                   prefetch={false}
                   className="flex items-center justify-end gap-x-1.5"
                 >
                   第{week.weekNumber}
                   週の週報を確認する
-                  <LinkLoadingIndicator />
+                  <LinkLoadingIndicator>
+                    <IconChevronLgRight />
+                  </LinkLoadingIndicator>
                 </Link>
               </Button>
             </div>

@@ -129,7 +129,7 @@ export function ReportContentInputEntries({
       }
     })
   }
-
+  
   return (
     <>
       <Button
