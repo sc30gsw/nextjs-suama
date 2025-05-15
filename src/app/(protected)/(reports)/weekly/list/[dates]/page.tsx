@@ -7,12 +7,11 @@ import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { WeeklyReportsCard } from '~/features/reports/weekly/components/weekly-reports-card'
 
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 
 export default async function WeeklyReportsPage({
   params,
-}: {
-  params: Promise<{ dates: string }>
-}) {
+}: NextPageProps<Record<'dates', string>>) {
   const session = await getServerSession()
 
   if (!session) {

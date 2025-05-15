@@ -20,10 +20,11 @@ import type {
 import { inputCountSearchParamsCache } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { getTroubles } from '~/features/troubles/server/fetcher'
 import { getServerSession } from '~/lib/get-server-session'
+import type { NextPageProps } from '~/types'
 
 export default async function Home({
   searchParams,
-}: Record<'searchParams', Promise<SearchParams>>) {
+}: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
