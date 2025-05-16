@@ -7,11 +7,11 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { AppealCategoriesTable } from '~/features/report-contexts/appeals/components/appeal-categories-table'
+import { CreateAppealCategoryModal } from '~/features/report-contexts/appeals/components/create-appeal-category-modal'
 import { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import { NameSearchTagField } from '~/features/report-contexts/components/name-search-tag-field'
 import { ReportContextMenu } from '~/features/report-contexts/components/report-context-menu'
 import { ReportContextTablePagination } from '~/features/report-contexts/components/report-context-table-pagination'
-import { CreateTroubleCategoryModal } from '~/features/report-contexts/troubles/components/create-trouble-category-modal'
 import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
@@ -50,7 +50,7 @@ export default async function AppealListPage({
       <div className="flex justify-between">
         <Heading>アピールポイントカテゴリー一覧</Heading>
         <div className="flex flex-col gap-2">
-          <CreateTroubleCategoryModal />
+          <CreateAppealCategoryModal />
           <ReportContextMenu label="カテゴリー" />
         </div>
       </div>
