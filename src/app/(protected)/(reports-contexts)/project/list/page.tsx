@@ -32,7 +32,7 @@ export default async function ProjectListPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const projectPromise = getProjects(
+  const projectsPromise = getProjects(
     {
       skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
       limit:
@@ -106,7 +106,7 @@ export default async function ProjectListPage({
               </table>
             }
           >
-            {Promise.all([projectPromise, clientsPromise]).then(
+            {Promise.all([projectsPromise, clientsPromise]).then(
               ([projectResponse, clientsResponse]) => (
                 <ProjectsTable
                   data={projectResponse}
@@ -133,7 +133,7 @@ export default async function ProjectListPage({
               </div>
             }
           >
-            {projectPromise.then((res) => {
+            {projectsPromise.then((res) => {
               const pageCount = Math.ceil(res.total / rowsPerPage)
 
               if (page > pageCount) {
