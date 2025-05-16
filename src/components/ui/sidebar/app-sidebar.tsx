@@ -2,6 +2,7 @@
 
 import {
   IconBookOpen,
+  IconBrandProducthunt,
   IconCalendarDays,
   IconCirclePerson,
   IconCircleQuestionmark,
@@ -140,17 +141,13 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
             <SidebarDisclosure id={6}>
               <SidebarDisclosureTrigger>
-                <IconPackage />
+                <IconBrandProducthunt />
                 <SidebarLabel>プロジェクト</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
+                <SidebarItem href="/project/list" tooltip="プロジェクト一覧">
+                  <IconBrandProducthunt />
                   <SidebarLabel>プロジェクト一覧</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
-                  <SidebarLabel>プロジェクト登録</SidebarLabel>
                 </SidebarItem>
               </SidebarDisclosurePanel>
             </SidebarDisclosure>

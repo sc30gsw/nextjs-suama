@@ -11,10 +11,10 @@ export const experimental_ppr = true
 
 const ITEMS = [
   { path: '/daily', name: '日報作成' },
-  { path: '/clients', name: 'クライアント一覧' },
+  { path: '/client/list', name: 'クライアント一覧' },
 ] as const satisfies readonly Record<'path' | 'name', string>[]
 
-export default function ClientsLayout({ children }: NextLayoutProps) {
+export default function ClientListLayout({ children }: NextLayoutProps) {
   return (
     <SidebarProvider>
       <AppSidebar collapsible="dock" />
