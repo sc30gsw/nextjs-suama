@@ -11,7 +11,6 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import {} from '~/features/report-contexts/missions/types/schemas/create-mission-input-schema'
 import { createTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/create-trouble-category-action'
 import {
   type CreateTroubleCategoryInputSchema,

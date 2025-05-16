@@ -1,5 +1,4 @@
 import { IconChevronLgRight } from '@intentui/icons'
-import {} from '@internationalized/date'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import Link from 'next/link'
