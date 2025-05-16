@@ -7,7 +7,7 @@ import {
   useInputControl,
 } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { IconPlus, IconTriangleExclamation } from '@intentui/icons'
+import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
@@ -20,55 +20,67 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { createProjectAction } from '~/features/report-contexts/projects/actions/create-project-action'
+import { updateProjectAction } from '~/features/report-contexts/projects/actions/update-project-action'
 import {
-  type CreateProjectInputSchema,
-  createProjectInputSchema,
-} from '~/features/report-contexts/projects/types/schemas/create-project-input-schema'
+  type EditProjectInputSchema,
+  editProjectInputSchema,
+} from '~/features/report-contexts/projects/types/schemas/edit-project-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-type CreateProjectModalProps = {
-  clients: InferResponseType<typeof client.api.clients.$get, 200>['clients']
-}
+type EditProjectModalProps = Pick<
+  InferResponseType<typeof client.api.projects.$get, 200>['projects'][number],
+  'id' | 'name' | 'likeKeywords' | 'clientId' | 'isArchived'
+> &
+  Record<
+    'clients',
+    InferResponseType<typeof client.api.clients.$get, 200>['clients']
+  >
 
-export function CreateProjectModal({ clients }: CreateProjectModalProps) {
+export function EditProjectModal({
+  id,
+  name,
+  likeKeywords,
+  clientId,
+  isArchived,
+  clients,
+}: EditProjectModalProps) {
   const [open, toggle] = useToggle(false)
-  // form resetがConformのものでは反映されないため
-  const [client, setClient] = useState<Key | null>(null)
-  const [checked, setChecked] = useState(false)
+  const [client, setClient] = useState<Key | null>(clientId)
+  const [checked, setChecked] = useState(isArchived)
 
   const [lastResult, action, isPending] = useActionState(
-    withCallbacks(createProjectAction, {
-      onSuccess() {
-        toast.success('プロジェクトの登録に成功しました')
+    withCallbacks(updateProjectAction, {
+      onSuccess(result) {
+        toast.success('プロジェクトの更新に成功しました')
         toggle(false)
-        setClient(null)
-        setChecked(false)
+        setClient(result.initialValue?.clientId.toString() ?? '')
+        setChecked(result.initialValue?.isArchive === 'on')
       },
       onError() {
-        toast.error('プロジェクトの登録に失敗しました')
+        toast.error('プロジェクトの更新に失敗しました')
       },
     }),
     null,
   )
 
-  const [form, fields] = useSafeForm<CreateProjectInputSchema>({
-    constraint: getZodConstraint(createProjectInputSchema),
+  const [form, fields] = useSafeForm<EditProjectInputSchema>({
+    constraint: getZodConstraint(editProjectInputSchema),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: createProjectInputSchema })
+      return parseWithZod(formData, { schema: editProjectInputSchema })
     },
     defaultValue: {
-      name: '',
-      likeKeywords: '',
-      clientId: '',
-      isArchive: 'off',
+      id,
+      name,
+      likeKeywords,
+      clientId,
+      isArchive: isArchived ? 'on' : 'off',
     },
   })
 
-  const clientId = useInputControl(fields.clientId)
+  const clientIdInput = useInputControl(fields.clientId)
 
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
@@ -80,15 +92,15 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
 
   return (
     <Modal>
-      <Button intent="outline" onPress={toggle}>
-        プロジェクトを追加
-        <IconPlus />
+      <Button onPress={toggle}>
+        編集
+        <IconDocumentEdit />
       </Button>
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
-          <Modal.Title>プロジェクトを登録する</Modal.Title>
+          <Modal.Title>プロジェクトを編集する</Modal.Title>
           <Modal.Description>
-            日報作成で選択できるプロジェクトを登録します。
+            選択したプロジェクトの情報を編集します。
           </Modal.Description>
         </Modal.Header>
         <Form {...getFormProps(form)} action={action}>
@@ -99,6 +111,7 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                 <p>{getError()}</p>
               </div>
             )}
+            <input {...getInputProps(fields.id, { type: 'hidden' })} />
             <div>
               <TextField
                 {...getInputProps(fields.name, { type: 'text' })}
@@ -107,6 +120,7 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                 isRequired={true}
                 autoFocus={true}
                 isDisabled={isPending}
+                defaultValue={lastResult?.initialValue?.name.toString() ?? name}
                 errorMessage={''}
               />
               <span id={fields.name.errorId} className="text-sm text-red-500">
@@ -120,6 +134,10 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                 placeholder="検索単語を入力（例: apple,banana,orange）"
                 isRequired={true}
                 isDisabled={isPending}
+                defaultValue={
+                  lastResult?.initialValue?.likeKeywords.toString() ??
+                  likeKeywords
+                }
                 errorMessage={''}
               />
               <span
@@ -141,7 +159,7 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                   }
 
                   setClient(key)
-                  clientId.change(key.toString())
+                  clientIdInput.change(key.toString())
                 }}
                 selectedKey={client}
                 className="col-span-2"
@@ -202,8 +220,8 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
           <Modal.Footer>
             <Modal.Close isDisabled={isPending}>閉じる</Modal.Close>
             <Button type="submit" isDisabled={isPending}>
-              {isPending ? '登録中...' : '登録する'}
-              {isPending ? <Loader /> : <IconPlus />}
+              {isPending ? '更新中...' : '更新する'}
+              {isPending ? <Loader /> : <IconDocumentEdit />}
             </Button>
           </Modal.Footer>
         </Form>

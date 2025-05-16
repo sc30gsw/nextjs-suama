@@ -10,8 +10,8 @@ import {
 import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { Table } from '~/components/ui/intent-ui/table'
-import { ClientDeleteButton } from '~/features/report-contexts/clients/components/client-delete-button'
-import { EditClientModal } from '~/features/report-contexts/clients/components/edit-client-modal'
+import { EditProjectModal } from '~/features/report-contexts/projects/components/edit-project-modal'
+import { ProjectDeleteButton } from '~/features/report-contexts/projects/components/project-delete-button'
 import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
@@ -26,7 +26,11 @@ type ProjectTableData = Pick<
       200
     >['projects'][number]['client']['name']
   > &
-  Record<'operate', string>
+  Record<'operate', string> &
+  Record<
+    'clients',
+    InferResponseType<typeof client.api.clients.$get, 200>['clients']
+  >
 
 const columnHelper = createColumnHelper<ProjectTableData>()
 
@@ -64,12 +68,15 @@ const COLUMNS = [
       return (
         <div className="flex items-center gap-2">
           <div className="flex gap-2">
-            <EditClientModal
+            <EditProjectModal
               id={row.original.id}
               name={row.original.name}
               likeKeywords={row.original.likeKeywords}
+              isArchived={row.original.isArchived}
+              clientId={row.original.clientId}
+              clients={row.original.clients}
             />
-            <ClientDeleteButton id={row.original.id} />
+            <ProjectDeleteButton id={row.original.id} />
           </div>
         </div>
       )
@@ -79,9 +86,10 @@ const COLUMNS = [
 
 type ProjectsTableProps = {
   data: InferResponseType<typeof client.api.projects.$get, 200>
+  clients: InferResponseType<typeof client.api.clients.$get, 200>['clients']
 }
 
-export function ProjectsTable({ data }: ProjectsTableProps) {
+export function ProjectsTable({ data, clients }: ProjectsTableProps) {
   const initialData: ProjectTableData[] = data.projects.map((project) => ({
     id: project.id,
     name: project.name,
@@ -90,6 +98,7 @@ export function ProjectsTable({ data }: ProjectsTableProps) {
     clientId: project.clientId,
     clientName: project.client.name,
     operate: '',
+    clients,
   }))
 
   const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
