@@ -1,7 +1,7 @@
-import type { InferResponseType } from 'hono'
 import 'server-only'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
+import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
@@ -13,12 +13,8 @@ export async function getTroubleCategories(
   cacheTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
 
   const url = client.api.troubles.categories.$url()
-  type ResType = InferResponseType<
-    typeof client.api.troubles.categories.$get,
-    200
-  >
 
-  const res = await upfetch<ResType>(url, {
+  const res = await upfetch<TroubleCategoriesResponse>(url, {
     headers: {
       Authorization: userId,
     },
