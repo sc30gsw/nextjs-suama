@@ -53,7 +53,7 @@ export default async function ProjectListPage({
       <div className="flex justify-between">
         <Heading>プロジェクト一覧</Heading>
         <div className="flex flex-col gap-2">
-          <Suspense>
+          <Suspense fallback={<Skeleton className="w-44.5 h-8" />}>
             {clientsPromise.then((res) => (
               <CreateProjectModal clients={res.clients} />
             ))}
