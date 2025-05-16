@@ -31,7 +31,10 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
       orderBy: (clients, { asc }) => [asc(clients.createdAt)],
     })
 
-    const total = await db.select({ count: count() }).from(clients)
+    const total = await db
+      .select({ count: count() })
+      .from(clients)
+      .where(whereClause)
 
     return c.json(
       {
