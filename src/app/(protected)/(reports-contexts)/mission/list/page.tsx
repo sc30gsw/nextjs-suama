@@ -53,7 +53,7 @@ export default async function MissionListPage({
       <div className="flex justify-between">
         <Heading>ミッション一覧</Heading>
         <div className="flex flex-col gap-2">
-          <Suspense>
+          <Suspense fallback={<Skeleton className="w-44.5 h-8" />}>
             {projectsPromise.then((res) => (
               <CreateMissionModal projects={res.projects} />
             ))}

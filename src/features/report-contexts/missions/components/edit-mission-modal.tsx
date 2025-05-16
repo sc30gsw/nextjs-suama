@@ -19,7 +19,6 @@ import {
   type EditMissionInputSchema,
   editMissionInputSchema,
 } from '~/features/report-contexts/missions/types/schemas/edit-mission-input-schema'
-import {} from '~/features/report-contexts/projects/types/schemas/edit-project-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
 import { withCallbacks } from '~/utils/with-callbacks'
@@ -83,7 +82,7 @@ export function EditMissionModal({
 
   return (
     <Modal>
-      <Button onPress={toggle}>
+      <Button size="small" onPress={toggle}>
         編集
         <IconDocumentEdit />
       </Button>
