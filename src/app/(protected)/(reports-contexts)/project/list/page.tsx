@@ -32,22 +32,21 @@ export default async function ProjectListPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const promises = Promise.all([
-    getProjects(
-      {
-        skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-        limit:
-          rowsPerPage > MAX_ROWS_PER_PAGE
-            ? MAX_ROWS_PER_PAGE
-            : rowsPerPage < MIN_ROWS_PER_PAGE
-              ? MIN_ROWS_PER_PAGE
-              : rowsPerPage,
-        names,
-      },
-      session.user.id,
-    ),
-    getClients(undefined, session.user.id),
-  ])
+  const projectPromise = getProjects(
+    {
+      skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
+      limit:
+        rowsPerPage > MAX_ROWS_PER_PAGE
+          ? MAX_ROWS_PER_PAGE
+          : rowsPerPage < MIN_ROWS_PER_PAGE
+            ? MIN_ROWS_PER_PAGE
+            : rowsPerPage,
+      names,
+    },
+    session.user.id,
+  )
+
+  const clientsPromise = getClients(undefined, session.user.id)
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-y-2">
@@ -55,8 +54,8 @@ export default async function ProjectListPage({
         <Heading>プロジェクト一覧</Heading>
         <div className="flex flex-col gap-2">
           <Suspense>
-            {promises.then(([, clientsResponse]) => (
-              <CreateProjectModal clients={clientsResponse.clients} />
+            {clientsPromise.then((res) => (
+              <CreateProjectModal clients={res.clients} />
             ))}
           </Suspense>
 
@@ -107,9 +106,14 @@ export default async function ProjectListPage({
               </table>
             }
           >
-            {promises.then(([projectResponse]) => (
-              <ProjectsTable data={projectResponse} />
-            ))}
+            {Promise.all([projectPromise, clientsPromise]).then(
+              ([projectResponse, clientsResponse]) => (
+                <ProjectsTable
+                  data={projectResponse}
+                  clients={clientsResponse.clients}
+                />
+              ),
+            )}
           </Suspense>
         </Card.Content>
         <Card.Footer>
@@ -129,8 +133,8 @@ export default async function ProjectListPage({
               </div>
             }
           >
-            {promises.then(([projectResponse]) => {
-              const pageCount = Math.ceil(projectResponse.total / rowsPerPage)
+            {projectPromise.then((res) => {
+              const pageCount = Math.ceil(res.total / rowsPerPage)
 
               if (page > pageCount) {
                 redirect(

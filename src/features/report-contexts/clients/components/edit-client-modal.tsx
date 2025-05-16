@@ -13,7 +13,10 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { updateClientAction } from '~/features/report-contexts/clients/actions/update-client-action'
-import { editClientInputSchema } from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
+import {
+  type EditClientInputSchema,
+  editClientInputSchema,
+} from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
 import { withCallbacks } from '~/utils/with-callbacks'
@@ -43,7 +46,7 @@ export function EditClientModal({
     null,
   )
 
-  const [form, fields] = useSafeForm<EditClientModalProps>({
+  const [form, fields] = useSafeForm<EditClientInputSchema>({
     constraint: getZodConstraint(editClientInputSchema),
     lastResult,
     onValidate({ formData }) {

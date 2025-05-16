@@ -50,7 +50,7 @@ export function ClientDeleteButton({ id }: ClientDeleteButtonProps) {
       isDisabled={isPending}
       onPress={handleDelete}
     >
-      {isPending ? '削除中...' : '削除'}
+      削除
       {isPending ? <Loader /> : <IconTrashEmpty />}
     </Button>
   )
