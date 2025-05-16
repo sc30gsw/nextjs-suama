@@ -183,7 +183,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
             <SidebarDisclosure id={9}>
               <SidebarDisclosureTrigger>
-                <IconPackage />
+                <IconBulb stroke={1} size={20} className="mr-1" />
                 <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
