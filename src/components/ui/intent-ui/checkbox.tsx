@@ -11,7 +11,7 @@ import {
   Checkbox as CheckboxPrimitive,
   composeRenderProps,
 } from 'react-aria-components'
-import { tv } from 'tailwind-variants'
+import { type VariantProps, tv } from 'tailwind-variants'
 
 import { twMerge } from 'tailwind-merge'
 import { Description, FieldError, Label } from '~/components/ui/intent-ui/field'
@@ -75,12 +75,20 @@ const boxStyles = tv({
     isInvalid: {
       true: 'border-danger/70 bg-danger/20 text-danger-fg ring-danger/20',
     },
+    size: {
+      sm: 'size-3',
+      md: 'size-4',
+      lg: 'size-6',
+      xl: 'size-8',
+      '2xl': 'size-10',
+    },
   },
 })
 
 interface CheckboxProps extends CheckboxPrimitiveProps {
   description?: string
   label?: string
+  size?: VariantProps<typeof boxStyles>['size']
 }
 
 const Checkbox = ({
@@ -88,6 +96,7 @@ const Checkbox = ({
   children,
   description,
   label,
+  size = 'md',
   ...props
 }: CheckboxProps) => {
   return (
@@ -107,6 +116,7 @@ const Checkbox = ({
           <div
             className={boxStyles({
               ...renderProps,
+              size,
               isSelected: isSelected || isIndeterminate,
             })}
           >
