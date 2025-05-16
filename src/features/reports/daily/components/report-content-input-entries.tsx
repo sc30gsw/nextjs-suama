@@ -3,7 +3,6 @@
 import { IconMinus, IconPlus } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
-import { useState } from 'react'
 import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
@@ -24,63 +23,123 @@ export function ReportContentInputEntries({
   projects,
   missions,
 }: ReportContentInputEntriesProps) {
-  const [{ count }, setCount] = useQueryStates(inputCountSearchParamsParsers, {
-    history: 'push',
-    shallow: false,
-  })
-
-  const [entries, setEntries] = useState<
+  const [{ reportEntry }, setReportState] = useQueryStates(
+    inputCountSearchParamsParsers,
     {
-      id: string
-      project: Key | null
-      mission: Key | null
-      hours: number
-      content: string
-    }[]
-  >(() =>
-    Array.from({ length: count > 0 ? count : 1 }, () => ({
-      id: crypto.randomUUID(),
-      project: null,
-      mission: null,
-      hours: 0,
-      content: '',
-    })),
+      history: 'push',
+      shallow: false,
+    },
   )
 
-  const totalHours = entries.reduce((acc, entry) => {
+  const totalHours = reportEntry.entries.reduce((acc, entry) => {
     if (entry.hours > 0) {
       return acc + entry.hours
     }
     return acc
   }, 0)
 
+  const handleAdd = () => {
+    const newEntry = {
+      id: crypto.randomUUID(),
+      project: null,
+      mission: null,
+      hours: 0,
+      content: '',
+    } as const satisfies (typeof reportEntry.entries)[number]
+
+    setReportState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        reportEntry: {
+          ...prev.reportEntry,
+          count: prev.reportEntry.count + 1,
+          entries: [...prev.reportEntry.entries, newEntry],
+        },
+      }
+    })
+  }
+
+  const handleRemove = (id: string) => {
+    setReportState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const filteredEntries = prev.reportEntry.entries.filter(
+        (e) => e.id !== id,
+      )
+
+      return {
+        ...prev,
+        reportEntry: {
+          ...prev.reportEntry,
+          count: prev.reportEntry.count > 1 ? prev.reportEntry.count - 1 : 1,
+          entries: filteredEntries,
+        },
+      }
+    })
+  }
+
+  const handleChangeItem = (
+    id: string,
+    newItem: Key | null,
+    kind: 'project' | 'mission',
+  ) => {
+    setReportState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.reportEntry.entries.map((e) =>
+        e.id === id ? { ...e, [kind]: Number(newItem) } : e,
+      )
+
+      return {
+        ...prev,
+        reportEntry: {
+          ...prev.reportEntry,
+          entries: updatedEntries,
+        },
+      }
+    })
+  }
+
+  const handleChangeValue = (id: string, newValue: string | number) => {
+    setReportState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const key = typeof newValue === 'string' ? 'content' : 'hours'
+
+      const updatedEntries = prev.reportEntry.entries.map((e) =>
+        e.id === id ? { ...e, [key]: newValue } : e,
+      )
+
+      return {
+        ...prev,
+        reportEntry: {
+          ...prev.reportEntry,
+          entries: updatedEntries,
+        },
+      }
+    })
+  }
+  
   return (
     <>
       <Button
         size="square-petite"
-        onPress={() => {
-          setCount((prev) => {
-            const newCount = prev.count > 0 ? prev.count + 1 : 1
-
-            setEntries((prev) => [
-              ...prev,
-              {
-                id: crypto.randomUUID(),
-                project: null,
-                mission: null,
-                hours: 0,
-                content: '',
-              },
-            ])
-
-            return { count: newCount }
-          })
-        }}
+        onPress={handleAdd}
         className="rounded-full mt-4"
       >
         <IconPlus />
       </Button>
-      {entries.map((entry) => {
+      {reportEntry.entries.map((entry) => {
         // TODO: ミッションが選択されている場合、プロジェクトをfilter（findだとComboBox.Listのitemsの型エラーとなる）
         // const filteredProject = entry.mission ? projects.filter((project) => project.missionId === entry.mission) : projects
         // TODO: プロジェクトが選択されていない場合は、ミッションをfilter
@@ -95,11 +154,7 @@ export function ReportContentInputEntries({
               label="プロジェクト"
               placeholder="プロジェクトを選択"
               onSelectionChange={(key) => {
-                setEntries((prev) =>
-                  prev.map((e) =>
-                    e.id === entry.id ? { ...e, project: key } : e,
-                  ),
-                )
+                handleChangeItem(entry.id, key, 'project')
               }}
               selectedKey={entry.project}
               className="col-span-2"
@@ -117,11 +172,7 @@ export function ReportContentInputEntries({
               label="ミッション"
               placeholder="ミッションを選択"
               onSelectionChange={(key) => {
-                setEntries((prev) =>
-                  prev.map((e) =>
-                    e.id === entry.id ? { ...e, mission: key } : e,
-                  ),
-                )
+                handleChangeItem(entry.id, key, 'mission')
               }}
               selectedKey={entry.mission}
               className="col-span-2"
@@ -138,47 +189,20 @@ export function ReportContentInputEntries({
             <NumberField
               label="時間"
               value={entry.hours}
-              onChange={(val) =>
-                setEntries((prev) =>
-                  prev.map((e) =>
-                    e.id === entry.id ? { ...e, hours: val } : e,
-                  ),
-                )
-              }
+              onChange={(val) => handleChangeValue(entry.id, val)}
               className="col-span-2"
             />
             <TextField
               label="内容"
               placeholder="タスク内容を入力"
               value={entry.content}
-              onChange={(val) =>
-                setEntries((prev) =>
-                  prev.map((e) =>
-                    e.id === entry.id ? { ...e, content: val } : e,
-                  ),
-                )
-              }
+              onChange={(val) => handleChangeValue(entry.id, val)}
               className="col-span-4"
             />
             <Button
               size="square-petite"
               intent="danger"
-              onPress={() => {
-                setEntries((prev) => {
-                  const updated = prev.filter((e) => e.id !== entry.id)
-
-                  if (updated.length > 0) {
-                    return updated
-                  }
-
-                  return [entry]
-                })
-
-                setCount((prev) => {
-                  const newCount = prev.count > 1 ? prev.count - 1 : 1
-                  return { count: newCount }
-                })
-              }}
+              onPress={() => handleRemove(entry.id)}
               className="rounded-full mt-6 col-span-1"
             >
               <IconMinus />

@@ -2,7 +2,8 @@
 
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { IconPlus, IconTriangleExclamation } from '@intentui/icons'
+import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
+import type { InferResponseType } from 'hono'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
@@ -11,39 +12,47 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { createClientAction } from '~/features/report-contexts/clients/actions/create-client-action'
-import {
-  type CreateClientInputSchema,
-  createClientInputSchema,
-} from '~/features/report-contexts/clients/types/schemas/create-client-input-schema'
+import { updateClientAction } from '~/features/report-contexts/clients/actions/update-client-action'
+import { editClientInputSchema } from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import type { client } from '~/lib/rpc'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-export function CreateClientModal() {
+type EditClientModalProps = Pick<
+  InferResponseType<typeof client.api.clients.$get, 200>['clients'][number],
+  'id' | 'name' | 'likeKeywords'
+>
+
+export function EditClientModal({
+  id,
+  name,
+  likeKeywords,
+}: EditClientModalProps) {
   const [open, toggle] = useToggle(false)
 
   const [lastResult, action, isPending] = useActionState(
-    withCallbacks(createClientAction, {
+    withCallbacks(updateClientAction, {
       onSuccess() {
-        toast.success('クライアントの登録に成功しました')
+        toast.success('クライアントの更新に成功しました')
         toggle(false)
       },
       onError() {
-        toast.error('クライアントの登録に失敗しました')
+        toast.error('クライアントの更新に失敗しました')
       },
     }),
     null,
   )
 
-  const [form, fields] = useSafeForm<CreateClientInputSchema>({
-    constraint: getZodConstraint(createClientInputSchema),
+  const [form, fields] = useSafeForm<EditClientModalProps>({
+    constraint: getZodConstraint(editClientInputSchema),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: createClientInputSchema })
+      return parseWithZod(formData, { schema: editClientInputSchema })
     },
     defaultValue: {
-      name: '',
-      likeKeywords: '',
+      id,
+      name,
+      likeKeywords,
     },
   })
 
@@ -57,15 +66,15 @@ export function CreateClientModal() {
 
   return (
     <Modal>
-      <Button intent="outline" onPress={toggle}>
-        クライアントを追加
-        <IconPlus />
+      <Button size="small" onPress={toggle}>
+        編集
+        <IconDocumentEdit />
       </Button>
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
-          <Modal.Title>クライアントを登録する</Modal.Title>
+          <Modal.Title>クライアントを編集する</Modal.Title>
           <Modal.Description>
-            プロジェクトに関連するクライアントを登録します。
+            選択したクライアントの情報を編集します。
           </Modal.Description>
         </Modal.Header>
         <Form {...getFormProps(form)} action={action}>
@@ -76,6 +85,7 @@ export function CreateClientModal() {
                 <p>{getError()}</p>
               </div>
             )}
+            <input {...getInputProps(fields.id, { type: 'hidden' })} />
             <TextField
               {...getInputProps(fields.name, { type: 'text' })}
               label="クライアント名"
@@ -83,6 +93,7 @@ export function CreateClientModal() {
               isRequired={true}
               autoFocus={true}
               isDisabled={isPending}
+              defaultValue={lastResult?.initialValue?.name.toString() ?? name}
               errorMessage={''}
             />
             <span id={fields.name.errorId} className="text-sm text-red-500">
@@ -94,6 +105,10 @@ export function CreateClientModal() {
               placeholder="検索単語を入力（例: apple,banana,orange）"
               isRequired={true}
               isDisabled={isPending}
+              defaultValue={
+                lastResult?.initialValue?.likeKeywords.toString() ??
+                likeKeywords
+              }
               errorMessage={''}
             />
             <span
@@ -106,8 +121,8 @@ export function CreateClientModal() {
           <Modal.Footer>
             <Modal.Close isDisabled={isPending}>閉じる</Modal.Close>
             <Button type="submit" isDisabled={isPending}>
-              {isPending ? '登録中...' : '登録する'}
-              {isPending ? <Loader /> : <IconPlus />}
+              {isPending ? '更新中...' : '更新する'}
+              {isPending ? <Loader /> : <IconDocumentEdit />}
             </Button>
           </Modal.Footer>
         </Form>

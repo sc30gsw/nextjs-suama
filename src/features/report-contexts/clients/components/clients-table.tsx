@@ -1,6 +1,4 @@
 'use client'
-
-import { IconDocumentEdit, IconTrashEmpty } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -9,16 +7,17 @@ import {
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
-import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
+import { ClientDeleteButton } from '~/features/report-contexts/clients/components/client-delete-button'
+import { EditClientModal } from '~/features/report-contexts/clients/components/edit-client-modal'
 import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-type ClientTableData = {
-  id: string
-  clientName: string
-  operate: string
-}
+type ClientTableData = Pick<
+  InferResponseType<typeof client.api.clients.$get, 200>['clients'][number],
+  'id' | 'name' | 'likeKeywords'
+> &
+  Record<'operate', string>
 
 const columnHelper = createColumnHelper<ClientTableData>()
 
@@ -27,25 +26,23 @@ const COLUMNS = [
     header: 'クライアントID',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('clientName', {
+  columnHelper.accessor('name', {
     header: 'クライアント名',
     cell: (info) => info.getValue(),
   }),
 
   columnHelper.accessor('operate', {
     header: '操作',
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <div className="flex items-center gap-2">
           <div className="flex gap-2">
-            <Button size="small">
-              編集
-              <IconDocumentEdit />
-            </Button>
-            <Button intent="danger" size="small">
-              削除
-              <IconTrashEmpty />
-            </Button>
+            <EditClientModal
+              id={row.original.id}
+              name={row.original.name}
+              likeKeywords={row.original.likeKeywords}
+            />
+            <ClientDeleteButton id={row.original.id} />
           </div>
         </div>
       )
@@ -54,14 +51,14 @@ const COLUMNS = [
 ]
 
 type ClientsTableProps = {
-  // TODO: 適切な型に修正（API側の修正でできるかも）
-  clients: InferResponseType<typeof client.api.clients.$get, 200>
+  data: InferResponseType<typeof client.api.clients.$get, 200>
 }
 
-export function ClientsTable({ clients }: ClientsTableProps) {
-  const initialData: ClientTableData[] = clients.users.map((user) => ({
-    id: user.id.toString(),
-    clientName: user.username,
+export function ClientsTable({ data }: ClientsTableProps) {
+  const initialData: ClientTableData[] = data.clients.map((client) => ({
+    id: client.id,
+    name: client.name,
+    likeKeywords: client.likeKeywords,
     operate: '',
   }))
 
@@ -75,7 +72,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
-    pageCount: Math.ceil(clients.total / rowsPerPage),
+    pageCount: Math.ceil(data.total / rowsPerPage),
   })
 
   return (

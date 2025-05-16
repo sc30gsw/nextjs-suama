@@ -1,9 +1,8 @@
+import { count, like, or } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { filter } from 'remeda'
-import { upfetchForDummy } from '~/lib/fetcher'
+import { clients } from '~/db/schema'
+import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
-
-const MAX_LIMIT = 500
 
 const app = new Hono().get('/', sessionMiddleware, async (c) => {
   const { skip, limit, names } = c.req.query()
@@ -11,59 +10,45 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
   const skipNumber = Number(skip) || 0
   const limitNumber = Number(limit) || 10
 
-  //  TODO: テーブルのnameとlikeKeywordsを部分一致検索し検索する
   const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
-  type User = {
-    id: number
-    firstName: string
-    lastName: string
-    age: number
-    phone: string
-    email: string
-    username: string
-    gender: string
-    birthDate: string
-    role: 'admin' | 'moderator'
-  }
+  try {
+    const whereClause =
+      namesArray.length > 0
+        ? or(
+            ...namesArray.flatMap((word) => [
+              like(clients.name, `%${word}%`),
+              like(clients.likeKeywords, `%${word}%`),
+            ]),
+          )
+        : undefined
 
-  type Response = {
-    users: User[]
-    total: number
-    skip: number
-    limit: number
-  }
-
-  const userList = await upfetchForDummy<Response>('/users', {
-    params: {
-      select:
-        'firstName,lastName,age,phone,email,username,gender,birthDate,role',
-      limit: MAX_LIMIT,
-      skip: 0,
-    },
-  })
-
-  const filteredUsers =
-    namesArray.length > 0
-      ? filter(userList.users, (user) =>
-          namesArray.some((name) => user.username.includes(name)),
-        )
-      : userList.users
-
-  const paginatedUsers = filteredUsers.slice(
-    skipNumber,
-    skipNumber + limitNumber,
-  )
-
-  return c.json(
-    {
-      users: paginatedUsers,
-      total: filteredUsers.length,
-      skip: skipNumber,
+    const clientList = await db.query.clients.findMany({
+      where: whereClause,
+      offset: skipNumber,
       limit: limitNumber,
-    },
-    200,
-  )
+      orderBy: (clients, { asc }) => [asc(clients.createdAt)],
+    })
+
+    const total = await db.select({ count: count() }).from(clients)
+
+    return c.json(
+      {
+        clients: clientList,
+        total: total[0].count,
+        skip: skipNumber,
+        limit: limitNumber,
+      },
+      200,
+    )
+  } catch (_) {
+    return c.json(
+      {
+        error: 'Something went wrong',
+      },
+      500,
+    )
+  }
 })
 
 export default app
