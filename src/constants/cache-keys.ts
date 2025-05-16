@@ -1,7 +1,7 @@
 export const GET_CLIENTS_CACHE_KEY = 'getClients'
 export const GET_PROJECTS_CACHE_KEY = 'getProjects'
 export const GET_MISSIONS_CACHE_KEY = 'getMissions'
-export const GET_TROUBLES_CACHE_KEY = 'getTroubles'
+export const GET_TROUBLE_CATEGORIES_CACHE_KEY = 'getTroubleCategories'
 export const GET_APPEALS_CACHE_KEY = 'getAppeals'
 export const GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY = 'getDailyReportsForToday'
 export const GET_WEEKLY_REPORTS_CACHE_KEY = 'getWeeklyReports'

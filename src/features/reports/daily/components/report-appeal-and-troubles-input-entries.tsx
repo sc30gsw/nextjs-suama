@@ -13,14 +13,14 @@ import type {
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 
 type ReportAppealAndTroublesInputEntriesProps<
-  T extends AppealResponse['appeals'] | TroubleResponse['troubles'],
+  T extends AppealResponse['appeals'] | TroubleResponse['troubleCategories'],
 > = {
   items: T
   kind: 'appeal' | 'trouble'
 }
 
 export function ReportAppealAndTroubleInputEntries<
-  T extends AppealResponse['appeals'] | TroubleResponse['troubles'],
+  T extends AppealResponse['appeals'] | TroubleResponse['troubleCategories'],
 >({ items, kind }: ReportAppealAndTroublesInputEntriesProps<T>) {
   const [{ appealsAndTroublesEntry }, setAppealsAndTroublesState] =
     useQueryStates(inputCountSearchParamsParsers, {
@@ -229,7 +229,7 @@ export function ReportAppealAndTroubleInputEntries<
             <ComboBox.Input />
             <ComboBox.List items={items}>
               {(item) => (
-                <ComboBox.Option id={item.id}>{item.todo}</ComboBox.Option>
+                <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>
               )}
             </ComboBox.List>
           </ComboBox>
