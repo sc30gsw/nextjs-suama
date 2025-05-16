@@ -14,6 +14,7 @@ import {
   IconBuilding,
   IconBuildings,
   IconCalendarEvent,
+  IconList,
   IconReport,
 } from '@tabler/icons-react'
 import Link from 'next/link'
@@ -154,17 +155,13 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
             <SidebarDisclosure id={7}>
               <SidebarDisclosureTrigger>
-                <IconPackage />
+                <IconList stroke={1} size={20} className="mr-1" />
                 <SidebarLabel>ミッション</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
+                <SidebarItem href="/mission/list" tooltip="ミッション一覧">
+                  <IconList stroke={1} size={20} className="mr-1" />
                   <SidebarLabel>ミッション一覧</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
-                  <SidebarLabel>ミッション登録</SidebarLabel>
                 </SidebarItem>
               </SidebarDisclosurePanel>
             </SidebarDisclosure>

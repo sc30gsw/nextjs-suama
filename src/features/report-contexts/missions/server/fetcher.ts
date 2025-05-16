@@ -5,7 +5,10 @@ import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
-export async function getMissions(userId?: string) {
+export async function getMissions(
+  params?: { skip: number; limit: number; names: string[] },
+  userId?: string,
+) {
   'use cache'
   cacheTag(GET_MISSIONS_CACHE_KEY)
 
@@ -16,7 +19,10 @@ export async function getMissions(userId?: string) {
     headers: {
       Authorization: userId,
     },
+    params: {
+      ...params,
+    },
   })
 
-  return res.posts
+  return res
 }
