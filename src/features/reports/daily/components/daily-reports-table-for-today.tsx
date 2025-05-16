@@ -156,7 +156,7 @@ export function DailyReportsTableForToday({
       </Table.Header>
       <Table.Body>
         {table.getRowModel().rows.map((row) => (
-          <Table.Row key={row.id}>
+          <Table.Row key={row.original.id}>
             {row.getVisibleCells().map((cell) => (
               <Table.Cell key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
