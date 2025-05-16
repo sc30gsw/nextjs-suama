@@ -13,6 +13,7 @@ import {
 import {
   IconBuilding,
   IconBuildings,
+  IconBulb,
   IconCalendarEvent,
   IconHelpTriangle,
   IconList,
@@ -186,13 +187,9 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                 <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
+                <SidebarItem href="/appeal/list" tooltip="Warehouse">
+                  <IconBulb stroke={1} size={20} className="mr-1" />
                   <SidebarLabel>カテゴリー一覧</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
-                  <SidebarLabel>カテゴリー登録</SidebarLabel>
                 </SidebarItem>
               </SidebarDisclosurePanel>
             </SidebarDisclosure>
