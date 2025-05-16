@@ -41,7 +41,7 @@ export default async function Home({
 
   const promises = Promise.all([
     getProjects(undefined, session.user.id),
-    getMissions(session.user.id),
+    getMissions(undefined, session.user.id),
   ])
 
   return (
