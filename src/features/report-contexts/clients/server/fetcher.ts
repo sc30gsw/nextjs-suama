@@ -6,7 +6,7 @@ import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getClients(
-  params: { skip: number; limit: number; names?: string[] },
+  params?: { skip: number; limit: number; names: string[] },
   userId?: string,
 ) {
   'use cache'

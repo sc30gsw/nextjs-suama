@@ -1,5 +1,6 @@
 import { count, like, or } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { MAX_LIMIT } from '~/constants'
 import { clients } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
@@ -8,7 +9,7 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
   const { skip, limit, names } = c.req.query()
 
   const skipNumber = Number(skip) || 0
-  const limitNumber = Number(limit) || 10
+  const limitNumber = Number(limit) || MAX_LIMIT
 
   const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
