@@ -152,10 +152,10 @@ export default async function Home({
             </>
           }
         >
-          {promises.then(([projectsResponse, missions]) => (
+          {promises.then(([projectsResponse, missionsResponse]) => (
             <ReportContentInputEntries
               projects={projectsResponse.projects}
-              missions={missions}
+              missions={missionsResponse.missions}
             />
           ))}
         </Suspense>
