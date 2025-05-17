@@ -8,7 +8,7 @@ import {
   IconX,
 } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
-import { useActionState, useState } from 'react'
+import { useActionState, useRef, useState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -39,6 +39,8 @@ type EditUserModalProps = Pick<
 export function EditUserModal({ id, name, image }: EditUserModalProps) {
   const [open, toggle] = useToggle(false)
   const [imageError, setImageError] = useState('')
+  // biome-ignore lint/style/noNonNullAssertion: To need intentUI
+  const fileInputRef = useRef<HTMLInputElement>(null!)
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateUserAction, {
@@ -155,8 +157,10 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                   {...getInputProps(fields.image, { type: 'file' })}
                   acceptedFileTypes={ACCEPTED_TYPES}
                   onSelect={handleSelect}
+                  ref={fileInputRef}
                   withIcon={true}
                   className="mt-2"
+                  isDisabled={isPending}
                 >
                   画像をアップロード
                 </FileTrigger>
@@ -167,18 +171,20 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                 )}
               </div>
               {imageInput.value ? (
-                <div className="relative">
+                <div className="relative w-fit group">
                   <Avatar
                     src={imageInput.value}
                     alt={name}
-                    className="size-15 *:size-15"
+                    onClick={() => fileInputRef.current.click()}
+                    className="size-15 *:size-15 hover:opacity-80 cursor-pointer"
                   />
                   <Button
                     shape="circle"
                     size="square-petite-small"
                     intent="outline"
+                    isDisabled={isPending}
                     onPress={() => imageInput.change('')}
-                    className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 "
+                    className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 group-hover:opacity-100 opacity-0"
                   >
                     <IconX />
                   </Button>
@@ -187,7 +193,8 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                 <Avatar
                   initials={name.charAt(0)}
                   alt={name}
-                  className="size-15 *:size-15"
+                  onClick={() => fileInputRef.current.click()}
+                  className="size-15 *:size-15 cursor-pointer hover:opacity-80"
                 />
               )}
             </div>
