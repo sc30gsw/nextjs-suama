@@ -58,6 +58,7 @@ export default async function UsersPage({
               <table className="w-full text-sm text-left font-normal">
                 <thead className="bg-muted">
                   <tr>
+                    <th className="w-28.25 p-3">アイコン</th>
                     <th className="w-28.25 p-3">ユーザーID</th>
                     <th className="w-24.25 p-3">ユーザー名</th>
                     <th className="w-90 p-3">操作</th>
@@ -66,8 +67,14 @@ export default async function UsersPage({
                 <tbody>
                   {Array.from({ length: 10 }, () => (
                     <tr key={crypto.randomUUID()} className="border-b">
+                      <th
+                        scope="row"
+                        className="p-4 *:data-[slot=skeleton]:rounded-full"
+                      >
+                        <Skeleton className="size-8 mr-10 ml-3" />
+                      </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-50 h-4" />
+                        <Skeleton className="w-75 h-4" />
                       </th>
                       <th scope="row" className="p-4">
                         <Skeleton className="w-50 h-4" />

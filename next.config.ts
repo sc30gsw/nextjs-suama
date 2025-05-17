@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
     useCache: true,
     ppr: 'incremental',
     authInterrupts: true,
+    serverActions: {
+      bodySizeLimit: '5mb',
+    },
   },
 }
 
