@@ -2,10 +2,13 @@ import {
   IconChevronLgDown,
   IconLogout,
   IconMoon,
-  IconSettings,
   IconSun,
 } from '@intentui/icons'
-import { IconCalendarEvent, IconReport } from '@tabler/icons-react'
+import {
+  IconCalendarEvent,
+  IconCalendarUser,
+  IconReport,
+} from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
 import { twMerge } from 'tailwind-merge'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -60,8 +63,8 @@ export function AppSidebarUserMenu() {
           <IconReport stroke={1} size={20} className="mr-1" />
           日報作成
         </Menu.Item>
-        <Menu.Item href="#settings">
-          <IconSettings />
+        <Menu.Item href="/daily/mine">
+          <IconCalendarUser stroke={1} size={20} className="mr-1" />
           自分の日報
         </Menu.Item>
         <Menu.Item href="/daily/today">
