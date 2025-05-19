@@ -26,12 +26,12 @@ export async function WeeklyRegisterLink({
     userId,
   )
 
+  const href = res.weeklyReport
+    ? `/weekly/list/${dates}/edit/${res.weeklyReport.id}`
+    : `/weekly/list/${dates}/register`
+
   return (
-    <Link
-      href={`/weekly/list/${res.weeklyReport ? res.weeklyReport.id : dates}/register`}
-      prefetch={false}
-      className="max-w-fit"
-    >
+    <Link href={href} prefetch={false} className="max-w-fit">
       <Button>
         次週の予定を{res.weeklyReport ? '編集' : '追加'}
         <LinkLoadingIndicator>

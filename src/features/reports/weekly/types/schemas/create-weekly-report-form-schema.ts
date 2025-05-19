@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const weeklyReportSchema = z.object({
+export const createWeeklyReportSchema = z.object({
   id: z.string().uuid(),
   project: z.string({ required_error: 'プロジェクトを選択してください' }),
   mission: z.string({ required_error: 'ミッションを選択してください' }),
@@ -13,13 +13,15 @@ export const weeklyReportSchema = z.object({
     }),
 })
 
-export const weeklyReportFormSchema = z.object({
+export const createWeeklyReportFormSchema = z.object({
   year: z.number(),
   week: z.number(),
   weeklyReports: z
-    .array(weeklyReportSchema)
+    .array(createWeeklyReportSchema)
     .min(1, '週報の内容は1件以上必要です'),
 })
 
-export type WeeklyReportFormSchema = z.infer<typeof weeklyReportFormSchema>
-export type WeeklyReportSchema = z.infer<typeof weeklyReportSchema>
+export type CreateWeeklyReportFormSchema = z.infer<
+  typeof createWeeklyReportFormSchema
+>
+export type CreateWeeklyReportSchema = z.infer<typeof createWeeklyReportSchema>

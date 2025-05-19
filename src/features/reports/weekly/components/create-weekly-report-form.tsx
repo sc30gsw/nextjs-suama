@@ -20,11 +20,11 @@ import type { getMissions } from '~/features/report-contexts/missions/server/fet
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
 import { createWeeklyReportAction } from '~/features/reports/weekly/actions/create-weekly-report-action'
-import { WeeklyReportContentInputEntries } from '~/features/reports/weekly/components/weekly-report-content-input-entries'
+import { CreateWeeklyReportContentInputEntries } from '~/features/reports/weekly/components/create-weekly-report-content-input-entries'
 import {
-  type WeeklyReportFormSchema,
-  weeklyReportFormSchema,
-} from '~/features/reports/weekly/types/schemas/weekly-report-form-schema'
+  type CreateWeeklyReportFormSchema,
+  createWeeklyReportFormSchema,
+} from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
   getNextWeekDates,
@@ -89,11 +89,11 @@ export function CreateWeeklyReportForm({
     null,
   )
 
-  const [form, fields] = useSafeForm<WeeklyReportFormSchema>({
-    constraint: getZodConstraint(weeklyReportFormSchema),
+  const [form, fields] = useSafeForm<CreateWeeklyReportFormSchema>({
+    constraint: getZodConstraint(createWeeklyReportFormSchema),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: weeklyReportFormSchema })
+      return parseWithZod(formData, { schema: createWeeklyReportFormSchema })
     },
     defaultValue: {
       year,
@@ -227,7 +227,7 @@ export function CreateWeeklyReportForm({
           <input {...getInputProps(fields.year, { type: 'hidden' })} />
           <input {...getInputProps(fields.week, { type: 'hidden' })} />
           {weeklyReports.map((weeklyReport) => (
-            <WeeklyReportContentInputEntries
+            <CreateWeeklyReportContentInputEntries
               key={weeklyReport.key}
               id={weeklyReport.value?.id}
               formId={form.id}

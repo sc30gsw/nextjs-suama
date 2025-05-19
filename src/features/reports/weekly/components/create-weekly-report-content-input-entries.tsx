@@ -14,29 +14,29 @@ import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import type {
-  WeeklyReportFormSchema,
-  WeeklyReportSchema,
-} from '~/features/reports/weekly/types/schemas/weekly-report-form-schema'
+  CreateWeeklyReportFormSchema,
+  CreateWeeklyReportSchema,
+} from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
-type WeeklyReportContentInputEntriesProps = {
+type CreateWeeklyReportContentInputEntriesProps = {
   id?: string
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
   missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
   formId: string
-  name: FieldName<WeeklyReportSchema, WeeklyReportFormSchema>
+  name: FieldName<CreateWeeklyReportSchema, CreateWeeklyReportFormSchema>
   removeButton: JSX.Element
 }
 
-export function WeeklyReportContentInputEntries({
+export function CreateWeeklyReportContentInputEntries({
   id,
   projects,
   missions,
   formId,
   name,
   removeButton,
-}: WeeklyReportContentInputEntriesProps) {
+}: CreateWeeklyReportContentInputEntriesProps) {
   const [meta] = useField(name, { formId })
   const field = meta.getFieldset()
   const projectInput = useInputControl(field.project)
