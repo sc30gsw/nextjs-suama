@@ -1,7 +1,7 @@
 import { addDays, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { dailyReports, weeklyReports } from '~/db/schema'
+import { dailyReports, troubles, weeklyReports } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
@@ -28,7 +28,7 @@ const app = new Hono()
 
     const reports = await Promise.all(
       users.map(async (user) => {
-        const [lastWeekReports, dailyReportList, nextWeekReports] =
+        const [lastWeekReports, dailyReportList, nextWeekReports, troubleList] =
           await Promise.all([
             db.query.weeklyReports.findMany({
               where: and(
@@ -56,9 +56,6 @@ const app = new Hono()
               ),
               with: {
                 dailyReportMissions: true,
-                user: {
-                  with: { troubles: true },
-                },
                 appeals: true,
               },
             }),
@@ -80,6 +77,12 @@ const app = new Hono()
                 },
               },
             }),
+            db.query.troubles.findMany({
+              where: and(
+                eq(troubles.userId, user.id),
+                eq(troubles.resolved, false),
+              ),
+            }),
           ])
 
         return {
@@ -87,6 +90,7 @@ const app = new Hono()
           lastWeekReports,
           dailyReports: dailyReportList,
           nextWeekReports,
+          troubles: troubleList,
         }
       }),
     )
