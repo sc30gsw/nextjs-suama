@@ -83,7 +83,7 @@ export function EditMissionModal({
 
   return (
     <Modal>
-      <Button onPress={toggle}>
+      <Button size="small" onPress={toggle}>
         編集
         <IconDocumentEdit />
       </Button>
