@@ -1,16 +1,16 @@
 'use client'
-
 import { IconMinus, IconPlus } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import type { Key } from 'react-aria-components'
+import { filter, pipe } from 'remeda'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
-import { Heading } from '~/components/ui/intent-ui/heading'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TotalHours } from '~/features/reports/components/total-hours'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
@@ -140,10 +140,23 @@ export function ReportContentInputEntries({
         <IconPlus />
       </Button>
       {reportEntry.entries.map((entry) => {
-        // TODO: ミッションが選択されている場合、プロジェクトをfilter（findだとComboBox.Listのitemsの型エラーとなる）
-        // const filteredProject = entry.mission ? projects.filter((project) => project.missionId === entry.mission) : projects
-        // TODO: プロジェクトが選択されていない場合は、ミッションをfilter
-        // const filteredMissions = entry.project ? missions.filter((mission) => mission.projectId === entry.project) : missions
+        const filteredProjects = entry.mission
+          ? pipe(
+              projects,
+              filter((project) =>
+                project.missions.some(
+                  (mission) => mission.id === entry.mission,
+                ),
+              ),
+            )
+          : projects
+
+        const filteredMissions = entry.project
+          ? pipe(
+              missions,
+              filter((mission) => mission.projectId === entry.project),
+            )
+          : missions
 
         return (
           <div
@@ -156,11 +169,11 @@ export function ReportContentInputEntries({
               onSelectionChange={(key) => {
                 handleChangeItem(entry.id, key, 'project')
               }}
-              selectedKey={entry.project}
+              selectedKey={entry.project ?? undefined}
               className="col-span-2"
             >
               <ComboBox.Input />
-              <ComboBox.List items={projects}>
+              <ComboBox.List items={filteredProjects}>
                 {(project) => (
                   <ComboBox.Option id={project.id}>
                     {project.name}
@@ -174,11 +187,11 @@ export function ReportContentInputEntries({
               onSelectionChange={(key) => {
                 handleChangeItem(entry.id, key, 'mission')
               }}
-              selectedKey={entry.mission}
+              selectedKey={entry.mission ?? undefined}
               className="col-span-2"
             >
               <ComboBox.Input />
-              <ComboBox.List items={missions}>
+              <ComboBox.List items={filteredMissions}>
                 {(mission) => (
                   <ComboBox.Option id={mission.id}>
                     {mission.name}
@@ -217,10 +230,7 @@ export function ReportContentInputEntries({
         <Checkbox className="cursor-pointer">リモート勤務</Checkbox>
       </div>
       <Separator orientation="horizontal" />
-      <div className="flex items-center gap-x-2 my-4">
-        <span className="text-sm">合計時間:</span>
-        <Heading className="text-muted-fg text-lg">{totalHours}時間</Heading>
-      </div>
+      <TotalHours totalHours={totalHours} />
     </>
   )
 }
