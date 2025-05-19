@@ -1,7 +1,7 @@
 import type { InferRequestType, InferResponseType } from 'hono'
 import 'server-only'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
-import { GET_WEEKLY_REPORT_CACHE_KEY } from '~/constants/cache-keys'
+import { GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
@@ -13,7 +13,7 @@ export async function getWeeklyReportMissions(
 ) {
   'use cache'
   cacheTag(
-    `${GET_WEEKLY_REPORT_CACHE_KEY}-${params.year}-${params.week}-${userId}`,
+    `${GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`,
   )
 
   const url = client.api.weeklies['current-user'][':year'][':week'].$url({
