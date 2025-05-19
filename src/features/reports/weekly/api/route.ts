@@ -55,8 +55,24 @@ const app = new Hono()
                 lte(dailyReports.reportDate, endDate),
               ),
               with: {
-                dailyReportMissions: true,
-                appeals: true,
+                dailyReportMissions: {
+                  with: {
+                    mission: {
+                      with: {
+                        project: true,
+                      },
+                    },
+                  },
+                },
+                appeals: {
+                  with: {
+                    categoryOfAppeal: {
+                      columns: {
+                        name: true,
+                      },
+                    },
+                  },
+                },
               },
             }),
             db.query.weeklyReports.findMany({
@@ -82,6 +98,13 @@ const app = new Hono()
                 eq(troubles.userId, user.id),
                 eq(troubles.resolved, false),
               ),
+              with: {
+                categoryOfTrouble: {
+                  columns: {
+                    name: true,
+                  },
+                },
+              },
             }),
           ])
 

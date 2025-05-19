@@ -5,6 +5,8 @@ import { flatMap, pipe, reduce } from 'remeda'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
+import { Table } from '~/components/ui/intent-ui/table'
+import { DailyReportsInWeeklyReportListTable } from '~/features/reports/weekly/components/daily-reports-in-weekly-report-list-table'
 import { LoadMoreButton } from '~/features/reports/weekly/components/load-more-button'
 import { WeeklyIssuesAndSolutionsTable } from '~/features/reports/weekly/components/weekly-issues-and-solutions-table'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
@@ -96,8 +98,9 @@ export function WeeklyReportsCard({
                   職務内容：総時間数: {totalThisWeekHours}時間
                 </Heading>
               </div>
-              {/* TODO: 日報作成機能実装後作成 */}
-              {/* <WeeklyReportsTable data={user.reports.reports} /> */}
+              <DailyReportsInWeeklyReportListTable
+                data={report.dailyReports.flatMap((r) => r.dailyReportMissions)}
+              />
               <div className="p-4">
                 <Heading level={3}>
                   次週の予定：総時間数: {totalNextWeekHours}時間
@@ -109,15 +112,34 @@ export function WeeklyReportsCard({
                 )}
               />
 
-              {/* TODO: 日報作成機能実装後作成 */}
               <div className="p-4">
                 <Heading level={3}>困っていること</Heading>
               </div>
-              <WeeklyIssuesAndSolutionsTable data={issuesOrSolutions} />
+              <WeeklyIssuesAndSolutionsTable>
+                <Table.Body items={report.troubles}>
+                  {(item) => (
+                    <Table.Row id={item.id}>
+                      <Table.Cell>{item.trouble}</Table.Cell>
+                      <Table.Cell>{item.categoryOfTrouble.name}</Table.Cell>
+                    </Table.Row>
+                  )}
+                </Table.Body>
+              </WeeklyIssuesAndSolutionsTable>
               <div className="p-4">
                 <Heading level={3}>工夫したこと</Heading>
               </div>
-              <WeeklyIssuesAndSolutionsTable data={issuesOrSolutions} />
+              <WeeklyIssuesAndSolutionsTable>
+                <Table.Body
+                  items={report.dailyReports.flatMap((r) => r.appeals)}
+                >
+                  {(item) => (
+                    <Table.Row id={item.id}>
+                      <Table.Cell>{item.appeal}</Table.Cell>
+                      <Table.Cell>{item.categoryOfAppeal.name}</Table.Cell>
+                    </Table.Row>
+                  )}
+                </Table.Body>
+              </WeeklyIssuesAndSolutionsTable>
             </Card.Content>
           </Card>
         )
@@ -132,16 +154,3 @@ export function WeeklyReportsCard({
     />
   )
 }
-
-const issuesOrSolutions = [
-  {
-    id: 1,
-    name: 'John Doe',
-    occupation: 'Software Engineer',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    occupation: 'Marketing Manager',
-  },
-]
