@@ -5,6 +5,7 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { WeeklyReportsCard } from '~/features/reports/weekly/components/weekly-reports-card'
+import { splitDates } from '~/features/reports/weekly/utils/date-utils'
 
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
@@ -19,15 +20,7 @@ export default async function WeeklyReportsPage({
   }
 
   const { dates } = await params
-
-  const [startDate, endDate] = dates.split('-').reduce((acc, val, i) => {
-    if (i % 3 === 0) {
-      acc.push(val)
-    } else {
-      acc[acc.length - 1] += `-${val}`
-    }
-    return acc
-  }, [] as string[])
+  const { startDate, endDate } = splitDates(dates)
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
@@ -35,7 +28,11 @@ export default async function WeeklyReportsPage({
         <Heading level={2}>
           {startDate} 〜 {endDate}
         </Heading>
-        <Link href={'/weekly/register'} prefetch={false} className="max-w-fit">
+        <Link
+          href={`/weekly/list/${dates}/register`}
+          prefetch={false}
+          className="max-w-fit"
+        >
           <Button>
             次週の予定を追加
             <LinkLoadingIndicator>

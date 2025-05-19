@@ -1,5 +1,5 @@
 import { createSearchParamsCache, parseAsNumberLiteral } from 'nuqs/server'
-import { getWeeksByMonth } from '~/features/reports/weekly/utils/get-weeks-by-month'
+import { getWeeksByMonth } from '~/features/reports/weekly/utils/date-utils'
 
 const months = getWeeksByMonth().map(({ month }) => month)
 

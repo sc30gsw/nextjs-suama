@@ -3,8 +3,8 @@ import { z } from 'zod'
 
 const reportEntrySchema = z.object({
   id: z.string(),
-  project: z.number().nullable(),
-  mission: z.number().nullable(),
+  project: z.string().nullable(),
+  mission: z.string().nullable(),
   hours: z.number(),
   content: z.string(),
 })
