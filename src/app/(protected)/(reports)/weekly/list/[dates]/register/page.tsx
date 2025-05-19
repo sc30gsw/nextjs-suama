@@ -45,7 +45,7 @@ export default async function WeeklyReportRegisterPage({
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
       <Heading level={2}>
-        {nextStartDate} 〜 {nextEndDate} の予定を追加{count}
+        {nextStartDate} 〜 {nextEndDate} の予定を追加
       </Heading>
       <Suspense
         fallback={
