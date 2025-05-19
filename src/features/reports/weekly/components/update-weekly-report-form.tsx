@@ -54,24 +54,28 @@ export function UpdateWeeklyReportForm({
     {
       weeklyReportEntry: parseAsJson(weeklyReportStateSchema.parse).withDefault(
         {
-          count: weeklyReportMissions.weeklyReport.weeklyReportMissions.length,
-          entries: weeklyReportMissions.weeklyReport.weeklyReportMissions.map(
-            (entry) => ({
-              id: entry.id,
-              project: pipe(
-                projectsResponse.projects,
-                find((project) =>
-                  project.missions.some(
-                    (mission) => mission.id === entry.missionId,
+          count: weeklyReportMissions.weeklyReport
+            ? weeklyReportMissions.weeklyReport.weeklyReportMissions.length
+            : 1,
+          entries: weeklyReportMissions.weeklyReport
+            ? weeklyReportMissions.weeklyReport.weeklyReportMissions.map(
+                (entry) => ({
+                  id: entry.id,
+                  project: pipe(
+                    projectsResponse.projects,
+                    find((project) =>
+                      project.missions.some(
+                        (mission) => mission.id === entry.missionId,
+                      ),
+                    ),
+                    (project) => project?.id ?? '',
                   ),
-                ),
-                (project) => project?.id ?? '',
-              ),
-              mission: entry.missionId,
-              content: entry.workContent,
-              hours: entry.hours,
-            }),
-          ),
+                  mission: entry.missionId,
+                  content: entry.workContent,
+                  hours: entry.hours,
+                }),
+              )
+            : [],
         },
       ),
     },
@@ -115,7 +119,7 @@ export function UpdateWeeklyReportForm({
       return parseWithZod(formData, { schema: updateWeeklyReportFormSchema })
     },
     defaultValue: {
-      weeklyReportId: weeklyReportMissions.weeklyReport.id,
+      weeklyReportId: weeklyReportMissions.weeklyReport?.id,
       weeklyReports: weeklyReportEntry.entries.map((entry) => ({
         ...entry,
         hours: entry.hours.toString(),
