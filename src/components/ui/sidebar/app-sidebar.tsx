@@ -6,7 +6,6 @@ import {
   IconCalendarDays,
   IconCirclePerson,
   IconCircleQuestionmark,
-  IconMessage,
   IconPackage,
   IconPeople,
 } from '@intentui/icons'
@@ -15,6 +14,7 @@ import {
   IconBuildings,
   IconBulb,
   IconCalendarEvent,
+  IconCalendarUser,
   IconHelpTriangle,
   IconList,
   IconReport,
@@ -63,8 +63,8 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                   <IconCalendarEvent stroke={1} size={20} className="mr-1" />
                   <SidebarLabel>本日の日報</SidebarLabel>
                 </SidebarItem>
-                <SidebarItem href="#" tooltip="Chat Support">
-                  <IconMessage />
+                <SidebarItem href="/daily/mine" tooltip="自分の日報">
+                  <IconCalendarUser stroke={1} size={20} className="mr-1" />
                   <SidebarLabel>自分の日報</SidebarLabel>
                 </SidebarItem>
                 <SidebarItem href="#" tooltip="FAQ">
