@@ -1,18 +1,21 @@
 'use client'
 
+import type { InferResponseType } from 'hono'
 import { Table } from '~/components/ui/intent-ui/table'
+import type { client } from '~/lib/rpc'
 
-type WeeklyReportsTableProps = {
-  data: {
-    id: number
-    name: string
-    gender: string
-    age: number
-    occupation: string
-  }[]
+type WeeklyReportsTableProps<
+  Key extends 'lastWeekReports' | 'nextWeekReports',
+> = {
+  data: InferResponseType<
+    typeof client.api.weeklies.$get,
+    200
+  >['reports'][number][Key][number]['weeklyReportMissions']
 }
 
-export function WeeklyReportsTable({ data }: WeeklyReportsTableProps) {
+export function WeeklyReportsTable<
+  Key extends 'lastWeekReports' | 'nextWeekReports',
+>({ data }: WeeklyReportsTableProps<Key>) {
   return (
     <Table allowResize={true} className="table-fixed w-full">
       <Table.Header>
@@ -31,14 +34,14 @@ export function WeeklyReportsTable({ data }: WeeklyReportsTableProps) {
         {(item) => (
           <Table.Row id={item.id}>
             <Table.Cell className="break-words whitespace-normal ">
-              {item.name}
+              {item.mission.project.name}
             </Table.Cell>
             <Table.Cell className="break-words whitespace-normal ">
-              {item.gender}
+              {item.mission.name}
             </Table.Cell>
-            <Table.Cell>{item.age}</Table.Cell>
+            <Table.Cell>{item.hours.toFixed(1)}</Table.Cell>
             <Table.Cell className="break-words whitespace-normal ">
-              {item.occupation}
+              {item.workContent}
             </Table.Cell>
           </Table.Row>
         )}

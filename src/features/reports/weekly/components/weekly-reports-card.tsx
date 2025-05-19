@@ -1,6 +1,8 @@
 'use client'
 
 import { Virtuoso } from 'react-virtuoso'
+import { flatMap, pipe, reduce } from 'remeda'
+import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { LoadMoreButton } from '~/features/reports/weekly/components/load-more-button'
@@ -11,17 +13,17 @@ import { useWeeklyReportsQuery } from '~/features/reports/weekly/hooks/use-weekl
 
 type WeeklyReportsCardProps = {
   userId: string
-  startDate: string
-  endDate: string
+  year: number
+  week: number
 }
 
 export function WeeklyReportsCard({
   userId,
-  startDate,
-  endDate,
+  year,
+  week,
 }: WeeklyReportsCardProps) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useWeeklyReportsQuery({ startDate, endDate }, userId)
+    useWeeklyReportsQuery({ year, week }, userId)
 
   if (isLoading || !data) {
     return <WeeklyReportsCardLoading />
@@ -38,42 +40,88 @@ export function WeeklyReportsCard({
       useWindowScroll={true}
       // style={{ height: '100dvh', paddingBottom: 0 }}
       className="min-h-dvh pb-0"
-      data={data.pages.flatMap((page) => page.userList.users)}
-      itemContent={(_, user) => (
-        <Card>
-          <Card.Header>
-            {/* TODO: 実際のデータにする */}
-            <Card.Title>
-              ユーザーID: {user.age} ユーザー名: {user.username}
-            </Card.Title>
-          </Card.Header>
-          <Card.Content className="space-y-4">
-            <div className="p-4">
-              <Heading level={3}>
-                前週に立てた予定：総時間数: {user.age}時間
-              </Heading>
-            </div>
-            <WeeklyReportsTable data={user.reports.lastWeekReports} />
-            <div className="p-4">
-              <Heading level={3}>職務内容：総時間数: {user.age}時間</Heading>
-            </div>
-            <WeeklyReportsTable data={user.reports.reports} />
-            <div className="p-4">
-              <Heading level={3}>次週の予定：総時間数: {user.age}時間</Heading>
-            </div>
-            <WeeklyReportsTable data={user.reports.nextWeekReports} />
+      data={data.pages.flatMap((page) => page.reports)}
+      itemContent={(_, report) => {
+        const totalLastWeekHours = pipe(
+          report.lastWeekReports,
+          flatMap((r) => r.weeklyReportMissions),
+          reduce((sum, mission) => sum + mission.hours, 0),
+        )
 
-            <div className="p-4">
-              <Heading level={3}>困っていること</Heading>
-            </div>
-            <WeeklyIssuesAndSolutionsTable data={issuesOrSolutions} />
-            <div className="p-4">
-              <Heading level={3}>工夫したこと</Heading>
-            </div>
-            <WeeklyIssuesAndSolutionsTable data={issuesOrSolutions} />
-          </Card.Content>
-        </Card>
-      )}
+        const totalThisWeekHours = pipe(
+          report.dailyReports,
+          flatMap((r) => r.dailyReportMissions ?? []),
+          reduce(
+            (sum, mission) =>
+              mission && typeof mission.hours === 'number'
+                ? sum + mission.hours
+                : sum,
+            0,
+          ),
+        )
+
+        const totalNextWeekHours = pipe(
+          report.nextWeekReports,
+          flatMap((r) => r.weeklyReportMissions),
+          reduce((sum, mission) => sum + mission.hours, 0),
+        )
+
+        return (
+          <Card className="mt-2">
+            <Card.Header>
+              {/* TODO: 実際のデータにする */}
+              <Card.Title className="flex items-center gap-2">
+                <Avatar
+                  initials={report.user.name.charAt(0)}
+                  src={report.user.image}
+                  alt={report.user.name}
+                />
+                ユーザーID: {report.user.id.slice(0, 15)} ユーザー名:{' '}
+                {report.user.name}
+              </Card.Title>
+            </Card.Header>
+            <Card.Content className="space-y-4">
+              <div className="p-4">
+                <Heading level={3}>
+                  前週に立てた予定：総時間数: {totalLastWeekHours}時間
+                </Heading>
+              </div>
+              <WeeklyReportsTable<'lastWeekReports'>
+                data={report.lastWeekReports.flatMap(
+                  (r) => r.weeklyReportMissions,
+                )}
+              />
+              <div className="p-4">
+                <Heading level={3}>
+                  職務内容：総時間数: {totalThisWeekHours}時間
+                </Heading>
+              </div>
+              {/* TODO: 日報作成機能実装後作成 */}
+              {/* <WeeklyReportsTable data={user.reports.reports} /> */}
+              <div className="p-4">
+                <Heading level={3}>
+                  次週の予定：総時間数: {totalNextWeekHours}時間
+                </Heading>
+              </div>
+              <WeeklyReportsTable<'nextWeekReports'>
+                data={report.nextWeekReports.flatMap(
+                  (r) => r.weeklyReportMissions,
+                )}
+              />
+
+              {/* TODO: 日報作成機能実装後作成 */}
+              <div className="p-4">
+                <Heading level={3}>困っていること</Heading>
+              </div>
+              <WeeklyIssuesAndSolutionsTable data={issuesOrSolutions} />
+              <div className="p-4">
+                <Heading level={3}>工夫したこと</Heading>
+              </div>
+              <WeeklyIssuesAndSolutionsTable data={issuesOrSolutions} />
+            </Card.Content>
+          </Card>
+        )
+      }}
       increaseViewportBy={200}
       components={{ Footer: hasNextPage ? LoadMoreButton : undefined }}
       context={{

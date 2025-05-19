@@ -5,7 +5,7 @@ import { getWeeklyReport } from '~/features/reports/weekly/client/fetcher'
 const LIMIT = 10
 
 export function useWeeklyReportsQuery(
-  params: Record<'startDate' | 'endDate', string>,
+  params: Record<'year' | 'week', number>,
   userId?: string,
 ) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
@@ -15,7 +15,7 @@ export function useWeeklyReportsQuery(
         return await getWeeklyReport(params, pageParam, userId)
       },
       getNextPageParam: (lastPage, allPages) => {
-        return lastPage.userList.users.length === LIMIT
+        return lastPage.reports.length === LIMIT
           ? allPages.length * LIMIT
           : undefined
       },

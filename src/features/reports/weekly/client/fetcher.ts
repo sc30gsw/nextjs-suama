@@ -3,7 +3,7 @@ import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getWeeklyReport(
-  params: Record<'startDate' | 'endDate', string>,
+  params: Record<'year' | 'week', number>,
   offset: number,
   userId?: string,
 ) {
