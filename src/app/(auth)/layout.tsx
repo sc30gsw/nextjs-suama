@@ -8,7 +8,7 @@ export default async function AuthLayout({ children }: NextLayoutProps) {
   const sessionData = await getServerSession()
 
   if (sessionData) {
-    redirect('/')
+    redirect('/daily')
   }
 
   return (
