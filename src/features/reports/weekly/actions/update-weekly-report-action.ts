@@ -1,8 +1,9 @@
 'use server'
 
 import { parseWithZod } from '@conform-to/zod'
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
+import { filter, map, pipe } from 'remeda'
 import { GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { missions, weeklyReportMissions, weeklyReports } from '~/db/schema'
 import { updateWeeklyReportFormSchema } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
@@ -41,6 +42,25 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       await db.query.weeklyReportMissions.findMany({
         where: eq(weeklyReportMissions.weeklyReportId, weeklyReport.id),
       })
+
+    const inputIds = pipe(
+      submission.value.weeklyReports,
+      map((item) => item.id),
+      filter((id): id is string => !!id),
+    )
+
+    const deleteTargets = weeklyReportMissionList.filter(
+      (mission) => !inputIds.includes(mission.id),
+    )
+
+    if (deleteTargets.length > 0) {
+      await db.delete(weeklyReportMissions).where(
+        inArray(
+          weeklyReportMissions.id,
+          deleteTargets.map((m) => m.id),
+        ),
+      )
+    }
 
     for (const weeklyReportInput of submission.value.weeklyReports) {
       const project = await db.query.projects.findFirst({
