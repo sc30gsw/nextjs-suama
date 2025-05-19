@@ -41,7 +41,7 @@ export default async function Home({
 
   const promises = Promise.all([
     getProjects(undefined, session.user.id),
-    getMissions(session.user.id),
+    getMissions(undefined, session.user.id),
   ])
 
   return (
@@ -152,10 +152,10 @@ export default async function Home({
             </>
           }
         >
-          {promises.then(([projectsResponse, missions]) => (
+          {promises.then(([projectsResponse, missionsResponse]) => (
             <ReportContentInputEntries
               projects={projectsResponse.projects}
-              missions={missions}
+              missions={missionsResponse.missions}
             />
           ))}
         </Suspense>

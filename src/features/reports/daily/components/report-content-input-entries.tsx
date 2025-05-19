@@ -16,7 +16,7 @@ import type { client } from '~/lib/rpc'
 
 type ReportContentInputEntriesProps = {
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
-  missions: InferResponseType<typeof client.api.missions.$get, 200>['posts']
+  missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
 }
 
 export function ReportContentInputEntries({
@@ -181,7 +181,7 @@ export function ReportContentInputEntries({
               <ComboBox.List items={missions}>
                 {(mission) => (
                   <ComboBox.Option id={mission.id}>
-                    {mission.title}
+                    {mission.name}
                   </ComboBox.Option>
                 )}
               </ComboBox.List>

@@ -6,19 +6,19 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
-import { getClients } from '~/features/report-contexts/clients/server/fetcher'
 import { NameSearchTagField } from '~/features/report-contexts/components/name-search-tag-field'
 import { ReportContextMenu } from '~/features/report-contexts/components/report-context-menu'
 import { ReportContextTablePagination } from '~/features/report-contexts/components/report-context-table-pagination'
-import { CreateProjectModal } from '~/features/report-contexts/projects/components/create-project-modal'
-import { ProjectsTable } from '~/features/report-contexts/projects/components/projects-table'
+import { CreateMissionModal } from '~/features/report-contexts/missions/components/create-mission-modal'
+import { MissionsTable } from '~/features/report-contexts/missions/components/missions-table'
+import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
-export default async function ProjectListPage({
+export default async function MissionListPage({
   searchParams,
 }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
@@ -32,7 +32,7 @@ export default async function ProjectListPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const projectsPromise = getProjects(
+  const missionsPromise = getMissions(
     {
       skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
       limit:
@@ -46,24 +46,23 @@ export default async function ProjectListPage({
     session.user.id,
   )
 
-  const clientsPromise = getClients(undefined, session.user.id)
+  const projectsPromise = getProjects(undefined, session.user.id)
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-y-2">
       <div className="flex justify-between">
-        <Heading>プロジェクト一覧</Heading>
+        <Heading>ミッション一覧</Heading>
         <div className="flex flex-col gap-2">
           <Suspense fallback={<Skeleton className="w-44.5 h-8" />}>
-            {clientsPromise.then((res) => (
-              <CreateProjectModal clients={res.clients} />
+            {projectsPromise.then((res) => (
+              <CreateMissionModal projects={res.projects} />
             ))}
           </Suspense>
-
-          <ReportContextMenu label="プロジェクト" />
+          <ReportContextMenu label="ミッション" />
         </div>
       </div>
       <div className="flex flex-row md:flex-col items-center md:items-start gap-x-4 md:gap-y-4">
-        <NameSearchTagField label="プロジェクト名" />
+        <NameSearchTagField label="ミッション名" />
         <RowsPerPageSelect />
       </div>
       <Card className="py-2 mt-4 max-w-full">
@@ -74,10 +73,9 @@ export default async function ProjectListPage({
               <table className="w-full text-sm text-left font-normal">
                 <thead className="bg-muted">
                   <tr>
-                    <th className="p-3">プロジェクトID</th>
+                    <th className="p-3">ミッションID</th>
+                    <th className="p-3">ミッション名</th>
                     <th className="p-3">プロジェクト名</th>
-                    <th className="p-3">クライアント名</th>
-                    <th className="p-3">アーカイブ</th>
                     <th className="p-3">操作</th>
                   </tr>
                 </thead>
@@ -85,16 +83,13 @@ export default async function ProjectListPage({
                   {Array.from({ length: 10 }, () => (
                     <tr key={crypto.randomUUID()} className="border-b">
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-90 h-4" />
+                        <Skeleton className="w-64 h-4" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-30 h-4" />
+                        <Skeleton className="w-25 h-4" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-30 h-4" />
-                      </th>
-                      <th scope="row" className="p-4">
-                        <Skeleton className="w-30 h-4" />
+                        <Skeleton className="w-25 h-4" />
                       </th>
                       <th scope="row" className="p-4 flex items-center gap-x-2">
                         <Skeleton className="w-19 h-9" />
@@ -106,11 +101,11 @@ export default async function ProjectListPage({
               </table>
             }
           >
-            {Promise.all([projectsPromise, clientsPromise]).then(
-              ([projectResponse, clientsResponse]) => (
-                <ProjectsTable
-                  data={projectResponse}
-                  clients={clientsResponse.clients}
+            {Promise.all([missionsPromise, projectsPromise]).then(
+              ([missionsResponse, projectsResponse]) => (
+                <MissionsTable
+                  data={missionsResponse}
+                  projects={projectsResponse.projects}
                 />
               ),
             )}
@@ -133,12 +128,12 @@ export default async function ProjectListPage({
               </div>
             }
           >
-            {projectsPromise.then((res) => {
+            {missionsPromise.then((res) => {
               const pageCount = Math.ceil(res.total / rowsPerPage)
 
               if (page > pageCount) {
                 redirect(
-                  `/project/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`,
+                  `/mission/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`,
                 )
               }
 
