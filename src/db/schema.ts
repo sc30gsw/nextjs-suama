@@ -507,6 +507,20 @@ export const dailyReportsRelations = relations(
   }),
 )
 
+export const dailyReportMissionsRelations = relations(
+  dailyReportMissions,
+  ({ one }) => ({
+    dailyReport: one(dailyReports, {
+      fields: [dailyReportMissions.dailyReportId],
+      references: [dailyReports.id],
+    }),
+    mission: one(missions, {
+      fields: [dailyReportMissions.missionId],
+      references: [missions.id],
+    }),
+  }),
+)
+
 export const troublesRelations = relations(troubles, ({ one, many }) => ({
   user: one(users, {
     fields: [troubles.userId],
