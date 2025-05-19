@@ -13,7 +13,10 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { updateClientAction } from '~/features/report-contexts/clients/actions/update-client-action'
-import { editClientInputSchema } from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
+import {
+  type EditClientInputSchema,
+  editClientInputSchema,
+} from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
 import { withCallbacks } from '~/utils/with-callbacks'
@@ -43,7 +46,7 @@ export function EditClientModal({
     null,
   )
 
-  const [form, fields] = useSafeForm<EditClientModalProps>({
+  const [form, fields] = useSafeForm<EditClientInputSchema>({
     constraint: getZodConstraint(editClientInputSchema),
     lastResult,
     onValidate({ formData }) {
@@ -86,37 +89,41 @@ export function EditClientModal({
               </div>
             )}
             <input {...getInputProps(fields.id, { type: 'hidden' })} />
-            <TextField
-              {...getInputProps(fields.name, { type: 'text' })}
-              label="クライアント名"
-              placeholder="クライアント名を入力"
-              isRequired={true}
-              autoFocus={true}
-              isDisabled={isPending}
-              defaultValue={lastResult?.initialValue?.name.toString() ?? name}
-              errorMessage={''}
-            />
-            <span id={fields.name.errorId} className="text-sm text-red-500">
-              {fields.name.errors}
-            </span>
-            <TextField
-              {...getInputProps(fields.likeKeywords, { type: 'text' })}
-              label="検索単語"
-              placeholder="検索単語を入力（例: apple,banana,orange）"
-              isRequired={true}
-              isDisabled={isPending}
-              defaultValue={
-                lastResult?.initialValue?.likeKeywords.toString() ??
-                likeKeywords
-              }
-              errorMessage={''}
-            />
-            <span
-              id={fields.likeKeywords.errorId}
-              className="text-sm text-red-500 break-words"
-            >
-              {fields.likeKeywords.errors}
-            </span>
+            <div>
+              <TextField
+                {...getInputProps(fields.name, { type: 'text' })}
+                label="クライアント名"
+                placeholder="クライアント名を入力"
+                isRequired={true}
+                autoFocus={true}
+                isDisabled={isPending}
+                defaultValue={lastResult?.initialValue?.name.toString() ?? name}
+                errorMessage={''}
+              />
+              <span id={fields.name.errorId} className="text-sm text-red-500">
+                {fields.name.errors}
+              </span>
+            </div>
+            <div>
+              <TextField
+                {...getInputProps(fields.likeKeywords, { type: 'text' })}
+                label="検索単語"
+                placeholder="検索単語を入力（例: apple,banana,orange）"
+                isRequired={true}
+                isDisabled={isPending}
+                defaultValue={
+                  lastResult?.initialValue?.likeKeywords.toString() ??
+                  likeKeywords
+                }
+                errorMessage={''}
+              />
+              <span
+                id={fields.likeKeywords.errorId}
+                className="text-sm text-red-500 break-words"
+              >
+                {fields.likeKeywords.errors}
+              </span>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Modal.Close isDisabled={isPending}>閉じる</Modal.Close>

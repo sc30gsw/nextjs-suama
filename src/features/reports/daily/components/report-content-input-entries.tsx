@@ -15,7 +15,7 @@ import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/se
 import type { client } from '~/lib/rpc'
 
 type ReportContentInputEntriesProps = {
-  projects: InferResponseType<typeof client.api.projects.$get, 200>['todos']
+  projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
   missions: InferResponseType<typeof client.api.missions.$get, 200>['posts']
 }
 
@@ -129,7 +129,7 @@ export function ReportContentInputEntries({
       }
     })
   }
-  
+
   return (
     <>
       <Button
@@ -163,7 +163,7 @@ export function ReportContentInputEntries({
               <ComboBox.List items={projects}>
                 {(project) => (
                   <ComboBox.Option id={project.id}>
-                    {project.todo}
+                    {project.name}
                   </ComboBox.Option>
                 )}
               </ComboBox.List>

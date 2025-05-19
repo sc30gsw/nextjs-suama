@@ -76,32 +76,36 @@ export function CreateClientModal() {
                 <p>{getError()}</p>
               </div>
             )}
-            <TextField
-              {...getInputProps(fields.name, { type: 'text' })}
-              label="クライアント名"
-              placeholder="クライアント名を入力"
-              isRequired={true}
-              autoFocus={true}
-              isDisabled={isPending}
-              errorMessage={''}
-            />
-            <span id={fields.name.errorId} className="text-sm text-red-500">
-              {fields.name.errors}
-            </span>
-            <TextField
-              {...getInputProps(fields.likeKeywords, { type: 'text' })}
-              label="検索単語"
-              placeholder="検索単語を入力（例: apple,banana,orange）"
-              isRequired={true}
-              isDisabled={isPending}
-              errorMessage={''}
-            />
-            <span
-              id={fields.likeKeywords.errorId}
-              className="text-sm text-red-500 break-words"
-            >
-              {fields.likeKeywords.errors}
-            </span>
+            <div>
+              <TextField
+                {...getInputProps(fields.name, { type: 'text' })}
+                label="クライアント名"
+                placeholder="クライアント名を入力"
+                isRequired={true}
+                autoFocus={true}
+                isDisabled={isPending}
+                errorMessage={''}
+              />
+              <span id={fields.name.errorId} className="text-sm text-red-500">
+                {fields.name.errors}
+              </span>
+            </div>
+            <div>
+              <TextField
+                {...getInputProps(fields.likeKeywords, { type: 'text' })}
+                label="検索単語"
+                placeholder="検索単語を入力（例: apple,banana,orange）"
+                isRequired={true}
+                isDisabled={isPending}
+                errorMessage={''}
+              />
+              <span
+                id={fields.likeKeywords.errorId}
+                className="text-sm text-red-500 break-words"
+              >
+                {fields.likeKeywords.errors}
+              </span>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Modal.Close isDisabled={isPending}>閉じる</Modal.Close>

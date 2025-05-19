@@ -40,7 +40,7 @@ export default async function Home({
   const appealCount = appealsAndTroublesEntry.appeals.count
 
   const promises = Promise.all([
-    getProjects(session.user.id),
+    getProjects(undefined, session.user.id),
     getMissions(session.user.id),
   ])
 
@@ -152,9 +152,9 @@ export default async function Home({
             </>
           }
         >
-          {promises.then(([projects, missions]) => (
+          {promises.then(([projectsResponse, missions]) => (
             <ReportContentInputEntries
-              projects={projects}
+              projects={projectsResponse.projects}
               missions={missions}
             />
           ))}
