@@ -9,11 +9,10 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { UpdateWeeklyReportForm } from '~/features/reports/weekly/components/update-weekly-report-form'
-import { getWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
+import { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
   getNextWeekDates,
-  getYearAndWeek,
   splitDates,
 } from '~/features/reports/weekly/utils/date-utils'
 import { getServerSession } from '~/lib/get-server-session'
@@ -29,10 +28,9 @@ export default async function WeeklyReportIdPage({
     unauthorized()
   }
 
-  const { dates } = await params
+  const { dates, weeklyReportId } = await params
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
-  const { year, week } = getYearAndWeek(nextStartDate)
 
   const { weeklyReportEntry } =
     await weeklyInputCountSearchParamsCache.parse(searchParams)
@@ -41,8 +39,8 @@ export default async function WeeklyReportIdPage({
 
   const projectPromise = getProjects(undefined, session.user.id)
   const missionPromise = getMissions(undefined, session.user.id)
-  const weeklyReportMissionsPromise = getWeeklyReportMissions(
-    { year: year.toString(), week: week.toString() },
+  const weeklyReportMissionsPromise = getWeeklyReportMissionsById(
+    { weeklyReportId },
     session.user.id,
   )
 

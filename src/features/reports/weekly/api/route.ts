@@ -120,6 +120,18 @@ const app = new Hono()
 
     return c.json({ reports, startDate, endDate }, 200)
   })
+  .get('/:weeklyReportId', sessionMiddleware, async (c) => {
+    const { weeklyReportId } = c.req.param()
+
+    const weeklyReport = await db.query.weeklyReports.findFirst({
+      where: eq(weeklyReports.id, weeklyReportId),
+      with: {
+        weeklyReportMissions: true,
+      },
+    })
+
+    return c.json({ weeklyReport }, 200)
+  })
   .get('/current-user/:year/:week', sessionMiddleware, async (c) => {
     const { year, week } = c.req.param()
 
@@ -131,6 +143,26 @@ const app = new Hono()
       ),
       with: {
         weeklyReportMissions: true,
+      },
+    })
+
+    return c.json({ weeklyReport }, 200)
+  })
+  .get('/last-week/:year/:week', sessionMiddleware, async (c) => {
+    const { year, week } = c.req.param()
+
+    const weeklyReport = await db.query.weeklyReports.findFirst({
+      where: and(
+        eq(weeklyReports.userId, c.get('user').id),
+        eq(weeklyReports.year, Number(year)),
+        eq(weeklyReports.week, Number(week)),
+      ),
+      with: {
+        weeklyReportMissions: {
+          with: {
+            mission: true,
+          },
+        },
       },
     })
 
