@@ -2,7 +2,6 @@ import {
   IconPlus,
   IconSearchSketchbook,
   IconSend3,
-  IconTrash,
   IconTriangleExclamation,
 } from '@intentui/icons'
 import Form from 'next/form'
@@ -16,6 +15,7 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { CreateWeeklyReportForm } from '~/features/reports/weekly/components/create-weekly-report-form'
+import { DisConnectLastWeekReportsButton } from '~/features/reports/weekly/components/dis-connect-last-week-reports-button'
 import { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
@@ -72,28 +72,27 @@ export default async function WeeklyReportRegisterPage({
       <Heading level={2}>
         {nextStartDate} 〜 {nextEndDate} の予定を追加
       </Heading>
-      <Form action={`/weekly/list/${dates}/register`}>
-        <input
-          type="hidden"
-          name="isReference"
-          value={isReferenceWithoutReport || !isReference ? 'true' : 'false'}
-        />
-        <Button
-          type="submit"
-          intent={
-            isReferenceWithoutReport || !isReference ? 'primary' : 'outline'
-          }
-        >
-          前週の予定
-          {isReferenceWithoutReport || !isReference ? 'を参照' : 'の参照を解除'}
-          する
-          {isReferenceWithoutReport || !isReference ? (
+      {isReferenceWithoutReport || !isReference ? (
+        <Form action={`/weekly/list/${dates}/register`}>
+          <input type="hidden" name="isReference" value="true" />
+          <Button type="submit">
+            前週の予定
+            {/* {isReferenceWithoutReport || !isReference
+              ? 'を参照'
+              : 'の参照を解除'}
+            する */}
+            を参照する
+            {/* {isReferenceWithoutReport || !isReference ? ( */}
             <IconSearchSketchbook />
-          ) : (
-            <IconTrash />
-          )}
-        </Button>
-      </Form>
+            {/* ) : ( */}
+            {/* <IconTrash /> */}
+            {/* )} */}
+          </Button>
+        </Form>
+      ) : (
+        <DisConnectLastWeekReportsButton />
+      )}
+
       {isReferenceWithoutReport ? (
         <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
           <IconTriangleExclamation className="size-4" />
