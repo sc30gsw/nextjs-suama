@@ -68,7 +68,7 @@
         "db/schema.ts",
         "auth-schema.ts",
         "auth-client.ts",
-        "./src/features/reports/weekly/components/weekly-reports-card.tsx"
+        "./src/features/reports/weekly/components/weekly-reports-cards.tsx"
       ],
       "linter": {
         "rules": {

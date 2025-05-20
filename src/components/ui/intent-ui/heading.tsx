@@ -9,6 +9,7 @@ const headingStyles = tv({
       2: 'font-semibold text-lg sm:text-xl',
       3: 'font-semibold text-base sm:text-lg',
       4: 'font-semibold text-base',
+      5: 'font-semibold text-sm',
     },
     tracking: {
       tighter: 'tracking-tighter',
@@ -20,8 +21,8 @@ const headingStyles = tv({
     },
   },
 })
-type HeadingType = { level?: 1 | 2 | 3 | 4 } & ComponentPropsWithoutRef<
-  'h1' | 'h2' | 'h3' | 'h4'
+type HeadingType = { level?: 1 | 2 | 3 | 4 | 5 } & ComponentPropsWithoutRef<
+  'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 >
 
 interface HeadingProps extends HeadingType {

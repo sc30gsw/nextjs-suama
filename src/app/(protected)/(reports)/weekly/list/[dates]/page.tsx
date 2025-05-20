@@ -4,7 +4,7 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { WeeklyRegisterLink } from '~/features/reports/weekly/components/weekly-register-link'
 import { WeeklyReportsBackToTopButton } from '~/features/reports/weekly/components/weekly-reports-back-to-top-button'
-import { WeeklyReportsCard } from '~/features/reports/weekly/components/weekly-reports-card'
+import { WeeklyReportsContainer } from '~/features/reports/weekly/components/weekly-reports-container'
 import {
   getYearAndWeek,
   splitDates,
@@ -36,8 +36,12 @@ export default async function WeeklyReportsPage({
           <WeeklyRegisterLink dates={dates} userId={session.user.id} />
         </Suspense>
       </div>
-      <div className="flex flex-col gap-4">
-        <WeeklyReportsCard userId={session.user.id} year={year} week={week} />
+      <div className="flex flex-col lg:flex-row gap-6">
+        <WeeklyReportsContainer
+          userId={session.user.id}
+          year={year}
+          week={week}
+        />
       </div>
       <WeeklyReportsBackToTopButton />
     </div>

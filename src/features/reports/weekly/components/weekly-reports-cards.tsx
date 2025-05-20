@@ -1,5 +1,3 @@
-'use client'
-
 import { Virtuoso } from 'react-virtuoso'
 import { flatMap, pipe, reduce } from 'remeda'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -9,38 +7,25 @@ import { Table } from '~/components/ui/intent-ui/table'
 import { DailyReportsInWeeklyReportListTable } from '~/features/reports/weekly/components/daily-reports-in-weekly-report-list-table'
 import { LoadMoreButton } from '~/features/reports/weekly/components/load-more-button'
 import { WeeklyIssuesAndSolutionsTable } from '~/features/reports/weekly/components/weekly-issues-and-solutions-table'
-import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsTable } from '~/features/reports/weekly/components/weekly-reports-table'
-import { useWeeklyReportsQuery } from '~/features/reports/weekly/hooks/use-weekly-reports-query'
+import type { useWeeklyReportsQuery } from '~/features/reports/weekly/hooks/use-weekly-reports-query'
 
-type WeeklyReportsCardProps = {
-  userId: string
-  year: number
-  week: number
+type WeeklyReportsCardsProps = {
+  data: Exclude<ReturnType<typeof useWeeklyReportsQuery>['data'], undefined>
+  hasNextPage: boolean
+  isFetchingNextPage: boolean
+  loadMore: () => void
 }
 
-export function WeeklyReportsCard({
-  userId,
-  year,
-  week,
-}: WeeklyReportsCardProps) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useWeeklyReportsQuery({ year, week }, userId)
-
-  if (isLoading || !data) {
-    return <WeeklyReportsCardLoading />
-  }
-
-  const loadMore = () => {
-    if (hasNextPage) {
-      fetchNextPage()
-    }
-  }
-
+export function WeeklyReportsCards({
+  data,
+  hasNextPage,
+  isFetchingNextPage,
+  loadMore,
+}: WeeklyReportsCardsProps) {
   return (
     <Virtuoso
       useWindowScroll={true}
-      // style={{ height: '100dvh', paddingBottom: 0 }}
       className="min-h-dvh pb-0"
       data={data.pages.flatMap((page) => page.reports)}
       itemContent={(_, report) => {
@@ -69,7 +54,7 @@ export function WeeklyReportsCard({
         )
 
         return (
-          <Card className="mt-2">
+          <Card id={`user-${report.user.id}`} className="mt-2">
             <Card.Header>
               {/* TODO: 実際のデータにする */}
               <Card.Title className="flex items-center gap-2">
