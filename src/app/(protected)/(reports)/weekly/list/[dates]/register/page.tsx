@@ -1,4 +1,11 @@
-import { IconPlus, IconSend3 } from '@intentui/icons'
+import {
+  IconPlus,
+  IconSearchSketchbook,
+  IconSend3,
+  IconTrash,
+  IconTriangleExclamation,
+} from '@intentui/icons'
+import Form from 'next/form'
 import { unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
@@ -9,9 +16,11 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { CreateWeeklyReportForm } from '~/features/reports/weekly/components/create-weekly-report-form'
+import { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
   getNextWeekDates,
+  getYearAndWeek,
   splitDates,
 } from '~/features/reports/weekly/utils/date-utils'
 
@@ -32,8 +41,21 @@ export default async function WeeklyReportRegisterPage({
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
 
-  const { weeklyReportEntry } =
+  const { weeklyReportEntry, isReference } =
     await weeklyInputCountSearchParamsCache.parse(searchParams)
+
+  let lastWeeklyReportMission:
+    | Awaited<ReturnType<typeof getLastWeeklyReportMissions>>
+    | undefined
+
+  if (isReference) {
+    const { year, week } = getYearAndWeek(startDate)
+
+    lastWeeklyReportMission = await getLastWeeklyReportMissions(
+      { year: year.toString(), week: week.toString() },
+      session.user.id,
+    )
+  }
 
   const count = weeklyReportEntry.count
 
@@ -47,7 +69,25 @@ export default async function WeeklyReportRegisterPage({
       <Heading level={2}>
         {nextStartDate} 〜 {nextEndDate} の予定を追加
       </Heading>
+      <Form action={`/weekly/list/${dates}/register`}>
+        <input
+          type="hidden"
+          name="isReference"
+          value={isReference ? 'false' : 'true'}
+        />
+        <Button type="submit" intent={isReference ? 'outline' : 'primary'}>
+          前週の予定{isReference ? 'の参照を解除' : 'を参照'}する
+          {isReference ? <IconTrash /> : <IconSearchSketchbook />}
+        </Button>
+      </Form>
+      {isReference && !lastWeeklyReportMission?.weeklyReport ? (
+        <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
+          <IconTriangleExclamation className="size-4" />
+          <p>前週の予定が見つかりませんでした。</p>
+        </div>
+      ) : null}
       <Suspense
+        key={JSON.stringify(isReference)}
         fallback={
           <>
             <Button size="square-petite" className="rounded-full mt-4">
@@ -83,7 +123,10 @@ export default async function WeeklyReportRegisterPage({
           </>
         }
       >
-        <CreateWeeklyReportForm promises={promises} />
+        <CreateWeeklyReportForm
+          promises={promises}
+          lastWeeklyReportMissions={lastWeeklyReportMission}
+        />
       </Suspense>
     </div>
   )
