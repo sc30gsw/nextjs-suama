@@ -4,7 +4,7 @@ import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
-import { clients, missions } from '~/db/schema'
+import { missions, projects } from '~/db/schema'
 import { createMissionInputSchema } from '~/features/report-contexts/missions/types/schemas/create-mission-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
 import { db } from '~/index'
@@ -20,7 +20,7 @@ export async function createMissionAction(_: unknown, formData: FormData) {
 
   try {
     const project = await db.query.projects.findFirst({
-      where: eq(clients.id, submission.value.projectId),
+      where: eq(projects.id, submission.value.projectId),
     })
 
     if (!project) {
