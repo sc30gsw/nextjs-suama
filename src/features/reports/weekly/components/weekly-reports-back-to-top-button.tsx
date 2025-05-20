@@ -7,17 +7,18 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { cn } from '~/utils/classes'
 
 export function WeeklyReportsBackToTopButton() {
-  const [isVisible, setIsVisible] = useToggle(false)
+  const [isVisible, toggle] = useToggle(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsVisible(scrollY > 300)
+      toggle(scrollY > 300)
     }
 
     addEventListener('scroll', handleScroll)
     return () => removeEventListener('scroll', handleScroll)
-  }, [setIsVisible])
+  }, [toggle])
 
+  // react-scrollだとカクつくため
   const scrollToTop = () => {
     scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -27,7 +28,7 @@ export function WeeklyReportsBackToTopButton() {
       size="square-petite"
       onPress={scrollToTop}
       className={cn(
-        'fixed bottom-6 right-6 z-50 p-3 rounded-full bg-primary text-white shadow-lg transition-opacity',
+        'fixed bottom-6 right-6 lg:right-80 z-50 p-3 rounded-full bg-primary text-white shadow-lg transition-opacity',
         isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none',
       )}
     >
