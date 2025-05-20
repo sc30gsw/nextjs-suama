@@ -2,7 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { GET_WEEKLY_REPORTS_CACHE_KEY } from '~/constants/cache-keys'
 import { getWeeklyReport } from '~/features/reports/weekly/client/fetcher'
 
-const LIMIT = 10
+const LIMIT = 30
 
 export function useWeeklyReportsQuery(
   params: Record<'year' | 'week', number>,
