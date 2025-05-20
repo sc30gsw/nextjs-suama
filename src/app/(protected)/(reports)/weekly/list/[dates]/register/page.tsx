@@ -64,6 +64,9 @@ export default async function WeeklyReportRegisterPage({
 
   const promises = Promise.all([projectPromise, missionPromise])
 
+  const isReferenceWithoutReport =
+    isReference && !lastWeeklyReportMission?.weeklyReport
+
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
       <Heading level={2}>
@@ -73,14 +76,25 @@ export default async function WeeklyReportRegisterPage({
         <input
           type="hidden"
           name="isReference"
-          value={isReference ? 'false' : 'true'}
+          value={isReferenceWithoutReport || !isReference ? 'true' : 'false'}
         />
-        <Button type="submit" intent={isReference ? 'outline' : 'primary'}>
-          前週の予定{isReference ? 'の参照を解除' : 'を参照'}する
-          {isReference ? <IconTrash /> : <IconSearchSketchbook />}
+        <Button
+          type="submit"
+          intent={
+            isReferenceWithoutReport || !isReference ? 'primary' : 'outline'
+          }
+        >
+          前週の予定
+          {isReferenceWithoutReport || !isReference ? 'を参照' : 'の参照を解除'}
+          する
+          {isReferenceWithoutReport || !isReference ? (
+            <IconSearchSketchbook />
+          ) : (
+            <IconTrash />
+          )}
         </Button>
       </Form>
-      {isReference && !lastWeeklyReportMission?.weeklyReport ? (
+      {isReferenceWithoutReport ? (
         <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
           <IconTriangleExclamation className="size-4" />
           <p>前週の予定が見つかりませんでした。</p>

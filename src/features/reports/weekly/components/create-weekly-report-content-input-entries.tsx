@@ -5,7 +5,7 @@ import {
   useInputControl,
 } from '@conform-to/react'
 import type { InferResponseType } from 'hono'
-import { useQueryStates } from 'nuqs'
+import { parseAsBoolean, parseAsJson, useQueryStates } from 'nuqs'
 import { type JSX, useState } from 'react'
 import type { Key } from 'react-aria-components'
 import { useFormStatus } from 'react-dom'
@@ -13,17 +13,24 @@ import { filter, find, pipe } from 'remeda'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import type { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 import type {
   CreateWeeklyReportFormSchema,
   CreateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
-import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+import {
+  weeklyInputCountSearchParamsParsers,
+  weeklyReportStateSchema,
+} from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 type CreateWeeklyReportContentInputEntriesProps = {
   id?: string
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
   missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
+  lastWeeklyReportMissions?: Awaited<
+    ReturnType<typeof getLastWeeklyReportMissions>
+  >
   formId: string
   name: FieldName<CreateWeeklyReportSchema, CreateWeeklyReportFormSchema>
   removeButton: JSX.Element
@@ -33,6 +40,7 @@ export function CreateWeeklyReportContentInputEntries({
   id,
   projects,
   missions,
+  lastWeeklyReportMissions,
   formId,
   name,
   removeButton,
@@ -55,8 +63,31 @@ export function CreateWeeklyReportContentInputEntries({
     missionInput.value ?? null,
   )
 
+  const initialWeeklyInputCountSearchParamsParsers =
+    lastWeeklyReportMissions?.weeklyReport
+      ? {
+          weeklyReportEntry: parseAsJson(
+            weeklyReportStateSchema.parse,
+          ).withDefault({
+            count:
+              lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.length,
+            entries:
+              lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.map(
+                (weeklyReportMission) => ({
+                  id: weeklyReportMission.id,
+                  project: weeklyReportMission.mission.projectId,
+                  mission: weeklyReportMission.missionId,
+                  hours: weeklyReportMission.hours,
+                  content: weeklyReportMission.workContent,
+                }),
+              ),
+          }),
+          isReference: parseAsBoolean.withDefault(false),
+        }
+      : weeklyInputCountSearchParamsParsers
+
   const [, setWeeklyReportEntry] = useQueryStates(
-    weeklyInputCountSearchParamsParsers,
+    initialWeeklyInputCountSearchParamsParsers,
     {
       history: 'push',
       shallow: false,

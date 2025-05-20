@@ -30,6 +30,7 @@ import {
   weeklyInputCountSearchParamsParsers,
   weeklyReportStateSchema,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+
 import {
   getNextWeekDates,
   getYearAndWeek,
@@ -265,6 +266,7 @@ export function CreateWeeklyReportForm({
               name={weeklyReport.name}
               projects={projectsResponse.projects}
               missions={missionsResponse.missions}
+              lastWeeklyReportMissions={lastWeeklyReportMissions}
               removeButton={
                 <Button
                   size="square-petite"
