@@ -15,14 +15,8 @@ export const { Root, ...Confirm } = createCallable<
         <Modal.Description>{message}</Modal.Description>
       </Modal.Header>
       <Modal.Footer className="pt-2">
-        <Modal.Close>Cancel</Modal.Close>
-        <Button
-          intent="secondary"
-          onPress={() => call.end(true)}
-          className="w-24 text-white bg-zinc-900 hover:bg-zinc-950 data-hovered:bg-zinc-800/90 data-pressed:bg-zinc-800/90"
-        >
-          Confirm
-        </Button>
+        <Modal.Close>閉じる</Modal.Close>
+        <Button onPress={() => call.end(true)}>実行する</Button>
       </Modal.Footer>
     </Modal.Content>
   </Modal>

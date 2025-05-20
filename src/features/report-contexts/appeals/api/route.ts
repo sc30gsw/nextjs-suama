@@ -17,7 +17,14 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
 
   const todoList = await upfetchForDummy<Response>('/todos')
 
-  return c.json({ ...todoList, appeals: todoList.todos }, 200)
+  const appeals = todoList.todos.map((todo) => ({
+    id: crypto.randomUUID(),
+    name: todo.todo,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }))
+
+  return c.json({ ...todoList, appeals }, 200)
 })
 
 export default app

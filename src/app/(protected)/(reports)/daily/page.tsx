@@ -10,7 +10,7 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getAppeals } from '~/features/report-contexts/appeals/server/fetcher'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
-import { getTroubles } from '~/features/report-contexts/troubles/server/fetcher'
+import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { CreateDailyForm } from '~/features/reports/daily/components/create-daily-form'
 import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/components/report-appeal-and-troubles-input-entries'
 
@@ -76,9 +76,11 @@ export default async function Home({
               </>
             }
           >
-            {getTroubles(session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<TroubleResponse['troubles']>
-                items={res}
+            {getTroubleCategories(undefined, session.user.id).then((res) => (
+              <ReportAppealAndTroubleInputEntries<
+                TroubleResponse['troubleCategories']
+              >
+                items={res.troubleCategories}
                 kind="trouble"
               />
             ))}

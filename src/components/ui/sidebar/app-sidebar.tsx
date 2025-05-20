@@ -14,6 +14,7 @@ import {
   IconBuildings,
   IconCalendarEvent,
   IconCalendarUser,
+  IconHelpTriangle,
   IconList,
   IconReport,
 } from '@tabler/icons-react'
@@ -168,17 +169,13 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
             <SidebarDisclosure id={8}>
               <SidebarDisclosureTrigger>
-                <IconPackage />
+                <IconHelpTriangle stroke={1} size={20} className="mr-1" />
                 <SidebarLabel>困っていることカテゴリー</SidebarLabel>
               </SidebarDisclosureTrigger>
               <SidebarDisclosurePanel>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
+                <SidebarItem href="/trouble/list" tooltip="Warehouse">
+                  <IconHelpTriangle stroke={1} size={20} className="mr-1" />
                   <SidebarLabel>カテゴリー一覧</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem href="#" tooltip="Warehouse">
-                  <IconBuilding />
-                  <SidebarLabel>カテゴリー登録</SidebarLabel>
                 </SidebarItem>
               </SidebarDisclosurePanel>
             </SidebarDisclosure>

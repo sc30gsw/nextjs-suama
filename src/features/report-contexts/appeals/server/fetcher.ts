@@ -18,5 +18,5 @@ export async function getAppeals(userId?: string) {
     },
   })
 
-  return res.todos
+  return res.appeals
 }
