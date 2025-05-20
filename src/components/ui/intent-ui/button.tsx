@@ -46,6 +46,7 @@ const buttonStyles = tv({
       large:
         'h-11 px-4.5 text-base *:data-[slot=icon]:mx-[-1.5px] sm:*:data-[slot=icon]:size-5 lg:text-base/7',
       'square-petite': 'size-9 shrink-0',
+      'square-petite-small': 'size-7 shrink-0',
     },
     shape: {
       square: 'rounded-lg',
@@ -68,7 +69,13 @@ const buttonStyles = tv({
 
 interface ButtonProps extends ButtonPrimitiveProps {
   intent?: 'primary' | 'secondary' | 'danger' | 'warning' | 'outline' | 'plain'
-  size?: 'medium' | 'large' | 'square-petite' | 'extra-small' | 'small'
+  size?:
+    | 'medium'
+    | 'large'
+    | 'square-petite'
+    | 'extra-small'
+    | 'small'
+    | 'square-petite-small'
   shape?: 'square' | 'circle'
   ref?: Ref<HTMLButtonElement>
 }
