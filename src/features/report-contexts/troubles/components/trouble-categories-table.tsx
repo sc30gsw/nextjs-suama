@@ -6,19 +6,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { Table } from '~/components/ui/intent-ui/table'
 import { EditTroubleCategoryModal } from '~/features/report-contexts/troubles/components/edit-trouble-category-modal'
 import { TroubleCategoryDeleteButton } from '~/features/report-contexts/troubles/components/trouble-category-delete-button'
-import type { client } from '~/lib/rpc'
+import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type TroubleCategoryTableData = Pick<
-  InferResponseType<
-    typeof client.api.troubles.categories.$get,
-    200
-  >['troubleCategories'][number],
+  TroubleCategoriesResponse['troubleCategories'][number],
   'id' | 'name'
 > &
   Record<'operate', string>
@@ -53,11 +49,9 @@ const COLUMNS = [
   }),
 ]
 
-type TroubleCategoriesTableProps = {
-  data: InferResponseType<typeof client.api.troubles.categories.$get, 200>
-}
-
-export function TroubleCategoriesTable({ data }: TroubleCategoriesTableProps) {
+export function TroubleCategoriesTable({
+  data,
+}: Record<'data', TroubleCategoriesResponse>) {
   const initialData: TroubleCategoryTableData[] = data.troubleCategories.map(
     (category) => ({
       id: category.id,
@@ -99,7 +93,7 @@ export function TroubleCategoriesTable({ data }: TroubleCategoriesTableProps) {
       </Table.Header>
       <Table.Body>
         {table.getRowModel().rows.map((row) => (
-          <Table.Row key={row.id}>
+          <Table.Row key={row.original.id}>
             {row.getVisibleCells().map((cell) => (
               <Table.Cell key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

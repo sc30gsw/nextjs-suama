@@ -3,23 +3,23 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
-import { deleteTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/delete-trouble-category-action'
-import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
+import { deleteAppealCategoryAction } from '~/features/report-contexts/appeals/actions/delete-appeal-category-action'
+import type { AppealCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { Confirm } from '~/hooks/use-confirm'
 
-type TroubleCategoryDeleteButtonProps = Pick<
-  TroubleCategoriesResponse['troubleCategories'][number],
+type AppealCategoryDeleteButtonProps = Pick<
+  AppealCategoriesResponse['appealCategories'][number],
   'id'
 >
 
-export function TroubleCategoryDeleteButton({
+export function AppealCategoryDeleteButton({
   id,
-}: TroubleCategoryDeleteButtonProps) {
+}: AppealCategoryDeleteButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
-      title: '困っていることカテゴリーを削除しますか?',
+      title: 'アピールポイントカテゴリーを削除しますか?',
       message: 'この操作は取り消せません。',
     })
 
@@ -29,16 +29,16 @@ export function TroubleCategoryDeleteButton({
 
     startTransition(async () => {
       try {
-        const result = await deleteTroubleCategoryAction(id)
+        const result = await deleteAppealCategoryAction(id)
 
         if (result.status === 'error') {
-          toast.error('困っていることカテゴリーの削除に失敗しました')
+          toast.error('アピールポイントカテゴリーの削除に失敗しました')
           return
         }
 
-        toast.success('困っていることカテゴリーの削除に成功しました')
+        toast.success('アピールポイントカテゴリーの削除に成功しました')
       } catch (_) {
-        toast.error('困っていることカテゴリーの削除に失敗しました')
+        toast.error('アピールポイントカテゴリーの削除に失敗しました')
       }
     })
   }

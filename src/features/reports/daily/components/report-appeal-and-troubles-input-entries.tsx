@@ -7,20 +7,24 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { Textarea } from '~/components/ui/intent-ui/textarea'
 import type {
-  AppealResponse,
-  TroubleResponse,
+  AppealCategoriesResponse,
+  TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 
 type ReportAppealAndTroublesInputEntriesProps<
-  T extends AppealResponse['appeals'] | TroubleResponse['troubleCategories'],
+  T extends
+    | AppealCategoriesResponse['appealCategories']
+    | TroubleCategoriesResponse['troubleCategories'],
 > = {
   items: T
   kind: 'appeal' | 'trouble'
 }
 
 export function ReportAppealAndTroubleInputEntries<
-  T extends AppealResponse['appeals'] | TroubleResponse['troubleCategories'],
+  T extends
+    | AppealCategoriesResponse['appealCategories']
+    | TroubleCategoriesResponse['troubleCategories'],
 >({ items, kind }: ReportAppealAndTroublesInputEntriesProps<T>) {
   const [{ appealsAndTroublesEntry }, setAppealsAndTroublesState] =
     useQueryStates(inputCountSearchParamsParsers, {
@@ -220,7 +224,7 @@ export function ReportAppealAndTroubleInputEntries<
             className="col-span-3"
           />
           <ComboBox
-            label="工夫したこと"
+            label="アピールポイント"
             placeholder="カテゴリーを選択"
             selectedKey={entry.item}
             onSelectionChange={(key) => handleChangeItem(entry.id, key)}

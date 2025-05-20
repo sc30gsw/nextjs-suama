@@ -7,7 +7,7 @@ import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
-import { getAppeals } from '~/features/report-contexts/appeals/server/fetcher'
+import { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
@@ -16,8 +16,8 @@ import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/com
 
 import { ReportContentInputEntries } from '~/features/reports/daily/components/report-content-input-entries'
 import type {
-  AppealResponse,
-  TroubleResponse,
+  AppealCategoriesResponse,
+  TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsCache } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
@@ -78,7 +78,7 @@ export default async function Home({
           >
             {getTroubleCategories(undefined, session.user.id).then((res) => (
               <ReportAppealAndTroubleInputEntries<
-                TroubleResponse['troubleCategories']
+                TroubleCategoriesResponse['troubleCategories']
               >
                 items={res.troubleCategories}
                 kind="trouble"
@@ -88,7 +88,7 @@ export default async function Home({
         }
         appealHeadings={
           <div className="flex items-center mt-4">
-            <Heading level={3}>工夫したこと</Heading>
+            <Heading level={3}>アピールポイント</Heading>
           </div>
         }
         appeals={
@@ -114,9 +114,11 @@ export default async function Home({
               </>
             }
           >
-            {getAppeals(session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<AppealResponse['appeals']>
-                items={res}
+            {getAppealCategories(undefined, session.user.id).then((res) => (
+              <ReportAppealAndTroubleInputEntries<
+                AppealCategoriesResponse['appealCategories']
+              >
+                items={res.appealCategories}
                 kind="appeal"
               />
             ))}

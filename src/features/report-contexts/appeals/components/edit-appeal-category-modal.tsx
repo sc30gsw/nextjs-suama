@@ -9,44 +9,44 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { updateTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/update-trouble-category-action'
+import { updateAppealCategoryAction } from '~/features/report-contexts/appeals/actions/update-appeal-category-action'
 import {
-  type EditTroubleCategoryInputSchema,
-  editTroubleCategoryInputSchema,
-} from '~/features/report-contexts/troubles/types/schemas/edit-trouble-category-input-schema'
-import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
+  type EditAppealCategoryInputSchema,
+  editAppealCategoryInputSchema,
+} from '~/features/report-contexts/appeals/types/schemas/edit-appeal-category-input-schema'
+import type { AppealCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-type EditTroubleCategoryModalProps = Pick<
-  TroubleCategoriesResponse['troubleCategories'][number],
+type EditAppealCategoryModalProps = Pick<
+  AppealCategoriesResponse['appealCategories'][number],
   'id' | 'name'
 >
 
-export function EditTroubleCategoryModal({
+export function EditAppealCategoryModal({
   id,
   name,
-}: EditTroubleCategoryModalProps) {
+}: EditAppealCategoryModalProps) {
   const [open, toggle] = useToggle(false)
 
   const [lastResult, action, isPending] = useActionState(
-    withCallbacks(updateTroubleCategoryAction, {
+    withCallbacks(updateAppealCategoryAction, {
       onSuccess() {
-        toast.success('困っていることカテゴリー更新に成功しました')
+        toast.success('アピールポイントことカテゴリー更新に成功しました')
         toggle(false)
       },
       onError() {
-        toast.error('困っていることカテゴリーの更新に失敗しました')
+        toast.error('アピールポイントカテゴリーの更新に失敗しました')
       },
     }),
     null,
   )
 
-  const [form, fields] = useSafeForm<EditTroubleCategoryInputSchema>({
-    constraint: getZodConstraint(editTroubleCategoryInputSchema),
+  const [form, fields] = useSafeForm<EditAppealCategoryInputSchema>({
+    constraint: getZodConstraint(editAppealCategoryInputSchema),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: editTroubleCategoryInputSchema })
+      return parseWithZod(formData, { schema: editAppealCategoryInputSchema })
     },
     defaultValue: {
       id,
@@ -70,9 +70,9 @@ export function EditTroubleCategoryModal({
       </Button>
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
-          <Modal.Title>困っていることカテゴリーを編集する</Modal.Title>
+          <Modal.Title>アピールポイントカテゴリーを編集する</Modal.Title>
           <Modal.Description>
-            選択した困っていることのカテゴリーの情報を編集します。
+            選択したアピールポイントのカテゴリーの情報を編集します。
           </Modal.Description>
         </Modal.Header>
         <Form {...getFormProps(form)} action={action}>
