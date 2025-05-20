@@ -1,5 +1,4 @@
 import { IconTrashEmpty } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -7,13 +6,9 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { deleteTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/delete-trouble-category-action'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { Confirm } from '~/hooks/use-confirm'
-import type { client } from '~/lib/rpc'
 
 type TroubleCategoryDeleteButtonProps = Pick<
-  InferResponseType<
-    typeof client.api.troubles.categories.$get,
-    200
-  >['troubleCategories'][number],
+  TroubleCategoriesResponse['troubleCategories'][number],
   'id'
 >
 

@@ -1,7 +1,6 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
@@ -17,9 +16,6 @@ import {
 } from '~/features/report-contexts/troubles/types/schemas/edit-trouble-category-input-schema'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import { withCallbacks } from '~/utils/with-callbacks'
-import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditTroubleCategoryModalProps = Pick<

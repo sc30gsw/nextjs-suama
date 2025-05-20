@@ -6,20 +6,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { Table } from '~/components/ui/intent-ui/table'
 import { EditTroubleCategoryModal } from '~/features/report-contexts/troubles/components/edit-trouble-category-modal'
 import { TroubleCategoryDeleteButton } from '~/features/report-contexts/troubles/components/trouble-category-delete-button'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
-import type { client } from '~/lib/rpc'
-import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type TroubleCategoryTableData = Pick<
-  InferResponseType<
-    typeof client.api.troubles.categories.$get,
-    200
+  TroubleCategoriesResponse['troubleCategories'][number],
   'id' | 'name'
 > &
   Record<'operate', string>

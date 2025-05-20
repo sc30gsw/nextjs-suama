@@ -78,7 +78,7 @@ export default async function Home({
           >
             {getTroubleCategories(undefined, session.user.id).then((res) => (
               <ReportAppealAndTroubleInputEntries<
-                TroubleResponse['troubleCategories']
+                TroubleCategoriesResponse['troubleCategories']
               >
                 items={res.troubleCategories}
                 kind="trouble"

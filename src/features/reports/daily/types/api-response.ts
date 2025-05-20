@@ -6,7 +6,7 @@ export type AppealCategoriesResponse = InferResponseType<
   200
 >
 
-export type TroubleResponse = InferResponseType<
+export type TroubleCategoriesResponse = InferResponseType<
   typeof client.api.troubles.categories.$get,
   200
 >
