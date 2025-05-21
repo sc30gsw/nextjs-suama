@@ -2,15 +2,16 @@
 
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { IconTriangleExclamation } from '@intentui/icons'
+import { IconKey, IconTriangleExclamation } from '@intentui/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { type ReactNode, useActionState } from 'react'
+import { type ReactNode, useActionState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { signInAction } from '~/features/auth/actions/sign-in-action'
 import {
@@ -19,6 +20,7 @@ import {
 } from '~/features/auth/types/schemas/sing-in-input-schema'
 
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { authClient } from '~/lib/auth-client'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function SignInForm({
@@ -26,6 +28,7 @@ export function SignInForm({
   notHaveAccountArea,
 }: { children: ReactNode; notHaveAccountArea: ReactNode }) {
   const router = useRouter()
+  const [pending, startTransition] = useTransition()
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(signInAction, {
@@ -79,7 +82,7 @@ export function SignInForm({
             <TextField
               {...getInputProps(fields.email, { type: 'email' })}
               placeholder="メールアドレス"
-              isDisabled={isPending}
+              isDisabled={isPending || pending}
               errorMessage={''}
             />
             <span id={fields.email.errorId} className="text-sm text-red-500">
@@ -90,7 +93,7 @@ export function SignInForm({
             <TextField
               {...getInputProps(fields.password, { type: 'password' })}
               placeholder="パスワード"
-              isDisabled={isPending}
+              isDisabled={isPending || pending}
               errorMessage={''}
             />
             <span id={fields.password.errorId} className="text-sm text-red-500">
@@ -105,16 +108,18 @@ export function SignInForm({
           </div>
         </Card.Content>
         <Card.Footer className="flex flex-col items-start gap-y-4 w-full">
-          <Button
-            type="submit"
-            className="w-full relative"
-            isDisabled={isPending}
-          >
-            サインイン
-            {isPending && <Loader className="absolute top-3 right-2" />}
-          </Button>
-          {/* ? Social Connectionによる認証が必要な場合追加 */}
-          {/* <Button
+          <div className="w-full">
+            <Button
+              type="submit"
+              className="w-full relative"
+              isDisabled={isPending || pending}
+            >
+              サインイン
+              {isPending && <Loader className="absolute top-3 right-2" />}
+            </Button>
+
+            {/* ? Social Connectionによる認証が必要な場合追加 */}
+            {/* <Button
             intent="secondary"
             className="w-full relative"
             isDisabled={isPending || isPasskeyPending || isOauthSignInPending}
@@ -134,7 +139,35 @@ export function SignInForm({
               <Loader className="absolute top-3 right-2" />
             )}
           </Button> */}
-          {notHaveAccountArea}
+            {notHaveAccountArea}
+          </div>
+          <Separator orientation="horizontal" />
+          <Button
+            intent="secondary"
+            isDisabled={isPending || pending}
+            onPress={() => {
+              startTransition(async () => {
+                const data = await authClient.signIn.passkey()
+
+                if (data?.error) {
+                  toast.error('サインインに失敗しました')
+
+                  return
+                }
+
+                toast.success('サインインしました')
+                router.push('/daily')
+              })
+            }}
+            className="w-full"
+          >
+            パスキーでサインイン
+            {pending ? (
+              <Loader className="absolute top-3 right-2" />
+            ) : (
+              <IconKey />
+            )}
+          </Button>
         </Card.Footer>
       </Form>
     </Card>
