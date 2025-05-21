@@ -17,11 +17,15 @@ const ITEMS = {
     path: '/register',
     name: '週報登録',
   },
+  weeklyEdit: {
+    path: '/edit',
+    name: '週報編集',
+  },
 } as const satisfies Record<string, Record<'path' | 'name', string>>
 
 export default function WeeklyBreadcrumbsDefaultPage() {
   const pathname = usePathname()
-  const params = useParams<Record<'dates', string>>()
+  const params = useParams<Record<'dates' | 'weeklyReportId', string>>()
 
   const items: Record<'path' | 'name', string>[] = []
 
@@ -41,8 +45,17 @@ export default function WeeklyBreadcrumbsDefaultPage() {
 
   if (pathname.endsWith(ITEMS.weeklyRegister.path)) {
     items.push({
-      name: ITEMS.weeklyList.name,
-      path: `${ITEMS.weeklyList.path}/${params.dates}`,
+      name: ITEMS.weeklyRegister.name,
+      path: `${ITEMS.weeklyList.path}/${params.dates}/${
+        ITEMS.weeklyRegister.path
+      }`,
+    })
+  }
+
+  if (pathname.includes(ITEMS.weeklyEdit.path)) {
+    items.push({
+      name: ITEMS.weeklyEdit.name,
+      path: `${ITEMS.weeklyList.path}/${params.dates}/${ITEMS.weeklyEdit.path}/${params.weeklyReportId}`,
     })
   }
 

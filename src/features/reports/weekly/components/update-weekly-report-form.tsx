@@ -9,8 +9,9 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { useParams, useRouter } from 'next/navigation'
-import { useQueryStates } from 'nuqs'
+import { parseAsJson, useQueryStates } from 'nuqs'
 import { use, useActionState } from 'react'
+import { find, pipe } from 'remeda'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Form } from '~/components/ui/intent-ui/form'
@@ -19,43 +20,61 @@ import { Separator } from '~/components/ui/intent-ui/separator'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
-import { createWeeklyReportAction } from '~/features/reports/weekly/actions/create-weekly-report-action'
-import { CreateWeeklyReportContentInputEntries } from '~/features/reports/weekly/components/create-weekly-report-content-input-entries'
+import { updateWeeklyReportAction } from '~/features/reports/weekly/actions/update-weekly-report-action'
+import { UpdateWeeklyReportContentInputEntries } from '~/features/reports/weekly/components/update-weekly-report-content-input-entries'
+import type { getWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 import {
-  type CreateWeeklyReportFormSchema,
-  createWeeklyReportFormSchema,
-} from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
-import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
-import {
-  getNextWeekDates,
-  getYearAndWeek,
-  splitDates,
-} from '~/features/reports/weekly/utils/date-utils'
+  type UpdateWeeklyReportFormSchema,
+  updateWeeklyReportFormSchema,
+} from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
+import { weeklyReportStateSchema } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-type CreateWeeklyReportFormProps = {
+type UpdateWeeklyReportFormProps = {
   promises: Promise<
     [
       Awaited<ReturnType<typeof getProjects>>,
       Awaited<ReturnType<typeof getMissions>>,
+      Awaited<ReturnType<typeof getWeeklyReportMissions>>,
     ]
   >
 }
 
-export function CreateWeeklyReportForm({
+export function UpdateWeeklyReportForm({
   promises,
-}: CreateWeeklyReportFormProps) {
-  const [projectsResponse, missionsResponse] = use(promises)
+}: UpdateWeeklyReportFormProps) {
+  const [projectsResponse, missionsResponse, weeklyReportMissions] =
+    use(promises)
 
   const router = useRouter()
   const { dates } = useParams<Record<'dates', string>>()
-  const { startDate, endDate } = splitDates(dates)
-  const { nextStartDate } = getNextWeekDates(startDate, endDate)
-  const { year, week } = getYearAndWeek(nextStartDate)
 
   const [{ weeklyReportEntry }, setWeeklyReportEntry] = useQueryStates(
-    weeklyInputCountSearchParamsParsers,
+    {
+      weeklyReportEntry: parseAsJson(weeklyReportStateSchema.parse).withDefault(
+        {
+          count: weeklyReportMissions.weeklyReport.weeklyReportMissions.length,
+          entries: weeklyReportMissions.weeklyReport.weeklyReportMissions.map(
+            (entry) => ({
+              id: entry.id,
+              project: pipe(
+                projectsResponse.projects,
+                find((project) =>
+                  project.missions.some(
+                    (mission) => mission.id === entry.missionId,
+                  ),
+                ),
+                (project) => project?.id ?? '',
+              ),
+              mission: entry.missionId,
+              content: entry.workContent,
+              hours: entry.hours,
+            }),
+          ),
+        },
+      ),
+    },
     {
       history: 'push',
       shallow: false,
@@ -63,9 +82,9 @@ export function CreateWeeklyReportForm({
   )
 
   const [lastResult, action, isPending] = useActionState(
-    withCallbacks(createWeeklyReportAction, {
+    withCallbacks(updateWeeklyReportAction, {
       onSuccess() {
-        toast.success('週報の作成に成功しました')
+        toast.success('週報の更新に成功しました')
         router.push(`/weekly/list/${dates}`)
       },
       onError(result) {
@@ -83,21 +102,20 @@ export function CreateWeeklyReportForm({
           }
         }
 
-        toast.error('週報の作成に失敗しました')
+        toast.error('週報の更新に失敗しました')
       },
     }),
     null,
   )
 
-  const [form, fields] = useSafeForm<CreateWeeklyReportFormSchema>({
-    constraint: getZodConstraint(createWeeklyReportFormSchema),
+  const [form, fields] = useSafeForm<UpdateWeeklyReportFormSchema>({
+    constraint: getZodConstraint(updateWeeklyReportFormSchema),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: createWeeklyReportFormSchema })
+      return parseWithZod(formData, { schema: updateWeeklyReportFormSchema })
     },
     defaultValue: {
-      year,
-      week,
+      weeklyReportId: weeklyReportMissions.weeklyReport.id,
       weeklyReports: weeklyReportEntry.entries.map((entry) => ({
         ...entry,
         hours: entry.hours.toString(),
@@ -224,10 +242,11 @@ export function CreateWeeklyReportForm({
       </div>
       <FormProvider context={form.context}>
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
-          <input {...getInputProps(fields.year, { type: 'hidden' })} />
-          <input {...getInputProps(fields.week, { type: 'hidden' })} />
+          <input
+            {...getInputProps(fields.weeklyReportId, { type: 'hidden' })}
+          />
           {weeklyReports.map((weeklyReport) => (
-            <CreateWeeklyReportContentInputEntries
+            <UpdateWeeklyReportContentInputEntries
               key={weeklyReport.key}
               id={weeklyReport.value?.id}
               formId={form.id}
@@ -254,7 +273,7 @@ export function CreateWeeklyReportForm({
           <Separator orientation="horizontal" />
           <div className="flex items-center justify-end gap-x-2 my-4">
             <Button isDisabled={isPending} type="submit">
-              {isPending ? '登録中...' : '登録する'}
+              {isPending ? '更新中...' : '更新する'}
               {isPending ? <Loader /> : <IconSend3 />}
             </Button>
           </div>

@@ -14,29 +14,29 @@ import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import type {
-  WeeklyReportFormSchema,
-  WeeklyReportSchema,
-} from '~/features/reports/weekly/types/schemas/weekly-report-form-schema'
+  UpdateWeeklyReportFormSchema,
+  UpdateWeeklyReportSchema,
+} from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
 import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
-type WeeklyReportContentInputEntriesProps = {
+type UpdateWeeklyReportContentInputEntriesProps = {
   id?: string
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
   missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
   formId: string
-  name: FieldName<WeeklyReportSchema, WeeklyReportFormSchema>
+  name: FieldName<UpdateWeeklyReportSchema, UpdateWeeklyReportFormSchema>
   removeButton: JSX.Element
 }
 
-export function WeeklyReportContentInputEntries({
+export function UpdateWeeklyReportContentInputEntries({
   id,
   projects,
   missions,
   formId,
   name,
   removeButton,
-}: WeeklyReportContentInputEntriesProps) {
+}: UpdateWeeklyReportContentInputEntriesProps) {
   const [meta] = useField(name, { formId })
   const field = meta.getFieldset()
   const projectInput = useInputControl(field.project)
@@ -72,27 +72,29 @@ export function WeeklyReportContentInputEntries({
       return
     }
 
-    setWeeklyReportEntry((prev) => {
-      if (!prev) {
-        return prev
-      }
-
-      const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
-        e.id === id ? { ...e, [kind]: newItem } : e,
-      )
-
-      return {
-        ...prev,
-        weeklyReportEntry: {
-          ...prev.weeklyReportEntry,
-          entries: updatedEntries,
-        },
-      }
-    })
-
     if (kind === 'project') {
       setProjectId(newItem)
       projectInput.change(newItem.toString())
+      setMissionId(null)
+      missionInput.change(undefined)
+
+      setWeeklyReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
+          e.id === id ? { ...e, [kind]: newItem.toString() } : e,
+        )
+
+        return {
+          ...prev,
+          weeklyReportEntry: {
+            ...prev.weeklyReportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
     } else {
       missionId
         ? pipe(
@@ -111,6 +113,31 @@ export function WeeklyReportContentInputEntries({
           project.missions.some((mission) => mission.id === newItem),
         ),
       )
+
+      setWeeklyReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.weeklyReportEntry.entries.map((e) => {
+          if (e.id === id) {
+            return {
+              ...e,
+              mission: newItem.toString(),
+              project: findProject?.id ?? '',
+            }
+          }
+          return e
+        })
+
+        return {
+          ...prev,
+          weeklyReportEntry: {
+            ...prev.weeklyReportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
 
       setProjectId(findProject?.id ?? null)
       projectInput.change(findProject?.id.toString() ?? '')
@@ -187,7 +214,7 @@ export function WeeklyReportContentInputEntries({
           <ComboBox.Input />
           <ComboBox.List
             items={
-              projectId
+              projectId && !missionInput.value
                 ? pipe(
                     missions,
                     filter((mission) => mission.projectId === projectId),

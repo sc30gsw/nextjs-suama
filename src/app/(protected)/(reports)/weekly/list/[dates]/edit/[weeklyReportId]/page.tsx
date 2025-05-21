@@ -8,20 +8,21 @@ import { Separator } from '~/components/ui/intent-ui/separator'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
-import { CreateWeeklyReportForm } from '~/features/reports/weekly/components/create-weekly-report-form'
+import { UpdateWeeklyReportForm } from '~/features/reports/weekly/components/update-weekly-report-form'
+import { getWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
   getNextWeekDates,
+  getYearAndWeek,
   splitDates,
 } from '~/features/reports/weekly/utils/date-utils'
-
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 
-export default async function WeeklyReportRegisterPage({
+export default async function WeeklyReportIdPage({
   params,
   searchParams,
-}: NextPageProps<Record<'dates', string>, SearchParams>) {
+}: NextPageProps<Record<'dates' | 'weeklyReportId', string>, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
@@ -31,6 +32,7 @@ export default async function WeeklyReportRegisterPage({
   const { dates } = await params
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
+  const { year, week } = getYearAndWeek(nextStartDate)
 
   const { weeklyReportEntry } =
     await weeklyInputCountSearchParamsCache.parse(searchParams)
@@ -39,13 +41,21 @@ export default async function WeeklyReportRegisterPage({
 
   const projectPromise = getProjects(undefined, session.user.id)
   const missionPromise = getMissions(undefined, session.user.id)
+  const weeklyReportMissionsPromise = getWeeklyReportMissions(
+    { year: year.toString(), week: week.toString() },
+    session.user.id,
+  )
 
-  const promises = Promise.all([projectPromise, missionPromise])
+  const promises = Promise.all([
+    projectPromise,
+    missionPromise,
+    weeklyReportMissionsPromise,
+  ])
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
       <Heading level={2}>
-        {nextStartDate} 〜 {nextEndDate} の予定を追加
+        {nextStartDate} 〜 {nextEndDate} の予定を編集
       </Heading>
       <Suspense
         fallback={
@@ -54,7 +64,7 @@ export default async function WeeklyReportRegisterPage({
               <IconPlus />
             </Button>
             <div className="space-y-2">
-              {Array.from({ length: count > 0 ? count : 1 }).map(() => (
+              {Array.from({ length: count > 0 ? count : 5 }).map(() => (
                 <div
                   key={crypto.randomUUID()}
                   className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2"
@@ -70,12 +80,15 @@ export default async function WeeklyReportRegisterPage({
               <Separator orientation="horizontal" />
               <div className="flex items-center gap-x-2 my-4">
                 <span className="text-sm">合計時間:</span>
-                <Heading className="text-muted-fg text-lg">0時間</Heading>
+                <Heading className="text-muted-fg text-lg flex items-center gap-x-2">
+                  <Skeleton className="h-8 w-13" />
+                  時間
+                </Heading>
               </div>
               <Separator orientation="horizontal" />
               <div className="flex items-center justify-end gap-x-2 my-4">
                 <Button>
-                  登録する
+                  更新する
                   <IconSend3 />
                 </Button>
               </div>
@@ -83,7 +96,7 @@ export default async function WeeklyReportRegisterPage({
           </>
         }
       >
-        <CreateWeeklyReportForm promises={promises} />
+        <UpdateWeeklyReportForm promises={promises} />
       </Suspense>
     </div>
   )
