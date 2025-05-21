@@ -23,7 +23,6 @@ import {
   getYearAndWeek,
   splitDates,
 } from '~/features/reports/weekly/utils/date-utils'
-
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 
