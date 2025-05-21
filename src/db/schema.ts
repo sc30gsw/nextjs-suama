@@ -77,6 +77,23 @@ export const verifications = sqliteTable('verifications', {
   ),
 })
 
+export const passkeys = sqliteTable('passkeys', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text('name'),
+  publicKey: text('public_key').notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  credentialID: text('credential_i_d').notNull(),
+  counter: integer('counter').notNull(),
+  deviceType: text('device_type').notNull(),
+  backedUp: integer('backed_up', { mode: 'boolean' }).notNull(),
+  transports: text('transports'),
+  createdAt: integer('created_at', { mode: 'timestamp' }),
+})
+
 export const clients = sqliteTable(
   'clients',
   {
@@ -471,6 +488,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   comments: many(comments),
   accounts: many(accounts),
   sessions: many(sessions),
+  passkeys: many(passkeys),
 }))
 
 export const clientsRelations = relations(clients, ({ many }) => ({
