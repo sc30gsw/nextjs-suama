@@ -76,17 +76,8 @@ export default async function WeeklyReportRegisterPage({
         <Form action={`/weekly/list/${dates}/register`}>
           <input type="hidden" name="isReference" value="true" />
           <Button type="submit">
-            前週の予定
-            {/* {isReferenceWithoutReport || !isReference
-              ? 'を参照'
-              : 'の参照を解除'}
-            する */}
-            を参照する
-            {/* {isReferenceWithoutReport || !isReference ? ( */}
+            前週の予定 を参照する
             <IconSearchSketchbook />
-            {/* ) : ( */}
-            {/* <IconTrash /> */}
-            {/* )} */}
           </Button>
         </Form>
       ) : (
