@@ -126,6 +126,24 @@ export function CreateWeeklyReportContentInputEntries({
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+
+      setWeeklyReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
+          e.id === id ? { ...e, [kind]: newItem.toString() } : e,
+        )
+
+        return {
+          ...prev,
+          weeklyReportEntry: {
+            ...prev.weeklyReportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
     } else {
       missionId
         ? pipe(
