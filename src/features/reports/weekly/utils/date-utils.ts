@@ -85,5 +85,5 @@ export function getYearAndWeek(dateStr: string) {
   const week = getWeek(date, { weekStartsOn: 1 })
   const year = getYear(date)
 
-  return { year, week }
+  return { year, week } as const
 }
