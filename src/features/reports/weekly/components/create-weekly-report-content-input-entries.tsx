@@ -93,6 +93,8 @@ export function CreateWeeklyReportContentInputEntries({
     if (kind === 'project') {
       setProjectId(newItem)
       projectInput.change(newItem.toString())
+      setMissionId(null)
+      missionInput.change(undefined)
     } else {
       missionId
         ? pipe(
@@ -187,7 +189,7 @@ export function CreateWeeklyReportContentInputEntries({
           <ComboBox.Input />
           <ComboBox.List
             items={
-              projectId
+              projectId && !missionInput.value
                 ? pipe(
                     missions,
                     filter((mission) => mission.projectId === projectId),

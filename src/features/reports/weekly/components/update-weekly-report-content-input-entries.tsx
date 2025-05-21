@@ -72,27 +72,29 @@ export function UpdateWeeklyReportContentInputEntries({
       return
     }
 
-    setWeeklyReportEntry((prev) => {
-      if (!prev) {
-        return prev
-      }
-
-      const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
-        e.id === id ? { ...e, [kind]: newItem } : e,
-      )
-
-      return {
-        ...prev,
-        weeklyReportEntry: {
-          ...prev.weeklyReportEntry,
-          entries: updatedEntries,
-        },
-      }
-    })
-
     if (kind === 'project') {
       setProjectId(newItem)
       projectInput.change(newItem.toString())
+      setMissionId(null)
+      missionInput.change(undefined)
+
+      setWeeklyReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
+          e.id === id ? { ...e, [kind]: newItem.toString() } : e,
+        )
+
+        return {
+          ...prev,
+          weeklyReportEntry: {
+            ...prev.weeklyReportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
     } else {
       missionId
         ? pipe(
@@ -111,6 +113,31 @@ export function UpdateWeeklyReportContentInputEntries({
           project.missions.some((mission) => mission.id === newItem),
         ),
       )
+
+      setWeeklyReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.weeklyReportEntry.entries.map((e) => {
+          if (e.id === id) {
+            return {
+              ...e,
+              mission: newItem.toString(),
+              project: findProject?.id ?? '',
+            }
+          }
+          return e
+        })
+
+        return {
+          ...prev,
+          weeklyReportEntry: {
+            ...prev.weeklyReportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
 
       setProjectId(findProject?.id ?? null)
       projectInput.change(findProject?.id.toString() ?? '')
@@ -187,7 +214,7 @@ export function UpdateWeeklyReportContentInputEntries({
           <ComboBox.Input />
           <ComboBox.List
             items={
-              projectId
+              projectId && !missionInput.value
                 ? pipe(
                     missions,
                     filter((mission) => mission.projectId === projectId),
