@@ -27,13 +27,13 @@ export async function WeeklyRegisterLink({
     userId,
   )
 
+  if (res.weeklyReport && res.weeklyReport.userId !== userId) {
+    forbidden()
+  }
+
   const href = res.weeklyReport
     ? `/weekly/list/${dates}/edit/${res.weeklyReport.id}`
     : `/weekly/list/${dates}/register`
-
-  if (res.weeklyReport?.userId !== userId) {
-    forbidden()
-  }
 
   return (
     <Link href={href} prefetch={false} className="max-w-fit">
