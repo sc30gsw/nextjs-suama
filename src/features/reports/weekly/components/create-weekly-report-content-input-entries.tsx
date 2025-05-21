@@ -133,7 +133,7 @@ export function CreateWeeklyReportContentInputEntries({
         }
 
         const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
-          e.id === id ? { ...e, [kind]: newItem.toString() } : e,
+          e.id === id ? { ...e, project: newItem.toString(), mission: '' } : e,
         )
 
         return {
@@ -162,6 +162,31 @@ export function CreateWeeklyReportContentInputEntries({
           project.missions.some((mission) => mission.id === newItem),
         ),
       )
+
+      setWeeklyReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.weeklyReportEntry.entries.map((e) => {
+          if (e.id === id) {
+            return {
+              ...e,
+              mission: newItem.toString(),
+              project: findProject?.id ?? '',
+            }
+          }
+          return e
+        })
+
+        return {
+          ...prev,
+          weeklyReportEntry: {
+            ...prev.weeklyReportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
 
       setProjectId(findProject?.id ?? null)
       projectInput.change(findProject?.id.toString() ?? '')

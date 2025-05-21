@@ -84,7 +84,7 @@ export function UpdateWeeklyReportContentInputEntries({
         }
 
         const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
-          e.id === id ? { ...e, [kind]: newItem.toString() } : e,
+          e.id === id ? { ...e, project: newItem.toString(), mission: '' } : e,
         )
 
         return {
