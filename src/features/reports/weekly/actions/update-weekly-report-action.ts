@@ -38,6 +38,12 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       })
     }
 
+    if (weeklyReport.userId !== session.user.id) {
+      return submission.reply({
+        fieldErrors: { message: ['他のユーザーの週報は更新できません。'] },
+      })
+    }
+
     const weeklyReportMissionList =
       await db.query.weeklyReportMissions.findMany({
         where: eq(weeklyReportMissions.weeklyReportId, weeklyReport.id),

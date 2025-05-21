@@ -44,6 +44,7 @@
         "error.tsx",
         "not-found.tsx",
         "unauthorized.tsx",
+        "forbidden.tsx",
         "middleware.ts",
         "default.tsx",
         "./src/features/**/*/route.ts",

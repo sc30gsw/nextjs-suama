@@ -1,5 +1,5 @@
 import { IconPlus, IconSend3 } from '@intentui/icons'
-import { unauthorized } from 'next/navigation'
+import { forbidden, notFound, unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -29,6 +29,20 @@ export default async function WeeklyReportIdPage({
   }
 
   const { dates, weeklyReportId } = await params
+
+  const res = await getWeeklyReportMissionsById(
+    { weeklyReportId },
+    session.user.id,
+  )
+
+  if (!res.weeklyReport) {
+    notFound()
+  }
+
+  if (res.weeklyReport.userId !== session.user.id) {
+    forbidden()
+  }
+
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
 
@@ -39,16 +53,8 @@ export default async function WeeklyReportIdPage({
 
   const projectPromise = getProjects(undefined, session.user.id)
   const missionPromise = getMissions(undefined, session.user.id)
-  const weeklyReportMissionsPromise = getWeeklyReportMissionsById(
-    { weeklyReportId },
-    session.user.id,
-  )
 
-  const promises = Promise.all([
-    projectPromise,
-    missionPromise,
-    weeklyReportMissionsPromise,
-  ])
+  const promises = Promise.all([projectPromise, missionPromise])
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
@@ -94,7 +100,10 @@ export default async function WeeklyReportIdPage({
           </>
         }
       >
-        <UpdateWeeklyReportForm promises={promises} />
+        <UpdateWeeklyReportForm
+          promises={promises}
+          weeklyReport={res.weeklyReport}
+        />
       </Suspense>
     </div>
   )
