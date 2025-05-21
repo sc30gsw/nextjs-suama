@@ -545,3 +545,17 @@ export const weeklyReportsRelations = relations(
     weeklyReportMissions: many(weeklyReportMissions),
   }),
 )
+
+export const weeklyReportMissionsRelations = relations(
+  weeklyReportMissions,
+  ({ one }) => ({
+    weeklyReport: one(weeklyReports, {
+      fields: [weeklyReportMissions.weeklyReportId],
+      references: [weeklyReports.id],
+    }),
+    mission: one(missions, {
+      fields: [weeklyReportMissions.missionId],
+      references: [missions.id],
+    }),
+  }),
+)

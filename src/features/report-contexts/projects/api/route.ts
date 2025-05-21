@@ -31,6 +31,11 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
       with: {
         client: true,
+        missions: {
+          columns: {
+            id: true,
+          },
+        },
       },
     })
 

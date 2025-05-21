@@ -1,9 +1,11 @@
 import {
   addWeeks,
   endOfWeek,
+  format,
   getMonth,
   getWeek,
   getYear,
+  parseISO,
   startOfWeek,
   startOfYear,
 } from 'date-fns'
@@ -49,4 +51,39 @@ export const getWeeksByMonth = () => {
       return index === -1 ? Number.POSITIVE_INFINITY : index
     }),
   )
+}
+
+export function splitDates(dates: string) {
+  const [startDate, endDate] = dates.split('-').reduce((acc, val, i) => {
+    if (i % 3 === 0) {
+      acc.push(val)
+    } else {
+      acc[acc.length - 1] += `-${val}`
+    }
+    return acc
+  }, [] as string[])
+
+  return {
+    startDate,
+    endDate,
+  } as const
+}
+
+export function getNextWeekDates(start: string, end: string) {
+  const nextStart = addWeeks(parseISO(start), 1)
+  const nextEnd = addWeeks(parseISO(end), 1)
+
+  return {
+    nextStartDate: format(nextStart, 'yyyy-MM-dd'),
+    nextEndDate: format(nextEnd, 'yyyy-MM-dd'),
+  } as const
+}
+
+export function getYearAndWeek(dateStr: string) {
+  const date = parseISO(dateStr)
+
+  const week = getWeek(date, { weekStartsOn: 1 })
+  const year = getYear(date)
+
+  return { year, week }
 }

@@ -9,7 +9,8 @@ import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { MonthSelector } from '~/features/reports/weekly/components/month-selector'
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
 import { monthSelectSearchParamsCache } from '~/features/reports/weekly/types/search-params/month-select-search-params-cache'
-import { getWeeksByMonth } from '~/features/reports/weekly/utils/get-weeks-by-month'
+import { getWeeksByMonth } from '~/features/reports/weekly/utils/date-utils'
+
 import type { NextPageProps } from '~/types'
 
 export default async function WeeklyPage({
