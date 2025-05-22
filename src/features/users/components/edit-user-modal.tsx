@@ -24,7 +24,7 @@ import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
   type EditUserInputSchema,
   editUserInputSchema,
-} from '~/features/users/types/schemas/edit-client-input-schema'
+} from '~/features/users/types/schemas/edit-user-input-schema'
 import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
