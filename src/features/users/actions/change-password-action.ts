@@ -1,0 +1,40 @@
+'use server'
+
+import { parseWithZod } from '@conform-to/zod'
+import { eq } from 'drizzle-orm'
+import { users } from '~/db/schema'
+import { changePasswordInputSchema } from '~/features/users/types/schemas/change-password-input-schema'
+import { db } from '~/index'
+import { auth } from '~/lib/auth'
+
+export async function changePasswordAction(_: unknown, formData: FormData) {
+  const submission = parseWithZod(formData, {
+    schema: changePasswordInputSchema,
+  })
+
+  if (submission.status !== 'success') {
+    return submission.reply()
+  }
+
+  try {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, submission.value.id),
+    })
+
+    if (!user) {
+      return submission.reply({
+        fieldErrors: { message: ['ユーザーが見つかりませんでした'] },
+      })
+    }
+
+    const ctx = await auth.$context
+    const hash = await ctx.password.hash(submission.value.password)
+    await ctx.internalAdapter.updatePassword(user.id, hash)
+
+    return submission.reply()
+  } catch (_) {
+    return submission.reply({
+      fieldErrors: { message: ['Something went wrong'] },
+    })
+  }
+}
