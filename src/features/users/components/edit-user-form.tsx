@@ -20,11 +20,11 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
-import { updateUserAction } from '~/features/users/actions/update-user-action'
+import { settingUserAction } from '~/features/users/actions/setting-user-action'
 import {
-  type EditUserInputSchema,
-  editUserInputSchema,
-} from '~/features/users/types/schemas/edit-client-input-schema'
+  type SettingUserInputSchema,
+  settingUserInputSchema,
+} from '~/features/users/types/schemas/setting-user-input-schema'
 import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
@@ -33,17 +33,17 @@ import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditUserFormProps = Pick<
   InferResponseType<typeof client.api.users.$get, 200>['users'][number],
-  'id' | 'name' | 'image'
+  'id' | 'name' | 'email' | 'image'
 >
 
-export function EditUserForm({ id, name, image }: EditUserFormProps) {
+export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
   const [pending, startTransition] = useTransition()
   const [imageError, setImageError] = useState('')
   // biome-ignore lint/style/noNonNullAssertion: To need intentUI
   const fileInputRef = useRef<HTMLInputElement>(null!)
 
   const [lastResult, action, isPending] = useActionState(
-    withCallbacks(updateUserAction, {
+    withCallbacks(settingUserAction, {
       onSuccess() {
         toast.success('ユーザーの更新に成功しました')
         setImageError('')
@@ -56,15 +56,16 @@ export function EditUserForm({ id, name, image }: EditUserFormProps) {
     null,
   )
 
-  const [form, fields] = useSafeForm<EditUserInputSchema>({
-    constraint: getZodConstraint(editUserInputSchema),
+  const [form, fields] = useSafeForm<SettingUserInputSchema>({
+    constraint: getZodConstraint(settingUserInputSchema),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: editUserInputSchema })
+      return parseWithZod(formData, { schema: settingUserInputSchema })
     },
     defaultValue: {
       id,
       name,
+      email,
       image,
     },
   })
@@ -127,6 +128,20 @@ export function EditUserForm({ id, name, image }: EditUserFormProps) {
           />
           <span id={fields.name.errorId} className="text-sm text-red-500">
             {fields.name.errors}
+          </span>
+        </div>
+        <div>
+          <TextField
+            {...getInputProps(fields.email, { type: 'email' })}
+            label="メールアドレス"
+            placeholder="メールアドレスを入力"
+            isRequired={true}
+            isDisabled={isPending || pending}
+            defaultValue={lastResult?.initialValue?.email.toString() ?? email}
+            errorMessage={''}
+          />
+          <span id={fields.email.errorId} className="text-sm text-red-500">
+            {fields.email.errors}
           </span>
         </div>
         <div className="flex items-center gap-x-4 my-4">

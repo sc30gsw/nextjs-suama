@@ -32,6 +32,7 @@ export default async function UserSettingsPage({
           <EditUserForm
             id={userId}
             name={session.user.name}
+            email={session.user.email}
             image={session.user.image ?? null}
           />
         </Card>
