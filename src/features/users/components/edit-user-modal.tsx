@@ -19,12 +19,11 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
-import {} from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
-  type EditUserInputSchema,
-  editUserInputSchema,
-} from '~/features/users/types/schemas/edit-user-input-schema'
+  type SettingUserInputSchema,
+  settingUserInputSchema,
+} from '~/features/users/types/schemas/setting-user-input-schema'
 import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
@@ -56,11 +55,13 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
     null,
   )
 
-  const [form, fields] = useSafeForm<EditUserInputSchema>({
-    constraint: getZodConstraint(editUserInputSchema),
+  const [form, fields] = useSafeForm<Omit<SettingUserInputSchema, 'email'>>({
+    constraint: getZodConstraint(settingUserInputSchema.omit({ email: true })),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: editUserInputSchema })
+      return parseWithZod(formData, {
+        schema: settingUserInputSchema.omit({ email: true }),
+      })
     },
     defaultValue: {
       id,
