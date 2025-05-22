@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsCards } from '~/features/reports/weekly/components/weekly-reports-cards'
 import { WeeklyReportsNavigation } from '~/features/reports/weekly/components/weekly-reports-navigation'
-import { useWeeklyReportsQuery } from '~/features/reports/weekly/hooks/use-weekly-reports-query'
+import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 
 type WeeklyReportsContainerProps = {
   userId: string
@@ -16,14 +16,25 @@ export function WeeklyReportsContainer({
   year,
   week,
 }: WeeklyReportsContainerProps) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useWeeklyReportsQuery({ year, week }, userId)
+  const { use: useWeeklyReports } = fetchWeeklyReportsInfiniteQuery(
+    { year, week },
+    userId,
+  )
 
-  if (isLoading || !data) {
+  const {
+    data,
+    error,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useWeeklyReports()
+
+  if (isLoading) {
     return <WeeklyReportsCardLoading />
   }
 
-  if (!data) {
+  if (!data || error) {
     notFound()
   }
 

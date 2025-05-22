@@ -8,10 +8,15 @@ import { DailyReportsInWeeklyReportListTable } from '~/features/reports/weekly/c
 import { LoadMoreButton } from '~/features/reports/weekly/components/load-more-button'
 import { WeeklyIssuesAndSolutionsTable } from '~/features/reports/weekly/components/weekly-issues-and-solutions-table'
 import { WeeklyReportsTable } from '~/features/reports/weekly/components/weekly-reports-table'
-import type { useWeeklyReportsQuery } from '~/features/reports/weekly/hooks/use-weekly-reports-query'
+import type { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 
 type WeeklyReportsCardsProps = {
-  data: Exclude<ReturnType<typeof useWeeklyReportsQuery>['data'], undefined>
+  data: Exclude<
+    ReturnType<
+      ReturnType<typeof fetchWeeklyReportsInfiniteQuery>['use']
+    >['data'],
+    undefined
+  >
   hasNextPage: boolean
   isFetchingNextPage: boolean
   loadMore: () => void
