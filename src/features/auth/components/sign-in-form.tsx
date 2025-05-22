@@ -95,6 +95,7 @@ export function SignInForm({
               placeholder="パスワード"
               isDisabled={isPending || pending}
               errorMessage={''}
+              isRevealable={true}
             />
             <span id={fields.password.errorId} className="text-sm text-red-500">
               {fields.password.errors}

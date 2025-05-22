@@ -84,6 +84,7 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
             placeholder="パスワード"
             isDisabled={isPending}
             errorMessage={''}
+            isRevealable={true}
           />
           <span id={fields.password.errorId} className="text-sm text-red-500">
             {fields.password.errors}
@@ -95,6 +96,7 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
             placeholder="確認用パスワード"
             isDisabled={isPending}
             errorMessage={''}
+            isRevealable={true}
           />
           <span
             id={fields.confirmPassword.errorId}

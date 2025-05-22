@@ -110,6 +110,7 @@ export function SignUpForm({
               placeholder="パスワード"
               isDisabled={isPending}
               errorMessage={''}
+              isRevealable={true}
             />
             <span id={fields.password.errorId} className="text-sm text-red-500">
               {fields.password.errors}
@@ -121,6 +122,7 @@ export function SignUpForm({
               placeholder="確認用パスワード"
               isDisabled={isPending}
               errorMessage={''}
+              isRevealable={true}
             />
             <span
               id={fields.confirmPassword.errorId}
