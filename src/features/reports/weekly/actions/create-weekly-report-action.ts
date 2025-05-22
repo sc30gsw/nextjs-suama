@@ -3,7 +3,10 @@
 import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
-import { GET_WEEKLY_REPORTS_CACHE_KEY } from '~/constants/cache-keys'
+import {
+  GET_WEEKLY_REPORTS_CACHE_KEY,
+  GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
+} from '~/constants/cache-keys'
 import { missions, weeklyReportMissions, weeklyReports } from '~/db/schema'
 import { createWeeklyReportFormSchema } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import { db } from '~/index'
@@ -73,6 +76,9 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
     }
 
     revalidateTag(GET_WEEKLY_REPORTS_CACHE_KEY)
+    revalidateTag(
+      `${GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${submission.value.year}-${submission.value.week}-${session.user.id}`,
+    )
 
     return submission.reply()
   } catch (_) {

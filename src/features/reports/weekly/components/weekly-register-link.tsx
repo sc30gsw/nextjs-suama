@@ -1,5 +1,6 @@
 import { IconPlus } from '@intentui/icons'
 import Link from 'next/link'
+import { forbidden } from 'next/navigation'
 import { Button } from '~/components/ui/intent-ui/button'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { getWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
@@ -25,6 +26,10 @@ export async function WeeklyRegisterLink({
     },
     userId,
   )
+
+  if (res.weeklyReport && res.weeklyReport.userId !== userId) {
+    forbidden()
+  }
 
   const href = res.weeklyReport
     ? `/weekly/list/${dates}/edit/${res.weeklyReport.id}`

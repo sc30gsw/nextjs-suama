@@ -36,16 +36,19 @@ type UpdateWeeklyReportFormProps = {
     [
       Awaited<ReturnType<typeof getProjects>>,
       Awaited<ReturnType<typeof getMissions>>,
-      Awaited<ReturnType<typeof getWeeklyReportMissions>>,
     ]
+  >
+  weeklyReport: Exclude<
+    Awaited<ReturnType<typeof getWeeklyReportMissions>>['weeklyReport'],
+    undefined
   >
 }
 
 export function UpdateWeeklyReportForm({
   promises,
+  weeklyReport,
 }: UpdateWeeklyReportFormProps) {
-  const [projectsResponse, missionsResponse, weeklyReportMissions] =
-    use(promises)
+  const [projectsResponse, missionsResponse] = use(promises)
 
   const router = useRouter()
   const { dates } = useParams<Record<'dates', string>>()
@@ -54,24 +57,22 @@ export function UpdateWeeklyReportForm({
     {
       weeklyReportEntry: parseAsJson(weeklyReportStateSchema.parse).withDefault(
         {
-          count: weeklyReportMissions.weeklyReport.weeklyReportMissions.length,
-          entries: weeklyReportMissions.weeklyReport.weeklyReportMissions.map(
-            (entry) => ({
-              id: entry.id,
-              project: pipe(
-                projectsResponse.projects,
-                find((project) =>
-                  project.missions.some(
-                    (mission) => mission.id === entry.missionId,
-                  ),
+          count: weeklyReport.weeklyReportMissions.length,
+          entries: weeklyReport.weeklyReportMissions.map((entry) => ({
+            id: entry.id,
+            project: pipe(
+              projectsResponse.projects,
+              find((project) =>
+                project.missions.some(
+                  (mission) => mission.id === entry.missionId,
                 ),
-                (project) => project?.id ?? '',
               ),
-              mission: entry.missionId,
-              content: entry.workContent,
-              hours: entry.hours,
-            }),
-          ),
+              (project) => project?.id ?? '',
+            ),
+            mission: entry.missionId,
+            content: entry.workContent,
+            hours: entry.hours,
+          })),
         },
       ),
     },
@@ -115,7 +116,7 @@ export function UpdateWeeklyReportForm({
       return parseWithZod(formData, { schema: updateWeeklyReportFormSchema })
     },
     defaultValue: {
-      weeklyReportId: weeklyReportMissions.weeklyReport.id,
+      weeklyReportId: weeklyReport.id,
       weeklyReports: weeklyReportEntry.entries.map((entry) => ({
         ...entry,
         hours: entry.hours.toString(),

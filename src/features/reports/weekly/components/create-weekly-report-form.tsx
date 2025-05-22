@@ -9,7 +9,7 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { useParams, useRouter } from 'next/navigation'
-import { useQueryStates } from 'nuqs'
+import { parseAsBoolean, parseAsJson, useQueryStates } from 'nuqs'
 import { use, useActionState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -21,11 +21,16 @@ import type { getProjects } from '~/features/report-contexts/projects/server/fet
 import { TotalHours } from '~/features/reports/components/total-hours'
 import { createWeeklyReportAction } from '~/features/reports/weekly/actions/create-weekly-report-action'
 import { CreateWeeklyReportContentInputEntries } from '~/features/reports/weekly/components/create-weekly-report-content-input-entries'
+import type { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 import {
   type CreateWeeklyReportFormSchema,
   createWeeklyReportFormSchema,
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
-import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+import {
+  weeklyInputCountSearchParamsParsers,
+  weeklyReportStateSchema,
+} from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+
 import {
   getNextWeekDates,
   getYearAndWeek,
@@ -41,10 +46,14 @@ type CreateWeeklyReportFormProps = {
       Awaited<ReturnType<typeof getMissions>>,
     ]
   >
+  lastWeeklyReportMissions?: Awaited<
+    ReturnType<typeof getLastWeeklyReportMissions>
+  >
 }
 
 export function CreateWeeklyReportForm({
   promises,
+  lastWeeklyReportMissions,
 }: CreateWeeklyReportFormProps) {
   const [projectsResponse, missionsResponse] = use(promises)
 
@@ -54,8 +63,31 @@ export function CreateWeeklyReportForm({
   const { nextStartDate } = getNextWeekDates(startDate, endDate)
   const { year, week } = getYearAndWeek(nextStartDate)
 
+  const initialWeeklyInputCountSearchParamsParsers =
+    lastWeeklyReportMissions?.weeklyReport
+      ? {
+          weeklyReportEntry: parseAsJson(
+            weeklyReportStateSchema.parse,
+          ).withDefault({
+            count:
+              lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.length,
+            entries:
+              lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.map(
+                (weeklyReportMission) => ({
+                  id: weeklyReportMission.id,
+                  project: weeklyReportMission.mission.projectId,
+                  mission: weeklyReportMission.missionId,
+                  hours: weeklyReportMission.hours,
+                  content: weeklyReportMission.workContent,
+                }),
+              ),
+          }),
+          isReference: parseAsBoolean.withDefault(false),
+        }
+      : weeklyInputCountSearchParamsParsers
+
   const [{ weeklyReportEntry }, setWeeklyReportEntry] = useQueryStates(
-    weeklyInputCountSearchParamsParsers,
+    initialWeeklyInputCountSearchParamsParsers,
     {
       history: 'push',
       shallow: false,
@@ -234,6 +266,7 @@ export function CreateWeeklyReportForm({
               name={weeklyReport.name}
               projects={projectsResponse.projects}
               missions={missionsResponse.missions}
+              lastWeeklyReportMissions={lastWeeklyReportMissions}
               removeButton={
                 <Button
                   size="square-petite"

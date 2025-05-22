@@ -6,5 +6,9 @@ export const GET_APPEAL_CATEGORIES_CACHE_KEY = 'getAppealCategories'
 export const GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY = 'getDailyReportsForToday'
 export const GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY = 'getDailyReportsForMine'
 export const GET_WEEKLY_REPORTS_CACHE_KEY = 'getWeeklyReports'
+export const GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY =
+  'getWeeklyReportMissionsById'
 export const GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY = 'getWeeklyReportMissions'
+export const GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY =
+  'getLastWeeklyReportMissions'
 export const GET_USERS_CACHE_KEY = 'getUsers'

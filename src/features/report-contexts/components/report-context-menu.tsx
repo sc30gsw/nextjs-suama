@@ -13,7 +13,7 @@ type ReportContextMenuProps = {
 }
 
 export function ReportContextMenu({ label }: ReportContextMenuProps) {
-  const [isOpen, toggle] = useToggle(false)
+  const [open, toggle] = useToggle(false)
   const triggerRef = useRef(null)
 
   return (
@@ -23,7 +23,7 @@ export function ReportContextMenu({ label }: ReportContextMenuProps) {
         <IconChevronLgDown
           className={cn(
             'transition-transform duration-300',
-            isOpen && 'rotate-180',
+            open && 'rotate-180',
           )}
         />
       </Button>

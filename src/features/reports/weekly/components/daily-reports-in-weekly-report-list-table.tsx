@@ -4,18 +4,16 @@ import type { InferResponseType } from 'hono'
 import { Table } from '~/components/ui/intent-ui/table'
 import type { client } from '~/lib/rpc'
 
-type WeeklyReportsTableProps<
-  Key extends 'lastWeekReports' | 'nextWeekReports',
-> = {
+type DailyReportsInWeeklyReportListTableProps = {
   data: InferResponseType<
     typeof client.api.weeklies.$get,
     200
-  >['reports'][number][Key][number]['weeklyReportMissions']
+  >['reports'][number]['dailyReports'][number]['dailyReportMissions']
 }
 
-export function WeeklyReportsTable<
-  Key extends 'lastWeekReports' | 'nextWeekReports',
->({ data }: WeeklyReportsTableProps<Key>) {
+export function DailyReportsInWeeklyReportListTable({
+  data,
+}: DailyReportsInWeeklyReportListTableProps) {
   return (
     <Table allowResize={true} className="table-fixed w-full">
       <Table.Header>
@@ -39,7 +37,7 @@ export function WeeklyReportsTable<
             <Table.Cell className="break-words whitespace-normal ">
               {item.mission.name}
             </Table.Cell>
-            <Table.Cell>{item.hours.toFixed(1)}</Table.Cell>
+            <Table.Cell>{item.hours ? item.hours.toFixed(1) : 0}</Table.Cell>
             <Table.Cell className="break-words whitespace-normal ">
               {item.workContent}
             </Table.Cell>

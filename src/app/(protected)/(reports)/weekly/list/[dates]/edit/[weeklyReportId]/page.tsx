@@ -1,5 +1,5 @@
 import { IconPlus, IconSend3 } from '@intentui/icons'
-import { unauthorized } from 'next/navigation'
+import { forbidden, notFound, unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -9,11 +9,10 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { UpdateWeeklyReportForm } from '~/features/reports/weekly/components/update-weekly-report-form'
-import { getWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
+import { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
   getNextWeekDates,
-  getYearAndWeek,
   splitDates,
 } from '~/features/reports/weekly/utils/date-utils'
 import { getServerSession } from '~/lib/get-server-session'
@@ -29,10 +28,23 @@ export default async function WeeklyReportIdPage({
     unauthorized()
   }
 
-  const { dates } = await params
+  const { dates, weeklyReportId } = await params
+
+  const res = await getWeeklyReportMissionsById(
+    { weeklyReportId },
+    session.user.id,
+  )
+
+  if (!res.weeklyReport) {
+    notFound()
+  }
+
+  if (res.weeklyReport.userId !== session.user.id) {
+    forbidden()
+  }
+
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
-  const { year, week } = getYearAndWeek(nextStartDate)
 
   const { weeklyReportEntry } =
     await weeklyInputCountSearchParamsCache.parse(searchParams)
@@ -41,16 +53,8 @@ export default async function WeeklyReportIdPage({
 
   const projectPromise = getProjects(undefined, session.user.id)
   const missionPromise = getMissions(undefined, session.user.id)
-  const weeklyReportMissionsPromise = getWeeklyReportMissions(
-    { year: year.toString(), week: week.toString() },
-    session.user.id,
-  )
 
-  const promises = Promise.all([
-    projectPromise,
-    missionPromise,
-    weeklyReportMissionsPromise,
-  ])
+  const promises = Promise.all([projectPromise, missionPromise])
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
@@ -96,7 +100,10 @@ export default async function WeeklyReportIdPage({
           </>
         }
       >
-        <UpdateWeeklyReportForm promises={promises} />
+        <UpdateWeeklyReportForm
+          promises={promises}
+          weeklyReport={res.weeklyReport}
+        />
       </Suspense>
     </div>
   )
