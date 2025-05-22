@@ -24,8 +24,8 @@ export default function UserChangePasswordLayout({
 
   const items: Record<'path' | 'name', string>[] = [
     ...ITEMS,
-    { path: `${params.userId}/settings`, name: 'ユーザー設定' },
-    { path: `${params.userId}/change-password`, name: 'パスワード変更' },
+    { path: `/${params.userId}/settings`, name: 'ユーザー設定' },
+    { path: `/${params.userId}/change-password`, name: 'パスワード変更' },
   ]
 
   return (
