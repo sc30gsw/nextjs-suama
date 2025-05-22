@@ -5,4 +5,5 @@ export const MAX_LIMIT = 500
 export const LIKE_KEYWORDS_REGEX =
   /^([\wぁ-んァ-ヶー一-龠]+)(\s*,\s*[\wぁ-んァ-ヶー一-龠]+)*$/
 
+// TODO: 検証のため1件としているが、実際は30~50件を想定
 export const WEEKLY_REPORTS_LIMIT = 1
