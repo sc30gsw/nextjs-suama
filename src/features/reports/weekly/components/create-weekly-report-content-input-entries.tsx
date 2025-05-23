@@ -103,9 +103,29 @@ export function CreateWeeklyReportContentInputEntries({
       return
     }
 
+    setWeeklyReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
+        e.id === id ? { ...e, [kind]: newItem } : e,
+      )
+
+      return {
+        ...prev,
+        weeklyReportEntry: {
+          ...prev.weeklyReportEntry,
+          entries: updatedEntries,
+        },
+      }
+    })
+
     if (kind === 'project') {
       setProjectId(newItem)
       projectInput.change(newItem.toString())
+      setMissionId(null)
+      missionInput.change(undefined)
 
       setWeeklyReportEntry((prev) => {
         if (!prev) {
@@ -113,7 +133,7 @@ export function CreateWeeklyReportContentInputEntries({
         }
 
         const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
-          e.id === id ? { ...e, [kind]: newItem.toString() } : e,
+          e.id === id ? { ...e, project: newItem.toString(), mission: '' } : e,
         )
 
         return {
@@ -243,7 +263,7 @@ export function CreateWeeklyReportContentInputEntries({
           <ComboBox.Input />
           <ComboBox.List
             items={
-              projectId
+              projectId && !missionInput.value
                 ? pipe(
                     missions,
                     filter((mission) => mission.projectId === projectId),

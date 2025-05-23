@@ -1,9 +1,10 @@
-'use client'
-import { notFound } from 'next/navigation'
-import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
-import { WeeklyReportsCards } from '~/features/reports/weekly/components/weekly-reports-cards'
-import { WeeklyReportsNavigation } from '~/features/reports/weekly/components/weekly-reports-navigation'
-import { useWeeklyReportsQuery } from '~/features/reports/weekly/hooks/use-weekly-reports-query'
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from '@tanstack/react-query'
+import { WeeklyReports } from '~/features/reports/weekly/components/weekly-reports'
+import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 
 type WeeklyReportsContainerProps = {
   userId: string
@@ -11,39 +12,19 @@ type WeeklyReportsContainerProps = {
   week: number
 }
 
-export function WeeklyReportsContainer({
+export async function WeeklyReportsContainer({
   userId,
   year,
   week,
 }: WeeklyReportsContainerProps) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useWeeklyReportsQuery({ year, week }, userId)
-
-  if (isLoading || !data) {
-    return <WeeklyReportsCardLoading />
-  }
-
-  if (!data) {
-    notFound()
-  }
-
-  const loadMore = () => {
-    if (hasNextPage) {
-      fetchNextPage()
-    }
-  }
+  const queryClient = new QueryClient()
+  await fetchWeeklyReportsInfiniteQuery({ year, week }, userId).prefetch(
+    queryClient,
+  )
 
   return (
-    <>
-      <div className="flex-1">
-        <WeeklyReportsCards
-          data={data}
-          hasNextPage={hasNextPage}
-          isFetchingNextPage={isFetchingNextPage}
-          loadMore={loadMore}
-        />
-      </div>
-      <WeeklyReportsNavigation data={data} />
-    </>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <WeeklyReports userId={userId} year={year} week={week} />
+    </HydrationBoundary>
   )
 }

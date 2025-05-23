@@ -1,3 +1,4 @@
+import { QueryClient } from '@tanstack/react-query'
 import { unauthorized } from 'next/navigation'
 import { Suspense } from 'react'
 import { Heading } from '~/components/ui/intent-ui/heading'
@@ -5,7 +6,9 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
 import { WeeklyRegisterLink } from '~/features/reports/weekly/components/weekly-register-link'
 import { WeeklyReportsBackToTopButton } from '~/features/reports/weekly/components/weekly-reports-back-to-top-button'
+import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsContainer } from '~/features/reports/weekly/components/weekly-reports-container'
+import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 import {
   getYearAndWeek,
   splitDates,
@@ -26,6 +29,11 @@ export default async function WeeklyReportsPage({
   const { dates } = await params
   const { startDate, endDate } = splitDates(dates)
   const { year, week } = getYearAndWeek(startDate)
+  const queryClient = new QueryClient()
+  await fetchWeeklyReportsInfiniteQuery(
+    { year, week },
+    session.user.id,
+  ).prefetch(queryClient)
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
@@ -53,11 +61,13 @@ export default async function WeeklyReportsPage({
         </Suspense>
       </div>
       <div className="flex flex-col lg:flex-row gap-6">
-        <WeeklyReportsContainer
-          userId={session.user.id}
-          year={year}
-          week={week}
-        />
+        <Suspense fallback={<WeeklyReportsCardLoading />}>
+          <WeeklyReportsContainer
+            userId={session.user.id}
+            year={year}
+            week={week}
+          />
+        </Suspense>
       </div>
       <WeeklyReportsBackToTopButton />
     </div>
