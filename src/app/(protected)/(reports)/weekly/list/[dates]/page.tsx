@@ -5,6 +5,7 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
 import { WeeklyRegisterLink } from '~/features/reports/weekly/components/weekly-register-link'
 import { WeeklyReportsBackToTopButton } from '~/features/reports/weekly/components/weekly-reports-back-to-top-button'
+import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsContainer } from '~/features/reports/weekly/components/weekly-reports-container'
 import {
   getYearAndWeek,
@@ -52,12 +53,14 @@ export default async function WeeklyReportsPage({
           <WeeklyRegisterLink dates={dates} userId={session.user.id} />
         </Suspense>
       </div>
-      <div className="flex flex-col lg:flex-row gap-6">
-        <WeeklyReportsContainer
-          userId={session.user.id}
-          year={year}
-          week={week}
-        />
+      <div className="flex flex-col lg:flex-row gap-6 max-w-">
+        <Suspense fallback={<WeeklyReportsCardLoading />}>
+          <WeeklyReportsContainer
+            userId={session.user.id}
+            year={year}
+            week={week}
+          />
+        </Suspense>
       </div>
       <WeeklyReportsBackToTopButton />
     </div>

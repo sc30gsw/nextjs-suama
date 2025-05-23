@@ -4,8 +4,8 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 
 export function WeeklyReportsCardLoading() {
   return (
-    <>
-      <div className="flex-1 max-w-9/12">
+    <div className="max-w-screen-lg flex gap-2">
+      <div className="flex-1 max-w-270">
         <Card>
           <Card.Header className="flex items-center">
             ユーザーID: <Skeleton className="h-4.5 w-60" /> ユーザー名:
@@ -64,7 +64,7 @@ export function WeeklyReportsCardLoading() {
           </div>
         </nav>
       </aside>
-    </>
+    </div>
   )
 }
 
