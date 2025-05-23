@@ -9,6 +9,7 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { UpdateWeeklyReportForm } from '~/features/reports/weekly/components/update-weekly-report-form'
+import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
 import { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
@@ -58,9 +59,23 @@ export default async function WeeklyReportIdPage({
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
-      <Heading level={2}>
-        {nextStartDate} 〜 {nextEndDate} の予定を編集
-      </Heading>
+      <div className="flex flex-col">
+        <div className="flex items-center">
+          <WeeklyCalendarHint
+            label="編集する予定の期間"
+            startDay={new Date(nextStartDate)}
+            endDay={new Date(nextEndDate)}
+          >
+            <Heading level={2} className="underline cursor-pointer">
+              {nextStartDate} 〜 {nextEndDate}
+            </Heading>
+          </WeeklyCalendarHint>
+          <Heading level={2}>の予定を編集</Heading>
+        </div>
+        <p className="ml-4 text-sm text-muted-fg">
+          ※ 日付をクリックすると、予定のカレンダーが表示されます。
+        </p>
+      </div>
       <Suspense
         fallback={
           <>

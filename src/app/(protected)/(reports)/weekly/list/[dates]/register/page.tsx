@@ -5,7 +5,7 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import Form from 'next/form'
-import { unauthorized } from 'next/navigation'
+import { redirect, unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -16,7 +16,11 @@ import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { CreateWeeklyReportForm } from '~/features/reports/weekly/components/create-weekly-report-form'
 import { DisConnectLastWeekReportsButton } from '~/features/reports/weekly/components/dis-connect-last-week-reports-button'
-import { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
+import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
+import {
+  getLastWeeklyReportMissions,
+  getWeeklyReportMissions,
+} from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import {
   getNextWeekDates,
@@ -39,6 +43,16 @@ export default async function WeeklyReportRegisterPage({
   const { dates } = await params
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
+  const { year, week } = getYearAndWeek(nextStartDate)
+
+  const res = await getWeeklyReportMissions(
+    { year: year.toString(), week: week.toString() },
+    session.user.id,
+  )
+
+  if (res.weeklyReport) {
+    redirect(`/weekly/list/${dates}/edit/${res.weeklyReport.id}`)
+  }
 
   const { weeklyReportEntry, isReference } =
     await weeklyInputCountSearchParamsCache.parse(searchParams)
@@ -68,9 +82,23 @@ export default async function WeeklyReportRegisterPage({
 
   return (
     <div className="p-4 lg:p-6 flex flex-col gap-4">
-      <Heading level={2}>
-        {nextStartDate} 〜 {nextEndDate} の予定を追加
-      </Heading>
+      <div className="flex flex-col">
+        <div className="flex items-center">
+          <WeeklyCalendarHint
+            label="追加する予定の期間"
+            startDay={new Date(nextStartDate)}
+            endDay={new Date(nextEndDate)}
+          >
+            <Heading level={2} className="underline cursor-pointer">
+              {nextStartDate} 〜 {nextEndDate}
+            </Heading>
+          </WeeklyCalendarHint>
+          <Heading level={2}>の予定を追加</Heading>
+        </div>
+        <p className="ml-4 text-sm text-muted-fg">
+          ※ 日付をクリックすると、予定のカレンダーが表示されます。
+        </p>
+      </div>
       {isReferenceWithoutReport || !isReference ? (
         <Form action={`/weekly/list/${dates}/register`}>
           <input type="hidden" name="isReference" value="true" />

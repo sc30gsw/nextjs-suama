@@ -1,11 +1,11 @@
 'use client'
 
 import {
-  IconBookOpen,
   IconBrandProducthunt,
   IconCalendarDays,
   IconCirclePerson,
   IconCircleQuestionmark,
+  IconHome,
   IconPackage,
   IconPeople,
 } from '@intentui/icons'
@@ -46,7 +46,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
           className="flex items-center gap-x-2 group-data-[collapsible=dock]:size-10 group-data-[collapsible=dock]:justify-center"
           href="/daily"
         >
-          <IconBookOpen className="size-5" />
+          <IconHome className="size-5" />
           <SidebarLabel className="font-medium">SUAMA</SidebarLabel>
         </Link>
       </SidebarHeader>
