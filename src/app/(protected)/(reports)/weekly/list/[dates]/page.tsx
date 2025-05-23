@@ -1,8 +1,4 @@
-import {
-  HydrationBoundary,
-  QueryClient,
-  dehydrate,
-} from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/react-query'
 import { unauthorized } from 'next/navigation'
 import { Suspense } from 'react'
 import { Heading } from '~/components/ui/intent-ui/heading'
