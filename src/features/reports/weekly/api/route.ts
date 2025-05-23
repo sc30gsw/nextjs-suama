@@ -1,6 +1,7 @@
 import { addDays, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { WEEKLY_REPORTS_LIMIT } from '~/constants'
 import { dailyReports, troubles, weeklyReports } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
@@ -22,7 +23,7 @@ const app = new Hono()
     const endDate = addDays(startDate, 6)
 
     const users = await db.query.users.findMany({
-      limit: 30,
+      limit: WEEKLY_REPORTS_LIMIT,
       offset: Number(offset),
     })
 

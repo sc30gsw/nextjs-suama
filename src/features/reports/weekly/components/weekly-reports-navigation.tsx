@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Events, Link as ScrollLink, scrollSpy } from 'react-scroll'
 import { Heading } from '~/components/ui/intent-ui/heading'
-import type { useWeeklyReportsQuery } from '~/features/reports/weekly/hooks/use-weekly-reports-query'
+import type { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 import { cn } from '~/utils/classes'
 import { throttle } from '~/utils/throttle'
 
@@ -9,7 +9,12 @@ export function WeeklyReportsNavigation({
   data,
 }: Record<
   'data',
-  Exclude<ReturnType<typeof useWeeklyReportsQuery>['data'], undefined>
+  Exclude<
+    ReturnType<
+      ReturnType<typeof fetchWeeklyReportsInfiniteQuery>['use']
+    >['data'],
+    undefined
+  >
 >) {
   const [activeId, setActiveId] = useState('')
 

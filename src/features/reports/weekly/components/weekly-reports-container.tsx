@@ -1,4 +1,3 @@
-
 import {
   HydrationBoundary,
   QueryClient,
@@ -6,7 +5,6 @@ import {
 } from '@tanstack/react-query'
 import { WeeklyReports } from '~/features/reports/weekly/components/weekly-reports'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
->
 
 type WeeklyReportsContainerProps = {
   userId: string
