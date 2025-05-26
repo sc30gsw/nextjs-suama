@@ -118,6 +118,7 @@ export default async function WeeklyReportIdPage({
         <UpdateWeeklyReportForm
           promises={promises}
           weeklyReport={res.weeklyReport}
+          dates={dates}
         />
       </Suspense>
     </div>

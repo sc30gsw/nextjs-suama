@@ -157,6 +157,7 @@ export default async function WeeklyReportRegisterPage({
         <CreateWeeklyReportForm
           promises={promises}
           lastWeeklyReportMissions={lastWeeklyReportMission}
+          date={{ dates, year, week }}
         />
       </Suspense>
     </div>

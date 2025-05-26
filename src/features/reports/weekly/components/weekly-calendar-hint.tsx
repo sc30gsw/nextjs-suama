@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Popover } from '~/components/ui/intent-ui/popover'
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
+import { getYearAndWeek } from '~/features/reports/weekly/utils/date-utils'
 
 type WeeklyCalendarHintProps = {
   children: ReactNode
@@ -17,6 +18,8 @@ export function WeeklyCalendarHint({
   label,
   endDay,
 }: WeeklyCalendarHintProps) {
+  const { year, week } = getYearAndWeek(startDay.toISOString())
+
   return (
     <Popover>
       <Button intent="plain">{children}</Button>
@@ -24,7 +27,9 @@ export function WeeklyCalendarHint({
         <Popover.Header>
           <Popover.Title>{label}</Popover.Title>
           <Popover.Description>
-            {label}を確認することができます
+            {label}（{year}年 第{week}週の予定）
+            <br />
+            を確認することができます
           </Popover.Description>
         </Popover.Header>
         <Popover.Body className="flex items-center justify-centera">

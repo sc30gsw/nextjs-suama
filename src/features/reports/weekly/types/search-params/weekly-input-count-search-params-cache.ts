@@ -34,6 +34,14 @@ export const weeklyInputCountSearchParamsParsers = {
   isReference: parseAsBoolean.withDefault(false),
 }
 
+export type WeeklyInputCountSearchParams =
+  typeof weeklyInputCountSearchParamsParsers
+
+export type UpdateWeeklyInputCountSearchParams = Omit<
+  WeeklyInputCountSearchParams,
+  'isReference'
+>
+
 export const weeklyInputCountSearchParamsCache = createSearchParamsCache(
   weeklyInputCountSearchParamsParsers,
 )
