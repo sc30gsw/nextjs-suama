@@ -1,10 +1,41 @@
 import { addDays, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { pipe, sortBy } from 'remeda'
 import { WEEKLY_REPORTS_LIMIT } from '~/constants'
-import { dailyReports, troubles, weeklyReports } from '~/db/schema'
+import {
+  type dailyReportMissions,
+  dailyReports,
+  type missions,
+  type projects,
+  troubles,
+  type weeklyReportMissions,
+  weeklyReports,
+} from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
+
+function groupingReportMission<
+  T extends
+    | typeof weeklyReportMissions.$inferSelect
+    | typeof dailyReportMissions.$inferSelect,
+>(
+  reportMissions: Array<
+    T &
+      Record<
+        'mission',
+        typeof missions.$inferSelect & {
+          project: typeof projects.$inferSelect
+        }
+      >
+  >,
+) {
+  return pipe(
+    reportMissions,
+    sortBy([(m) => m.mission.name, 'asc']),
+    sortBy([(m) => m.mission.project.name, 'asc']),
+  )
+}
 
 const app = new Hono()
   .get('/', sessionMiddleware, async (c) => {
@@ -111,9 +142,24 @@ const app = new Hono()
 
         return {
           user,
-          lastWeekReports,
-          dailyReports: dailyReportList,
-          nextWeekReports,
+          lastWeekReports: lastWeekReports.map((report) => ({
+            ...report,
+            weeklyReportMissions: groupingReportMission<
+              typeof weeklyReportMissions.$inferSelect
+            >(report.weeklyReportMissions),
+          })),
+          dailyReports: dailyReportList.map((report) => ({
+            ...report,
+            dailyReportMissions: groupingReportMission<
+              typeof dailyReportMissions.$inferSelect
+            >(report.dailyReportMissions),
+          })),
+          nextWeekReports: nextWeekReports.map((report) => ({
+            ...report,
+            weeklyReportMissions: groupingReportMission<
+              typeof weeklyReportMissions.$inferSelect
+            >(report.weeklyReportMissions),
+          })),
           troubles: troubleList,
         }
       }),

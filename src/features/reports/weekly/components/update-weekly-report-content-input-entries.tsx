@@ -1,23 +1,17 @@
-import {
-  type FieldName,
-  getInputProps,
-  useField,
-  useInputControl,
-} from '@conform-to/react'
+import { type FieldName, getInputProps } from '@conform-to/react'
 import type { InferResponseType } from 'hono'
-import { useQueryStates } from 'nuqs'
-import { type JSX, useState } from 'react'
-import type { Key } from 'react-aria-components'
+import type { JSX } from 'react'
 import { useFormStatus } from 'react-dom'
-import { filter, find, pipe } from 'remeda'
+import { filter, pipe } from 'remeda'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { useUpdatedWeeklyReportContentInputEntries } from '~/features/reports/weekly/hooks/use-update-weekly-report-contentInput-entries'
 import type {
   UpdateWeeklyReportFormSchema,
   UpdateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
-import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+import type { UpdateWeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 type UpdateWeeklyReportContentInputEntriesProps = {
@@ -27,6 +21,7 @@ type UpdateWeeklyReportContentInputEntriesProps = {
   formId: string
   name: FieldName<UpdateWeeklyReportSchema, UpdateWeeklyReportFormSchema>
   removeButton: JSX.Element
+  initialWeeklyInputCountSearchParamsParsers: UpdateWeeklyInputCountSearchParams
 }
 
 export function UpdateWeeklyReportContentInputEntries({
@@ -36,145 +31,24 @@ export function UpdateWeeklyReportContentInputEntries({
   formId,
   name,
   removeButton,
+  initialWeeklyInputCountSearchParamsParsers,
 }: UpdateWeeklyReportContentInputEntriesProps) {
-  const [meta] = useField(name, { formId })
-  const field = meta.getFieldset()
-  const projectInput = useInputControl(field.project)
-  const missionInput = useInputControl(field.mission)
-
-  const contentInput = useInputControl(field.content)
-  const hoursInput = useInputControl(field.hours)
+  const {
+    field,
+    hoursInput,
+    contentInput,
+    projectId,
+    missionId,
+    handleChangeItem,
+    handleChangeValue,
+  } = useUpdatedWeeklyReportContentInputEntries(
+    initialWeeklyInputCountSearchParamsParsers,
+    formId,
+    name,
+    projects,
+  )
 
   const { pending } = useFormStatus()
-
-  // form resetがConformのものでは反映されないため
-  const [projectId, setProjectId] = useState<Key | null>(
-    projectInput.value ?? null,
-  )
-  const [missionId, setMissionId] = useState<Key | null>(
-    missionInput.value ?? null,
-  )
-
-  const [, setWeeklyReportEntry] = useQueryStates(
-    weeklyInputCountSearchParamsParsers,
-    {
-      history: 'push',
-      shallow: false,
-    },
-  )
-
-  const handleChangeItem = (
-    id: string,
-    newItem: Key | null,
-    kind: 'project' | 'mission',
-  ) => {
-    if (!(id && newItem)) {
-      return
-    }
-
-    if (kind === 'project') {
-      setProjectId(newItem)
-      projectInput.change(newItem.toString())
-      setMissionId(null)
-      missionInput.change(undefined)
-
-      setWeeklyReportEntry((prev) => {
-        if (!prev) {
-          return prev
-        }
-
-        const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
-          e.id === id ? { ...e, project: newItem.toString(), mission: '' } : e,
-        )
-
-        return {
-          ...prev,
-          weeklyReportEntry: {
-            ...prev.weeklyReportEntry,
-            entries: updatedEntries,
-          },
-        }
-      })
-    } else {
-      missionId
-        ? pipe(
-            projects,
-            filter((project) =>
-              project.missions.some((mission) => mission.id === missionId),
-            ),
-          )
-        : projects
-      setMissionId(newItem)
-      missionInput.change(newItem.toString())
-
-      const findProject = pipe(
-        projects,
-        find((project) =>
-          project.missions.some((mission) => mission.id === newItem),
-        ),
-      )
-
-      setWeeklyReportEntry((prev) => {
-        if (!prev) {
-          return prev
-        }
-
-        const updatedEntries = prev.weeklyReportEntry.entries.map((e) => {
-          if (e.id === id) {
-            return {
-              ...e,
-              mission: newItem.toString(),
-              project: findProject?.id ?? '',
-            }
-          }
-          return e
-        })
-
-        return {
-          ...prev,
-          weeklyReportEntry: {
-            ...prev.weeklyReportEntry,
-            entries: updatedEntries,
-          },
-        }
-      })
-
-      setProjectId(findProject?.id ?? null)
-      projectInput.change(findProject?.id.toString() ?? '')
-    }
-  }
-
-  const handleChangeValue = (id: string, newValue: string | number) => {
-    if (!id) {
-      return
-    }
-
-    setWeeklyReportEntry((prev) => {
-      if (!prev) {
-        return prev
-      }
-
-      const key = typeof newValue === 'string' ? 'content' : 'hours'
-      const updatedEntries = prev.weeklyReportEntry.entries.map((e) =>
-        e.id === id ? { ...e, [key]: newValue } : e,
-      )
-
-      return {
-        ...prev,
-        weeklyReportEntry: {
-          ...prev.weeklyReportEntry,
-          entries: updatedEntries,
-        },
-      }
-    })
-
-    if (typeof newValue === 'string') {
-      contentInput.change(newValue)
-    } else {
-      hoursInput.change(newValue.toString())
-    }
-  }
-
   return (
     <div className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2">
       <input {...getInputProps(field.id, { type: 'hidden' })} />
@@ -214,7 +88,7 @@ export function UpdateWeeklyReportContentInputEntries({
           <ComboBox.Input />
           <ComboBox.List
             items={
-              projectId && !missionInput.value
+              projectId
                 ? pipe(
                     missions,
                     filter((mission) => mission.projectId === projectId),

@@ -1,17 +1,14 @@
 'use client'
 
 import { FormProvider, getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
   IconMinus,
   IconPlus,
   IconSend3,
   IconTriangleExclamation,
 } from '@intentui/icons'
-import { useParams, useRouter } from 'next/navigation'
-import { parseAsBoolean, parseAsJson, useQueryStates } from 'nuqs'
-import { use, useActionState } from 'react'
-import { toast } from 'sonner'
+import { parseAsBoolean, parseAsJson } from 'nuqs'
+import { use } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
@@ -19,25 +16,13 @@ import { Separator } from '~/components/ui/intent-ui/separator'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
-import { createWeeklyReportAction } from '~/features/reports/weekly/actions/create-weekly-report-action'
 import { CreateWeeklyReportContentInputEntries } from '~/features/reports/weekly/components/create-weekly-report-content-input-entries'
+import { useCreateWeeklyForm } from '~/features/reports/weekly/hooks/use-create-weekly-report-form'
 import type { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
-import {
-  type CreateWeeklyReportFormSchema,
-  createWeeklyReportFormSchema,
-} from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import {
   weeklyInputCountSearchParamsParsers,
   weeklyReportStateSchema,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
-
-import {
-  getNextWeekDates,
-  getYearAndWeek,
-  splitDates,
-} from '~/features/reports/weekly/utils/date-utils'
-import { useSafeForm } from '~/hooks/use-safe-form'
-import { withCallbacks } from '~/utils/with-callbacks'
 
 type CreateWeeklyReportFormProps = {
   promises: Promise<
@@ -49,19 +34,19 @@ type CreateWeeklyReportFormProps = {
   lastWeeklyReportMissions?: Awaited<
     ReturnType<typeof getLastWeeklyReportMissions>
   >
+  date: {
+    dates: string
+    year: number
+    week: number
+  }
 }
 
 export function CreateWeeklyReportForm({
   promises,
   lastWeeklyReportMissions,
+  date,
 }: CreateWeeklyReportFormProps) {
   const [projectsResponse, missionsResponse] = use(promises)
-
-  const router = useRouter()
-  const { dates } = useParams<Record<'dates', string>>()
-  const { startDate, endDate } = splitDates(dates)
-  const { nextStartDate } = getNextWeekDates(startDate, endDate)
-  const { year, week } = getYearAndWeek(nextStartDate)
 
   const initialWeeklyInputCountSearchParamsParsers =
     lastWeeklyReportMissions?.weeklyReport
@@ -86,149 +71,17 @@ export function CreateWeeklyReportForm({
         }
       : weeklyInputCountSearchParamsParsers
 
-  const [{ weeklyReportEntry }, setWeeklyReportEntry] = useQueryStates(
-    initialWeeklyInputCountSearchParamsParsers,
-    {
-      history: 'push',
-      shallow: false,
-    },
-  )
-
-  const [lastResult, action, isPending] = useActionState(
-    withCallbacks(createWeeklyReportAction, {
-      onSuccess() {
-        toast.success('週報の作成に成功しました')
-        router.push(`/weekly/list/${dates}`)
-      },
-      onError(result) {
-        if (result.error) {
-          const isUnauthorized = result.error.message?.includes('Unauthorized')
-
-          if (isUnauthorized) {
-            toast.error('セッションが切れました。再度ログインしてください', {
-              cancel: {
-                label: 'ログイン',
-                onClick: () => router.push('/sign-in'),
-              },
-            })
-            return
-          }
-        }
-
-        toast.error('週報の作成に失敗しました')
-      },
-    }),
-    null,
-  )
-
-  const [form, fields] = useSafeForm<CreateWeeklyReportFormSchema>({
-    constraint: getZodConstraint(createWeeklyReportFormSchema),
-    lastResult,
-    onValidate({ formData }) {
-      return parseWithZod(formData, { schema: createWeeklyReportFormSchema })
-    },
-    defaultValue: {
-      year,
-      week,
-      weeklyReports: weeklyReportEntry.entries.map((entry) => ({
-        ...entry,
-        hours: entry.hours.toString(),
-      })),
-    },
-  })
-
-  // Conformによるformの増減等状態管理は以下を参照
-  // ? https://zenn.dev/coji/articles/remix-conform-nested-array
-  // ? https://github.com/techtalkjp/techtalk.jp/blob/main/app/routes/demo+/conform.nested-array/route.tsx
-  // ? https://www.techtalk.jp/demo/conform/nested-array
-  const weeklyReports = fields.weeklyReports.getFieldList()
-
-  const totalHours = weeklyReports.reduce((acc, entry) => {
-    const hours = Number(entry.value?.hours ?? 0)
-    return acc + (hours > 0 ? hours : 0)
-  }, 0)
-
-  const handleAdd = () => {
-    const newEntry = {
-      id: crypto.randomUUID(),
-      project: '',
-      mission: '',
-      content: '',
-      hours: 0,
-    } as const satisfies (typeof weeklyReportEntry.entries)[number]
-
-    setWeeklyReportEntry((prev) => {
-      if (!prev) {
-        return prev
-      }
-
-      return {
-        ...prev,
-        weeklyReportEntry: {
-          ...prev.weeklyReportEntry,
-          count: prev.weeklyReportEntry.count + 1,
-          entries: [...prev.weeklyReportEntry.entries, newEntry],
-        },
-      }
-    })
-
-    form.insert({
-      name: fields.weeklyReports.name,
-      defaultValue: {
-        ...newEntry,
-        hours: '0',
-      },
-    })
-  }
-
-  const handleRemove = (id: string) => {
-    const index = weeklyReports.findIndex((entry) => entry.value?.id === id)
-
-    if (index === -1) {
-      return
-    }
-
-    setWeeklyReportEntry((prev) => {
-      if (!prev) {
-        return prev
-      }
-
-      const filteredEntries = prev.weeklyReportEntry.entries.filter(
-        (e) => e.id !== id,
-      )
-
-      return {
-        ...prev,
-        weeklyReportEntry: {
-          ...prev.weeklyReportEntry,
-          count:
-            prev.weeklyReportEntry.count > 1
-              ? prev.weeklyReportEntry.count - 1
-              : 1,
-          entries: filteredEntries,
-        },
-      }
-    })
-
-    form.remove({
-      name: fields.weeklyReports.name,
-      index,
-    })
-  }
-
-  const getError = () => {
-    if (lastResult?.error && Array.isArray(lastResult.error.message)) {
-      const filteredMessages = lastResult.error.message.filter(
-        (msg) => !msg.includes('Unauthorized'),
-      )
-
-      return filteredMessages.length > 0
-        ? filteredMessages.join(', ')
-        : undefined
-    }
-
-    return
-  }
+  const {
+    action,
+    isPending,
+    form,
+    fields,
+    weeklyReports,
+    totalHours,
+    handleAdd,
+    handleRemove,
+    getError,
+  } = useCreateWeeklyForm(initialWeeklyInputCountSearchParamsParsers, date)
 
   return (
     <>
