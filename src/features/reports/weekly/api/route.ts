@@ -15,17 +15,6 @@ import {
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-// ({
-//     id: string;
-//     createdAt: Date;
-//     updatedAt: Date | null;
-//     weeklyReportId: string;
-//     missionId: string;
-//     hours: number;
-//     workContent: string;
-//     mission: { ... 7 more };
-// })[]
-
 function groupingReportMission<
   T extends
     | typeof weeklyReportMissions.$inferSelect
