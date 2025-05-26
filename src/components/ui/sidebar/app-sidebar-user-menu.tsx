@@ -1,5 +1,6 @@
 import {
   IconChevronLgDown,
+  IconCirclePerson,
   IconLogout,
   IconMoon,
   IconSun,
@@ -70,6 +71,11 @@ export function AppSidebarUserMenu() {
         <Menu.Item href="/daily/today">
           <IconCalendarEvent stroke={1} size={20} className="mr-1" />
           本日の日報
+        </Menu.Item>
+        <Menu.Separator />
+        <Menu.Item href={`/${session?.user.id}/settings`}>
+          <IconCirclePerson />
+          ユーザー設定
         </Menu.Item>
         <Menu.Separator />
         <Menu.Item className="[&>[slot=label]+[data-slot=icon]]:right-4 [&>[slot=label]+[data-slot=icon]]:bottom-3">

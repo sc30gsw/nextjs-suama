@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
+import { passkey } from 'better-auth/plugins/passkey'
 import { redirect } from 'next/navigation'
 
 // biome-ignore lint/style/noNamespaceImport: <explanation>
@@ -27,5 +28,5 @@ export const auth = betterAuth({
   //     clientSecret: env.GOOGLE_CLIENT_SECRET,
   //   },
   // },
-  plugins: [nextCookies()],
+  plugins: [nextCookies(), passkey()],
 })

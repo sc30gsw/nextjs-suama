@@ -18,18 +18,16 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import {} from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
+import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
-  type EditUserInputSchema,
-  editUserInputSchema,
-} from '~/features/users/types/schemas/edit-client-input-schema'
+  type SettingUserInputSchema,
+  settingUserInputSchema,
+} from '~/features/users/types/schemas/setting-user-input-schema'
+import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
 import { withCallbacks } from '~/utils/with-callbacks'
-
-const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
-const MAX_IMAGE_SIZE_MB = 5
 
 type EditUserModalProps = Pick<
   InferResponseType<typeof client.api.users.$get, 200>['users'][number],
@@ -57,11 +55,13 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
     null,
   )
 
-  const [form, fields] = useSafeForm<EditUserInputSchema>({
-    constraint: getZodConstraint(editUserInputSchema),
+  const [form, fields] = useSafeForm<Omit<SettingUserInputSchema, 'email'>>({
+    constraint: getZodConstraint(settingUserInputSchema.omit({ email: true })),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: editUserInputSchema })
+      return parseWithZod(formData, {
+        schema: settingUserInputSchema.omit({ email: true }),
+      })
     },
     defaultValue: {
       id,
@@ -93,7 +93,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
       return
     }
 
-    // // サイズ制限
+    // サイズ制限
     if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
       setImageError('画像サイズは5MB以下にしてください。')
       return
@@ -103,15 +103,6 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
     const base64 = await fileToBase64(file)
     imageInput.change(base64)
     setImageError('')
-  }
-
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = reject
-    })
   }
 
   return (

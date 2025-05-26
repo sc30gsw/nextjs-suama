@@ -6,10 +6,10 @@ export default function SignInPage() {
   return (
     <SignInForm
       notHaveAccountArea={
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-x-2 mt-2">
           アカウントをお持ちでないですか？
           <Link
-            className="ml-2 text-blue-500 hover:text-blue-500/80"
+            className="text-blue-500 hover:text-blue-500/80"
             href="/sign-up"
           >
             サインアップ
