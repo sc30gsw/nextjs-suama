@@ -91,7 +91,11 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
     }
 
     // 拡張子制限
-    if (!ACCEPTED_TYPES.includes(file.type)) {
+    if (
+      !ACCEPTED_TYPES.includes(
+        file.type as 'image/jpeg' | 'image/png' | 'image/webp',
+      )
+    ) {
       setImageError('画像はJPEG, PNG, WEBP形式のみ対応しています。')
       return
     }
