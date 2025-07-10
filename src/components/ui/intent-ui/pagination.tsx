@@ -7,10 +7,9 @@ import {
   IconChevronWallRight,
   IconDotsHorizontal,
 } from '@intentui/icons'
+import type { ComponentProps, ReactNode, RefObject } from 'react'
 import type { ListBoxItemProps, ListBoxProps, ListBoxSectionProps } from 'react-aria-components'
 import { ListBox, ListBoxItem, ListBoxSection, Separator } from 'react-aria-components'
-
-import type { ComponentProps, ReactNode, RefObject } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { composeTailwindRenderProps } from '~/lib/primitive'
@@ -165,7 +164,7 @@ const PaginationItem = ({
             intent: isCurrent ? 'primary' : intent,
             size,
             className: twMerge(
-              'cursor-pointer font-normal tabular-nums disabled:cursor-default disabled:opacity-100 focus-visible:border-primary focus-visible:bg-primary/10 focus-visible:ring-4 focus-visible:ring-primary/20',
+              'cursor-pointer font-normal tabular-nums focus-visible:border-primary focus-visible:bg-primary/10 focus-visible:ring-4 focus-visible:ring-primary/20 disabled:cursor-default disabled:opacity-100',
               className,
             ),
           }),

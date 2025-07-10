@@ -5,7 +5,6 @@ import { type CalendarDate, getLocalTimeZone, today } from '@internationalized/d
 import { useDateFormatter } from '@react-aria/i18n'
 import type { CalendarState } from '@react-stately/calendar'
 import { type ComponentProps, use } from 'react'
-import { CalendarStateContext } from 'react-aria-components'
 import type { CalendarProps as CalendarPrimitiveProps, DateValue } from 'react-aria-components'
 import {
   CalendarCell,
@@ -14,9 +13,10 @@ import {
   CalendarGridHeader as CalendarGridHeaderPrimitive,
   CalendarHeaderCell,
   Calendar as CalendarPrimitive,
+  CalendarStateContext,
+  composeRenderProps,
   Heading,
   Text,
-  composeRenderProps,
   useLocale,
 } from 'react-aria-components'
 import { twMerge } from 'tailwind-merge'
@@ -147,7 +147,7 @@ const SelectMonth = ({ state }: { state: CalendarState }) => {
       <Select.List className="w-34 min-w-34 max-w-34" popoverClassName="w-34 max-w-34 min-w-34">
         {months.map((month, index) => (
           <Select.Option key={crypto.randomUUID()} id={(index + 1).toString()} textValue={month}>
-            <Select.Label className="md:text-xs text-sm">{month}</Select.Label>
+            <Select.Label className="text-sm md:text-xs">{month}</Select.Label>
           </Select.Option>
         ))}
       </Select.List>
@@ -181,7 +181,7 @@ const SelectYear = ({ state }: { state: CalendarState }) => {
       <Select.List className="w-34 min-w-34 max-w-34" popoverClassName="w-34 max-w-34 min-w-34">
         {years.map((year, i) => (
           <Select.Option key={crypto.randomUUID()} id={i} textValue={year.formatted}>
-            <Select.Label className="md:text-xs text-sm">{year.formatted}</Select.Label>
+            <Select.Label className="text-sm md:text-xs">{year.formatted}</Select.Label>
           </Select.Option>
         ))}
       </Select.List>

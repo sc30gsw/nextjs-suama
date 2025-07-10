@@ -2,8 +2,8 @@
 
 import type { ComponentProps } from 'react'
 import type { DialogProps, DialogTriggerProps, ModalOverlayProps } from 'react-aria-components'
-import { DialogTrigger, Modal, ModalOverlay, composeRenderProps } from 'react-aria-components'
-import { type VariantProps, tv } from 'tailwind-variants'
+import { composeRenderProps, DialogTrigger, Modal, ModalOverlay } from 'react-aria-components'
+import { tv, type VariantProps } from 'tailwind-variants'
 
 import {
   Dialog,
@@ -133,12 +133,10 @@ const SheetContent = ({
       >
         {(values) => (
           <Dialog role={role} aria-label={props['aria-label'] ?? undefined} className="h-full">
-            <>
-              {typeof children === 'function' ? children(values) : children}
-              {closeButton && (
-                <DialogCloseIcon className="top-2.5 right-2.5" isDismissable={_isDismissable} />
-              )}
-            </>
+            {typeof children === 'function' ? children(values) : children}
+            {closeButton && (
+              <DialogCloseIcon className="top-2.5 right-2.5" isDismissable={_isDismissable} />
+            )}
           </Dialog>
         )}
       </Modal>

@@ -11,9 +11,8 @@ import {
   Checkbox as CheckboxPrimitive,
   composeRenderProps,
 } from 'react-aria-components'
-import { type VariantProps, tv } from 'tailwind-variants'
-
 import { twMerge } from 'tailwind-merge'
+import { tv, type VariantProps } from 'tailwind-variants'
 import { Description, FieldError, Label } from '~/components/ui/intent-ui/field'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
@@ -113,14 +112,14 @@ const Checkbox = ({
           </div>
 
           <div className="flex flex-col gap-1">
-            <>
-              {label ? (
-                <Label className={twMerge(description && 'font-normal text-sm/4')}>{label}</Label>
-              ) : (
-                children
-              )}
-              {description && <Description>{description}</Description>}
-            </>
+            {label ? (
+              <Label className={twMerge(description && 'font-normal text-sm/4')}>{label}</Label>
+            ) : typeof children === 'function' ? (
+              children({ isSelected, isIndeterminate, ...renderProps })
+            ) : (
+              children
+            )}
+            {description && <Description>{description}</Description>}
           </div>
         </div>
       )}
