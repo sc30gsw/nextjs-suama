@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconMinus,
-  IconPlus,
-} from '@intentui/icons'
+import { IconChevronDown, IconChevronUp, IconMinus, IconPlus } from '@intentui/icons'
 import {
   Button,
   type ButtonProps,
@@ -16,13 +11,7 @@ import {
 import { tv } from 'tailwind-variants'
 
 import { twMerge } from 'tailwind-merge'
-import {
-  Description,
-  FieldError,
-  FieldGroup,
-  Input,
-  Label,
-} from '~/components/ui/intent-ui/field'
+import { Description, FieldError, FieldGroup, Input, Label } from '~/components/ui/intent-ui/field'
 import { useMediaQuery } from '~/hooks/use-media-query'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
@@ -57,28 +46,19 @@ const NumberField = ({
   return (
     <NumberFieldPrimitive
       {...props}
-      className={composeTailwindRenderProps(
-        className,
-        'group flex flex-col gap-y-1.5',
-      )}
+      className={composeTailwindRenderProps(className, 'group flex flex-col gap-y-1.5')}
     >
       {label && <Label>{label}</Label>}
       <FieldGroup
         className={twMerge(
           'overflow-hidden',
-          isMobile &&
-            '**:[button]:h-10 **:[button]:rounded-none **:[button]:px-2',
+          isMobile && '**:[button]:h-10 **:[button]:rounded-none **:[button]:px-2',
         )}
       >
         {(renderProps) => (
           <>
-            {isMobile ? (
-              <StepperButton className="border-r" slot="decrement" />
-            ) : null}
-            <Input
-              className="px-13 tabular-nums md:px-2.5"
-              placeholder={placeholder}
-            />
+            {isMobile ? <StepperButton className="border-r" slot="decrement" /> : null}
+            <Input className="px-13 tabular-nums md:px-2.5" placeholder={placeholder} />
             {isMobile ? (
               <StepperButton className="border-l" slot="increment" />
             ) : (
@@ -89,22 +69,14 @@ const NumberField = ({
                 })}
               >
                 <div className="flex h-full flex-col">
-                  <StepperButton
-                    slot="increment"
-                    emblemType="chevron"
-                    className="h-5 px-1"
-                  />
+                  <StepperButton slot="increment" emblemType="chevron" className="h-5 px-1" />
                   <div
                     className={fieldBorderStyles({
                       ...renderProps,
                       className: 'border-input border-b',
                     })}
                   />
-                  <StepperButton
-                    slot="decrement"
-                    emblemType="chevron"
-                    className="h-5 px-1"
-                  />
+                  <StepperButton slot="decrement" emblemType="chevron" className="h-5 px-1" />
                 </div>
               </div>
             )}

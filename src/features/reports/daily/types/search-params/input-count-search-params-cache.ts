@@ -44,14 +44,10 @@ export const inputCountSearchParamsParsers = {
       },
     ],
   }),
-  appealsAndTroublesEntry: parseAsJson(
-    appealsAndTroublesStateSchema.parse,
-  ).withDefault({
+  appealsAndTroublesEntry: parseAsJson(appealsAndTroublesStateSchema.parse).withDefault({
     appeals: { count: 0, entries: [] },
     troubles: { count: 0, entries: [] },
   }),
 }
 
-export const inputCountSearchParamsCache = createSearchParamsCache(
-  inputCountSearchParamsParsers,
-)
+export const inputCountSearchParamsCache = createSearchParamsCache(inputCountSearchParamsParsers)

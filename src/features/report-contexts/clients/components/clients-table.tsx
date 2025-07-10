@@ -84,10 +84,7 @@ export function ClientsTable({ data }: ClientsTableProps) {
               <Table.Column key={header.id} isRowHeader={true}>
                 {header.isPlaceholder
                   ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                  : flexRender(header.column.columnDef.header, header.getContext())}
               </Table.Column>
             ))}
           </Table.Row>

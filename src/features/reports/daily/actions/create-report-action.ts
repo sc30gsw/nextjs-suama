@@ -15,8 +15,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
   }
 
   const status = actionType === 'draft' ? 'draft' : 'published'
-  // biome-ignore lint/suspicious/noConsoleLog: This is a sample code
-  // biome-ignore lint/suspicious/noConsole: This is a sample code
   console.log('🚀 ~ createReportAction ~ formData:', status)
   return {} as const satisfies SubmissionResult
 }

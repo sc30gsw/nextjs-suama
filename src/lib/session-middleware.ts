@@ -12,24 +12,22 @@ type AdditionalContext = Record<
   }
 >
 
-export const sessionMiddleware = createMiddleware<AdditionalContext>(
-  async (c, next) => {
-    const userId = c.req.header('Authorization')
+export const sessionMiddleware = createMiddleware<AdditionalContext>(async (c, next) => {
+  const userId = c.req.header('Authorization')
 
-    if (!userId) {
-      return c.json({ error: { message: 'Unauthorized' } }, 401)
-    }
+  if (!userId) {
+    return c.json({ error: { message: 'Unauthorized' } }, 401)
+  }
 
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, userId),
-    })
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+  })
 
-    if (!user) {
-      return c.json({ error: { message: 'User not found' } }, 404)
-    }
+  if (!user) {
+    return c.json({ error: { message: 'User not found' } }, 404)
+  }
 
-    c.set('user', user)
+  c.set('user', user)
 
-    await next()
-  },
-)
+  await next()
+})

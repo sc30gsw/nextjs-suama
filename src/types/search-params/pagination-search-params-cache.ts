@@ -5,6 +5,4 @@ export const paginationSearchParamsParsers = {
   rowsPerPage: parseAsInteger.withDefault(10),
 }
 
-export const paginationSearchParamsCache = createSearchParamsCache(
-  paginationSearchParamsParsers,
-)
+export const paginationSearchParamsCache = createSearchParamsCache(paginationSearchParamsParsers)

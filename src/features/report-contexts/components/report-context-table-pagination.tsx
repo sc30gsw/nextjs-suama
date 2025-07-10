@@ -49,9 +49,7 @@ export function ReportContextTablePagination({
       result.push(last)
     }
 
-    return pageCount <= 7
-      ? Array.from({ length: pageCount }, (_, i) => i)
-      : result
+    return pageCount <= 7 ? Array.from({ length: pageCount }, (_, i) => i) : result
   }
 
   const pages = createPageNumbers()

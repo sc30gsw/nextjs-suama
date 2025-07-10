@@ -9,9 +9,7 @@ import { db } from '~/index'
 
 export async function deleteAppealCategoryAction(categoryId: string) {
   try {
-    await db
-      .delete(categoriesOfAppeal)
-      .where(eq(categoriesOfAppeal.id, categoryId))
+    await db.delete(categoriesOfAppeal).where(eq(categoriesOfAppeal.id, categoryId))
 
     revalidateTag(GET_APPEAL_CATEGORIES_CACHE_KEY)
 

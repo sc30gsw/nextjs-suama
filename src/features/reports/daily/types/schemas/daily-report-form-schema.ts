@@ -50,21 +50,14 @@ export const dailyReportFormSchema = z.object({
   ),
   workContent: z
     .union([singleWorkContentSchema, multipleWorkContentSchema])
-    .refine(
-      (data) =>
-        Array.isArray(data) ? data.every((d) => d.length > 0) : data.length > 0,
-      {
-        message: '内容を入力してください',
-      },
-    ),
+    .refine((data) => (Array.isArray(data) ? data.every((d) => d.length > 0) : data.length > 0), {
+      message: '内容を入力してください',
+    }),
   hours: z
     .union([singleHourSchema, multipleHoursSchema])
-    .refine(
-      (data) => (Array.isArray(data) ? data.every((d) => d > 0) : data > 0),
-      {
-        message: '0より大きい数値で入力してください',
-      },
-    ),
+    .refine((data) => (Array.isArray(data) ? data.every((d) => d > 0) : data > 0), {
+      message: '0より大きい数値で入力してください',
+    }),
   appeal: z.union([singleAppealSchema, multipleAppealSchema]).refine(
     (data) =>
       Array.isArray(data)

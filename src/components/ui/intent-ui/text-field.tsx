@@ -3,22 +3,10 @@
 import { type ReactNode, useState } from 'react'
 
 import { IconEye, IconEyeClosed } from '@intentui/icons'
-import {
-  Button as ButtonPrimitive,
-  TextField as TextFieldPrimitive,
-} from 'react-aria-components'
-import type {
-  InputProps,
-  TextFieldProps as TextFieldPrimitiveProps,
-} from 'react-aria-components'
+import { Button as ButtonPrimitive, TextField as TextFieldPrimitive } from 'react-aria-components'
+import type { InputProps, TextFieldProps as TextFieldPrimitiveProps } from 'react-aria-components'
 import type { FieldProps } from '~/components/ui/intent-ui/field'
-import {
-  Description,
-  FieldError,
-  FieldGroup,
-  Input,
-  Label,
-} from '~/components/ui/intent-ui/field'
+import { Description, FieldError, FieldGroup, Input, Label } from '~/components/ui/intent-ui/field'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
@@ -57,11 +45,7 @@ const TextField = ({
   ...props
 }: TextFieldProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-  const inputType = isRevealable
-    ? isPasswordVisible
-      ? 'text'
-      : 'password'
-    : type
+  const inputType = isRevealable ? (isPasswordVisible ? 'text' : 'password') : type
   const handleTogglePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev)
   }
@@ -69,10 +53,7 @@ const TextField = ({
     <TextFieldPrimitive
       type={inputType}
       {...props}
-      className={composeTailwindRenderProps(
-        className,
-        'group flex flex-col gap-y-1',
-      )}
+      className={composeTailwindRenderProps(className, 'group flex flex-col gap-y-1')}
     >
       {props.children ? (
         props.children

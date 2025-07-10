@@ -30,8 +30,7 @@ const Avatar = ({
         size === 'medium' && 'size-8 *:size-8',
         size === 'large' && 'size-10 *:size-10',
         size === 'extra-large' && 'size-12 *:size-12',
-        shape === 'square' &&
-          'rounded-(--avatar-radius) *:rounded-(--avatar-radius)',
+        shape === 'square' && 'rounded-(--avatar-radius) *:rounded-(--avatar-radius)',
         shape === 'circle' && 'rounded-full *:rounded-full',
         className,
       )}

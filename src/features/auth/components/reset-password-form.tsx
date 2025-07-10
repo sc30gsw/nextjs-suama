@@ -75,11 +75,11 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
       <Form
         {...getFormProps(form)}
         action={action}
-        className="flex flex-col items-center justify-center w-full gap-y-4"
+        className="flex w-full flex-col items-center justify-center gap-y-4"
       >
-        <Card.Content className="space-y-6 w-full">
+        <Card.Content className="w-full space-y-6">
           {getError() && (
-            <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+            <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
               <IconTriangleExclamation className="size-4" />
               <p>{getError()}</p>
             </div>
@@ -98,7 +98,7 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
               errorMessage={''}
               isRevealable={true}
             />
-            <span id={fields.password.errorId} className="text-sm text-red-500">
+            <span id={fields.password.errorId} className="text-red-500 text-sm">
               {fields.password.errors}
             </span>
           </div>
@@ -110,20 +110,13 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
               errorMessage={''}
               isRevealable={true}
             />
-            <span
-              id={fields.confirmPassword.errorId}
-              className="text-sm text-red-500"
-            >
+            <span id={fields.confirmPassword.errorId} className="text-red-500 text-sm">
               {fields.confirmPassword.errors}
             </span>
           </div>
         </Card.Content>
-        <Card.Footer className="flex flex-col items-start gap-y-4 w-full">
-          <Button
-            type="submit"
-            className="w-full relative"
-            isDisabled={isPending}
-          >
+        <Card.Footer className="flex w-full flex-col items-start gap-y-4">
+          <Button type="submit" className="relative w-full" isDisabled={isPending}>
             パスワードをリセット
             {isPending && <Loader className="absolute top-3 right-2" />}
           </Button>

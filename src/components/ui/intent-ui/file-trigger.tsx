@@ -10,9 +10,7 @@ import {
 import type { VariantProps } from 'tailwind-variants'
 import { Button, type buttonStyles } from '~/components/ui/intent-ui/button'
 
-interface FileTriggerProps
-  extends FileTriggerPrimitiveProps,
-    VariantProps<typeof buttonStyles> {
+interface FileTriggerProps extends FileTriggerPrimitiveProps, VariantProps<typeof buttonStyles> {
   withIcon?: boolean
   isDisabled?: boolean
   ref?: RefObject<HTMLInputElement>

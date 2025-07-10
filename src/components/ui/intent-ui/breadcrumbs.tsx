@@ -2,15 +2,8 @@
 
 import { IconChevronLgRight } from '@intentui/icons'
 import { createContext, use } from 'react'
-import type {
-  BreadcrumbProps,
-  BreadcrumbsProps,
-  LinkProps,
-} from 'react-aria-components'
-import {
-  Breadcrumb,
-  Breadcrumbs as BreadcrumbsPrimitive,
-} from 'react-aria-components'
+import type { BreadcrumbProps, BreadcrumbsProps, LinkProps } from 'react-aria-components'
+import { Breadcrumb, Breadcrumbs as BreadcrumbsPrimitive } from 'react-aria-components'
 import { twMerge } from 'tailwind-merge'
 import { Link } from '~/components/ui/intent-ui/link'
 import { composeTailwindRenderProps } from '~/lib/primitive'
@@ -26,17 +19,12 @@ const Breadcrumbs = <T extends object>({
 }: BreadcrumbsProps<T> & BreadcrumbsContextProps) => {
   return (
     <BreadcrumbsProvider value={{ separator: props.separator }}>
-      <BreadcrumbsPrimitive
-        {...props}
-        className={twMerge('flex items-center gap-2', className)}
-      />
+      <BreadcrumbsPrimitive {...props} className={twMerge('flex items-center gap-2', className)} />
     </BreadcrumbsProvider>
   )
 }
 
-interface BreadcrumbsItemProps
-  extends BreadcrumbProps,
-    BreadcrumbsContextProps {
+interface BreadcrumbsItemProps extends BreadcrumbProps, BreadcrumbsContextProps {
   href?: string
 }
 
@@ -53,17 +41,12 @@ const BreadcrumbsItem = ({
   return (
     <Breadcrumb
       {...props}
-      className={composeTailwindRenderProps(
-        className,
-        'flex items-center gap-2 text-sm',
-      )}
+      className={composeTailwindRenderProps(className, 'flex items-center gap-2 text-sm')}
     >
       {({ isCurrent }) => (
         <>
           <Link href={href} {...props} />
-          {!isCurrent && separator !== false && (
-            <Separator separator={separatorValue} />
-          )}
+          {!isCurrent && separator !== false && <Separator separator={separatorValue} />}
         </>
       )}
     </Breadcrumb>
@@ -72,7 +55,9 @@ const BreadcrumbsItem = ({
 
 const Separator = ({
   separator = 'chevron',
-}: { separator?: BreadcrumbsItemProps['separator'] }) => {
+}: {
+  separator?: BreadcrumbsItemProps['separator']
+}) => {
   return (
     <span className="*:shrink-0 *:text-muted-fg *:data-[slot=icon]:size-3.5">
       {separator === 'chevron' && <IconChevronLgRight />}

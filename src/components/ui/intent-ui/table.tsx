@@ -109,11 +109,7 @@ const cellStyles = tv({
 const TableCell = ({ children, className, ...props }: TableCellProps) => {
   const { allowResize } = useTableContext()
   return (
-    <Cell
-      data-slot="table-cell"
-      {...props}
-      className={cellStyles({ allowResize, className })}
-    >
+    <Cell data-slot="table-cell" {...props} className={cellStyles({ allowResize, className })}>
       {children}
     </Cell>
   )
@@ -133,11 +129,7 @@ interface TableColumnProps extends ColumnProps {
   isResizable?: boolean
 }
 
-const TableColumn = ({
-  isResizable = false,
-  className,
-  ...props
-}: TableColumnProps) => {
+const TableColumn = ({ isResizable = false, className, ...props }: TableColumnProps) => {
   return (
     <Column
       data-slot="table-column"
@@ -159,9 +151,7 @@ const TableColumn = ({
                   className,
                 )}
               >
-                <IconChevronLgDown
-                  className={sortDirection === 'ascending' ? 'rotate-180' : ''}
-                />
+                <IconChevronLgDown className={sortDirection === 'ascending' ? 'rotate-180' : ''} />
               </span>
             )}
             {isResizable && <ColumnResizer />}
@@ -260,11 +250,5 @@ Table.Column = TableColumn
 Table.Header = TableHeader
 Table.Row = TableRow
 
-export type {
-  TableProps,
-  TableBodyProps,
-  TableCellProps,
-  TableColumnProps,
-  TableRowProps,
-}
+export type { TableProps, TableBodyProps, TableCellProps, TableColumnProps, TableRowProps }
 export { Table }

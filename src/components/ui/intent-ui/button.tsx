@@ -69,25 +69,12 @@ const buttonStyles = tv({
 
 interface ButtonProps extends ButtonPrimitiveProps {
   intent?: 'primary' | 'secondary' | 'danger' | 'warning' | 'outline' | 'plain'
-  size?:
-    | 'medium'
-    | 'large'
-    | 'square-petite'
-    | 'extra-small'
-    | 'small'
-    | 'square-petite-small'
+  size?: 'medium' | 'large' | 'square-petite' | 'extra-small' | 'small' | 'square-petite-small'
   shape?: 'square' | 'circle'
   ref?: Ref<HTMLButtonElement>
 }
 
-const Button = ({
-  className,
-  intent,
-  size,
-  shape,
-  ref,
-  ...props
-}: ButtonProps) => {
+const Button = ({ className, intent, size, shape, ref, ...props }: ButtonProps) => {
   return (
     <ButtonPrimitive
       ref={ref}
@@ -103,11 +90,7 @@ const Button = ({
       )}
     >
       {(values) => (
-        <>
-          {typeof props.children === 'function'
-            ? props.children(values)
-            : props.children}
-        </>
+        <>{typeof props.children === 'function' ? props.children(values) : props.children}</>
       )}
     </ButtonPrimitive>
   )

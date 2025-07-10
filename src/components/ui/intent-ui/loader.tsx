@@ -136,12 +136,7 @@ const Bars = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
 )
 const Ring = (props: SVGProps<SVGSVGElement>) => <IconLoader {...props} />
 const Spin = ({ className, ...props }: SVGProps<SVGSVGElement>) => (
-  <svg
-    className={twMerge('size-4', className)}
-    data-slot="icon"
-    viewBox="0 0 2400 2400"
-    {...props}
-  >
+  <svg className={twMerge('size-4', className)} data-slot="icon" viewBox="0 0 2400 2400" {...props}>
     <g strokeWidth="200" strokeLinecap="round" fill="none">
       <line x1="1200" y1="600" x2="1200" y2="100" />
       <line opacity="0.5" x1="1200" y1="2300" x2="1200" y2="1800" />
@@ -179,10 +174,7 @@ const LOADERS = {
 const DEFAULT_SPINNER = 'spin'
 
 interface LoaderProps
-  extends Omit<
-      ComponentPropsWithoutRef<'svg'>,
-      'display' | 'opacity' | 'intent'
-    >,
+  extends Omit<ComponentPropsWithoutRef<'svg'>, 'display' | 'opacity' | 'intent'>,
     LoaderVariantProps {
   variant?: keyof typeof LOADERS
   percentage?: number
@@ -192,15 +184,8 @@ interface LoaderProps
 }
 
 const Loader = ({ isIndeterminate = true, ref, ...props }: LoaderProps) => {
-  const {
-    className,
-    variant = DEFAULT_SPINNER,
-    intent,
-    size,
-    ...spinnerProps
-  } = props
-  const LoaderPrimitive =
-    LOADERS[variant in LOADERS ? variant : DEFAULT_SPINNER]
+  const { className, variant = DEFAULT_SPINNER, intent, size, ...spinnerProps } = props
+  const LoaderPrimitive = LOADERS[variant in LOADERS ? variant : DEFAULT_SPINNER]
 
   return (
     <ProgressBar

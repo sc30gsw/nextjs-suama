@@ -2,10 +2,7 @@
 
 import { useParams } from 'next/navigation'
 import { AppBreadcrumbs } from '~/components/ui/app-breadcrumbs'
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '~/components/ui/intent-ui/sidebar'
+import { SidebarInset, SidebarProvider } from '~/components/ui/intent-ui/sidebar'
 import { AppSidebar } from '~/components/ui/sidebar/app-sidebar'
 import { AppSidebarNav } from '~/components/ui/sidebar/app-sidebar-nav'
 import type { NextLayoutProps } from '~/types'
@@ -17,9 +14,7 @@ const ITEMS = [{ path: '/daily', name: '日報作成' }] as const satisfies Reco
   string
 >[]
 
-export default function UserChangePasswordLayout({
-  children,
-}: NextLayoutProps) {
+export default function UserChangePasswordLayout({ children }: NextLayoutProps) {
   const params = useParams<Record<'userId', string>>()
 
   const items: Record<'path' | 'name', string>[] = [

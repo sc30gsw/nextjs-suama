@@ -103,10 +103,7 @@ export default async function MissionListPage({
           >
             {Promise.all([missionsPromise, projectsPromise]).then(
               ([missionsResponse, projectsResponse]) => (
-                <MissionsTable
-                  data={missionsResponse}
-                  projects={projectsResponse.projects}
-                />
+                <MissionsTable data={missionsResponse} projects={projectsResponse.projects} />
               ),
             )}
           </Suspense>
@@ -137,12 +134,7 @@ export default async function MissionListPage({
                 )
               }
 
-              return (
-                <ReportContextTablePagination
-                  page={page}
-                  pageCount={pageCount}
-                />
-              )
+              return <ReportContextTablePagination page={page} pageCount={pageCount} />
             })}
           </Suspense>
         </Card.Footer>

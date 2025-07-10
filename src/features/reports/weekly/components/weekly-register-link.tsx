@@ -10,14 +10,9 @@ import {
   splitDates,
 } from '~/features/reports/weekly/utils/date-utils'
 
-export async function WeeklyRegisterLink({
-  dates,
-  userId,
-}: Record<'dates' | 'userId', string>) {
+export async function WeeklyRegisterLink({ dates, userId }: Record<'dates' | 'userId', string>) {
   const { startDate, endDate } = splitDates(dates)
-  const { year, week } = getYearAndWeek(
-    getNextWeekDates(startDate, endDate).nextStartDate,
-  )
+  const { year, week } = getYearAndWeek(getNextWeekDates(startDate, endDate).nextStartDate)
 
   const res = await getWeeklyReportMissions(
     {

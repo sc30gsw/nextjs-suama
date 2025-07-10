@@ -12,9 +12,7 @@ type AppealCategoryDeleteButtonProps = Pick<
   'id'
 >
 
-export function AppealCategoryDeleteButton({
-  id,
-}: AppealCategoryDeleteButtonProps) {
+export function AppealCategoryDeleteButton({ id }: AppealCategoryDeleteButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
@@ -44,12 +42,7 @@ export function AppealCategoryDeleteButton({
   }
 
   return (
-    <Button
-      intent="danger"
-      size="small"
-      isDisabled={isPending}
-      onPress={handleDelete}
-    >
+    <Button intent="danger" size="small" isDisabled={isPending} onPress={handleDelete}>
       削除
       {isPending ? <Loader /> : <IconTrashEmpty />}
     </Button>

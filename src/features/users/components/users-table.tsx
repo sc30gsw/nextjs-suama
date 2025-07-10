@@ -25,9 +25,7 @@ const columnHelper = createColumnHelper<UserTableData>()
 const COLUMNS = [
   columnHelper.accessor('image', {
     header: 'アイコン',
-    cell: ({ row }) => (
-      <Avatar initials={row.original.name.charAt(0)} src={row.original.image} />
-    ),
+    cell: ({ row }) => <Avatar initials={row.original.name.charAt(0)} src={row.original.image} />,
   }),
   columnHelper.accessor('id', {
     header: 'ユーザーID',
@@ -97,10 +95,7 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
               <Table.Column key={header.id} isRowHeader={true}>
                 {header.isPlaceholder
                   ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                  : flexRender(header.column.columnDef.header, header.getContext())}
               </Table.Column>
             ))}
           </Table.Row>

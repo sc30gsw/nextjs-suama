@@ -15,12 +15,7 @@ import { twJoin } from 'tailwind-merge'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Calendar } from '~/components/ui/intent-ui/calendar'
 import { DateInput } from '~/components/ui/intent-ui/date-field'
-import {
-  Description,
-  FieldError,
-  FieldGroup,
-  Label,
-} from '~/components/ui/intent-ui/field'
+import { Description, FieldError, FieldGroup, Label } from '~/components/ui/intent-ui/field'
 import { Popover } from '~/components/ui/intent-ui/popover'
 import { RangeCalendar } from '~/components/ui/intent-ui/range-calendar'
 import { composeTailwindRenderProps } from '~/lib/primitive'
@@ -54,10 +49,7 @@ const DatePickerOverlay = ({
       {...props}
     >
       {range ? (
-        <RangeCalendar
-          pageBehavior={pageBehavior}
-          visibleDuration={visibleDuration}
-        />
+        <RangeCalendar pageBehavior={pageBehavior} visibleDuration={visibleDuration} />
       ) : (
         <Calendar />
       )}
@@ -82,8 +74,7 @@ const DatePickerIcon = () => (
   </Button>
 )
 
-interface DatePickerProps<T extends DateValue>
-  extends DatePickerPrimitiveProps<T> {
+interface DatePickerProps<T extends DateValue> extends DatePickerPrimitiveProps<T> {
   label?: string
   description?: string
   errorMessage?: string | ((validation: ValidationResult) => string)
@@ -99,10 +90,7 @@ const DatePicker = <T extends DateValue>({
   return (
     <DatePickerPrimitive
       {...props}
-      className={composeTailwindRenderProps(
-        className,
-        'group/date-picker flex flex-col gap-y-1',
-      )}
+      className={composeTailwindRenderProps(className, 'group/date-picker flex flex-col gap-y-1')}
     >
       {label && <Label>{label}</Label>}
       <FieldGroup className="min-w-40">

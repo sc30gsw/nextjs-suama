@@ -20,8 +20,9 @@ export function useCreateWeeklyForm(
     week: number
   },
 ) {
-  const { weeklyReportEntry, setWeeklyReportEntry } =
-    useWeeklyReportSearchParams(initialWeeklyInputCountSearchParamsParsers)
+  const { weeklyReportEntry, setWeeklyReportEntry } = useWeeklyReportSearchParams(
+    initialWeeklyInputCountSearchParamsParsers,
+  )
 
   const router = useRouter()
 
@@ -124,18 +125,13 @@ export function useCreateWeeklyForm(
         return prev
       }
 
-      const filteredEntries = prev.weeklyReportEntry.entries.filter(
-        (e) => e.id !== id,
-      )
+      const filteredEntries = prev.weeklyReportEntry.entries.filter((e) => e.id !== id)
 
       return {
         ...prev,
         weeklyReportEntry: {
           ...prev.weeklyReportEntry,
-          count:
-            prev.weeklyReportEntry.count > 1
-              ? prev.weeklyReportEntry.count - 1
-              : 1,
+          count: prev.weeklyReportEntry.count > 1 ? prev.weeklyReportEntry.count - 1 : 1,
           entries: filteredEntries,
         },
       }
@@ -153,9 +149,7 @@ export function useCreateWeeklyForm(
         (msg) => !msg.includes('Unauthorized'),
       )
 
-      return filteredMessages.length > 0
-        ? filteredMessages.join(', ')
-        : undefined
+      return filteredMessages.length > 0 ? filteredMessages.join(', ') : undefined
     }
 
     return

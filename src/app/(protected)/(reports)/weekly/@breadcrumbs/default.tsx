@@ -46,9 +46,7 @@ export default function WeeklyBreadcrumbsDefaultPage() {
   if (pathname.endsWith(ITEMS.weeklyRegister.path)) {
     items.push({
       name: ITEMS.weeklyRegister.name,
-      path: `${ITEMS.weeklyList.path}/${params.dates}/${
-        ITEMS.weeklyRegister.path
-      }`,
+      path: `${ITEMS.weeklyList.path}/${params.dates}/${ITEMS.weeklyRegister.path}`,
     })
   }
 

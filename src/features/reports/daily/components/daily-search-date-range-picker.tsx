@@ -6,9 +6,7 @@ import { DateRangePicker } from '~/components/ui/intent-ui/date-range-picker'
 import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
 
 export function DailySearchDateRangePicker() {
-  const [{ startDate, endDate }] = useQueryStates(
-    dailyReportForMineSearchParamsParsers,
-  )
+  const [{ startDate, endDate }] = useQueryStates(dailyReportForMineSearchParamsParsers)
 
   const defaultValue =
     startDate && endDate

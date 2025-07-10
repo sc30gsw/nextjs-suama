@@ -7,10 +7,7 @@ import { categoriesOfTrouble } from '~/db/schema'
 import { createTroubleCategoryInputSchema } from '~/features/report-contexts/troubles/types/schemas/create-trouble-category-input-schema'
 import { db } from '~/index'
 
-export async function createTroubleCategoryAction(
-  _: unknown,
-  formData: FormData,
-) {
+export async function createTroubleCategoryAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
     schema: createTroubleCategoryInputSchema,
   })

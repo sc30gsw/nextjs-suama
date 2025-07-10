@@ -12,10 +12,7 @@ import { UpdateWeeklyReportForm } from '~/features/reports/weekly/components/upd
 import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
 import { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
-import {
-  getNextWeekDates,
-  splitDates,
-} from '~/features/reports/weekly/utils/date-utils'
+import { getNextWeekDates, splitDates } from '~/features/reports/weekly/utils/date-utils'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 
@@ -31,10 +28,7 @@ export default async function WeeklyReportIdPage({
 
   const { dates, weeklyReportId } = await params
 
-  const res = await getWeeklyReportMissionsById(
-    { weeklyReportId },
-    session.user.id,
-  )
+  const res = await getWeeklyReportMissionsById({ weeklyReportId }, session.user.id)
 
   if (!res.weeklyReport) {
     notFound()
@@ -47,8 +41,7 @@ export default async function WeeklyReportIdPage({
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
 
-  const { weeklyReportEntry } =
-    await weeklyInputCountSearchParamsCache.parse(searchParams)
+  const { weeklyReportEntry } = await weeklyInputCountSearchParamsCache.parse(searchParams)
 
   const count = weeklyReportEntry.count
 
@@ -58,7 +51,7 @@ export default async function WeeklyReportIdPage({
   const promises = Promise.all([projectPromise, missionPromise])
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-4 lg:p-6">
       <div className="flex flex-col">
         <div className="flex items-center">
           <WeeklyCalendarHint
@@ -66,27 +59,27 @@ export default async function WeeklyReportIdPage({
             startDay={new Date(nextStartDate)}
             endDay={new Date(nextEndDate)}
           >
-            <Heading level={2} className="underline cursor-pointer">
+            <Heading level={2} className="cursor-pointer underline">
               {nextStartDate} 〜 {nextEndDate}
             </Heading>
           </WeeklyCalendarHint>
           <Heading level={2}>の予定を編集</Heading>
         </div>
-        <p className="ml-4 text-sm text-muted-fg">
+        <p className="ml-4 text-muted-fg text-sm">
           ※ 日付をクリックすると、予定のカレンダーが表示されます。
         </p>
       </div>
       <Suspense
         fallback={
           <>
-            <Button size="square-petite" className="rounded-full mt-4">
+            <Button size="square-petite" className="mt-4 rounded-full">
               <IconPlus />
             </Button>
             <div className="space-y-2">
               {Array.from({ length: count > 0 ? count : 5 }).map(() => (
                 <div
                   key={crypto.randomUUID()}
-                  className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2"
+                  className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2"
                 >
                   <Skeleton className="col-span-2 h-7" />
                   <Skeleton className="col-span-2 h-7" />
@@ -97,15 +90,15 @@ export default async function WeeklyReportIdPage({
               ))}
 
               <Separator orientation="horizontal" />
-              <div className="flex items-center gap-x-2 my-4">
+              <div className="my-4 flex items-center gap-x-2">
                 <span className="text-sm">合計時間:</span>
-                <Heading className="text-muted-fg text-lg flex items-center gap-x-2">
+                <Heading className="flex items-center gap-x-2 text-lg text-muted-fg">
                   <Skeleton className="h-8 w-13" />
                   時間
                 </Heading>
               </div>
               <Separator orientation="horizontal" />
-              <div className="flex items-center justify-end gap-x-2 my-4">
+              <div className="my-4 flex items-center justify-end gap-x-2">
                 <Button>
                   更新する
                   <IconSend3 />
@@ -115,11 +108,7 @@ export default async function WeeklyReportIdPage({
           </>
         }
       >
-        <UpdateWeeklyReportForm
-          promises={promises}
-          weeklyReport={res.weeklyReport}
-          dates={dates}
-        />
+        <UpdateWeeklyReportForm promises={promises} weeklyReport={res.weeklyReport} dates={dates} />
       </Suspense>
     </div>
   )

@@ -7,17 +7,8 @@ import {
   IconChevronWallRight,
   IconDotsHorizontal,
 } from '@intentui/icons'
-import type {
-  ListBoxItemProps,
-  ListBoxProps,
-  ListBoxSectionProps,
-} from 'react-aria-components'
-import {
-  ListBox,
-  ListBoxItem,
-  ListBoxSection,
-  Separator,
-} from 'react-aria-components'
+import type { ListBoxItemProps, ListBoxProps, ListBoxSectionProps } from 'react-aria-components'
+import { ListBox, ListBoxItem, ListBoxSection, Separator } from 'react-aria-components'
 
 import type { ComponentProps, ReactNode, RefObject } from 'react'
 import { twMerge } from 'tailwind-merge'
@@ -29,10 +20,7 @@ const Pagination = ({ className, ref, ...props }: PaginationProps) => (
   <nav
     aria-label="pagination"
     ref={ref}
-    className={twMerge(
-      'mx-auto flex w-full justify-center gap-[5px]',
-      className,
-    )}
+    className={twMerge('mx-auto flex w-full justify-center gap-[5px]', className)}
     {...props}
   />
 )
@@ -45,31 +33,20 @@ const PaginationSection = <T extends object>({
   ref,
   ...props
 }: PaginationSectionProps<T>) => (
-  <ListBoxSection
-    ref={ref}
-    {...props}
-    className={twMerge('flex h-9 gap-[5px]', className)}
-  />
+  <ListBoxSection ref={ref} {...props} className={twMerge('flex h-9 gap-[5px]', className)} />
 )
 
 interface PaginationListProps<T> extends ListBoxProps<T> {
   ref?: RefObject<HTMLDivElement>
 }
-const PaginationList = <T extends object>({
-  className,
-  ref,
-  ...props
-}: PaginationListProps<T>) => {
+const PaginationList = <T extends object>({ className, ref, ...props }: PaginationListProps<T>) => {
   return (
     <ListBox
       ref={ref}
       orientation="horizontal"
       aria-label={props['aria-label'] || 'Pagination'}
       layout="grid"
-      className={composeTailwindRenderProps(
-        className,
-        'flex flex-row items-center gap-[5px]',
-      )}
+      className={composeTailwindRenderProps(className, 'flex flex-row items-center gap-[5px]')}
       {...props}
     />
   )
@@ -92,15 +69,7 @@ interface PaginationItemProps extends ListBoxItemProps {
   size?: 'medium' | 'large' | 'square-petite' | 'extra-small' | 'small'
   shape?: 'square' | 'circle'
   isCurrent?: boolean
-  segment?:
-    | 'label'
-    | 'separator'
-    | 'ellipsis'
-    | 'default'
-    | 'last'
-    | 'first'
-    | 'previous'
-    | 'next'
+  segment?: 'label' | 'separator' | 'ellipsis' | 'default' | 'last' | 'first' | 'previous' | 'next'
 }
 
 const PaginationItem = ({
@@ -144,10 +113,7 @@ const PaginationItem = ({
       return renderListItem(
         {
           textValue: textValue,
-          className: twMerge(
-            'grid h-9 place-content-center px-3.5 tabular-nums',
-            className,
-          ),
+          className: twMerge('grid h-9 place-content-center px-3.5 tabular-nums', className),
           ...props,
         },
         children,
@@ -176,10 +142,7 @@ const PaginationItem = ({
         },
         <span
           aria-hidden={true}
-          className={twMerge(
-            'flex size-9 items-center justify-center',
-            className,
-          )}
+          className={twMerge('flex size-9 items-center justify-center', className)}
         >
           <IconDotsHorizontal />
         </span>,
@@ -217,10 +180,5 @@ Pagination.Item = PaginationItem
 Pagination.List = PaginationList
 Pagination.Section = PaginationSection
 
-export type {
-  PaginationProps,
-  PaginationListProps,
-  PaginationSectionProps,
-  PaginationItemProps,
-}
+export type { PaginationProps, PaginationListProps, PaginationSectionProps, PaginationItemProps }
 export { Pagination }

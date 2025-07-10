@@ -25,10 +25,7 @@ type EditMissionModalProps = Pick<
   InferResponseType<typeof client.api.missions.$get, 200>['missions'][number],
   'id' | 'name' | 'likeKeywords' | 'projectId'
 > &
-  Record<
-    'projects',
-    InferResponseType<typeof client.api.projects.$get, 200>['projects']
-  >
+  Record<'projects', InferResponseType<typeof client.api.projects.$get, 200>['projects']>
 
 export function EditMissionModal({
   id,
@@ -87,14 +84,12 @@ export function EditMissionModal({
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
           <Modal.Title>ミッションを編集する</Modal.Title>
-          <Modal.Description>
-            選択したミッションの情報を編集します。
-          </Modal.Description>
+          <Modal.Description>選択したミッションの情報を編集します。</Modal.Description>
         </Modal.Header>
         <Form {...getFormProps(form)} action={action}>
           <Modal.Body className="space-y-4">
             {getError() && (
-              <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+              <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
                 <p>{getError()}</p>
               </div>
@@ -111,7 +106,7 @@ export function EditMissionModal({
                 defaultValue={lastResult?.initialValue?.name.toString() ?? name}
                 errorMessage={''}
               />
-              <span id={fields.name.errorId} className="text-sm text-red-500">
+              <span id={fields.name.errorId} className="text-red-500 text-sm">
                 {fields.name.errors}
               </span>
             </div>
@@ -122,16 +117,10 @@ export function EditMissionModal({
                 placeholder="検索単語を入力（例: apple,banana,orange）"
                 isRequired={true}
                 isDisabled={isPending}
-                defaultValue={
-                  lastResult?.initialValue?.likeKeywords.toString() ??
-                  likeKeywords
-                }
+                defaultValue={lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords}
                 errorMessage={''}
               />
-              <span
-                id={fields.likeKeywords.errorId}
-                className="text-sm text-red-500 break-words"
-              >
+              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
                 {fields.likeKeywords.errors}
               </span>
             </div>
@@ -154,17 +143,10 @@ export function EditMissionModal({
               >
                 <ComboBox.Input />
                 <ComboBox.List items={projects}>
-                  {(project) => (
-                    <ComboBox.Option id={project.id}>
-                      {project.name}
-                    </ComboBox.Option>
-                  )}
+                  {(project) => <ComboBox.Option id={project.id}>{project.name}</ComboBox.Option>}
                 </ComboBox.List>
               </ComboBox>
-              <span
-                id={fields.projectId.errorId}
-                className="text-sm text-red-500"
-              >
+              <span id={fields.projectId.errorId} className="text-red-500 text-sm">
                 {fields.projectId.errors}
               </span>
             </div>

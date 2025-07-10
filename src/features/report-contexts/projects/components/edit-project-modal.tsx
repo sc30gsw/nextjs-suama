@@ -1,9 +1,4 @@
-import {
-  getCollectionProps,
-  getFormProps,
-  getInputProps,
-  useInputControl,
-} from '@conform-to/react'
+import { getCollectionProps, getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
@@ -31,10 +26,7 @@ type EditProjectModalProps = Pick<
   InferResponseType<typeof client.api.projects.$get, 200>['projects'][number],
   'id' | 'name' | 'likeKeywords' | 'clientId' | 'isArchived'
 > &
-  Record<
-    'clients',
-    InferResponseType<typeof client.api.clients.$get, 200>['clients']
-  >
+  Record<'clients', InferResponseType<typeof client.api.clients.$get, 200>['clients']>
 
 export function EditProjectModal({
   id,
@@ -97,14 +89,12 @@ export function EditProjectModal({
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
           <Modal.Title>プロジェクトを編集する</Modal.Title>
-          <Modal.Description>
-            選択したプロジェクトの情報を編集します。
-          </Modal.Description>
+          <Modal.Description>選択したプロジェクトの情報を編集します。</Modal.Description>
         </Modal.Header>
         <Form {...getFormProps(form)} action={action}>
           <Modal.Body className="space-y-4">
             {getError() && (
-              <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+              <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
                 <p>{getError()}</p>
               </div>
@@ -121,7 +111,7 @@ export function EditProjectModal({
                 defaultValue={lastResult?.initialValue?.name.toString() ?? name}
                 errorMessage={''}
               />
-              <span id={fields.name.errorId} className="text-sm text-red-500">
+              <span id={fields.name.errorId} className="text-red-500 text-sm">
                 {fields.name.errors}
               </span>
             </div>
@@ -132,16 +122,10 @@ export function EditProjectModal({
                 placeholder="検索単語を入力（例: apple,banana,orange）"
                 isRequired={true}
                 isDisabled={isPending}
-                defaultValue={
-                  lastResult?.initialValue?.likeKeywords.toString() ??
-                  likeKeywords
-                }
+                defaultValue={lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords}
                 errorMessage={''}
               />
-              <span
-                id={fields.likeKeywords.errorId}
-                className="text-sm text-red-500 break-words"
-              >
+              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
                 {fields.likeKeywords.errors}
               </span>
             </div>
@@ -164,17 +148,10 @@ export function EditProjectModal({
               >
                 <ComboBox.Input />
                 <ComboBox.List items={clients}>
-                  {(client) => (
-                    <ComboBox.Option id={client.id}>
-                      {client.name}
-                    </ComboBox.Option>
-                  )}
+                  {(client) => <ComboBox.Option id={client.id}>{client.name}</ComboBox.Option>}
                 </ComboBox.List>
               </ComboBox>
-              <span
-                id={fields.clientId.errorId}
-                className="text-sm text-red-500"
-              >
+              <span id={fields.clientId.errorId} className="text-red-500 text-sm">
                 {fields.clientId.errors}
               </span>
             </div>
@@ -207,10 +184,7 @@ export function EditProjectModal({
                   </Checkbox>
                 )
               })}
-              <span
-                id={fields.isArchive.errorId}
-                className="text-sm text-red-500 break-words"
-              >
+              <span id={fields.isArchive.errorId} className="break-words text-red-500 text-sm">
                 {fields.isArchive.errors}
               </span>
             </div>

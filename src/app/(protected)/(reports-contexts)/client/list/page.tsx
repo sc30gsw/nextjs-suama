@@ -46,7 +46,7 @@ export default async function ClientListPage({
   )
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <div className="flex justify-between">
         <Heading>クライアント一覧</Heading>
         <div className="flex flex-col gap-2">
@@ -54,16 +54,16 @@ export default async function ClientListPage({
           <ReportContextMenu label="クライアント" />
         </div>
       </div>
-      <div className="flex flex-row md:flex-col items-center md:items-start gap-x-4 md:gap-y-4">
+      <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">
         <NameSearchTagField label="クライアント名" />
         <RowsPerPageSelect />
       </div>
-      <Card className="py-2 mt-4 max-w-full">
+      <Card className="mt-4 max-w-full py-2">
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, names })}
             fallback={
-              <table className="w-full text-sm text-left font-normal">
+              <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
                   <tr>
                     <th className="w-28.25 p-3">クライアントID</th>
@@ -75,14 +75,14 @@ export default async function ClientListPage({
                   {Array.from({ length: 10 }, () => (
                     <tr key={crypto.randomUUID()} className="border-b">
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-60 h-4" />
+                        <Skeleton className="h-4 w-60" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-56 h-4" />
+                        <Skeleton className="h-4 w-56" />
                       </th>
-                      <th scope="row" className="p-4 flex items-center gap-x-2">
-                        <Skeleton className="w-19 h-9" />
-                        <Skeleton className="w-19 h-9" />
+                      <th scope="row" className="flex items-center gap-x-2 p-4">
+                        <Skeleton className="h-9 w-19" />
+                        <Skeleton className="h-9 w-19" />
                       </th>
                     </tr>
                   ))}
@@ -116,17 +116,10 @@ export default async function ClientListPage({
               const pageCount = Math.ceil(res.total / rowsPerPage)
 
               if (page > pageCount) {
-                redirect(
-                  `/client/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`,
-                )
+                redirect(`/client/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`)
               }
 
-              return (
-                <ReportContextTablePagination
-                  page={page}
-                  pageCount={pageCount}
-                />
-              )
+              return <ReportContextTablePagination page={page} pageCount={pageCount} />
             })}
           </Suspense>
         </Card.Footer>

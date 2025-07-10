@@ -39,10 +39,7 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
       },
     })
 
-    const total = await db
-      .select({ count: count() })
-      .from(projects)
-      .where(whereClause)
+    const total = await db.select({ count: count() }).from(projects).where(whereClause)
 
     return c.json(
       {

@@ -5,12 +5,7 @@ interface SkeletonProps extends React.ComponentProps<'div'> {
   soft?: boolean
 }
 
-const Skeleton = ({
-  ref,
-  soft = false,
-  className,
-  ...props
-}: SkeletonProps) => {
+const Skeleton = ({ ref, soft = false, className, ...props }: SkeletonProps) => {
   return (
     <div
       data-slot="skeleton"

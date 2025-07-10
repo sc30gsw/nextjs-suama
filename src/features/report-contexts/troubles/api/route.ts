@@ -16,26 +16,17 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
   try {
     const whereClause =
       namesArray.length > 0
-        ? or(
-            ...namesArray.flatMap((word) => [
-              like(categoriesOfTrouble.name, `%${word}%`),
-            ]),
-          )
+        ? or(...namesArray.flatMap((word) => [like(categoriesOfTrouble.name, `%${word}%`)]))
         : undefined
 
     const categories = await db.query.categoriesOfTrouble.findMany({
       where: whereClause,
       offset: skipNumber,
       limit: limitNumber,
-      orderBy: (categoriesOfTrouble, { asc }) => [
-        asc(categoriesOfTrouble.createdAt),
-      ],
+      orderBy: (categoriesOfTrouble, { asc }) => [asc(categoriesOfTrouble.createdAt)],
     })
 
-    const total = await db
-      .select({ count: count() })
-      .from(categoriesOfTrouble)
-      .where(whereClause)
+    const total = await db.select({ count: count() }).from(categoriesOfTrouble).where(whereClause)
 
     return c.json(
       {

@@ -26,7 +26,10 @@ import { withCallbacks } from '~/utils/with-callbacks'
 export function SignInForm({
   children,
   notHaveAccountArea,
-}: { children: ReactNode; notHaveAccountArea: ReactNode }) {
+}: {
+  children: ReactNode
+  notHaveAccountArea: ReactNode
+}) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
 
@@ -69,11 +72,11 @@ export function SignInForm({
       <Form
         {...getFormProps(form)}
         action={action}
-        className="flex flex-col items-center justify-center w-full gap-y-4"
+        className="flex w-full flex-col items-center justify-center gap-y-4"
       >
-        <Card.Content className="space-y-6 w-full">
+        <Card.Content className="w-full space-y-6">
           {getError() && (
-            <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+            <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
               <IconTriangleExclamation className="size-4" />
               <p>{getError()}</p>
             </div>
@@ -85,7 +88,7 @@ export function SignInForm({
               isDisabled={isPending || pending}
               errorMessage={''}
             />
-            <span id={fields.email.errorId} className="text-sm text-red-500">
+            <span id={fields.email.errorId} className="text-red-500 text-sm">
               {fields.email.errors}
             </span>
           </div>
@@ -97,24 +100,17 @@ export function SignInForm({
               errorMessage={''}
               isRevealable={true}
             />
-            <span id={fields.password.errorId} className="text-sm text-red-500">
+            <span id={fields.password.errorId} className="text-red-500 text-sm">
               {fields.password.errors}
             </span>
-            <Link
-              href={'/forgot-password'}
-              className="text-blue-500 hover:text-blue-500/80 mt-2"
-            >
+            <Link href={'/forgot-password'} className="mt-2 text-blue-500 hover:text-blue-500/80">
               パスワードをお忘れですか？
             </Link>
           </div>
         </Card.Content>
-        <Card.Footer className="flex flex-col items-start gap-y-4 w-full">
+        <Card.Footer className="flex w-full flex-col items-start gap-y-4">
           <div className="w-full">
-            <Button
-              type="submit"
-              className="w-full relative"
-              isDisabled={isPending || pending}
-            >
+            <Button type="submit" className="relative w-full" isDisabled={isPending || pending}>
               サインイン
               {isPending && <Loader className="absolute top-3 right-2" />}
             </Button>
@@ -163,11 +159,7 @@ export function SignInForm({
             className="w-full"
           >
             パスキーでサインイン
-            {pending ? (
-              <Loader className="absolute top-3 right-2" />
-            ) : (
-              <IconKey />
-            )}
+            {pending ? <Loader className="absolute top-3 right-2" /> : <IconKey />}
           </Button>
         </Card.Footer>
       </Form>

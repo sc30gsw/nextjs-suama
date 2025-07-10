@@ -13,19 +13,10 @@ type WeeklyReportsProps = {
 }
 
 export function WeeklyReports({ year, week, userId }: WeeklyReportsProps) {
-  const { use: useWeeklyReports } = fetchWeeklyReportsInfiniteQuery(
-    { year, week },
-    userId,
-  )
+  const { use: useWeeklyReports } = fetchWeeklyReportsInfiniteQuery({ year, week }, userId)
 
-  const {
-    data,
-    error,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useWeeklyReports()
+  const { data, error, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useWeeklyReports()
 
   if (isLoading) {
     return <WeeklyReportsCardLoading />

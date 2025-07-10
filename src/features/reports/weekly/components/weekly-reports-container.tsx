@@ -1,8 +1,4 @@
-import {
-  HydrationBoundary,
-  QueryClient,
-  dehydrate,
-} from '@tanstack/react-query'
+import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
 import { WeeklyReports } from '~/features/reports/weekly/components/weekly-reports'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 
@@ -12,15 +8,9 @@ type WeeklyReportsContainerProps = {
   week: number
 }
 
-export async function WeeklyReportsContainer({
-  userId,
-  year,
-  week,
-}: WeeklyReportsContainerProps) {
+export async function WeeklyReportsContainer({ userId, year, week }: WeeklyReportsContainerProps) {
   const queryClient = new QueryClient()
-  await fetchWeeklyReportsInfiniteQuery({ year, week }, userId).prefetch(
-    queryClient,
-  )
+  await fetchWeeklyReportsInfiniteQuery({ year, week }, userId).prefetch(queryClient)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

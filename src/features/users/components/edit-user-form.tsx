@@ -42,7 +42,6 @@ type EditUserFormProps = Pick<
 export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
   const [pending, startTransition] = useTransition()
   const [imageError, setImageError] = useState('')
-  // biome-ignore lint/style/noNonNullAssertion: To need intentUI
   const fileInputRef = useRef<HTMLInputElement>(null!)
 
   const [lastResult, action, isPending] = useActionState(
@@ -91,11 +90,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
     }
 
     // 拡張子制限
-    if (
-      !ACCEPTED_TYPES.includes(
-        file.type as 'image/jpeg' | 'image/png' | 'image/webp',
-      )
-    ) {
+    if (!ACCEPTED_TYPES.includes(file.type as 'image/jpeg' | 'image/png' | 'image/webp')) {
       setImageError('画像はJPEG, PNG, WEBP形式のみ対応しています。')
       return
     }
@@ -116,7 +111,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
     <Form {...getFormProps(form)} action={action}>
       <Card.Content className="space-y-4">
         {getError() && (
-          <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+          <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
             <p>{getError()}</p>
           </div>
@@ -133,7 +128,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
             defaultValue={lastResult?.initialValue?.name.toString() ?? name}
             errorMessage={''}
           />
-          <span id={fields.name.errorId} className="text-sm text-red-500">
+          <span id={fields.name.errorId} className="text-red-500 text-sm">
             {fields.name.errors}
           </span>
         </div>
@@ -147,11 +142,11 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
             defaultValue={lastResult?.initialValue?.email.toString() ?? email}
             errorMessage={''}
           />
-          <span id={fields.email.errorId} className="text-sm text-red-500">
+          <span id={fields.email.errorId} className="text-red-500 text-sm">
             {fields.email.errors}
           </span>
         </div>
-        <div className="flex items-center gap-x-4 my-4">
+        <div className="my-4 flex items-center gap-x-4">
           <div className="flex flex-col">
             <FileTrigger
               {...getInputProps(fields.image, { type: 'file' })}
@@ -164,19 +159,15 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
             >
               画像をアップロード
             </FileTrigger>
-            {imageError && (
-              <span className="text-sm text-red-500 break-words">
-                {imageError}
-              </span>
-            )}
+            {imageError && <span className="break-words text-red-500 text-sm">{imageError}</span>}
           </div>
           {imageInput.value ? (
-            <div className="relative w-fit group">
+            <div className="group relative w-fit">
               <Avatar
                 src={imageInput.value}
                 alt={name}
                 onClick={() => fileInputRef.current.click()}
-                className="size-15 *:size-15 hover:opacity-80 cursor-pointer"
+                className="size-15 cursor-pointer *:size-15 hover:opacity-80"
               />
               <Button
                 shape="circle"
@@ -184,7 +175,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
                 intent="outline"
                 isDisabled={isPending || pending}
                 onPress={() => imageInput.change('')}
-                className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 group-hover:opacity-100 opacity-0"
+                className="-translate-y-1/2 absolute top-0 right-0 translate-x-1/2 opacity-0 group-hover:opacity-100"
               >
                 <IconX />
               </Button>
@@ -194,17 +185,13 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               initials={name.charAt(0)}
               alt={name}
               onClick={() => fileInputRef.current.click()}
-              className="size-15 *:size-15 cursor-pointer hover:opacity-80"
+              className="size-15 cursor-pointer *:size-15 hover:opacity-80"
             />
           )}
         </div>
       </Card.Content>
       <Card.Footer className="flex flex-col items-center gap-y-4 py-4">
-        <Button
-          type="submit"
-          isDisabled={isPending || pending}
-          className="w-full"
-        >
+        <Button type="submit" isDisabled={isPending || pending} className="w-full">
           {isPending ? '更新中...' : '更新する'}
           {isPending ? <Loader /> : <IconDocumentEdit />}
         </Button>
@@ -228,22 +215,11 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
           className="w-full"
         >
           パスキーを追加する
-          {pending ? (
-            <Loader className="absolute top-3 right-2" />
-          ) : (
-            <IconPersonPasskey />
-          )}
+          {pending ? <Loader className="absolute top-3 right-2" /> : <IconPersonPasskey />}
         </Button>
         <Separator orientation="horizontal" />
-        <Button
-          intent="outline"
-          isDisabled={isPending || pending}
-          className="w-full"
-        >
-          <Link
-            href={`/${id}/change-password`}
-            className="flex items-center gap-x-2"
-          >
+        <Button intent="outline" isDisabled={isPending || pending} className="w-full">
+          <Link href={`/${id}/change-password`} className="flex items-center gap-x-2">
             パスワードを変更する
             <LinkLoadingIndicator>
               <IconLock />

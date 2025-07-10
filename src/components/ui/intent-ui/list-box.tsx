@@ -21,10 +21,7 @@ import {
 } from '~/components/ui/intent-ui/dropdown'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
-const ListBox = <T extends object>({
-  className,
-  ...props
-}: ListBoxProps<T>) => (
+const ListBox = <T extends object>({ className, ...props }: ListBoxProps<T>) => (
   <ListBoxPrimitive
     {...props}
     className={composeTailwindRenderProps(
@@ -34,18 +31,12 @@ const ListBox = <T extends object>({
   />
 )
 
-interface ListBoxItemProps<T extends object>
-  extends ListBoxItemPrimitiveProps<T> {
+interface ListBoxItemProps<T extends object> extends ListBoxItemPrimitiveProps<T> {
   className?: string
 }
 
-const ListBoxItem = <T extends object>({
-  children,
-  className,
-  ...props
-}: ListBoxItemProps<T>) => {
-  const textValue =
-    props.textValue || (typeof children === 'string' ? children : undefined)
+const ListBoxItem = <T extends object>({ children, className, ...props }: ListBoxItemProps<T>) => {
+  const textValue = props.textValue || (typeof children === 'string' ? children : undefined)
 
   return (
     <ListBoxItemPrimitive
@@ -59,8 +50,7 @@ const ListBoxItem = <T extends object>({
       )}
     >
       {(renderProps) => {
-        const { allowsDragging, isSelected, isFocused, isDragging } =
-          renderProps
+        const { allowsDragging, isSelected, isFocused, isDragging } = renderProps
 
         return (
           <>
@@ -74,9 +64,7 @@ const ListBoxItem = <T extends object>({
                 )}
               />
             )}
-            {isSelected && (
-              <IconCheck className="-mx-0.5 mr-2" data-slot="checked-icon" />
-            )}
+            {isSelected && <IconCheck className="-mx-0.5 mr-2" data-slot="checked-icon" />}
             {typeof children === 'function' ? (
               children(renderProps)
             ) : typeof children === 'string' ? (

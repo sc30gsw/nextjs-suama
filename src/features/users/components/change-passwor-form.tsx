@@ -2,11 +2,7 @@
 
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import {
-  IconCirclePerson,
-  IconTriangleExclamation,
-  IconUnlocked,
-} from '@intentui/icons'
+import { IconCirclePerson, IconTriangleExclamation, IconUnlocked } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
 import { useActionState } from 'react'
@@ -72,7 +68,7 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
     <Form {...getFormProps(form)} action={action}>
       <Card.Content className="space-y-4">
         {getError() && (
-          <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+          <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
             <p>{getError()}</p>
           </div>
@@ -86,7 +82,7 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
             errorMessage={''}
             isRevealable={true}
           />
-          <span id={fields.password.errorId} className="text-sm text-red-500">
+          <span id={fields.password.errorId} className="text-red-500 text-sm">
             {fields.password.errors}
           </span>
         </div>
@@ -98,10 +94,7 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
             errorMessage={''}
             isRevealable={true}
           />
-          <span
-            id={fields.confirmPassword.errorId}
-            className="text-sm text-red-500"
-          >
+          <span id={fields.confirmPassword.errorId} className="text-red-500 text-sm">
             {fields.confirmPassword.errors}
           </span>
         </div>

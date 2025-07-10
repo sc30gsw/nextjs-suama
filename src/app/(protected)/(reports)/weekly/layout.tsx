@@ -1,7 +1,4 @@
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '~/components/ui/intent-ui/sidebar'
+import { SidebarInset, SidebarProvider } from '~/components/ui/intent-ui/sidebar'
 import { AppSidebar } from '~/components/ui/sidebar/app-sidebar'
 import { AppSidebarNav } from '~/components/ui/sidebar/app-sidebar-nav'
 import type { NextLayoutProps } from '~/types'

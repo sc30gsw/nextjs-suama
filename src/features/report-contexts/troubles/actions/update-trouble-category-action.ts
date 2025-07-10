@@ -8,10 +8,7 @@ import { categoriesOfTrouble } from '~/db/schema'
 import { editTroubleCategoryInputSchema } from '~/features/report-contexts/troubles/types/schemas/edit-trouble-category-input-schema'
 import { db } from '~/index'
 
-export async function updateTroubleCategoryAction(
-  _: unknown,
-  formData: FormData,
-) {
+export async function updateTroubleCategoryAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
     schema: editTroubleCategoryInputSchema,
   })

@@ -17,11 +17,7 @@ import {
 } from 'react-aria-components'
 import { twJoin, twMerge } from 'tailwind-merge'
 import { tv } from 'tailwind-variants'
-import {
-  badgeIntents,
-  badgeShapes,
-  badgeStyles,
-} from '~/components/ui/intent-ui/badge'
+import { badgeIntents, badgeShapes, badgeStyles } from '~/components/ui/intent-ui/badge'
 import { Description, Label } from '~/components/ui/intent-ui/field'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
@@ -124,17 +120,11 @@ const TagGroup = ({ children, ref, className, ...props }: TagGroupProps) => {
   )
 }
 
-const TagList = <T extends object>({
-  className,
-  ...props
-}: TagListProps<T>) => {
+const TagList = <T extends object>({ className, ...props }: TagListProps<T>) => {
   return (
     <TagListPrimitive
       {...props}
-      className={composeTailwindRenderProps(
-        className,
-        'flex flex-wrap gap-1.5',
-      )}
+      className={composeTailwindRenderProps(className, 'flex flex-wrap gap-1.5')}
     />
   )
 }
@@ -154,8 +144,7 @@ interface TagProps extends TagPrimitiveProps {
 }
 
 const Tag = ({ className, intent, shape, ...props }: TagProps) => {
-  const textValue =
-    typeof props.children === 'string' ? props.children : undefined
+  const textValue = typeof props.children === 'string' ? props.children : undefined
   const groupContext = React.useContext(TagGroupContext)
 
   return (

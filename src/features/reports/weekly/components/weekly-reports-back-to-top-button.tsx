@@ -28,8 +28,8 @@ export function WeeklyReportsBackToTopButton() {
       size="square-petite"
       onPress={scrollToTop}
       className={cn(
-        'fixed bottom-6 right-6 lg:right-80 z-50 p-3 rounded-full bg-primary text-white shadow-lg transition-opacity',
-        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none',
+        'fixed right-6 bottom-6 z-50 rounded-full bg-primary p-3 text-white shadow-lg transition-opacity lg:right-80',
+        isVisible ? 'opacity-100' : 'pointer-events-none opacity-0',
       )}
     >
       <IconArrowUp />

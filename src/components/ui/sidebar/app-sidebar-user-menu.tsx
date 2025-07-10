@@ -1,15 +1,5 @@
-import {
-  IconChevronLgDown,
-  IconCirclePerson,
-  IconLogout,
-  IconMoon,
-  IconSun,
-} from '@intentui/icons'
-import {
-  IconCalendarEvent,
-  IconCalendarUser,
-  IconReport,
-} from '@tabler/icons-react'
+import { IconChevronLgDown, IconCirclePerson, IconLogout, IconMoon, IconSun } from '@intentui/icons'
+import { IconCalendarEvent, IconCalendarUser, IconReport } from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
 import { twMerge } from 'tailwind-merge'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -35,9 +25,7 @@ export function AppSidebarUserMenu() {
         />
         <div className="in-data-[sidebar-collapsible=dock]:hidden text-sm">
           <SidebarLabel>{session?.user.name}</SidebarLabel>
-          <span className="-mt-0.5 block text-muted-fg">
-            {session?.user.email}
-          </span>
+          <span className="-mt-0.5 block text-muted-fg">{session?.user.email}</span>
         </div>
         <IconChevronLgDown
           data-slot="chevron"
@@ -46,16 +34,12 @@ export function AppSidebarUserMenu() {
       </Menu.Trigger>
       <Menu.Content
         placement="bottom right"
-        className={twMerge(
-          state === 'expanded' ? 'sm:min-w-(--trigger-width)' : 'sm:min-w-60',
-        )}
+        className={twMerge(state === 'expanded' ? 'sm:min-w-(--trigger-width)' : 'sm:min-w-60')}
       >
         <Menu.Section>
           <Menu.Header separator={true}>
             <span className="block">{session?.user.name}</span>
-            <span className="font-normal text-muted-fg">
-              {session?.user.email}
-            </span>
+            <span className="font-normal text-muted-fg">{session?.user.email}</span>
           </Menu.Header>
         </Menu.Section>
 

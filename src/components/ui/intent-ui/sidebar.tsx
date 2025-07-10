@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  IconChevronLgDown,
-  IconHamburger,
-  IconSidebarFill,
-} from '@intentui/icons'
+import { IconChevronLgDown, IconHamburger, IconSidebarFill } from '@intentui/icons'
 import {
   type ComponentProps,
   type ReactNode,
@@ -167,10 +163,8 @@ const gap = tv({
   ],
   variants: {
     intent: {
-      default:
-        'group-data-[sidebar-collapsible=dock]/sidebar-container:w-(--sidebar-width-dock)',
-      fleet:
-        'group-data-[sidebar-collapsible=dock]/sidebar-container:w-(--sidebar-width-dock)',
+      default: 'group-data-[sidebar-collapsible=dock]/sidebar-container:w-(--sidebar-width-dock)',
+      fleet: 'group-data-[sidebar-collapsible=dock]/sidebar-container:w-(--sidebar-width-dock)',
       float:
         'group-data-[sidebar-collapsible=dock]/sidebar-container:w-[calc(var(--sidebar-width-dock)+theme(spacing.4))]',
       inset:
@@ -243,11 +237,7 @@ const Sidebar = ({
 
   if (isMobile) {
     return (
-      <Sheet
-        isOpen={isOpenOnMobile}
-        onOpenChange={setIsOpenOnMobile}
-        {...props}
-      >
+      <Sheet isOpen={isOpenOnMobile} onOpenChange={setIsOpenOnMobile} {...props}>
         <Sheet.Content
           closeButton={closeButton}
           aria-label="Sidebar"
@@ -380,10 +370,7 @@ const SidebarContent = ({ className, ...props }: ComponentProps<'div'>) => {
   )
 }
 
-const SidebarSectionGroup = ({
-  className,
-  ...props
-}: ComponentProps<'section'>) => {
+const SidebarSectionGroup = ({ className, ...props }: ComponentProps<'section'>) => {
   const { state, isMobile } = useSidebar()
   const collapsed = state === 'collapsed' && !isMobile
   return (
@@ -419,9 +406,7 @@ const SidebarSection = ({ className, ...props }: SidebarSectionProps) => {
           {props.label}
         </Header>
       )}
-      <div className="grid grid-cols-[auto_1fr] gap-y-0.5">
-        {props.children}
-      </div>
+      <div className="grid grid-cols-[auto_1fr] gap-y-0.5">{props.children}</div>
     </div>
   )
 }
@@ -451,8 +436,7 @@ const sidebarItemStyles = tv({
   },
 })
 
-interface SidebarItemProps
-  extends Omit<ComponentProps<typeof Link>, 'children'> {
+interface SidebarItemProps extends Omit<ComponentProps<typeof Link>, 'children'> {
   isCurrent?: boolean
   tooltip?: ReactNode | string
   children?:
@@ -487,10 +471,7 @@ const SidebarItem = ({
           ...renderProps,
           isCurrent,
           collapsed: isCollapsed,
-          isActive:
-            renderProps.isPressed ||
-            renderProps.isFocusVisible ||
-            renderProps.isHovered,
+          isActive: renderProps.isPressed || renderProps.isFocusVisible || renderProps.isHovered,
           className: cls,
         }),
       )}
@@ -498,9 +479,7 @@ const SidebarItem = ({
     >
       {(values) => (
         <>
-          {typeof children === 'function'
-            ? children({ ...values, isCollapsed })
-            : children}
+          {typeof children === 'function' ? children({ ...values, isCollapsed }) : children}
 
           {badge &&
             (state !== 'collapsed' ? (
@@ -597,10 +576,7 @@ const SidebarDisclosureGroup = ({
     <DisclosureGroup
       data-sidebar-disclosure-group="true"
       allowsMultipleExpanded={allowsMultipleExpanded}
-      className={composeTailwindRenderProps(
-        className,
-        'col-span-full flex flex-col gap-y-6',
-      )}
+      className={composeTailwindRenderProps(className, 'col-span-full flex flex-col gap-y-6')}
       {...props}
     />
   )
@@ -609,11 +585,7 @@ const SidebarDisclosureGroup = ({
 interface SidebarDisclosureProps extends DisclosureProps {
   ref?: Ref<HTMLDivElement>
 }
-const SidebarDisclosure = ({
-  className,
-  ref,
-  ...props
-}: SidebarDisclosureProps) => {
+const SidebarDisclosure = ({ className, ref, ...props }: SidebarDisclosureProps) => {
   const { state } = useSidebar()
   return (
     <Disclosure
@@ -650,11 +622,7 @@ const sidebarDisclosureTrigger = tv({
 interface SidebarDisclosureTriggerProps extends ButtonProps {
   ref?: Ref<HTMLButtonElement>
 }
-const SidebarDisclosureTrigger = ({
-  className,
-  ref,
-  ...props
-}: SidebarDisclosureTriggerProps) => {
+const SidebarDisclosureTrigger = ({ className, ref, ...props }: SidebarDisclosureTriggerProps) => {
   const { state, isMobile } = useSidebar()
   const collapsed = state === 'collapsed' && !isMobile
   return (
@@ -666,10 +634,7 @@ const SidebarDisclosureTrigger = ({
           sidebarDisclosureTrigger({
             ...renderProps,
             collapsed,
-            isActive:
-              renderProps.isPressed ||
-              renderProps.isFocusVisible ||
-              renderProps.isHovered,
+            isActive: renderProps.isPressed || renderProps.isFocusVisible || renderProps.isHovered,
             className,
           }),
         )}
@@ -677,9 +642,7 @@ const SidebarDisclosureTrigger = ({
       >
         {(values) => (
           <>
-            {typeof props.children === 'function'
-              ? props.children(values)
-              : props.children}
+            {typeof props.children === 'function' ? props.children(values) : props.children}
             {state !== 'collapsed' && (
               <IconChevronLgDown
                 data-slot="chevron"
@@ -693,9 +656,7 @@ const SidebarDisclosureTrigger = ({
   )
 }
 
-const SidebarDisclosurePanel = (
-  props: ComponentProps<typeof DisclosurePanel>,
-) => {
+const SidebarDisclosurePanel = (props: ComponentProps<typeof DisclosurePanel>) => {
   return (
     <DisclosurePanel
       data-sidebar-disclosure-panel="true"
@@ -718,11 +679,7 @@ const SidebarSeparator = ({ className, ...props }: SidebarSeparatorProps) => {
   )
 }
 
-const SidebarTrigger = ({
-  onPress,
-  children,
-  ...props
-}: ComponentProps<typeof Button>) => {
+const SidebarTrigger = ({ onPress, children, ...props }: ComponentProps<typeof Button>) => {
   const { toggleSidebar } = useSidebar()
   return (
     <Button
@@ -747,11 +704,7 @@ const SidebarTrigger = ({
   )
 }
 
-const SidebarRail = ({
-  className,
-  ref,
-  ...props
-}: ComponentProps<'button'>) => {
+const SidebarRail = ({ className, ref, ...props }: ComponentProps<'button'>) => {
   const { toggleSidebar } = useSidebar()
 
   return (
@@ -815,18 +768,8 @@ interface SidebarNavProps extends ComponentProps<'nav'> {
   isSticky?: boolean
 }
 
-const SidebarNav = ({
-  isSticky = false,
-  className,
-  ...props
-}: SidebarNavProps) => {
-  return (
-    <nav
-      data-slot="sidebar-nav"
-      {...props}
-      className={nav({ isSticky, className })}
-    />
-  )
+const SidebarNav = ({ isSticky = false, className, ...props }: SidebarNavProps) => {
+  return <nav data-slot="sidebar-nav" {...props} className={nav({ isSticky, className })} />
 }
 
 export type {

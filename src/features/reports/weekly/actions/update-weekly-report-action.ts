@@ -44,10 +44,9 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       })
     }
 
-    const weeklyReportMissionList =
-      await db.query.weeklyReportMissions.findMany({
-        where: eq(weeklyReportMissions.weeklyReportId, weeklyReport.id),
-      })
+    const weeklyReportMissionList = await db.query.weeklyReportMissions.findMany({
+      where: eq(weeklyReportMissions.weeklyReportId, weeklyReport.id),
+    })
 
     const inputIds = pipe(
       submission.value.weeklyReports,
@@ -98,8 +97,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       }
 
       const isExisting = weeklyReportMissionList.find(
-        (weeklyReportMission) =>
-          weeklyReportMission.id === weeklyReportInput.id,
+        (weeklyReportMission) => weeklyReportMission.id === weeklyReportInput.id,
       )
 
       if (isExisting) {
@@ -121,9 +119,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       }
     }
 
-    revalidateTag(
-      `${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${weeklyReport.id}`,
-    )
+    revalidateTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${weeklyReport.id}`)
 
     return submission.reply()
   } catch (_) {

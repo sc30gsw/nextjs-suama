@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  type KeyboardEvent,
-  type ReactNode,
-  useCallback,
-  useState,
-} from 'react'
+import { type KeyboardEvent, type ReactNode, useCallback, useState } from 'react'
 
 import type { Key } from 'react-aria-components'
 import { Group, TextField } from 'react-aria-components'
@@ -15,10 +10,7 @@ import { tv } from 'tailwind-variants'
 
 import type { FieldProps } from '~/components/ui/intent-ui/field'
 import { Description, Input, Label } from '~/components/ui/intent-ui/field'
-import type {
-  RestrictedIntent,
-  TagGroupProps,
-} from '~/components/ui/intent-ui/tag-group'
+import type { RestrictedIntent, TagGroupProps } from '~/components/ui/intent-ui/tag-group'
 import { Tag, TagGroup, TagList } from '~/components/ui/intent-ui/tag-group'
 
 const tagFieldsStyles = tv({
@@ -91,9 +83,7 @@ const TagField = ({
 
       if (
         formattedName &&
-        !list.items.some(
-          ({ name }) => name.toLowerCase() === formattedName.toLowerCase(),
-        )
+        !list.items.some(({ name }) => name.toLowerCase() === formattedName.toLowerCase())
       ) {
         const tag = {
           id: (list.items.at(-1)?.id ?? 0) + 1,
@@ -153,9 +143,7 @@ const TagField = ({
   return (
     <div className={twMerge('flex w-full flex-col gap-y-1.5', className)}>
       {props.label && <Label>{props.label}</Label>}
-      <Group
-        className={twJoin('flex flex-col', props.isDisabled && 'opacity-50')}
-      >
+      <Group className={twJoin('flex flex-col', props.isDisabled && 'opacity-50')}>
         <TagGroup
           intent={props.intent}
           shape={props.shape}
@@ -170,8 +158,7 @@ const TagField = ({
                   list.items.length > 0
                     ? appearance === 'outline' && 'gap-1.5 px-1 py-1.5'
                     : 'gap-0',
-                  props.shape === 'square' &&
-                    '[&_.jdt3lr2x]:rounded-[calc(var(--radius-lg)-4px)]',
+                  props.shape === 'square' && '[&_.jdt3lr2x]:rounded-[calc(var(--radius-lg)-4px)]',
                   '[&_.jdt3lr2x]:last:-mr-1 outline-hidden [&_.jdt3lr2x]:cursor-default',
                 )}
               >
@@ -179,9 +166,7 @@ const TagField = ({
               </TagList>
               <TextField
                 isDisabled={props.isDisabled}
-                aria-label={
-                  props?.label ?? (props['aria-label'] || props.placeholder)
-                }
+                aria-label={props?.label ?? (props['aria-label'] || props.placeholder)}
                 isInvalid={isInvalid}
                 onKeyDown={onKeyDown}
                 onChange={setInputValue}
@@ -191,11 +176,7 @@ const TagField = ({
               >
                 <Input
                   className="inline"
-                  placeholder={
-                    maxTagsToAdd <= 0
-                      ? 'Remove one to add more'
-                      : props.placeholder
-                  }
+                  placeholder={maxTagsToAdd <= 0 ? 'Remove one to add more' : props.placeholder}
                 />
               </TextField>
             </div>

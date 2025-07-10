@@ -37,20 +37,12 @@ const badgeStyles = tv({
   },
 })
 
-interface BadgeProps
-  extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeStyles> {
+interface BadgeProps extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeStyles> {
   className?: string
   children: ReactNode
 }
 
-const Badge = ({
-  children,
-  intent,
-  shape,
-  className,
-  ...props
-}: BadgeProps) => {
+const Badge = ({ children, intent, shape, className, ...props }: BadgeProps) => {
   return (
     <span {...props} className={badgeStyles({ intent, shape, className })}>
       {children}

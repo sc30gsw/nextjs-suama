@@ -14,11 +14,7 @@ import { twMerge } from 'tailwind-merge'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
-const GridList = <T extends object>({
-  children,
-  className,
-  ...props
-}: GridListProps<T>) => (
+const GridList = <T extends object>({ children, className, ...props }: GridListProps<T>) => (
   <GridListPrimitive
     className={composeTailwindRenderProps(
       className,
@@ -50,8 +46,7 @@ const itemStyles = tv({
 })
 
 const GridListItem = ({ className, children, ...props }: GridListItemProps) => {
-  const textValue =
-    props.textValue || (typeof children === 'string' ? children : undefined)
+  const textValue = props.textValue || (typeof children === 'string' ? children : undefined)
   return (
     <GridListItemPrimitive
       textValue={textValue}
@@ -75,10 +70,9 @@ const GridListItem = ({ className, children, ...props }: GridListItemProps) => {
             aria-hidden={true}
             className="absolute inset-y-0 left-0 hidden h-full w-0.5 bg-primary group-selected:block"
           />
-          {values.selectionMode === 'multiple' &&
-            values.selectionBehavior === 'toggle' && (
-              <Checkbox className="-mr-2" slot="selection" />
-            )}
+          {values.selectionMode === 'multiple' && values.selectionBehavior === 'toggle' && (
+            <Checkbox className="-mr-2" slot="selection" />
+          )}
           {typeof children === 'function' ? children(values) : children}
         </>
       )}
@@ -86,11 +80,7 @@ const GridListItem = ({ className, children, ...props }: GridListItemProps) => {
   )
 }
 
-const GridEmptyState = ({
-  ref,
-  className,
-  ...props
-}: React.ComponentProps<'div'>) => (
+const GridEmptyState = ({ ref, className, ...props }: React.ComponentProps<'div'>) => (
   <div ref={ref} className={twMerge('p-6', className)} {...props} />
 )
 

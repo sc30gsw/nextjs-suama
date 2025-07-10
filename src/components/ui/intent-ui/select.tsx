@@ -23,10 +23,7 @@ import {
 } from '~/components/ui/intent-ui/dropdown'
 import { Description, FieldError, Label } from '~/components/ui/intent-ui/field'
 import { ListBox } from '~/components/ui/intent-ui/list-box'
-import {
-  PopoverContent,
-  type PopoverContentProps,
-} from '~/components/ui/intent-ui/popover'
+import { PopoverContent, type PopoverContentProps } from '~/components/ui/intent-ui/popover'
 import { composeTailwindRenderProps, focusStyles } from '~/lib/primitive'
 
 const selectTriggerStyles = tv({
@@ -63,17 +60,12 @@ const Select = <T extends object>({
   return (
     <SelectPrimitive
       {...props}
-      className={composeTailwindRenderProps(
-        className,
-        'group flex w-full flex-col gap-y-1.5',
-      )}
+      className={composeTailwindRenderProps(className, 'group flex w-full flex-col gap-y-1.5')}
     >
       {(values) => (
         <>
           {label && <Label className={labelClassName}>{label}</Label>}
-          {typeof props.children === 'function'
-            ? props.children(values)
-            : props.children}
+          {typeof props.children === 'function' ? props.children(values) : props.children}
           {description && <Description>{description}</Description>}
           <FieldError>{errorMessage}</FieldError>
         </>
@@ -106,10 +98,7 @@ const SelectList = <T extends object>({
       <ListBox
         layout="stack"
         orientation="vertical"
-        className={composeTailwindRenderProps(
-          className,
-          'max-h-[inherit] border-0 shadow-none',
-        )}
+        className={composeTailwindRenderProps(className, 'max-h-[inherit] border-0 shadow-none')}
         items={items}
         {...props}
       >
