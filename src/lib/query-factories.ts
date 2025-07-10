@@ -51,7 +51,7 @@ export function createInfiniteQueryFactory<
 
     const use = (
       options?: Omit<
-        UseInfiniteQueryOptions<TPage, TError, InfiniteData<TPage>, TPage, QueryKey, TPageParam>,
+        UseInfiniteQueryOptions<TPage, TError, InfiniteData<TPage>, QueryKey, TPageParam>,
         'queryKey' | 'queryFn' | 'getNextPageParam' | 'initialPageParam'
       >,
     ): UseInfiniteQueryResult<InfiniteData<TPage>, TError> =>
