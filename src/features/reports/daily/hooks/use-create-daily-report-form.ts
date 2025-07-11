@@ -27,9 +27,6 @@ export function useCreateDailyForm(
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createReportAction, {
-      onSuccess() {
-        toast.success('日報の作成に成功しました')
-      },
       onError(result) {
         if (result.error) {
           const errorMessage = result.error.message
