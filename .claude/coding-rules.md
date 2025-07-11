@@ -104,7 +104,7 @@
   |  └ utils : アプリ全体で使われるユーティリティ実装
   ├ .env.* : 環境変数定義ファイル
   ├ next.config.ts : next.jsの設定ファイル
-  ├ components.json : shadcn/uiの設定ファイル
+  ├ intentui.json : Intent UIの設定ファイル
   ├ tailwind.config.ts : tailwind cssの設定ファイル
   ├ postcss.config.mjs : postcssの設定ファイル（主にtailwind cssのプラグイン設定を記述）
   ├ package.json : パッケージマネージャーの設定ファイル
