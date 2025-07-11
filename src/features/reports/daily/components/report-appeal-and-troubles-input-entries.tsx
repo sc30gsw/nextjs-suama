@@ -203,40 +203,57 @@ export function ReportAppealAndTroubleInputEntries<
       <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
         <IconPlus />
       </Button>
-      {entries.map((entry) => (
-        <div
-          key={entry.id}
-          className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
-        >
-          <Textarea
-            label="内容"
-            placeholder="内容を入力"
-            value={entry.content}
-            onChange={(val) => handleChangeContent(entry.id, val)}
-            className="col-span-3"
-          />
-          <ComboBox
-            label="アピールポイント"
-            placeholder="カテゴリーを選択"
-            selectedKey={entry.item}
-            onSelectionChange={(key) => handleChangeItem(entry.id, key)}
-            className="col-span-2"
+      {entries.map((entry, index) => {
+        const namePrefix = kind === 'appeal' ? 'appealEntries' : 'troubleEntries'
+
+        return (
+          <div
+            key={entry.id}
+            className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
           >
-            <ComboBox.Input />
-            <ComboBox.List items={items}>
-              {(item) => <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>}
-            </ComboBox.List>
-          </ComboBox>
-          <Button
-            size="square-petite"
-            intent="danger"
-            onPress={() => handleRemove(entry.id)}
-            className="col-span-1 mt-6 rounded-full"
-          >
-            <IconMinus />
-          </Button>
-        </div>
-      ))}
+            {/* Hidden inputs for form data structure */}
+            <input type="hidden" name={`${namePrefix}[${index}][id]`} value={entry.id} />
+            <input
+              type="hidden"
+              name={`${namePrefix}[${index}][content]`}
+              value={entry.content || ''}
+            />
+            <input
+              type="hidden"
+              name={`${namePrefix}[${index}][categoryId]`}
+              value={entry.item || ''}
+            />
+
+            <Textarea
+              label="内容"
+              placeholder="内容を入力"
+              value={entry.content}
+              onChange={(val) => handleChangeContent(entry.id, val)}
+              className="col-span-3"
+            />
+            <ComboBox
+              label={kind === 'appeal' ? 'アピールポイント' : 'トラブルカテゴリー'}
+              placeholder="カテゴリーを選択"
+              selectedKey={entry.item ?? undefined}
+              onSelectionChange={(key) => handleChangeItem(entry.id, key)}
+              className="col-span-2"
+            >
+              <ComboBox.Input />
+              <ComboBox.List items={items}>
+                {(item) => <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>}
+              </ComboBox.List>
+            </ComboBox>
+            <Button
+              size="square-petite"
+              intent="danger"
+              onPress={() => handleRemove(entry.id)}
+              className="col-span-1 mt-6 rounded-full"
+            >
+              <IconMinus />
+            </Button>
+          </div>
+        )
+      })}
     </>
   )
 }

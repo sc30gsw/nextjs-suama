@@ -3,9 +3,7 @@ import { unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
-import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Heading } from '~/components/ui/intent-ui/heading'
-import { Separator } from '~/components/ui/intent-ui/separator'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
@@ -13,8 +11,6 @@ import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { CreateDailyForm } from '~/features/reports/daily/components/create-daily-form'
 import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/components/report-appeal-and-troubles-input-entries'
-
-import { ReportContentInputEntries } from '~/features/reports/daily/components/report-content-input-entries'
 import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
@@ -33,19 +29,20 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
   const { reportEntry, appealsAndTroublesEntry } =
     await inputCountSearchParamsCache.parse(searchParams)
 
-  const count = reportEntry.count
+  const _count = reportEntry.count
   const troubleCount = appealsAndTroublesEntry.troubles.count
   const appealCount = appealsAndTroublesEntry.appeals.count
 
-  const promises = Promise.all([
-    getProjects(undefined, session.user.id),
-    getMissions(undefined, session.user.id),
-  ])
+  const projectPromise = getProjects(undefined, session.user.id)
+  const missionPromise = getMissions(undefined, session.user.id)
+
+  const promises = Promise.all([projectPromise, missionPromise])
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <Heading>日報作成</Heading>
       <CreateDailyForm
+        promises={promises}
         troubleHeadings={
           <div className="mt-4 flex items-center">
             <Heading level={3}>困っていること</Heading>
@@ -118,8 +115,9 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
             ))}
           </Suspense>
         }
-      >
-        <Suspense
+      />
+      {/* TODO: アピールと困っていることの登録 */}
+      {/* <Suspense
           fallback={
             <>
               <Button size="square-petite" className="mt-4 rounded-full">
@@ -156,8 +154,7 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
               missions={missionsResponse.missions}
             />
           ))}
-        </Suspense>
-      </CreateDailyForm>
+        </Suspense> */}
     </div>
   )
 }

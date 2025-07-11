@@ -5,7 +5,6 @@ import { useQueryStates } from 'nuqs'
 import type { Key } from 'react-aria-components'
 import { filter, pipe } from 'remeda'
 import { Button } from '~/components/ui/intent-ui/button'
-import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { Separator } from '~/components/ui/intent-ui/separator'
@@ -83,7 +82,7 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
       }
 
       const updatedEntries = prev.reportEntry.entries.map((e) =>
-        e.id === id ? { ...e, [kind]: Number(newItem) } : e,
+        e.id === id ? { ...e, [kind]: newItem ? String(newItem) : null } : e,
       )
 
       return {
@@ -123,7 +122,7 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
       <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
         <IconPlus />
       </Button>
-      {reportEntry.entries.map((entry) => {
+      {reportEntry.entries.map((entry, index) => {
         const filteredProjects = entry.mission
           ? pipe(
               projects,
@@ -143,6 +142,29 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
             key={entry.id}
             className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2"
           >
+            {/* Hidden inputs for ID and form data structure */}
+            <input type="hidden" name={`reportEntries[${index}][id]`} value={entry.id} />
+            <input
+              type="hidden"
+              name={`reportEntries[${index}][project]`}
+              value={entry.project || ''}
+            />
+            <input
+              type="hidden"
+              name={`reportEntries[${index}][mission]`}
+              value={entry.mission || ''}
+            />
+            <input
+              type="hidden"
+              name={`reportEntries[${index}][hours]`}
+              value={entry.hours.toString()}
+            />
+            <input
+              type="hidden"
+              name={`reportEntries[${index}][content]`}
+              value={entry.content || ''}
+            />
+
             <ComboBox
               label="プロジェクト"
               placeholder="プロジェクトを選択"
@@ -196,11 +218,6 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
         )
       })}
 
-      <Separator orientation="horizontal" />
-      {/* ? https://qiita.com/curry__30/items/24e7c144123a9fc15fa3#ui%E4%BD%9C%E6%88%90 */}
-      <div className="my-4">
-        <Checkbox className="cursor-pointer">リモート勤務</Checkbox>
-      </div>
       <Separator orientation="horizontal" />
       <TotalHours totalHours={totalHours} />
     </>
