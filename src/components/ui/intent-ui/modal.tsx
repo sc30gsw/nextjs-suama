@@ -1,10 +1,6 @@
 'use client'
 
-import type {
-  DialogProps,
-  DialogTriggerProps,
-  ModalOverlayProps,
-} from 'react-aria-components'
+import type { DialogProps, DialogTriggerProps, ModalOverlayProps } from 'react-aria-components'
 import {
   DialogTrigger,
   ModalOverlay,
@@ -108,27 +104,23 @@ const ModalContent = ({
   return (
     <ModalOverlay
       isDismissable={isDismissable}
-      className={composeRenderProps(
-        classNames?.overlay,
-        (className, renderProps) =>
-          modalOverlayStyles({
-            ...renderProps,
-            isBlurred,
-            className,
-          }),
+      className={composeRenderProps(classNames?.overlay, (className, renderProps) =>
+        modalOverlayStyles({
+          ...renderProps,
+          isBlurred,
+          className,
+        }),
       )}
       {...props}
     >
       <ModalPrimitive
         isDismissable={isDismissable}
-        className={composeRenderProps(
-          classNames?.content,
-          (className, renderProps) =>
-            modalContentStyles({
-              ...renderProps,
-              size,
-              className,
-            }),
+        className={composeRenderProps(classNames?.content, (className, renderProps) =>
+          modalContentStyles({
+            ...renderProps,
+            size,
+            className,
+          }),
         )}
         {...props}
       >

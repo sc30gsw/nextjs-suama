@@ -21,10 +21,10 @@ export default async function UserSettingsPage({
   }
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <Heading>ユーザー設定</Heading>
       <div className="flex flex-col items-center">
-        <Card className="py-4 mt-4 w-full max-w-lg">
+        <Card className="mt-4 w-full max-w-lg py-4">
           <Card.Header>
             <Card.Title>ユーザー情報</Card.Title>
             <Card.Description>ユーザー情報を編集する</Card.Description>

@@ -50,7 +50,7 @@ export function UpdateWeeklyReportContentInputEntries({
 
   const { pending } = useFormStatus()
   return (
-    <div className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2">
+    <div className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2">
       <input {...getInputProps(field.id, { type: 'hidden' })} />
       <div className="col-span-2">
         <ComboBox
@@ -65,12 +65,10 @@ export function UpdateWeeklyReportContentInputEntries({
         >
           <ComboBox.Input />
           <ComboBox.List items={projects}>
-            {(project) => (
-              <ComboBox.Option id={project.id}>{project.name}</ComboBox.Option>
-            )}
+            {(project) => <ComboBox.Option id={project.id}>{project.name}</ComboBox.Option>}
           </ComboBox.List>
         </ComboBox>
-        <span id={field.project.errorId} className="text-sm text-red-500">
+        <span id={field.project.errorId} className="text-red-500 text-sm">
           {field.project.errors}
         </span>
       </div>
@@ -96,12 +94,10 @@ export function UpdateWeeklyReportContentInputEntries({
                 : missions
             }
           >
-            {(mission) => (
-              <ComboBox.Option id={mission.id}>{mission.name}</ComboBox.Option>
-            )}
+            {(mission) => <ComboBox.Option id={mission.id}>{mission.name}</ComboBox.Option>}
           </ComboBox.List>
         </ComboBox>
-        <span id={field.mission.errorId} className="text-sm text-red-500">
+        <span id={field.mission.errorId} className="text-red-500 text-sm">
           {field.mission.errors}
         </span>
       </div>
@@ -114,7 +110,7 @@ export function UpdateWeeklyReportContentInputEntries({
           errorMessage={''}
           isDisabled={pending}
         />
-        <span id={field.hours.errorId} className="text-sm text-red-500">
+        <span id={field.hours.errorId} className="text-red-500 text-sm">
           {field.hours.errors}
         </span>
       </div>
@@ -130,7 +126,7 @@ export function UpdateWeeklyReportContentInputEntries({
           isDisabled={pending}
           errorMessage={''}
         />
-        <span id={field.content.errorId} className="text-sm text-red-500">
+        <span id={field.content.errorId} className="text-red-500 text-sm">
           {field.content.errors}
         </span>
       </div>

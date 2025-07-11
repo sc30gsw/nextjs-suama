@@ -15,12 +15,8 @@ export const updateWeeklyReportSchema = z.object({
 
 export const updateWeeklyReportFormSchema = z.object({
   weeklyReportId: z.string().uuid(),
-  weeklyReports: z
-    .array(updateWeeklyReportSchema)
-    .min(1, '週報の内容は1件以上必要です'),
+  weeklyReports: z.array(updateWeeklyReportSchema).min(1, '週報の内容は1件以上必要です'),
 })
 
-export type UpdateWeeklyReportFormSchema = z.infer<
-  typeof updateWeeklyReportFormSchema
->
+export type UpdateWeeklyReportFormSchema = z.infer<typeof updateWeeklyReportFormSchema>
 export type UpdateWeeklyReportSchema = z.infer<typeof updateWeeklyReportSchema>

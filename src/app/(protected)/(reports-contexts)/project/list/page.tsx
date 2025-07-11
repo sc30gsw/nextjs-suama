@@ -49,11 +49,11 @@ export default async function ProjectListPage({
   const clientsPromise = getClients(undefined, session.user.id)
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <div className="flex justify-between">
         <Heading>プロジェクト一覧</Heading>
         <div className="flex flex-col gap-2">
-          <Suspense fallback={<Skeleton className="w-44.5 h-8" />}>
+          <Suspense fallback={<Skeleton className="h-8 w-44.5" />}>
             {clientsPromise.then((res) => (
               <CreateProjectModal clients={res.clients} />
             ))}
@@ -62,16 +62,16 @@ export default async function ProjectListPage({
           <ReportContextMenu label="プロジェクト" />
         </div>
       </div>
-      <div className="flex flex-row md:flex-col items-center md:items-start gap-x-4 md:gap-y-4">
+      <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">
         <NameSearchTagField label="プロジェクト名" />
         <RowsPerPageSelect />
       </div>
-      <Card className="py-2 mt-4 max-w-full">
+      <Card className="mt-4 max-w-full py-2">
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, names })}
             fallback={
-              <table className="w-full text-sm text-left font-normal">
+              <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
                   <tr>
                     <th className="p-3">プロジェクトID</th>
@@ -85,20 +85,20 @@ export default async function ProjectListPage({
                   {Array.from({ length: 10 }, () => (
                     <tr key={crypto.randomUUID()} className="border-b">
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-90 h-4" />
+                        <Skeleton className="h-4 w-90" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-30 h-4" />
+                        <Skeleton className="h-4 w-30" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-30 h-4" />
+                        <Skeleton className="h-4 w-30" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-30 h-4" />
+                        <Skeleton className="h-4 w-30" />
                       </th>
-                      <th scope="row" className="p-4 flex items-center gap-x-2">
-                        <Skeleton className="w-19 h-9" />
-                        <Skeleton className="w-19 h-9" />
+                      <th scope="row" className="flex items-center gap-x-2 p-4">
+                        <Skeleton className="h-9 w-19" />
+                        <Skeleton className="h-9 w-19" />
                       </th>
                     </tr>
                   ))}
@@ -108,10 +108,7 @@ export default async function ProjectListPage({
           >
             {Promise.all([projectsPromise, clientsPromise]).then(
               ([projectResponse, clientsResponse]) => (
-                <ProjectsTable
-                  data={projectResponse}
-                  clients={clientsResponse.clients}
-                />
+                <ProjectsTable data={projectResponse} clients={clientsResponse.clients} />
               ),
             )}
           </Suspense>
@@ -142,12 +139,7 @@ export default async function ProjectListPage({
                 )
               }
 
-              return (
-                <ReportContextTablePagination
-                  page={page}
-                  pageCount={pageCount}
-                />
-              )
+              return <ReportContextTablePagination page={page} pageCount={pageCount} />
             })}
           </Suspense>
         </Card.Footer>

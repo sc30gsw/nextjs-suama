@@ -1,9 +1,7 @@
 import type { ReactNode } from 'react'
 import { Table } from '~/components/ui/intent-ui/table'
 
-export function WeeklyIssuesAndSolutionsTable({
-  children,
-}: { children: ReactNode }) {
+export function WeeklyIssuesAndSolutionsTable({ children }: { children: ReactNode }) {
   return (
     <Table allowResize={true}>
       <Table.Header>

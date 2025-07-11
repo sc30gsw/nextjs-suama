@@ -30,18 +30,10 @@ export function useCreateWeeklyReportContentInputEntries(
   )
 
   // form resetがConformのものでは反映されないため
-  const [projectId, setProjectId] = useState<Key | null>(
-    projectInput.value ?? null,
-  )
-  const [missionId, setMissionId] = useState<Key | null>(
-    missionInput.value ?? null,
-  )
+  const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
+  const [missionId, setMissionId] = useState<Key | null>(missionInput.value ?? null)
 
-  const handleChangeItem = (
-    id: string,
-    newItem: Key | null,
-    kind: 'project' | 'mission',
-  ) => {
+  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
     if (!(id && newItem)) {
       return
     }
@@ -91,9 +83,7 @@ export function useCreateWeeklyReportContentInputEntries(
       missionId
         ? pipe(
             projects,
-            filter((project) =>
-              project.missions.some((mission) => mission.id === missionId),
-            ),
+            filter((project) => project.missions.some((mission) => mission.id === missionId)),
           )
         : projects
       setMissionId(newItem)
@@ -101,9 +91,7 @@ export function useCreateWeeklyReportContentInputEntries(
 
       const findProject = pipe(
         projects,
-        find((project) =>
-          project.missions.some((mission) => mission.id === newItem),
-        ),
+        find((project) => project.missions.some((mission) => mission.id === newItem)),
       )
 
       setWeeklyReportEntry((prev) => {

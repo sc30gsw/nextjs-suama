@@ -1,9 +1,4 @@
-import {
-  IconPlus,
-  IconSearchSketchbook,
-  IconSend3,
-  IconTriangleExclamation,
-} from '@intentui/icons'
+import { IconPlus, IconSearchSketchbook, IconSend3, IconTriangleExclamation } from '@intentui/icons'
 import Form from 'next/form'
 import { redirect, unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
@@ -57,9 +52,7 @@ export default async function WeeklyReportRegisterPage({
   const { weeklyReportEntry, isReference } =
     await weeklyInputCountSearchParamsCache.parse(searchParams)
 
-  let lastWeeklyReportMission:
-    | Awaited<ReturnType<typeof getLastWeeklyReportMissions>>
-    | undefined
+  let lastWeeklyReportMission: Awaited<ReturnType<typeof getLastWeeklyReportMissions>> | undefined
 
   if (isReference) {
     const { year, week } = getYearAndWeek(startDate)
@@ -77,11 +70,10 @@ export default async function WeeklyReportRegisterPage({
 
   const promises = Promise.all([projectPromise, missionPromise])
 
-  const isReferenceWithoutReport =
-    isReference && !lastWeeklyReportMission?.weeklyReport
+  const isReferenceWithoutReport = isReference && !lastWeeklyReportMission?.weeklyReport
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-4">
+    <div className="flex flex-col gap-4 p-4 lg:p-6">
       <div className="flex flex-col">
         <div className="flex items-center">
           <WeeklyCalendarHint
@@ -89,13 +81,13 @@ export default async function WeeklyReportRegisterPage({
             startDay={new Date(nextStartDate)}
             endDay={new Date(nextEndDate)}
           >
-            <Heading level={2} className="underline cursor-pointer">
+            <Heading level={2} className="cursor-pointer underline">
               {nextStartDate} 〜 {nextEndDate}
             </Heading>
           </WeeklyCalendarHint>
           <Heading level={2}>の予定を追加</Heading>
         </div>
-        <p className="ml-4 text-sm text-muted-fg">
+        <p className="ml-4 text-muted-fg text-sm">
           ※ 日付をクリックすると、予定のカレンダーが表示されます。
         </p>
       </div>
@@ -112,7 +104,7 @@ export default async function WeeklyReportRegisterPage({
       )}
 
       {isReferenceWithoutReport ? (
-        <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
+        <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
           <IconTriangleExclamation className="size-4" />
           <p>前週の予定が見つかりませんでした。</p>
         </div>
@@ -121,14 +113,14 @@ export default async function WeeklyReportRegisterPage({
         key={JSON.stringify(isReference)}
         fallback={
           <>
-            <Button size="square-petite" className="rounded-full mt-4">
+            <Button size="square-petite" className="mt-4 rounded-full">
               <IconPlus />
             </Button>
             <div className="space-y-2">
               {Array.from({ length: count > 0 ? count : 1 }).map(() => (
                 <div
                   key={crypto.randomUUID()}
-                  className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2"
+                  className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2"
                 >
                   <Skeleton className="col-span-2 h-7" />
                   <Skeleton className="col-span-2 h-7" />
@@ -139,12 +131,12 @@ export default async function WeeklyReportRegisterPage({
               ))}
 
               <Separator orientation="horizontal" />
-              <div className="flex items-center gap-x-2 my-4">
+              <div className="my-4 flex items-center gap-x-2">
                 <span className="text-sm">合計時間:</span>
-                <Heading className="text-muted-fg text-lg">0時間</Heading>
+                <Heading className="text-lg text-muted-fg">0時間</Heading>
               </div>
               <Separator orientation="horizontal" />
-              <div className="flex items-center justify-end gap-x-2 my-4">
+              <div className="my-4 flex items-center justify-end gap-x-2">
                 <Button>
                   登録する
                   <IconSend3 />

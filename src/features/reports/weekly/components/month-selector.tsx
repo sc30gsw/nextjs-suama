@@ -4,9 +4,7 @@ import { useQueryStates } from 'nuqs'
 import { Select } from '~/components/ui/intent-ui/select'
 import { monthSelectSearchParamsParsers } from '~/features/reports/weekly/types/search-params/month-select-search-params-cache'
 
-export function MonthSelector({
-  months,
-}: Record<'months', Record<'name', number>[]>) {
+export function MonthSelector({ months }: Record<'months', Record<'name', number>[]>) {
   const [{ month }, setMonth] = useQueryStates(monthSelectSearchParamsParsers, {
     history: 'push',
     shallow: false,

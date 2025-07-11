@@ -24,14 +24,12 @@ export function createQueryFactory<
     const queryFn: QueryFunction<TData> = () => fn(...args)
 
     /** サーバー用：prefetchQuery ラッパー */
-    const prefetch = (queryClient: QueryClient) =>
-      queryClient.prefetchQuery({ queryKey, queryFn })
+    const prefetch = (queryClient: QueryClient) => queryClient.prefetchQuery({ queryKey, queryFn })
 
     /** クライアント用：useQuery ラッパー */
     const use = (
       options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-    ): UseQueryResult<TData, TError> =>
-      useQuery({ queryKey, queryFn, ...options })
+    ): UseQueryResult<TData, TError> => useQuery({ queryKey, queryFn, ...options })
 
     return { queryKey, prefetch, use } as const
   }
@@ -45,10 +43,7 @@ export function createInfiniteQueryFactory<
 >(
   keyFn: (...args: TArgs) => QueryKey,
   queryFn: (pageParam: TPageParam, ...args: TArgs) => Promise<TPage>,
-  getNextPageParam: (
-    lastPage: TPage,
-    allPages: TPage[],
-  ) => TPageParam | undefined,
+  getNextPageParam: (lastPage: TPage, allPages: TPage[]) => TPageParam | undefined,
   initialPageParam: TPageParam,
 ) {
   return (...args: TArgs) => {
@@ -56,14 +51,7 @@ export function createInfiniteQueryFactory<
 
     const use = (
       options?: Omit<
-        UseInfiniteQueryOptions<
-          TPage,
-          TError,
-          InfiniteData<TPage>,
-          TPage,
-          QueryKey,
-          TPageParam
-        >,
+        UseInfiniteQueryOptions<TPage, TError, InfiniteData<TPage>, QueryKey, TPageParam>,
         'queryKey' | 'queryFn' | 'getNextPageParam' | 'initialPageParam'
       >,
     ): UseInfiniteQueryResult<InfiniteData<TPage>, TError> =>

@@ -12,19 +12,14 @@ export const rowsPerPages = [
 ] as const satisfies readonly Record<string, number>[]
 
 export function RowsPerPageSelect() {
-  const [{ rowsPerPage }, setPagination] = useQueryStates(
-    paginationSearchParamsParsers,
-    {
-      history: 'push',
-      shallow: false,
-    },
-  )
+  const [{ rowsPerPage }, setPagination] = useQueryStates(paginationSearchParamsParsers, {
+    history: 'push',
+    shallow: false,
+  })
 
   return (
     <Select
-      selectedKey={
-        rowsPerPages.find((item) => item.rows === rowsPerPage)?.id ?? 1
-      }
+      selectedKey={rowsPerPages.find((item) => item.rows === rowsPerPage)?.id ?? 1}
       onSelectionChange={(key) => {
         const selectedItem = rowsPerPages.find((item) => item.id === key)
 

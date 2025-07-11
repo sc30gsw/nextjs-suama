@@ -21,16 +21,10 @@ type ProjectTableData = Pick<
 > &
   Record<
     'clientName',
-    InferResponseType<
-      typeof client.api.projects.$get,
-      200
-    >['projects'][number]['client']['name']
+    InferResponseType<typeof client.api.projects.$get, 200>['projects'][number]['client']['name']
   > &
   Record<'operate', string> &
-  Record<
-    'clients',
-    InferResponseType<typeof client.api.clients.$get, 200>['clients']
-  >
+  Record<'clients', InferResponseType<typeof client.api.clients.$get, 200>['clients']>
 
 const columnHelper = createColumnHelper<ProjectTableData>()
 
@@ -123,10 +117,7 @@ export function ProjectsTable({ data, clients }: ProjectsTableProps) {
               <Table.Column key={header.id} isRowHeader={true}>
                 {header.isPlaceholder
                   ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                  : flexRender(header.column.columnDef.header, header.getContext())}
               </Table.Column>
             ))}
           </Table.Row>

@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
-
 import { IconChevronLgDown, IconHamburger } from '@intentui/icons'
+import React from 'react'
 import type {
   CellProps,
   ColumnProps,
@@ -25,9 +24,8 @@ import {
   Table as TablePrimitive,
   useTableOptions,
 } from 'react-aria-components'
-import { tv } from 'tailwind-variants'
-
 import { twMerge } from 'tailwind-merge'
+import { tv } from 'tailwind-variants'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
@@ -109,11 +107,7 @@ const cellStyles = tv({
 const TableCell = ({ children, className, ...props }: TableCellProps) => {
   const { allowResize } = useTableContext()
   return (
-    <Cell
-      data-slot="table-cell"
-      {...props}
-      className={cellStyles({ allowResize, className })}
-    >
+    <Cell data-slot="table-cell" {...props} className={cellStyles({ allowResize, className })}>
       {children}
     </Cell>
   )
@@ -133,11 +127,7 @@ interface TableColumnProps extends ColumnProps {
   isResizable?: boolean
 }
 
-const TableColumn = ({
-  isResizable = false,
-  className,
-  ...props
-}: TableColumnProps) => {
+const TableColumn = ({ isResizable = false, className, ...props }: TableColumnProps) => {
   return (
     <Column
       data-slot="table-column"
@@ -149,23 +139,19 @@ const TableColumn = ({
     >
       {({ allowsSorting, sortDirection, isHovered }) => (
         <div className="flex items-center gap-2 **:data-[slot=icon]:shrink-0">
-          <>
-            {props.children as React.ReactNode}
-            {allowsSorting && (
-              <span
-                className={twMerge(
-                  'grid size-[1.15rem] flex-none shrink-0 place-content-center rounded bg-secondary text-fg *:data-[slot=icon]:size-3.5 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:transition-transform *:data-[slot=icon]:duration-200',
-                  isHovered ? 'bg-secondary-fg/10' : '',
-                  className,
-                )}
-              >
-                <IconChevronLgDown
-                  className={sortDirection === 'ascending' ? 'rotate-180' : ''}
-                />
-              </span>
-            )}
-            {isResizable && <ColumnResizer />}
-          </>
+          {props.children as React.ReactNode}
+          {allowsSorting && (
+            <span
+              className={twMerge(
+                'grid size-[1.15rem] flex-none shrink-0 place-content-center rounded bg-secondary text-fg *:data-[slot=icon]:size-3.5 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:transition-transform *:data-[slot=icon]:duration-200',
+                isHovered ? 'bg-secondary-fg/10' : '',
+                className,
+              )}
+            >
+              <IconChevronLgDown className={sortDirection === 'ascending' ? 'rotate-180' : ''} />
+            </span>
+          )}
+          {isResizable && <ColumnResizer />}
         </div>
       )}
     </Column>
@@ -260,11 +246,5 @@ Table.Column = TableColumn
 Table.Header = TableHeader
 Table.Row = TableRow
 
-export type {
-  TableProps,
-  TableBodyProps,
-  TableCellProps,
-  TableColumnProps,
-  TableRowProps,
-}
+export type { TableProps, TableBodyProps, TableCellProps, TableColumnProps, TableRowProps }
 export { Table }

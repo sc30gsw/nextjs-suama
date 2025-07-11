@@ -11,9 +11,5 @@ export default async function AuthLayout({ children }: NextLayoutProps) {
     redirect('/daily')
   }
 
-  return (
-    <main className="flex min-h-dvh min-w-dvw items-center justify-center">
-      {children}
-    </main>
-  )
+  return <main className="flex min-h-dvh min-w-dvw items-center justify-center">{children}</main>
 }

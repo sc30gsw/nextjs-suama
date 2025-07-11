@@ -12,9 +12,7 @@ import type { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/
 
 type WeeklyReportsCardsProps = {
   data: Exclude<
-    ReturnType<
-      ReturnType<typeof fetchWeeklyReportsInfiniteQuery>['use']
-    >['data'],
+    ReturnType<ReturnType<typeof fetchWeeklyReportsInfiniteQuery>['use']>['data'],
     undefined
   >
   hasNextPage: boolean
@@ -45,9 +43,7 @@ export function WeeklyReportsCards({
           flatMap((r) => r.dailyReportMissions ?? []),
           reduce(
             (sum, mission) =>
-              mission && typeof mission.hours === 'number'
-                ? sum + mission.hours
-                : sum,
+              mission && typeof mission.hours === 'number' ? sum + mission.hours : sum,
             0,
           ),
         )
@@ -68,38 +64,27 @@ export function WeeklyReportsCards({
                   src={report.user.image}
                   alt={report.user.name}
                 />
-                ユーザーID: {report.user.id.slice(0, 15)} ユーザー名:{' '}
-                {report.user.name}
+                ユーザーID: {report.user.id.slice(0, 15)} ユーザー名: {report.user.name}
               </Card.Title>
             </Card.Header>
             <Card.Content className="space-y-4">
               <div className="p-4">
-                <Heading level={3}>
-                  前週に立てた予定：総時間数: {totalLastWeekHours}時間
-                </Heading>
+                <Heading level={3}>前週に立てた予定：総時間数: {totalLastWeekHours}時間</Heading>
               </div>
               <WeeklyReportsTable<'lastWeekReports'>
-                data={report.lastWeekReports.flatMap(
-                  (r) => r.weeklyReportMissions,
-                )}
+                data={report.lastWeekReports.flatMap((r) => r.weeklyReportMissions)}
               />
               <div className="p-4">
-                <Heading level={3}>
-                  職務内容：総時間数: {totalThisWeekHours}時間
-                </Heading>
+                <Heading level={3}>職務内容：総時間数: {totalThisWeekHours}時間</Heading>
               </div>
               <DailyReportsInWeeklyReportListTable
                 data={report.dailyReports.flatMap((r) => r.dailyReportMissions)}
               />
               <div className="p-4">
-                <Heading level={3}>
-                  次週の予定：総時間数: {totalNextWeekHours}時間
-                </Heading>
+                <Heading level={3}>次週の予定：総時間数: {totalNextWeekHours}時間</Heading>
               </div>
               <WeeklyReportsTable<'nextWeekReports'>
-                data={report.nextWeekReports.flatMap(
-                  (r) => r.weeklyReportMissions,
-                )}
+                data={report.nextWeekReports.flatMap((r) => r.weeklyReportMissions)}
               />
 
               <div className="p-4">
@@ -119,9 +104,7 @@ export function WeeklyReportsCards({
                 <Heading level={3}>工夫したこと</Heading>
               </div>
               <WeeklyIssuesAndSolutionsTable>
-                <Table.Body
-                  items={report.dailyReports.flatMap((r) => r.appeals)}
-                >
+                <Table.Body items={report.dailyReports.flatMap((r) => r.appeals)}>
                   {(item) => (
                     <Table.Row id={item.id}>
                       <Table.Cell>{item.appeal}</Table.Cell>

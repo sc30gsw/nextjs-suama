@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  Separator as Divider,
-  type SeparatorProps as DividerProps,
-} from 'react-aria-components'
+import { Separator as Divider, type SeparatorProps as DividerProps } from 'react-aria-components'
 import { twMerge } from 'tailwind-merge'
 
 interface SeparatorProps extends DividerProps {

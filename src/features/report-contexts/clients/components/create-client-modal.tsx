@@ -64,14 +64,12 @@ export function CreateClientModal() {
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
           <Modal.Title>クライアントを登録する</Modal.Title>
-          <Modal.Description>
-            プロジェクトに関連するクライアントを登録します。
-          </Modal.Description>
+          <Modal.Description>プロジェクトに関連するクライアントを登録します。</Modal.Description>
         </Modal.Header>
         <Form {...getFormProps(form)} action={action}>
           <Modal.Body className="space-y-4">
             {getError() && (
-              <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+              <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
                 <p>{getError()}</p>
               </div>
@@ -86,7 +84,7 @@ export function CreateClientModal() {
                 isDisabled={isPending}
                 errorMessage={''}
               />
-              <span id={fields.name.errorId} className="text-sm text-red-500">
+              <span id={fields.name.errorId} className="text-red-500 text-sm">
                 {fields.name.errors}
               </span>
             </div>
@@ -99,10 +97,7 @@ export function CreateClientModal() {
                 isDisabled={isPending}
                 errorMessage={''}
               />
-              <span
-                id={fields.likeKeywords.errorId}
-                className="text-sm text-red-500 break-words"
-              >
+              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
                 {fields.likeKeywords.errors}
               </span>
             </div>

@@ -1,8 +1,4 @@
-import {
-  createSearchParamsCache,
-  parseAsBoolean,
-  parseAsJson,
-} from 'nuqs/server'
+import { createSearchParamsCache, parseAsBoolean, parseAsJson } from 'nuqs/server'
 import { z } from 'zod'
 
 const weeklyReportEntrySchema = z.object({
@@ -34,13 +30,9 @@ export const weeklyInputCountSearchParamsParsers = {
   isReference: parseAsBoolean.withDefault(false),
 }
 
-export type WeeklyInputCountSearchParams =
-  typeof weeklyInputCountSearchParamsParsers
+export type WeeklyInputCountSearchParams = typeof weeklyInputCountSearchParamsParsers
 
-export type UpdateWeeklyInputCountSearchParams = Omit<
-  WeeklyInputCountSearchParams,
-  'isReference'
->
+export type UpdateWeeklyInputCountSearchParams = Omit<WeeklyInputCountSearchParams, 'isReference'>
 
 export const weeklyInputCountSearchParamsCache = createSearchParamsCache(
   weeklyInputCountSearchParamsParsers,

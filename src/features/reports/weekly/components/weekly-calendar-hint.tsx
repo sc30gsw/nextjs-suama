@@ -12,12 +12,7 @@ type WeeklyCalendarHintProps = {
   endDay: Date
 }
 
-export function WeeklyCalendarHint({
-  children,
-  startDay,
-  label,
-  endDay,
-}: WeeklyCalendarHintProps) {
+export function WeeklyCalendarHint({ children, startDay, label, endDay }: WeeklyCalendarHintProps) {
   const { year, week } = getYearAndWeek(startDay.toISOString())
 
   return (
@@ -32,7 +27,7 @@ export function WeeklyCalendarHint({
             を確認することができます
           </Popover.Description>
         </Popover.Header>
-        <Popover.Body className="flex items-center justify-centera">
+        <Popover.Body className="justify-centera flex items-center">
           <div className="w-fit ">
             <WeekRangeCalendar startDay={startDay} endDay={endDay} />
           </div>

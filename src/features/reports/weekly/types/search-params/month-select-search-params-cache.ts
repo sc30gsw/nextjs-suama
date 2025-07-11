@@ -7,6 +7,4 @@ export const monthSelectSearchParamsParsers = {
   month: parseAsNumberLiteral(months).withDefault(months[0]),
 }
 
-export const monthSelectSearchParamsCache = createSearchParamsCache(
-  monthSelectSearchParamsParsers,
-)
+export const monthSelectSearchParamsCache = createSearchParamsCache(monthSelectSearchParamsParsers)

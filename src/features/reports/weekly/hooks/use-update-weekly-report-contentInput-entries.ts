@@ -26,22 +26,14 @@ export function useUpdatedWeeklyReportContentInputEntries(
   const hoursInput = useInputControl(field.hours)
 
   // form resetがConformのものでは反映されないため
-  const [projectId, setProjectId] = useState<Key | null>(
-    projectInput.value ?? null,
-  )
-  const [missionId, setMissionId] = useState<Key | null>(
-    missionInput.value ?? null,
-  )
+  const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
+  const [missionId, setMissionId] = useState<Key | null>(missionInput.value ?? null)
 
   const { setWeeklyReportEntry } = useWeeklyReportSearchParams(
     initialWeeklyInputCountSearchParamsParsers,
   )
 
-  const handleChangeItem = (
-    id: string,
-    newItem: Key | null,
-    kind: 'project' | 'mission',
-  ) => {
+  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
     if (!(id && newItem)) {
       return
     }
@@ -73,9 +65,7 @@ export function useUpdatedWeeklyReportContentInputEntries(
       missionId
         ? pipe(
             projects,
-            filter((project) =>
-              project.missions.some((mission) => mission.id === missionId),
-            ),
+            filter((project) => project.missions.some((mission) => mission.id === missionId)),
           )
         : projects
       setMissionId(newItem)
@@ -83,9 +73,7 @@ export function useUpdatedWeeklyReportContentInputEntries(
 
       const findProject = pipe(
         projects,
-        find((project) =>
-          project.missions.some((mission) => mission.id === newItem),
-        ),
+        find((project) => project.missions.some((mission) => mission.id === newItem)),
       )
 
       setWeeklyReportEntry((prev) => {

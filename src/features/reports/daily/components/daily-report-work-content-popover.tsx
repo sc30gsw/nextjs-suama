@@ -24,9 +24,7 @@ export function DailyReportWorkContentPopover({
       <Popover.Content className="sm:min-w-96">
         <Popover.Header>
           <Popover.Title>職務内容</Popover.Title>
-          <Popover.Description>
-            この日の仕事の内容を確認できます。
-          </Popover.Description>
+          <Popover.Description>この日の仕事の内容を確認できます。</Popover.Description>
         </Popover.Header>
         <Popover.Body>
           <div className="space-y-4">

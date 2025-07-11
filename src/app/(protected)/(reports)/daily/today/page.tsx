@@ -44,18 +44,18 @@ export default async function DailyOfTodayPage({
   )
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <Heading>本日の日報</Heading>
-      <div className="flex flex-row md:flex-col items-center md:items-start gap-x-4 md:gap-y-4">
+      <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">
         <UserSearchTagField />
         <RowsPerPageSelect />
       </div>
-      <Card className="py-2 mt-4 max-w-full">
+      <Card className="mt-4 max-w-full py-2">
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, userNames })}
             fallback={
-              <table className="w-full text-sm text-left font-normal">
+              <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
                   <tr>
                     <th className="w-30.75 p-3">日付</th>
@@ -71,27 +71,27 @@ export default async function DailyOfTodayPage({
                   {Array.from({ length: rowsPerPage }, () => (
                     <tr key={crypto.randomUUID()} className="border-b">
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-20 h-4" />
+                        <Skeleton className="h-4 w-20" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-20 h-4" />
+                        <Skeleton className="h-4 w-20" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-15 h-4" />
+                        <Skeleton className="h-4 w-15" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-82 h-4" />
+                        <Skeleton className="h-4 w-82" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-20 h-4" />
+                        <Skeleton className="h-4 w-20" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-20 h-4" />
+                        <Skeleton className="h-4 w-20" />
                       </th>
-                      <th scope="row" className="p-4 flex items-center gap-x-2">
-                        <Skeleton className="w-26 h-9" />
-                        <Skeleton className="w-19 h-9" />
-                        <Skeleton className="w-19 h-9" />
+                      <th scope="row" className="flex items-center gap-x-2 p-4">
+                        <Skeleton className="h-9 w-26" />
+                        <Skeleton className="h-9 w-19" />
+                        <Skeleton className="h-9 w-19" />
                       </th>
                     </tr>
                   ))}

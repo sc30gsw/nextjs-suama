@@ -26,9 +26,7 @@ export default function RootLayout({ children }: NextLayoutProps) {
   return (
     <html lang="ja">
       {process.env.NODE_ENV === 'development' && <ReactScan />}
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <Root />
           <Toast />

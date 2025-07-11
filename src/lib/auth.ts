@@ -4,7 +4,6 @@ import { nextCookies } from 'better-auth/next-js'
 import { passkey } from 'better-auth/plugins/passkey'
 import { redirect } from 'next/navigation'
 
-// biome-ignore lint/style/noNamespaceImport: <explanation>
 import * as schema from '~/db/schema'
 import { db } from '~/index'
 

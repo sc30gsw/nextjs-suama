@@ -5,10 +5,7 @@ import { Pagination } from '~/components/ui/intent-ui/pagination'
 import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-export function TablePagination({
-  pageCount,
-  page,
-}: Record<'pageCount' | 'page', number>) {
+export function TablePagination({ pageCount, page }: Record<'pageCount' | 'page', number>) {
   const pageIndex = page <= 1 ? 0 : page - 1
   const [{ userNames }] = useQueryStates(userSearchParamsParsers, {
     history: 'push',
@@ -49,9 +46,7 @@ export function TablePagination({
       result.push(last)
     }
 
-    return pageCount <= 7
-      ? Array.from({ length: pageCount }, (_, i) => i)
-      : result
+    return pageCount <= 7 ? Array.from({ length: pageCount }, (_, i) => i) : result
   }
 
   const pages = createPageNumbers()

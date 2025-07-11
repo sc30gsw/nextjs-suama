@@ -37,10 +37,7 @@ const COLUMNS = [
       return (
         <div className="flex items-center gap-2">
           <div className="flex gap-2">
-            <EditTroubleCategoryModal
-              id={row.original.id}
-              name={row.original.name}
-            />
+            <EditTroubleCategoryModal id={row.original.id} name={row.original.name} />
             <TroubleCategoryDeleteButton id={row.original.id} />
           </div>
         </div>
@@ -49,16 +46,12 @@ const COLUMNS = [
   }),
 ]
 
-export function TroubleCategoriesTable({
-  data,
-}: Record<'data', TroubleCategoriesResponse>) {
-  const initialData: TroubleCategoryTableData[] = data.troubleCategories.map(
-    (category) => ({
-      id: category.id,
-      name: category.name,
-      operate: '',
-    }),
-  )
+export function TroubleCategoriesTable({ data }: Record<'data', TroubleCategoriesResponse>) {
+  const initialData: TroubleCategoryTableData[] = data.troubleCategories.map((category) => ({
+    id: category.id,
+    name: category.name,
+    operate: '',
+  }))
 
   const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
     history: 'push',
@@ -82,10 +75,7 @@ export function TroubleCategoriesTable({
               <Table.Column key={header.id} isRowHeader={true}>
                 {header.isPlaceholder
                   ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                  : flexRender(header.column.columnDef.header, header.getContext())}
               </Table.Column>
             ))}
           </Table.Row>

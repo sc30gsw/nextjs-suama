@@ -16,12 +16,8 @@ export const createWeeklyReportSchema = z.object({
 export const createWeeklyReportFormSchema = z.object({
   year: z.number(),
   week: z.number(),
-  weeklyReports: z
-    .array(createWeeklyReportSchema)
-    .min(1, '週報の内容は1件以上必要です'),
+  weeklyReports: z.array(createWeeklyReportSchema).min(1, '週報の内容は1件以上必要です'),
 })
 
-export type CreateWeeklyReportFormSchema = z.infer<
-  typeof createWeeklyReportFormSchema
->
+export type CreateWeeklyReportFormSchema = z.infer<typeof createWeeklyReportFormSchema>
 export type CreateWeeklyReportSchema = z.infer<typeof createWeeklyReportSchema>

@@ -30,12 +30,7 @@ interface HeadingProps extends HeadingType {
   className?: string | undefined
 }
 
-const Heading = ({
-  className,
-  tracking = 'normal',
-  level = 1,
-  ...props
-}: HeadingProps) => {
+const Heading = ({ className, tracking = 'normal', level = 1, ...props }: HeadingProps) => {
   const Element: `h${typeof level}` = `h${level}`
   return (
     <Element

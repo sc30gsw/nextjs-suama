@@ -17,10 +17,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
   try {
     const existingUser = await db.query.users.findFirst({
       where: (users, { eq }) =>
-        or(
-          eq(users.email, submission.value.email),
-          eq(users.name, submission.value.name),
-        ),
+        or(eq(users.email, submission.value.email), eq(users.name, submission.value.name)),
     })
 
     if (existingUser) {

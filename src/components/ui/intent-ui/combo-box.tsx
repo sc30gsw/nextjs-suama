@@ -17,27 +17,13 @@ import {
   useSlottedContext,
 } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
-import {
-  DropdownItem,
-  DropdownLabel,
-  DropdownSection,
-} from '~/components/ui/intent-ui/dropdown'
-import {
-  Description,
-  FieldError,
-  FieldGroup,
-  Input,
-  Label,
-} from '~/components/ui/intent-ui/field'
+import { DropdownItem, DropdownLabel, DropdownSection } from '~/components/ui/intent-ui/dropdown'
+import { Description, FieldError, FieldGroup, Input, Label } from '~/components/ui/intent-ui/field'
 import { ListBox } from '~/components/ui/intent-ui/list-box'
-import {
-  PopoverContent,
-  type PopoverContentProps,
-} from '~/components/ui/intent-ui/popover'
+import { PopoverContent, type PopoverContentProps } from '~/components/ui/intent-ui/popover'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
-interface ComboBoxProps<T extends object>
-  extends Omit<ComboboxPrimitiveProps<T>, 'children'> {
+interface ComboBoxProps<T extends object> extends Omit<ComboboxPrimitiveProps<T>, 'children'> {
   label?: string
   placeholder?: string
   description?: string | null
@@ -56,10 +42,7 @@ const ComboBox = <T extends object>({
   return (
     <ComboboxPrimitive
       {...props}
-      className={composeTailwindRenderProps(
-        className,
-        'group flex w-full flex-col gap-y-1.5',
-      )}
+      className={composeTailwindRenderProps(className, 'group flex w-full flex-col gap-y-1.5')}
     >
       {label && <Label>{label}</Label>}
       {children}
@@ -91,10 +74,7 @@ const ComboBoxList = <T extends object>({
       placement={props.placement}
     >
       <ListBox
-        className={composeTailwindRenderProps(
-          className,
-          'max-h-[inherit] border-0 shadow-none',
-        )}
+        className={composeTailwindRenderProps(className, 'max-h-[inherit] border-0 shadow-none')}
         layout="stack"
         orientation="vertical"
         items={items}

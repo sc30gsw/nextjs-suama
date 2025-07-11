@@ -17,8 +17,7 @@ const Toast = ({ ...props }: ToasterProps) => {
           title: 'title',
           description: 'description',
           actionButton: 'bg-primary! hover:bg-primary/90! text-primary-fg!',
-          cancelButton:
-            'bg-transparent! hover:bg-secondary! hover:text-secondary-fg!',
+          cancelButton: 'bg-transparent! hover:bg-secondary! hover:text-secondary-fg!',
           closeButton: 'close-button',
         },
       }}

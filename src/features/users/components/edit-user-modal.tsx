@@ -2,11 +2,7 @@
 
 import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import {
-  IconDocumentEdit,
-  IconTriangleExclamation,
-  IconX,
-} from '@intentui/icons'
+import { IconDocumentEdit, IconTriangleExclamation, IconX } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import { useActionState, useRef, useState } from 'react'
 import { useToggle } from 'react-use'
@@ -37,7 +33,6 @@ type EditUserModalProps = Pick<
 export function EditUserModal({ id, name, image }: EditUserModalProps) {
   const [open, toggle] = useToggle(false)
   const [imageError, setImageError] = useState('')
-  // biome-ignore lint/style/noNonNullAssertion: To need intentUI
   const fileInputRef = useRef<HTMLInputElement>(null!)
 
   const [lastResult, action, isPending] = useActionState(
@@ -88,11 +83,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
     }
 
     // 拡張子制限
-    if (
-      !ACCEPTED_TYPES.includes(
-        file.type as 'image/jpeg' | 'image/png' | 'image/webp',
-      )
-    ) {
+    if (!ACCEPTED_TYPES.includes(file.type as 'image/jpeg' | 'image/png' | 'image/webp')) {
       setImageError('画像はJPEG, PNG, WEBP形式のみ対応しています。')
       return
     }
@@ -118,14 +109,12 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
           <Modal.Title>ユーザーを編集する</Modal.Title>
-          <Modal.Description>
-            選択したユーザーの情報を編集します。
-          </Modal.Description>
+          <Modal.Description>選択したユーザーの情報を編集します。</Modal.Description>
         </Modal.Header>
         <Form {...getFormProps(form)} action={action}>
           <Modal.Body className="space-y-4">
             {getError() && (
-              <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger mb-6">
+              <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
                 <p>{getError()}</p>
               </div>
@@ -142,11 +131,11 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                 defaultValue={lastResult?.initialValue?.name.toString() ?? name}
                 errorMessage={''}
               />
-              <span id={fields.name.errorId} className="text-sm text-red-500">
+              <span id={fields.name.errorId} className="text-red-500 text-sm">
                 {fields.name.errors}
               </span>
             </div>
-            <div className="flex items-center gap-x-4 mt-2">
+            <div className="mt-2 flex items-center gap-x-4">
               <div className="flex flex-col">
                 <FileTrigger
                   {...getInputProps(fields.image, { type: 'file' })}
@@ -160,18 +149,16 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                   画像をアップロード
                 </FileTrigger>
                 {imageError && (
-                  <span className="text-sm text-red-500 break-words">
-                    {imageError}
-                  </span>
+                  <span className="break-words text-red-500 text-sm">{imageError}</span>
                 )}
               </div>
               {imageInput.value ? (
-                <div className="relative w-fit group">
+                <div className="group relative w-fit">
                   <Avatar
                     src={imageInput.value}
                     alt={name}
                     onClick={() => fileInputRef.current.click()}
-                    className="size-15 *:size-15 hover:opacity-80 cursor-pointer"
+                    className="size-15 cursor-pointer *:size-15 hover:opacity-80"
                   />
                   <Button
                     shape="circle"
@@ -179,7 +166,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                     intent="outline"
                     isDisabled={isPending}
                     onPress={() => imageInput.change('')}
-                    className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 group-hover:opacity-100 opacity-0"
+                    className="-translate-y-1/2 absolute top-0 right-0 translate-x-1/2 opacity-0 group-hover:opacity-100"
                   >
                     <IconX />
                   </Button>
@@ -189,7 +176,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                   initials={name.charAt(0)}
                   alt={name}
                   onClick={() => fileInputRef.current.click()}
-                  className="size-15 *:size-15 cursor-pointer hover:opacity-80"
+                  className="size-15 cursor-pointer *:size-15 hover:opacity-80"
                 />
               )}
             </div>

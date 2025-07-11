@@ -1,18 +1,9 @@
 'use client'
 
 import type { ComponentProps } from 'react'
-import type {
-  DialogProps,
-  DialogTriggerProps,
-  ModalOverlayProps,
-} from 'react-aria-components'
-import {
-  DialogTrigger,
-  Modal,
-  ModalOverlay,
-  composeRenderProps,
-} from 'react-aria-components'
-import { type VariantProps, tv } from 'tailwind-variants'
+import type { DialogProps, DialogTriggerProps, ModalOverlayProps } from 'react-aria-components'
+import { composeRenderProps, DialogTrigger, Modal, ModalOverlay } from 'react-aria-components'
+import { tv, type VariantProps } from 'tailwind-variants'
 
 import {
   Dialog,
@@ -80,12 +71,7 @@ const contentStyles = tv({
       true: 'ring-fg/5 dark:ring-border',
     },
   },
-  compoundVariants: generateCompoundVariants([
-    'top',
-    'bottom',
-    'left',
-    'right',
-  ]),
+  compoundVariants: generateCompoundVariants(['top', 'bottom', 'left', 'right']),
 })
 
 type SheetProps = DialogTriggerProps
@@ -125,46 +111,32 @@ const SheetContent = ({
   return (
     <ModalOverlay
       isDismissable={_isDismissable}
-      className={composeRenderProps(
-        classNames?.overlay,
-        (className, renderProps) => {
-          return overlayStyles({
-            ...renderProps,
-            isBlurred,
-            className,
-          })
-        },
-      )}
+      className={composeRenderProps(classNames?.overlay, (className, renderProps) => {
+        return overlayStyles({
+          ...renderProps,
+          isBlurred,
+          className,
+        })
+      })}
       {...props}
     >
       <Modal
-        className={composeRenderProps(
-          classNames?.content,
-          (className, renderProps) =>
-            contentStyles({
-              ...renderProps,
-              side,
-              isFloat,
-              className,
-            }),
+        className={composeRenderProps(classNames?.content, (className, renderProps) =>
+          contentStyles({
+            ...renderProps,
+            side,
+            isFloat,
+            className,
+          }),
         )}
         {...props}
       >
         {(values) => (
-          <Dialog
-            role={role}
-            aria-label={props['aria-label'] ?? undefined}
-            className="h-full"
-          >
-            <>
-              {typeof children === 'function' ? children(values) : children}
-              {closeButton && (
-                <DialogCloseIcon
-                  className="top-2.5 right-2.5"
-                  isDismissable={_isDismissable}
-                />
-              )}
-            </>
+          <Dialog role={role} aria-label={props['aria-label'] ?? undefined} className="h-full">
+            {typeof children === 'function' ? children(values) : children}
+            {closeButton && (
+              <DialogCloseIcon className="top-2.5 right-2.5" isDismissable={_isDismissable} />
+            )}
           </Dialog>
         )}
       </Modal>

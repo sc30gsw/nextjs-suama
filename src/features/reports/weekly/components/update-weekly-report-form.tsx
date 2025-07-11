@@ -1,12 +1,7 @@
 'use client'
 
 import { FormProvider, getFormProps, getInputProps } from '@conform-to/react'
-import {
-  IconMinus,
-  IconPlus,
-  IconSend3,
-  IconTriangleExclamation,
-} from '@intentui/icons'
+import { IconMinus, IconPlus, IconSend3, IconTriangleExclamation } from '@intentui/icons'
 import { parseAsJson } from 'nuqs'
 import { use } from 'react'
 import { find, pipe } from 'remeda'
@@ -24,10 +19,7 @@ import { weeklyReportStateSchema } from '~/features/reports/weekly/types/search-
 
 type UpdateWeeklyReportFormProps = {
   promises: Promise<
-    [
-      Awaited<ReturnType<typeof getProjects>>,
-      Awaited<ReturnType<typeof getMissions>>,
-    ]
+    [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
   >
   weeklyReport: Exclude<
     Awaited<ReturnType<typeof getWeeklyReportMissionsById>>['weeklyReport'],
@@ -50,9 +42,7 @@ export function UpdateWeeklyReportForm({
         id: entry.id,
         project: pipe(
           projectsResponse.projects,
-          find((project) =>
-            project.missions.some((mission) => mission.id === entry.missionId),
-          ),
+          find((project) => project.missions.some((mission) => mission.id === entry.missionId)),
           (project) => project?.id ?? '',
         ),
         mission: entry.missionId,
@@ -72,23 +62,19 @@ export function UpdateWeeklyReportForm({
     handleAdd,
     handleRemove,
     getError,
-  } = useUpdateWeeklyReportForm(
-    initialWeeklyInputCountSearchParamsParsers,
-    dates,
-    weeklyReport.id,
-  )
+  } = useUpdateWeeklyReportForm(initialWeeklyInputCountSearchParamsParsers, dates, weeklyReport.id)
 
   return (
     <>
       <div className="space-y-2">
         {fields.weeklyReports.errors && (
-          <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
+          <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
             <p>{fields.weeklyReports.errors}</p>
           </div>
         )}
         {getError() && (
-          <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
+          <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
             <p>{getError()}</p>
           </div>
@@ -96,7 +82,7 @@ export function UpdateWeeklyReportForm({
         <Button
           size="square-petite"
           onPress={handleAdd}
-          className="rounded-full mt-4"
+          className="mt-4 rounded-full"
           isDisabled={isPending}
         >
           <IconPlus />
@@ -104,9 +90,7 @@ export function UpdateWeeklyReportForm({
       </div>
       <FormProvider context={form.context}>
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
-          <input
-            {...getInputProps(fields.weeklyReportId, { type: 'hidden' })}
-          />
+          <input {...getInputProps(fields.weeklyReportId, { type: 'hidden' })} />
           {weeklyReports.map((weeklyReport) => (
             <UpdateWeeklyReportContentInputEntries
               key={weeklyReport.key}
@@ -123,7 +107,7 @@ export function UpdateWeeklyReportForm({
                     handleRemove(weeklyReport.getFieldset().id.value ?? '')
                   }}
                   isDisabled={isPending}
-                  className="rounded-full mt-6"
+                  className="mt-6 rounded-full"
                 >
                   <IconMinus />
                 </Button>
@@ -136,7 +120,7 @@ export function UpdateWeeklyReportForm({
           <Separator orientation="horizontal" />
           <TotalHours totalHours={totalHours} />
           <Separator orientation="horizontal" />
-          <div className="flex items-center justify-end gap-x-2 my-4">
+          <div className="my-4 flex items-center justify-end gap-x-2">
             <Button isDisabled={isPending} type="submit">
               {isPending ? '更新中...' : '更新する'}
               {isPending ? <Loader /> : <IconSend3 />}

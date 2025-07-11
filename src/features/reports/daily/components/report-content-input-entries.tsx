@@ -19,17 +19,11 @@ type ReportContentInputEntriesProps = {
   missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
 }
 
-export function ReportContentInputEntries({
-  projects,
-  missions,
-}: ReportContentInputEntriesProps) {
-  const [{ reportEntry }, setReportState] = useQueryStates(
-    inputCountSearchParamsParsers,
-    {
-      history: 'push',
-      shallow: false,
-    },
-  )
+export function ReportContentInputEntries({ projects, missions }: ReportContentInputEntriesProps) {
+  const [{ reportEntry }, setReportState] = useQueryStates(inputCountSearchParamsParsers, {
+    history: 'push',
+    shallow: false,
+  })
 
   const totalHours = reportEntry.entries.reduce((acc, entry) => {
     if (entry.hours > 0) {
@@ -69,9 +63,7 @@ export function ReportContentInputEntries({
         return prev
       }
 
-      const filteredEntries = prev.reportEntry.entries.filter(
-        (e) => e.id !== id,
-      )
+      const filteredEntries = prev.reportEntry.entries.filter((e) => e.id !== id)
 
       return {
         ...prev,
@@ -84,11 +76,7 @@ export function ReportContentInputEntries({
     })
   }
 
-  const handleChangeItem = (
-    id: string,
-    newItem: Key | null,
-    kind: 'project' | 'mission',
-  ) => {
+  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
     setReportState((prev) => {
       if (!prev) {
         return prev
@@ -132,22 +120,14 @@ export function ReportContentInputEntries({
 
   return (
     <>
-      <Button
-        size="square-petite"
-        onPress={handleAdd}
-        className="rounded-full mt-4"
-      >
+      <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
         <IconPlus />
       </Button>
       {reportEntry.entries.map((entry) => {
         const filteredProjects = entry.mission
           ? pipe(
               projects,
-              filter((project) =>
-                project.missions.some(
-                  (mission) => mission.id === entry.mission,
-                ),
-              ),
+              filter((project) => project.missions.some((mission) => mission.id === entry.mission)),
             )
           : projects
 
@@ -161,7 +141,7 @@ export function ReportContentInputEntries({
         return (
           <div
             key={entry.id}
-            className="grid grid-cols-11 grid-rows-1 items-center gap-4 mx-auto py-2"
+            className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2"
           >
             <ComboBox
               label="プロジェクト"
@@ -174,11 +154,7 @@ export function ReportContentInputEntries({
             >
               <ComboBox.Input />
               <ComboBox.List items={filteredProjects}>
-                {(project) => (
-                  <ComboBox.Option id={project.id}>
-                    {project.name}
-                  </ComboBox.Option>
-                )}
+                {(project) => <ComboBox.Option id={project.id}>{project.name}</ComboBox.Option>}
               </ComboBox.List>
             </ComboBox>
             <ComboBox
@@ -192,11 +168,7 @@ export function ReportContentInputEntries({
             >
               <ComboBox.Input />
               <ComboBox.List items={filteredMissions}>
-                {(mission) => (
-                  <ComboBox.Option id={mission.id}>
-                    {mission.name}
-                  </ComboBox.Option>
-                )}
+                {(mission) => <ComboBox.Option id={mission.id}>{mission.name}</ComboBox.Option>}
               </ComboBox.List>
             </ComboBox>
             <NumberField
@@ -216,7 +188,7 @@ export function ReportContentInputEntries({
               size="square-petite"
               intent="danger"
               onPress={() => handleRemove(entry.id)}
-              className="rounded-full mt-6 col-span-1"
+              className="col-span-1 mt-6 rounded-full"
             >
               <IconMinus />
             </Button>

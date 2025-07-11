@@ -11,18 +11,12 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
   const skipNumber = Number(skip) || 0
   const limitNumber = Number(limit) || MAX_LIMIT
 
-  const userNamesArray = userNames
-    ? userNames.split(',').map((name) => name.trim())
-    : []
+  const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : []
 
   try {
     const whereClause =
       userNamesArray.length > 0
-        ? or(
-            ...userNamesArray.flatMap((word) => [
-              like(users.name, `%${word}%`),
-            ]),
-          )
+        ? or(...userNamesArray.flatMap((word) => [like(users.name, `%${word}%`)]))
         : undefined
 
     const userList = await db.query.users.findMany({
@@ -32,10 +26,7 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
       orderBy: (users, { asc }) => [asc(users.createdAt)],
     })
 
-    const total = await db
-      .select({ count: count() })
-      .from(users)
-      .where(whereClause)
+    const total = await db.select({ count: count() }).from(users).where(whereClause)
 
     return c.json(
       {

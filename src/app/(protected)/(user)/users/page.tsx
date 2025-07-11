@@ -15,9 +15,7 @@ import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
-export default async function UsersPage({
-  searchParams,
-}: NextPageProps<undefined, SearchParams>) {
+export default async function UsersPage({ searchParams }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
@@ -44,18 +42,18 @@ export default async function UsersPage({
   )
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <Heading>ユーザー一覧</Heading>
-      <div className="flex flex-row md:flex-col items-center md:items-start gap-x-4 md:gap-y-4">
+      <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">
         <UserSearchTagField />
         <RowsPerPageSelect />
       </div>
-      <Card className="py-2 mt-4 max-w-full">
+      <Card className="mt-4 max-w-full py-2">
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, userNames })}
             fallback={
-              <table className="w-full text-sm text-left font-normal">
+              <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
                   <tr>
                     <th className="w-28.25 p-3">アイコン</th>
@@ -67,21 +65,18 @@ export default async function UsersPage({
                 <tbody>
                   {Array.from({ length: 10 }, () => (
                     <tr key={crypto.randomUUID()} className="border-b">
-                      <th
-                        scope="row"
-                        className="p-4 *:data-[slot=skeleton]:rounded-full"
-                      >
-                        <Skeleton className="size-8 mr-10 ml-3" />
+                      <th scope="row" className="p-4 *:data-[slot=skeleton]:rounded-full">
+                        <Skeleton className="mr-10 ml-3 size-8" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-75 h-4" />
+                        <Skeleton className="h-4 w-75" />
                       </th>
                       <th scope="row" className="p-4">
-                        <Skeleton className="w-50 h-4" />
+                        <Skeleton className="h-4 w-50" />
                       </th>
-                      <th scope="row" className="p-4 flex items-center gap-x-2">
-                        <Skeleton className="w-19 h-9" />
-                        <Skeleton className="w-19 h-9" />
+                      <th scope="row" className="flex items-center gap-x-2 p-4">
+                        <Skeleton className="h-9 w-19" />
+                        <Skeleton className="h-9 w-19" />
                       </th>
                     </tr>
                   ))}

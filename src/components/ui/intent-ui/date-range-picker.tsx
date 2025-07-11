@@ -10,20 +10,11 @@ import {
 import type { DateDuration } from '@internationalized/date'
 import type { Placement } from '@react-types/overlays'
 import { DateInput } from '~/components/ui/intent-ui/date-field'
-import {
-  DatePickerIcon,
-  DatePickerOverlay,
-} from '~/components/ui/intent-ui/date-picker'
-import {
-  Description,
-  FieldError,
-  FieldGroup,
-  Label,
-} from '~/components/ui/intent-ui/field'
+import { DatePickerIcon, DatePickerOverlay } from '~/components/ui/intent-ui/date-picker'
+import { Description, FieldError, FieldGroup, Label } from '~/components/ui/intent-ui/field'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
-interface DateRangePickerProps<T extends DateValue>
-  extends DateRangePickerPrimitiveProps<T> {
+interface DateRangePickerProps<T extends DateValue> extends DateRangePickerPrimitiveProps<T> {
   label?: string
   description?: string
   errorMessage?: string | ((validation: ValidationResult) => string)

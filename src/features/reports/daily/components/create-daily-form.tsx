@@ -85,23 +85,12 @@ export function CreateDailyForm({
       {appealHeadings}
       {appeals}
       <Separator orientation="horizontal" />
-      <div className="flex items-center justify-end gap-x-2 my-4">
-        <Button
-          isDisabled={isPending}
-          type="submit"
-          intent="outline"
-          name="action"
-          value="draft"
-        >
+      <div className="my-4 flex items-center justify-end gap-x-2">
+        <Button isDisabled={isPending} type="submit" intent="outline" name="action" value="draft">
           下書き
           <IconPencilBox />
         </Button>
-        <Button
-          isDisabled={isPending}
-          type="submit"
-          name="action"
-          value="published"
-        >
+        <Button isDisabled={isPending} type="submit" name="action" value="published">
           登録
           <IconSend3 />
         </Button>

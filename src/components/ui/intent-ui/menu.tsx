@@ -75,11 +75,7 @@ const MenuTrigger = ({ className, ref, ...props }: MenuTriggerProps) => (
     {...props}
   >
     {(values) => (
-      <>
-        {typeof props.children === 'function'
-          ? props.children(values)
-          : props.children}
-      </>
+      <>{typeof props.children === 'function' ? props.children(values) : props.children}</>
     )}
   </Button>
 )
@@ -139,20 +135,12 @@ const MenuContent = <T extends object>({
   )
 }
 
-interface MenuItemProps
-  extends MenuItemPrimitiveProps,
-    VariantProps<typeof dropdownItemStyles> {
+interface MenuItemProps extends MenuItemPrimitiveProps, VariantProps<typeof dropdownItemStyles> {
   isDanger?: boolean
 }
 
-const MenuItem = ({
-  className,
-  isDanger = false,
-  children,
-  ...props
-}: MenuItemProps) => {
-  const textValue =
-    props.textValue || (typeof children === 'string' ? children : undefined)
+const MenuItem = ({ className, isDanger = false, children, ...props }: MenuItemProps) => {
+  const textValue = props.textValue || (typeof children === 'string' ? children : undefined)
   return (
     <MenuItemPrimitive
       className={composeRenderProps(className, (className, renderProps) =>
@@ -184,10 +172,7 @@ const MenuItem = ({
                 </span>
               )}
               {values.selectionMode === 'multiple' && (
-                <IconCheck
-                  className="-mx-0.5 mr-2 size-4"
-                  data-slot="checked-icon"
-                />
+                <IconCheck className="-mx-0.5 mr-2 size-4" data-slot="checked-icon" />
               )}
             </>
           )}
@@ -195,10 +180,7 @@ const MenuItem = ({
           {typeof children === 'function' ? children(values) : children}
 
           {values.hasSubmenu && (
-            <IconChevronLgRight
-              data-slot="chevron"
-              className="absolute right-2 size-3.5"
-            />
+            <IconChevronLgRight data-slot="chevron" className="absolute right-2 size-3.5" />
           )}
         </>
       )}
@@ -210,11 +192,7 @@ export interface MenuHeaderProps extends ComponentProps<typeof Header> {
   separator?: boolean
 }
 
-const MenuHeader = ({
-  className,
-  separator = false,
-  ...props
-}: MenuHeaderProps) => (
+const MenuHeader = ({ className, separator = false, ...props }: MenuHeaderProps) => (
   <Header
     className={twMerge(
       'col-span-full px-2.5 py-2 font-semibold text-base sm:text-sm',
@@ -232,17 +210,9 @@ interface MenuSectionProps<T> extends MenuSectionPrimitiveProps<T> {
   title?: string
 }
 
-const MenuSection = <T extends object>({
-  className,
-  ref,
-  ...props
-}: MenuSectionProps<T>) => {
+const MenuSection = <T extends object>({ className, ref, ...props }: MenuSectionProps<T>) => {
   return (
-    <MenuSectionPrimitive
-      ref={ref}
-      className={section({ className })}
-      {...props}
-    >
+    <MenuSectionPrimitive ref={ref} className={section({ className })} {...props}>
       {'title' in props && <Header className={header()}>{props.title}</Header>}
       <Collection items={props.items}>{props.children}</Collection>
     </MenuSectionPrimitive>
@@ -265,11 +235,5 @@ Menu.Label = MenuLabel
 Menu.Trigger = MenuTrigger
 Menu.Submenu = MenuSubMenu
 
-export type {
-  MenuProps,
-  MenuContentProps,
-  MenuTriggerProps,
-  MenuItemProps,
-  MenuSectionProps,
-}
+export type { MenuProps, MenuContentProps, MenuTriggerProps, MenuItemProps, MenuSectionProps }
 export { Menu }

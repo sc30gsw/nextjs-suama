@@ -22,9 +22,7 @@ export function NameSearchTagField({ label }: Record<'label', string>) {
     <TagField
       appearance="outline"
       label={label}
-      placeholder={
-        names.length > 0 ? '' : `${label}（複数選択可）で検索できます`
-      }
+      placeholder={names.length > 0 ? '' : `${label}（複数選択可）で検索できます`}
       list={selectedItems}
       onItemInserted={(key) => {
         setQuery({ names: [...names, key.name] })

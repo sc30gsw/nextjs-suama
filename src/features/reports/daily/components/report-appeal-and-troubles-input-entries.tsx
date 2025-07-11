@@ -26,11 +26,13 @@ export function ReportAppealAndTroubleInputEntries<
     | AppealCategoriesResponse['appealCategories']
     | TroubleCategoriesResponse['troubleCategories'],
 >({ items, kind }: ReportAppealAndTroublesInputEntriesProps<T>) {
-  const [{ appealsAndTroublesEntry }, setAppealsAndTroublesState] =
-    useQueryStates(inputCountSearchParamsParsers, {
+  const [{ appealsAndTroublesEntry }, setAppealsAndTroublesState] = useQueryStates(
+    inputCountSearchParamsParsers,
+    {
       history: 'push',
       shallow: false,
-    })
+    },
+  )
 
   const entries =
     kind === 'appeal'
@@ -57,10 +59,7 @@ export function ReportAppealAndTroubleInputEntries<
             ...prev.appealsAndTroublesEntry,
             appeals: {
               count: prev.appealsAndTroublesEntry.appeals.count + 1,
-              entries: [
-                ...prev.appealsAndTroublesEntry.appeals.entries,
-                newEntry,
-              ],
+              entries: [...prev.appealsAndTroublesEntry.appeals.entries, newEntry],
             },
           },
         }
@@ -72,10 +71,7 @@ export function ReportAppealAndTroubleInputEntries<
           ...prev.appealsAndTroublesEntry,
           troubles: {
             count: prev.appealsAndTroublesEntry.troubles.count + 1,
-            entries: [
-              ...prev.appealsAndTroublesEntry.troubles.entries,
-              newEntry,
-            ],
+            entries: [...prev.appealsAndTroublesEntry.troubles.entries, newEntry],
           },
         },
       }
@@ -89,10 +85,9 @@ export function ReportAppealAndTroubleInputEntries<
       }
 
       if (kind === 'appeal') {
-        const filteredEntries =
-          prev.appealsAndTroublesEntry.appeals.entries.filter(
-            (e) => e.id !== id,
-          )
+        const filteredEntries = prev.appealsAndTroublesEntry.appeals.entries.filter(
+          (e) => e.id !== id,
+        )
 
         return {
           ...prev,
@@ -106,8 +101,9 @@ export function ReportAppealAndTroubleInputEntries<
         }
       }
 
-      const filteredEntries =
-        prev.appealsAndTroublesEntry.troubles.entries.filter((e) => e.id !== id)
+      const filteredEntries = prev.appealsAndTroublesEntry.troubles.entries.filter(
+        (e) => e.id !== id,
+      )
 
       return {
         ...prev,
@@ -129,8 +125,8 @@ export function ReportAppealAndTroubleInputEntries<
       }
 
       if (kind === 'appeal') {
-        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map(
-          (e) => (e.id === id ? { ...e, content: newContent } : e),
+        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((e) =>
+          e.id === id ? { ...e, content: newContent } : e,
         )
 
         return {
@@ -145,8 +141,8 @@ export function ReportAppealAndTroubleInputEntries<
         }
       }
 
-      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map(
-        (e) => (e.id === id ? { ...e, content: newContent } : e),
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((e) =>
+        e.id === id ? { ...e, content: newContent } : e,
       )
 
       return {
@@ -169,8 +165,8 @@ export function ReportAppealAndTroubleInputEntries<
       }
 
       if (kind === 'appeal') {
-        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map(
-          (e) => (e.id === id ? { ...e, item: Number(newItem) } : e),
+        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((e) =>
+          e.id === id ? { ...e, item: Number(newItem) } : e,
         )
 
         return {
@@ -185,8 +181,8 @@ export function ReportAppealAndTroubleInputEntries<
         }
       }
 
-      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map(
-        (e) => (e.id === id ? { ...e, item: Number(newItem) } : e),
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((e) =>
+        e.id === id ? { ...e, item: Number(newItem) } : e,
       )
 
       return {
@@ -204,17 +200,13 @@ export function ReportAppealAndTroubleInputEntries<
 
   return (
     <>
-      <Button
-        size="square-petite"
-        onPress={handleAdd}
-        className="rounded-full mt-4"
-      >
+      <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
         <IconPlus />
       </Button>
       {entries.map((entry) => (
         <div
           key={entry.id}
-          className="grid grid-cols-12 grid-rows-1 items-center gap-4 mx-auto py-2"
+          className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
         >
           <Textarea
             label="内容"
@@ -232,16 +224,14 @@ export function ReportAppealAndTroubleInputEntries<
           >
             <ComboBox.Input />
             <ComboBox.List items={items}>
-              {(item) => (
-                <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>
-              )}
+              {(item) => <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>}
             </ComboBox.List>
           </ComboBox>
           <Button
             size="square-petite"
             intent="danger"
             onPress={() => handleRemove(entry.id)}
-            className="rounded-full mt-6 col-span-1"
+            className="col-span-1 mt-6 rounded-full"
           >
             <IconMinus />
           </Button>

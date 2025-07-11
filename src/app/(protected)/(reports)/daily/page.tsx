@@ -23,9 +23,7 @@ import { inputCountSearchParamsCache } from '~/features/reports/daily/types/sear
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 
-export default async function Home({
-  searchParams,
-}: NextPageProps<undefined, SearchParams>) {
+export default async function Home({ searchParams }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
@@ -45,11 +43,11 @@ export default async function Home({
   ])
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <Heading>日報作成</Heading>
       <CreateDailyForm
         troubleHeadings={
-          <div className="flex items-center mt-4">
+          <div className="mt-4 flex items-center">
             <Heading level={3}>困っていること</Heading>
           </div>
         }
@@ -57,7 +55,7 @@ export default async function Home({
           <Suspense
             fallback={
               <>
-                <Button size="square-petite" className="rounded-full mt-4">
+                <Button size="square-petite" className="mt-4 rounded-full">
                   <IconPlus />
                 </Button>
                 {Array.from({
@@ -65,7 +63,7 @@ export default async function Home({
                 }).map(() => (
                   <div
                     key={crypto.randomUUID()}
-                    className="grid grid-cols-12 grid-rows-1 items-center gap-4 mx-auto py-2"
+                    className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
                   >
                     <Skeleton className="col-span-3 h-16" />
                     <Skeleton className="col-span-2 h-7" />
@@ -77,9 +75,7 @@ export default async function Home({
             }
           >
             {getTroubleCategories(undefined, session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<
-                TroubleCategoriesResponse['troubleCategories']
-              >
+              <ReportAppealAndTroubleInputEntries<TroubleCategoriesResponse['troubleCategories']>
                 items={res.troubleCategories}
                 kind="trouble"
               />
@@ -87,7 +83,7 @@ export default async function Home({
           </Suspense>
         }
         appealHeadings={
-          <div className="flex items-center mt-4">
+          <div className="mt-4 flex items-center">
             <Heading level={3}>アピールポイント</Heading>
           </div>
         }
@@ -95,7 +91,7 @@ export default async function Home({
           <Suspense
             fallback={
               <>
-                <Button size="square-petite" className="rounded-full mt-4">
+                <Button size="square-petite" className="mt-4 rounded-full">
                   <IconPlus />
                 </Button>
                 {Array.from({
@@ -103,7 +99,7 @@ export default async function Home({
                 }).map(() => (
                   <div
                     key={crypto.randomUUID()}
-                    className="grid grid-cols-12 grid-rows-1 items-center gap-4 mx-auto py-2"
+                    className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
                   >
                     <Skeleton className="col-span-3 h-16" />
                     <Skeleton className="col-span-2 h-7" />
@@ -115,9 +111,7 @@ export default async function Home({
             }
           >
             {getAppealCategories(undefined, session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<
-                AppealCategoriesResponse['appealCategories']
-              >
+              <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
                 items={res.appealCategories}
                 kind="appeal"
               />
@@ -128,13 +122,13 @@ export default async function Home({
         <Suspense
           fallback={
             <>
-              <Button size="square-petite" className="rounded-full mt-4">
+              <Button size="square-petite" className="mt-4 rounded-full">
                 <IconPlus />
               </Button>
               {Array.from({ length: count > 0 ? count : 1 }).map(() => (
                 <div
                   key={crypto.randomUUID()}
-                  className="grid grid-cols-11 items-center grid-rows-1  mx-auto gap-4 mt-10"
+                  className="mx-auto mt-10 grid grid-cols-11 grid-rows-1 items-center gap-4"
                 >
                   <Skeleton className="col-span-2 h-7" />
                   <Skeleton className="col-span-2 h-7" />
@@ -149,9 +143,9 @@ export default async function Home({
                 <Checkbox className="cursor-pointer">リモート勤務</Checkbox>
               </div>
               <Separator orientation="horizontal" />
-              <div className="flex items-center gap-x-2 my-4">
+              <div className="my-4 flex items-center gap-x-2">
                 <span className="text-sm">合計時間:</span>
-                <Heading className="text-muted-fg text-lg">0時間</Heading>
+                <Heading className="text-lg text-muted-fg">0時間</Heading>
               </div>
             </>
           }

@@ -11,16 +11,10 @@ import {
   type ValidationResult,
 } from 'react-aria-components'
 import { tv } from 'tailwind-variants'
-import {
-  Description,
-  FieldError,
-  FieldGroup,
-  Label,
-} from '~/components/ui/intent-ui/field'
+import { Description, FieldError, FieldGroup, Label } from '~/components/ui/intent-ui/field'
 import { composeTailwindRenderProps } from '~/lib/primitive'
 
-interface DateFieldProps<T extends DateValue>
-  extends DateFieldPrimitiveProps<T> {
+interface DateFieldProps<T extends DateValue> extends DateFieldPrimitiveProps<T> {
   label?: string
   description?: string
   errorMessage?: string | ((validation: ValidationResult) => string)
@@ -39,10 +33,7 @@ const DateField = <T extends DateValue>({
   return (
     <DateFieldPrimitive
       {...props}
-      className={composeTailwindRenderProps(
-        props.className,
-        'group flex flex-col gap-y-1.5',
-      )}
+      className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-y-1.5')}
     >
       {label && <Label>{label}</Label>}
       <FieldGroup>
@@ -84,10 +75,7 @@ const segmentStyles = tv({
   },
 })
 
-const DateInput = ({
-  className,
-  ...props
-}: Omit<DateInputProps, 'children'>) => {
+const DateInput = ({ className, ...props }: Omit<DateInputProps, 'children'>) => {
   return (
     <DateInputPrimitive
       className={composeTailwindRenderProps(

@@ -19,13 +19,7 @@ interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
   description?: string
 }
 
-const CardHeader = ({
-  className,
-  title,
-  description,
-  children,
-  ...props
-}: HeaderProps) => (
+const CardHeader = ({ className, title, description, children, ...props }: HeaderProps) => (
   <div
     data-slot="card-header"
     className={twMerge(
@@ -36,11 +30,7 @@ const CardHeader = ({
   >
     {title && <CardTitle>{title}</CardTitle>}
     {description && <CardDescription>{description}</CardDescription>}
-    {!title && typeof children === 'string' ? (
-      <CardTitle>{children}</CardTitle>
-    ) : (
-      children
-    )}
+    {!title && typeof children === 'string' ? <CardTitle>{children}</CardTitle> : children}
   </div>
 )
 
@@ -48,36 +38,24 @@ const CardTitle = ({ className, ...props }: ComponentProps<'div'>) => {
   return (
     <div
       data-slot="card-title"
-      className={twMerge(
-        'font-semibold text-lg leading-none tracking-tight',
-        className,
-      )}
+      className={twMerge('font-semibold text-lg leading-none tracking-tight', className)}
       {...props}
     />
   )
 }
 
-const CardDescription = ({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) => {
+const CardDescription = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       {...props}
       data-slot="card-description"
-      className={twMerge(
-        'row-start-2 text-pretty text-muted-fg text-sm',
-        className,
-      )}
+      className={twMerge('row-start-2 text-pretty text-muted-fg text-sm', className)}
       {...props}
     />
   )
 }
 
-const CardAction = ({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) => {
+const CardAction = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       data-slot="card-action"
@@ -90,10 +68,7 @@ const CardAction = ({
   )
 }
 
-const CardContent = ({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) => {
+const CardContent = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       data-slot="card-content"
@@ -106,17 +81,11 @@ const CardContent = ({
   )
 }
 
-const CardFooter = ({
-  className,
-  ...props
-}: HTMLAttributes<HTMLDivElement>) => {
+const CardFooter = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       data-slot="card-footer"
-      className={twMerge(
-        'flex items-center px-(--card-spacing) [.border-t]:pt-6',
-        className,
-      )}
+      className={twMerge('flex items-center px-(--card-spacing) [.border-t]:pt-6', className)}
       {...props}
     />
   )
@@ -129,12 +98,4 @@ Card.Header = CardHeader
 Card.Title = CardTitle
 Card.Action = CardAction
 
-export {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  CardAction,
-}
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, CardAction }

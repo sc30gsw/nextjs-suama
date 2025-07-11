@@ -9,12 +9,7 @@ export function WeeklyReportsNavigation({
   data,
 }: Record<
   'data',
-  Exclude<
-    ReturnType<
-      ReturnType<typeof fetchWeeklyReportsInfiniteQuery>['use']
-    >['data'],
-    undefined
-  >
+  Exclude<ReturnType<ReturnType<typeof fetchWeeklyReportsInfiniteQuery>['use']>['data'], undefined>
 >) {
   const [activeId, setActiveId] = useState('')
 
@@ -32,7 +27,7 @@ export function WeeklyReportsNavigation({
   }, [])
 
   return (
-    <aside className="w-64 sticky top-20 h-fit hidden lg:block pr-4">
+    <aside className="sticky top-20 hidden h-fit w-64 pr-4 lg:block">
       <nav className="flex flex-col gap-1 text-sm">
         <Heading level={5}>On this page</Heading>
         {data.pages.flatMap((page) =>
@@ -46,9 +41,9 @@ export function WeeklyReportsNavigation({
               duration={300}
               onSetActive={throttledSetActive}
               className={cn(
-                'px-2 my-1 transition-colors cursor-pointer',
+                'my-1 cursor-pointer px-2 transition-colors',
                 activeId === `user-${report.user.id}`
-                  ? 'text-white font-semibold'
+                  ? 'font-semibold text-white'
                   : 'text-muted-fg hover:text-white',
               )}
             >

@@ -44,11 +44,7 @@ const Popover = (props: PopoverProps) => {
 
 const PopoverTitle = ({ level = 2, className, ...props }: DialogTitleProps) => (
   <DialogTitle
-    className={twMerge(
-      'sm:leading-none',
-      level === 2 && 'sm:text-lg',
-      className,
-    )}
+    className={twMerge('sm:leading-none', level === 2 && 'sm:text-lg', className)}
     {...props}
   />
 )
@@ -62,11 +58,7 @@ const PopoverFooter = ({ className, ...props }: DialogFooterProps) => (
 )
 
 const PopoverBody = ({ className, ref, ...props }: DialogBodyProps) => (
-  <DialogBody
-    ref={ref}
-    className={twMerge('sm:px-4 sm:pt-0', className)}
-    {...props}
-  />
+  <DialogBody ref={ref} className={twMerge('sm:px-4 sm:pt-0', className)} {...props} />
 )
 
 const content = tv({

@@ -1,12 +1,7 @@
 'use client'
 
 import { FormProvider, getFormProps, getInputProps } from '@conform-to/react'
-import {
-  IconMinus,
-  IconPlus,
-  IconSend3,
-  IconTriangleExclamation,
-} from '@intentui/icons'
+import { IconMinus, IconPlus, IconSend3, IconTriangleExclamation } from '@intentui/icons'
 import { parseAsBoolean, parseAsJson } from 'nuqs'
 import { use } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -26,14 +21,9 @@ import {
 
 type CreateWeeklyReportFormProps = {
   promises: Promise<
-    [
-      Awaited<ReturnType<typeof getProjects>>,
-      Awaited<ReturnType<typeof getMissions>>,
-    ]
+    [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
   >
-  lastWeeklyReportMissions?: Awaited<
-    ReturnType<typeof getLastWeeklyReportMissions>
-  >
+  lastWeeklyReportMissions?: Awaited<ReturnType<typeof getLastWeeklyReportMissions>>
   date: {
     dates: string
     year: number
@@ -48,28 +38,23 @@ export function CreateWeeklyReportForm({
 }: CreateWeeklyReportFormProps) {
   const [projectsResponse, missionsResponse] = use(promises)
 
-  const initialWeeklyInputCountSearchParamsParsers =
-    lastWeeklyReportMissions?.weeklyReport
-      ? {
-          weeklyReportEntry: parseAsJson(
-            weeklyReportStateSchema.parse,
-          ).withDefault({
-            count:
-              lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.length,
-            entries:
-              lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.map(
-                (weeklyReportMission) => ({
-                  id: weeklyReportMission.id,
-                  project: weeklyReportMission.mission.projectId,
-                  mission: weeklyReportMission.missionId,
-                  hours: weeklyReportMission.hours,
-                  content: weeklyReportMission.workContent,
-                }),
-              ),
-          }),
-          isReference: parseAsBoolean.withDefault(false),
-        }
-      : weeklyInputCountSearchParamsParsers
+  const initialWeeklyInputCountSearchParamsParsers = lastWeeklyReportMissions?.weeklyReport
+    ? {
+        weeklyReportEntry: parseAsJson(weeklyReportStateSchema.parse).withDefault({
+          count: lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.length,
+          entries: lastWeeklyReportMissions.weeklyReport.weeklyReportMissions.map(
+            (weeklyReportMission) => ({
+              id: weeklyReportMission.id,
+              project: weeklyReportMission.mission.projectId,
+              mission: weeklyReportMission.missionId,
+              hours: weeklyReportMission.hours,
+              content: weeklyReportMission.workContent,
+            }),
+          ),
+        }),
+        isReference: parseAsBoolean.withDefault(false),
+      }
+    : weeklyInputCountSearchParamsParsers
 
   const {
     action,
@@ -87,13 +72,13 @@ export function CreateWeeklyReportForm({
     <>
       <div className="space-y-2">
         {fields.weeklyReports.errors && (
-          <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
+          <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
             <p>{fields.weeklyReports.errors}</p>
           </div>
         )}
         {getError() && (
-          <div className="bg-danger/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-danger">
+          <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
             <p>{getError()}</p>
           </div>
@@ -101,7 +86,7 @@ export function CreateWeeklyReportForm({
         <Button
           size="square-petite"
           onPress={handleAdd}
-          className="rounded-full mt-4"
+          className="mt-4 rounded-full"
           isDisabled={isPending}
         >
           <IconPlus />
@@ -128,7 +113,7 @@ export function CreateWeeklyReportForm({
                     handleRemove(weeklyReport.getFieldset().id.value ?? '')
                   }}
                   isDisabled={isPending}
-                  className="rounded-full mt-6"
+                  className="mt-6 rounded-full"
                 >
                   <IconMinus />
                 </Button>
@@ -138,7 +123,7 @@ export function CreateWeeklyReportForm({
           <Separator orientation="horizontal" />
           <TotalHours totalHours={totalHours} />
           <Separator orientation="horizontal" />
-          <div className="flex items-center justify-end gap-x-2 my-4">
+          <div className="my-4 flex items-center justify-end gap-x-2">
             <Button isDisabled={isPending} type="submit">
               {isPending ? '登録中...' : '登録する'}
               {isPending ? <Loader /> : <IconSend3 />}

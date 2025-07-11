@@ -37,10 +37,7 @@ const COLUMNS = [
       return (
         <div className="flex items-center gap-2">
           <div className="flex gap-2">
-            <EditAppealCategoryModal
-              id={row.original.id}
-              name={row.original.name}
-            />
+            <EditAppealCategoryModal id={row.original.id} name={row.original.name} />
             <AppealCategoryDeleteButton id={row.original.id} />
           </div>
         </div>
@@ -49,16 +46,12 @@ const COLUMNS = [
   }),
 ]
 
-export function AppealCategoriesTable({
-  data,
-}: Record<'data', AppealCategoriesResponse>) {
-  const initialData: AppealCategoryTableData[] = data.appealCategories.map(
-    (category) => ({
-      id: category.id,
-      name: category.name,
-      operate: '',
-    }),
-  )
+export function AppealCategoriesTable({ data }: Record<'data', AppealCategoriesResponse>) {
+  const initialData: AppealCategoryTableData[] = data.appealCategories.map((category) => ({
+    id: category.id,
+    name: category.name,
+    operate: '',
+  }))
 
   const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
     history: 'push',
@@ -82,10 +75,7 @@ export function AppealCategoriesTable({
               <Table.Column key={header.id} isRowHeader={true}>
                 {header.isPlaceholder
                   ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
+                  : flexRender(header.column.columnDef.header, header.getContext())}
               </Table.Column>
             ))}
           </Table.Row>

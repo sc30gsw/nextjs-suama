@@ -7,10 +7,7 @@ import { categoriesOfAppeal } from '~/db/schema'
 import { createAppealCategoryInputSchema } from '~/features/report-contexts/appeals/types/schemas/create-appeal-category-input-schema'
 import { db } from '~/index'
 
-export async function createAppealCategoryAction(
-  _: unknown,
-  formData: FormData,
-) {
+export async function createAppealCategoryAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
     schema: createAppealCategoryInputSchema,
   })

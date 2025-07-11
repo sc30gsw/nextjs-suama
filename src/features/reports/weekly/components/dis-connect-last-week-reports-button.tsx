@@ -7,19 +7,15 @@ import { weeklyInputCountSearchParamsParsers } from '~/features/reports/weekly/t
 import { Confirm } from '~/hooks/use-confirm'
 
 export function DisConnectLastWeekReportsButton() {
-  const [, setWeeklyReportEntry] = useQueryStates(
-    weeklyInputCountSearchParamsParsers,
-    {
-      history: 'push',
-      shallow: false,
-    },
-  )
+  const [, setWeeklyReportEntry] = useQueryStates(weeklyInputCountSearchParamsParsers, {
+    history: 'push',
+    shallow: false,
+  })
 
   const handleClick = async () => {
     const ok = await Confirm.call({
       title: '前週の予定の参照を解除しますか?',
-      message:
-        '実行すると、入力した内容は消え、再度、予定を入力し直す必要があります。',
+      message: '実行すると、入力した内容は消え、再度、予定を入力し直す必要があります。',
     })
 
     if (!ok) {

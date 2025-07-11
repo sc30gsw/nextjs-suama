@@ -13,33 +13,29 @@ import { getWeeksByMonth } from '~/features/reports/weekly/utils/date-utils'
 
 import type { NextPageProps } from '~/types'
 
-export default async function WeeklyPage({
-  searchParams,
-}: NextPageProps<undefined, SearchParams>) {
+export default async function WeeklyPage({ searchParams }: NextPageProps<undefined, SearchParams>) {
   const { month } = await monthSelectSearchParamsCache.parse(searchParams)
 
-  const selectedWeeksByMonth = getWeeksByMonth().find(
-    (weeks) => weeks.month === month,
-  )
+  const selectedWeeksByMonth = getWeeksByMonth().find((weeks) => weeks.month === month)
 
   if (!selectedWeeksByMonth) {
     notFound()
   }
 
   return (
-    <div className="p-4 lg:p-6 flex flex-col gap-y-2">
-      <div className="w-full flex items-center justify-center my-4">
+    <div className="flex flex-col gap-y-2 p-4 lg:p-6">
+      <div className="my-4 flex w-full items-center justify-center">
         <MonthSelector
           months={getWeeksByMonth().map(({ month }) => ({
             name: month,
           }))}
         />
       </div>
-      <div className="grid lg:grid-cols-4 md:grid-cols-2 gird-cols-1 grid-rows-2 gap-8 mx-auto py-2">
+      <div className="gird-cols-1 mx-auto grid grid-rows-2 gap-8 py-2 md:grid-cols-2 lg:grid-cols-4">
         {selectedWeeksByMonth.weeks.map((week) => (
           <div key={week.weekNumber}>
             <WeekRangeCalendar startDay={week.startDay} endDay={week.endDay} />
-            <div className="flex justify-end items-center">
+            <div className="flex items-center justify-end">
               <Button size="extra-small" className="mt-2">
                 <Link
                   href={`/weekly/list/${format(week.startDay, 'yyyy-MM-dd', { locale: ja })}-${format(week.endDay, 'yyyy-MM-dd', { locale: ja })}`}

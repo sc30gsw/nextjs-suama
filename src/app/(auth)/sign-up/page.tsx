@@ -8,10 +8,7 @@ export default function SignUpPage() {
       haveAccountArea={
         <div className="flex items-center justify-between">
           アカウントをお持ちですか？
-          <Link
-            className="ml-2 text-blue-500 hover:text-blue-500/80"
-            href="/sign-in"
-          >
+          <Link className="ml-2 text-blue-500 hover:text-blue-500/80" href="/sign-in">
             サインイン
           </Link>
         </div>

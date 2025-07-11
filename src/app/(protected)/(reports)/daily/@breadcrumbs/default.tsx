@@ -19,9 +19,7 @@ const ITEMS = [
 export default function DailyBreadcrumbsDefaultPage() {
   const pathname = usePathname()
 
-  const filteredItems = ITEMS.filter(
-    (item) => item.path === '/daily' || item.path === pathname,
-  )
+  const filteredItems = ITEMS.filter((item) => item.path === '/daily' || item.path === pathname)
 
   return <AppBreadcrumbs items={filteredItems} />
 }

@@ -13,9 +13,7 @@ const app = new Hono()
     const skipNumber = Number(skip) || 0
     const limitNumber = Number(limit) || 10
 
-    const userNamesArray = userNames
-      ? userNames.split(',').map((name) => name.trim())
-      : []
+    const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : []
 
     type User = {
       id: number
@@ -39,8 +37,7 @@ const app = new Hono()
 
     const userList = await upfetchForDummy<Response>('/users', {
       params: {
-        select:
-          'firstName,lastName,age,phone,email,username,gender,birthDate,role',
+        select: 'firstName,lastName,age,phone,email,username,gender,birthDate,role',
         limit: MAX_LIMIT,
         skip: 0,
       },
@@ -53,10 +50,7 @@ const app = new Hono()
           )
         : userList.users
 
-    const paginatedUsers = userList.users.slice(
-      skipNumber,
-      skipNumber + limitNumber,
-    )
+    const paginatedUsers = userList.users.slice(skipNumber, skipNumber + limitNumber)
 
     return c.json(
       {
@@ -98,17 +92,13 @@ const app = new Hono()
 
     const userList = await upfetchForDummy<Response>('/users', {
       params: {
-        select:
-          'firstName,lastName,age,phone,email,username,gender,birthDate,role',
+        select: 'firstName,lastName,age,phone,email,username,gender,birthDate,role',
         limit: MAX_LIMIT,
         skip: 0,
       },
     })
 
-    const paginatedUsers = userList.users.slice(
-      skipNumber,
-      skipNumber + limitNumber,
-    )
+    const paginatedUsers = userList.users.slice(skipNumber, skipNumber + limitNumber)
 
     return c.json(
       {

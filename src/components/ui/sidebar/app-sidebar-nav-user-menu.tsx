@@ -1,10 +1,4 @@
-import {
-  IconCirclePerson,
-  IconLogout,
-  IconMoon,
-  IconSettings,
-  IconSun,
-} from '@intentui/icons'
+import { IconCirclePerson, IconLogout, IconMoon, IconSettings, IconSun } from '@intentui/icons'
 import { IconCalendarEvent, IconReport } from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -21,10 +15,7 @@ export function AppSidebarNavUserMenu() {
   return (
     // TODO: 各種リンク・アイコンの設定
     <Menu>
-      <Menu.Trigger
-        className="ml-auto md:hidden cursor-pointer"
-        aria-label="Open Menu"
-      >
+      <Menu.Trigger className="ml-auto cursor-pointer md:hidden" aria-label="Open Menu">
         <Avatar
           alt={session?.user.name}
           src={session?.user?.image}
