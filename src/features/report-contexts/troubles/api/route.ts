@@ -1,7 +1,7 @@
 import { count, like, or } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { MAX_LIMIT } from '~/constants'
-import { categoriesOfTrouble } from '~/db/schema'
+import { categoryOfTroubles } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
@@ -16,17 +16,17 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
   try {
     const whereClause =
       namesArray.length > 0
-        ? or(...namesArray.flatMap((word) => [like(categoriesOfTrouble.name, `%${word}%`)]))
+        ? or(...namesArray.flatMap((word) => [like(categoryOfTroubles.name, `%${word}%`)]))
         : undefined
 
-    const categories = await db.query.categoriesOfTrouble.findMany({
+    const categories = await db.query.categoryOfTroubles.findMany({
       where: whereClause,
       offset: skipNumber,
       limit: limitNumber,
-      orderBy: (categoriesOfTrouble, { asc }) => [asc(categoriesOfTrouble.createdAt)],
+      orderBy: (categoryOfTroubles, { asc }) => [asc(categoryOfTroubles.createdAt)],
     })
 
-    const total = await db.select({ count: count() }).from(categoriesOfTrouble).where(whereClause)
+    const total = await db.select({ count: count() }).from(categoryOfTroubles).where(whereClause)
 
     return c.json(
       {
