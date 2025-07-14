@@ -17,23 +17,29 @@ export const withCallbacks = <
   callbacks: Callbacks<T, R>,
 ) => {
   return async (...args: Args) => {
-    const promise = fn(...args)
-
     const reference = callbacks.onStart?.()
-    const result = await promise
 
-    if (reference) {
-      callbacks.onEnd?.(reference)
+    try {
+      const result = await fn(...args)
+
+      if (reference) {
+        callbacks.onEnd?.(reference)
+      }
+
+      if (result.status === 'success') {
+        callbacks.onSuccess?.(result)
+      }
+
+      if (result.status === 'error') {
+        callbacks.onError?.(result)
+      }
+
+      return result
+    } catch (error) {
+      if (reference) {
+        callbacks.onEnd?.(reference)
+      }
+      throw error
     }
-
-    if (result.status === 'success') {
-      callbacks.onSuccess?.(result)
-    }
-
-    if (result.status === 'error') {
-      callbacks.onError?.(result)
-    }
-
-    return promise
   }
 }
