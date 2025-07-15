@@ -296,7 +296,7 @@ export const troubles = sqliteTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     categoryOfTroubleId: text('category_of_trouble_id')
       .notNull()
-      .references(() => categoriesOfTrouble.id, { onDelete: 'cascade' }),
+      .references(() => categoryOfTroubles.id, { onDelete: 'cascade' }),
     trouble: text('trouble').notNull(),
     resolved: integer('resolved', { mode: 'boolean' }).notNull().default(false),
     createdAt: integer('created_at', { mode: 'timestamp' })
@@ -335,8 +335,8 @@ export const troubleReplies = sqliteTable(
   ],
 )
 
-export const categoriesOfTrouble = sqliteTable(
-  'categories_of_trouble',
+export const categoryOfTroubles = sqliteTable(
+  'category_of_troubles',
   {
     id: text('id')
       .primaryKey()
@@ -347,7 +347,7 @@ export const categoriesOfTrouble = sqliteTable(
       .$defaultFn(() => new Date()),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
   },
-  (table) => [index('index_categories_of_trouble_on_name').on(table.name)],
+  (table) => [index('index_category_of_trouble_on_name').on(table.name)],
 )
 
 export const appeals = sqliteTable(
@@ -361,7 +361,7 @@ export const appeals = sqliteTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     categoryOfAppealId: text('category_of_appeal_id')
       .notNull()
-      .references(() => categoriesOfAppeal.id, { onDelete: 'cascade' }),
+      .references(() => categoryOfAppeals.id, { onDelete: 'cascade' }),
     dailyReportId: text('daily_report_id')
       .notNull()
       .references(() => dailyReports.id, { onDelete: 'cascade' }),
@@ -402,8 +402,8 @@ export const appealReplies = sqliteTable(
   ],
 )
 
-export const categoriesOfAppeal = sqliteTable(
-  'categories_of_appeal',
+export const categoryOfAppeals = sqliteTable(
+  'category_of_appeals',
   {
     id: text('id')
       .primaryKey()
@@ -414,7 +414,7 @@ export const categoriesOfAppeal = sqliteTable(
       .$defaultFn(() => new Date()),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).$onUpdate(() => new Date()),
   },
-  (table) => [index('index_categories_of_appeal_on_name').on(table.name)],
+  (table) => [index('index_category_of_appeal_on_name').on(table.name)],
 )
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -475,9 +475,9 @@ export const troublesRelations = relations(troubles, ({ one, many }) => ({
     fields: [troubles.userId],
     references: [users.id],
   }),
-  categoryOfTrouble: one(categoriesOfTrouble, {
+  categoryOfTrouble: one(categoryOfTroubles, {
     fields: [troubles.categoryOfTroubleId],
-    references: [categoriesOfTrouble.id],
+    references: [categoryOfTroubles.id],
   }),
   troubleReplies: many(troubleReplies),
 }))
@@ -487,9 +487,9 @@ export const appealsRelations = relations(appeals, ({ one, many }) => ({
     fields: [appeals.userId],
     references: [users.id],
   }),
-  categoryOfAppeal: one(categoriesOfAppeal, {
+  categoryOfAppeal: one(categoryOfAppeals, {
     fields: [appeals.categoryOfAppealId],
-    references: [categoriesOfAppeal.id],
+    references: [categoryOfAppeals.id],
   }),
   dailyReport: one(dailyReports, {
     fields: [appeals.dailyReportId],

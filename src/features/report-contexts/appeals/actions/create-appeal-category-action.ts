@@ -3,7 +3,7 @@
 import { parseWithZod } from '@conform-to/zod'
 import { revalidateTag } from 'next/cache'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
-import { categoriesOfAppeal } from '~/db/schema'
+import { categoryOfAppeals } from '~/db/schema'
 import { createAppealCategoryInputSchema } from '~/features/report-contexts/appeals/types/schemas/create-appeal-category-input-schema'
 import { db } from '~/index'
 
@@ -17,7 +17,7 @@ export async function createAppealCategoryAction(_: unknown, formData: FormData)
   }
 
   try {
-    await db.insert(categoriesOfAppeal).values({
+    await db.insert(categoryOfAppeals).values({
       name: submission.value.name,
     })
 
