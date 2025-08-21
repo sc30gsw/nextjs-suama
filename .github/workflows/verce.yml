@@ -24,7 +24,6 @@ jobs:
       
       - name: Install dependencies
         run: bun i
-        working-directory: dashboard-frontend
         
       - name: Install Vercel CLI
         run: |
@@ -33,11 +32,9 @@ jobs:
 
       - name: Pull Vercel Environment Variables
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: dashboard-frontend
 
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: dashboard-frontend
         
       - name: Deploy to Vercel
         run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
