@@ -13,6 +13,8 @@ touch .env
 NEXT_PUBLIC_APP_URL = http://localhost:3000
 TURSO_DATABASE_URLL = {NotePMにて共有}
 TURSO_AUTH_TOKEN = {NotePMにて共有}
+BETTER_AUTH_SECRET = openssl rand -base64 32
+BETTER_AUTH_URL = http://localhost:3000
 ```
 
 ### 3. 依存関係のインストール
@@ -34,6 +36,7 @@ bun dev
 - slotsの概念やComposition Patternを活用し、Client Module Graphを小さくし、Clientに送信されるJSバンドルを小さくすること（RSC内に移せる記述は移し、Server Module Graphを大きくする方針とする）
 - 本プロジェクトでは[React Compiler](https://ja.react.dev/learn/react-compiler)を使用しているため、原則、`useMemo`や`useCallback`などのメモ化のhooksは不要とします
 - PR前に実装者は`bun run build`または`bun run build:clean`を実行し、ビルドが通ることを確認すること
+- 開発でDBに変更が必要な場合は、Tursoの「ブランチング」機能を活用し、環境を切り替えること
 
 ### 命名について
 - ファイル名・フォルダ名（dynamic routesを除く）はケバブケースを、変数名や関数名はキャメルケースを使用する
@@ -64,7 +67,7 @@ bun dev
 ディレクトリ構成は[bulletproof-react](https://github.com/alan2207/bulletproof-react)に従い、以下の構成とします。
 
 ```
-/2025-april-fools-day-claves
+/nextjs-suama
   ├ public : 画像などアセット類
   ├ src
   |  ├ app: ルーティング定義
@@ -125,13 +128,13 @@ bun dev
   |  ├ db 
   |  |  └ schema.ts : テーブルSchema定義
   |  ├ hooks : アプリ全体で使われるカスタムフック(use-***.ts)
-  |  ├ libs :アプリ全体で使用されるライブラリの設定定義や共通ヘルパー関数
+  |  ├ lib :アプリ全体で使用されるライブラリの設定定義や共通ヘルパー関数
   |  ├ env.ts : @t3-oss/env-nextjs による環境変数定義
   |  ├ index.ts : Drizzle ORM のDB定義
   |  └ utils : アプリ全体で使われるユーティリティ実装
   ├ .env.* : 環境変数定義ファイル
   ├ next.config.ts : next.jsの設定ファイル
-  ├ components.json : shadcn/uiの設定ファイル
+  ├ intentui.json : Intent UIの設定ファイル
   ├ tailwind.config.ts : tailwind cssの設定ファイル
   ├ postcss.config.mjs : postcssの設定ファイル（主にtailwind cssのプラグイン設定を記述）
   ├ package.json : パッケージマネージャーの設定ファイル
@@ -152,6 +155,37 @@ bun dev
 - [Remeda](https://remedajs.com/): TypeScriptのユーティリティライブラリ
 - [date-fns](https://date-fns.org/docs/Getting-Started): 日付操作ライブラリ
 - [react-call](https://github.com/desko27/react-call): Confirmダイアログ管理ライブラリ
+- [TanStack Query](https://tanstack.com/query/latest): クライアントfetch ライブラリ
+- [TanStack Table](https://tanstack.com/table/latest): Unstyled UI tableライブラリ
+- [React Virtuoso](https://virtuoso.dev/): 仮想化レンダリングライブラリ
+
+## Better Auth CLIによるSchema生成
+```sh
+bunx @better-auth/cli generate
+```
+
+## drizzle-kitによるTurso migration
+```sh
+bunx drizzle-kit push
+```
+
+or
+
+```sh
+bunx drizzle-kit generate
+bunx drizzle-kit migrate
+```
+
+## Tursoによるブランチング
+```sh
+# 既存データベース old-db から新しいブランチ new-db を作成
+turso db create new-db --from-db old-db
+```
+
+```sh
+# 不要になったブランチは手動で削除
+turso db destroy new-db
+```
 
 ## Learn More
 

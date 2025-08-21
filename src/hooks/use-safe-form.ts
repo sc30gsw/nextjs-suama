@@ -1,8 +1,6 @@
 import { useForm } from '@conform-to/react'
 
-type FieldValues<T extends Record<string, any>> = Parameters<
-  typeof useForm<T>
->[0]
+type FieldValues<T extends Record<string, any>> = Parameters<typeof useForm<T>>[0]
 
 /**
  * useFormのラッパー

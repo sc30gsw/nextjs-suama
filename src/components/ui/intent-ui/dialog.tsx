@@ -1,12 +1,6 @@
 'use client'
 
-import {
-  type ComponentProps,
-  type HTMLAttributes,
-  type Ref,
-  useEffect,
-  useRef,
-} from 'react'
+import { type ComponentProps, type HTMLAttributes, type Ref, useEffect, useRef } from 'react'
 
 import { IconX } from '@intentui/icons'
 import type { HeadingProps } from 'react-aria-components'
@@ -20,7 +14,7 @@ import {
 import { twJoin, twMerge } from 'tailwind-merge'
 import { Button, type ButtonProps } from '~/components/ui/intent-ui//button'
 import { useMediaQuery } from '~/hooks/use-media-query'
-import { composeTailwindRenderProps } from '~/libs/primitive'
+import { composeTailwindRenderProps } from '~/lib/primitive'
 // import { composeTailwindRenderProps } from '~/lib/primitive'
 
 const Dialog = ({
@@ -81,9 +75,7 @@ const DialogHeader = ({ className, ...props }: DialogHeaderProps) => {
       )}
     >
       {props.title && <DialogTitle>{props.title}</DialogTitle>}
-      {props.description && (
-        <DialogDescription>{props.description}</DialogDescription>
-      )}
+      {props.description && <DialogDescription>{props.description}</DialogDescription>}
       {!props.title && typeof props.children === 'string' ? (
         <DialogTitle {...props} />
       ) : (
@@ -97,12 +89,7 @@ interface DialogTitleProps extends Omit<HeadingProps, 'level'> {
   level?: 1 | 2 | 3 | 4
   ref?: Ref<HTMLHeadingElement>
 }
-const DialogTitle = ({
-  level = 2,
-  className,
-  ref,
-  ...props
-}: DialogTitleProps) => (
+const DialogTitle = ({ level = 2, className, ref, ...props }: DialogTitleProps) => (
   <Heading
     slot="title"
     level={level}
@@ -122,11 +109,7 @@ const DialogTitle = ({
 )
 
 type DialogDescriptionProps = ComponentProps<'div'>
-const DialogDescription = ({
-  className,
-  ref,
-  ...props
-}: DialogDescriptionProps) => (
+const DialogDescription = ({ className, ref, ...props }: DialogDescriptionProps) => (
   <Text
     slot="description"
     className={twMerge('text-muted-fg text-sm', className)}
@@ -186,21 +169,8 @@ const DialogFooter = ({ className, ...props }: DialogFooterProps) => {
   )
 }
 
-const DialogClose = ({
-  className,
-  intent = 'outline',
-  ref,
-  ...props
-}: ButtonProps) => {
-  return (
-    <Button
-      slot="close"
-      className={className}
-      ref={ref}
-      intent={intent}
-      {...props}
-    />
-  )
+const DialogClose = ({ className, intent = 'outline', ref, ...props }: ButtonProps) => {
+  return <Button slot="close" className={className} ref={ref} intent={intent} {...props} />
 }
 
 interface CloseButtonIndicatorProps extends Omit<ButtonProps, 'children'> {
@@ -208,10 +178,7 @@ interface CloseButtonIndicatorProps extends Omit<ButtonProps, 'children'> {
   isDismissable?: boolean | undefined
 }
 
-const DialogCloseIcon = ({
-  className,
-  ...props
-}: CloseButtonIndicatorProps) => {
+const DialogCloseIcon = ({ className, ...props }: CloseButtonIndicatorProps) => {
   const isMobile = useMediaQuery('(max-width: 600px)')
   const buttonRef = useRef<HTMLButtonElement>(null)
 
