@@ -3,6 +3,10 @@
 本コーディング規約はNext.jsのドキュメントはもちろん、[Next.jsの考え方](https://zenn.dev/akfm/books/nextjs-basic-principle/viewer/intro)に大いに着想を得ているため、一読することをお勧めします
 
 ### 共通
+- 本PRでは、Claude Codeをエージェントとして使用しており、Spec driven developmentを行うため、[cc-sdd](https://github.com/gotalab/cc-sdd)を導入している
+  - したがって、Spec driven developmentを実施する場合、cc-sddのドキュメントに従って実施すること
+  - また、適宜Steeringを実施し、ドキュメントの最新化を行うこと
+- CLAUDE.mdは常に最新のプロジェクト状態を反映するかつ、適切にプロジェクトの内容が反映されていること（更新時のデグッションがないことはmustで確認すること）
 - routingの機能および、Suspenseを活用し、適切なチャンク化を行うこと
 - slotsの概念やComposition Patternを活用し、Client Module Graphを小さくし、Clientに送信されるJSバンドルを小さくすること（RSC内に移せる記述は移し、Server Module Graphを大きくする方針とする）
 - 本プロジェクトでは[React Compiler](https://ja.react.dev/learn/react-compiler)を使用しているため、原則、`useMemo`や`useCallback`などのメモ化のhooksは不要とします
