@@ -1,6 +1,6 @@
 'use client'
 
-import { IconDocumentEdit, IconFileText, IconTrashEmpty } from '@intentui/icons'
+import { IconDocumentEdit, IconFileText, IconSend3, IconTrashEmpty } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -8,9 +8,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
+import Link from 'next/link'
 import { useQueryStates } from 'nuqs'
+import { useTransition } from 'react'
+import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
+import { publishDraftAction } from '~/features/reports/daily/actions/publish-draft-action'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
@@ -66,10 +70,14 @@ const COLUMNS = [
   }),
   columnHelper.accessor('operate', {
     header: '操作',
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const report = row.original
       // TODO: ここで実際のユーザー情報を取得して、現在のユーザーと比較するロジックを実装する
       const isCurrentUser = report.isRemote
+      const tableProps = table.options.meta as {
+        handlePublish: (id: string) => void
+        isPending: boolean
+      }
 
       return (
         <div className="flex items-center gap-2">
@@ -81,10 +89,23 @@ const COLUMNS = [
           </DailyReportWorkContentPopover>
           {isCurrentUser && (
             <div className="flex gap-2">
-              <Button intent="outline" size="small">
-                修正
-                <IconDocumentEdit />
-              </Button>
+              <Link href={`/daily/edit/${report.id}`}>
+                <Button intent="outline" size="small">
+                  修正
+                  <IconDocumentEdit />
+                </Button>
+              </Link>
+              {!report.isTurnedIn && (
+                <Button
+                  intent="primary"
+                  size="small"
+                  onPress={() => tableProps.handlePublish(report.id)}
+                  isDisabled={tableProps.isPending}
+                >
+                  公開
+                  <IconSend3 />
+                </Button>
+              )}
               <Button intent="danger" size="small">
                 削除
                 <IconTrashEmpty />
@@ -105,23 +126,31 @@ type DailyReportsTableProps<T extends 'today' | 'mine'> = {
 export function DailyReportsTable<T extends 'today' | 'mine'>({
   reports,
 }: DailyReportsTableProps<T>) {
-  const initialData: DailyReportForToday[] = reports.users.map((user) => ({
-    id: user.id.toString(),
-    date: user.birthDate,
+  const [isPending, startTransition] = useTransition()
+
+  const initialData: DailyReportForToday[] = reports.users.map((user: any) => ({
+    id: user.id,
+    date: user.date,
     username: user.username,
-    totalHour: user.age,
-    impression: user.email,
-    isRemote: user.role === 'admin',
-    isTurnedIn: user.role === 'moderator',
+    totalHour: user.totalHour,
+    impression: user.impression,
+    isRemote: user.isRemote,
+    isTurnedIn: user.isTurnedIn,
     operate: '',
-    workContents: Array.from({ length: 5 }, (_, i) => ({
-      id: `${user.id}-${i}`,
-      project: `プロジェクト${i + 1}`,
-      mission: `ミッション${i + 1}`,
-      workTime: Number((Math.random() * 3 + 1).toFixed(1)),
-      workContent: `作業内容のダミー${i + 1}`,
-    })),
+    workContents: user.workContents || [],
   }))
+
+  const handlePublish = (reportId: string) => {
+    startTransition(async () => {
+      try {
+        await publishDraftAction(reportId)
+        toast.success('日報を公開しました')
+      } catch (error) {
+        console.error('公開エラー:', error)
+        toast.error('公開に失敗しました')
+      }
+    })
+  }
 
   const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
     history: 'push',
@@ -134,6 +163,10 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: Math.ceil(reports.total / rowsPerPage),
+    meta: {
+      handlePublish,
+      isPending,
+    },
   })
 
   return (

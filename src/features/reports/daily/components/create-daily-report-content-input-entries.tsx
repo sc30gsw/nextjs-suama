@@ -12,6 +12,7 @@ import type {
   DailyReportEntrySchema,
 } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 type CreateDailyReportContentInputEntriesProps = {
@@ -21,7 +22,7 @@ type CreateDailyReportContentInputEntriesProps = {
   formId: string
   name: FieldName<DailyReportEntrySchema, CreateDailyReportFormSchema>
   removeButton: JSX.Element
-  initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams
+  initialDailyInputCountSearchParamsParsers?: DailyInputCountSearchParams
 }
 
 export function CreateDailyReportContentInputEntries({
@@ -42,7 +43,7 @@ export function CreateDailyReportContentInputEntries({
     handleChangeItem,
     handleChangeValue,
   } = useCreateDailyReportContentInputEntries(
-    initialDailyInputCountSearchParamsParsers,
+    initialDailyInputCountSearchParamsParsers ?? inputCountSearchParamsParsers,
     formId,
     name,
     projects,
