@@ -8,9 +8,43 @@
 - 本プロジェクトでは[React Compiler](https://ja.react.dev/learn/react-compiler)を使用しているため、原則、`useMemo`や`useCallback`などのメモ化のhooksは不要とします
 - PR前に実装者は`bun run build`または`bun run build:clean`を実行し、ビルドが通ることを確認すること
 - 開発でDBに変更が必要な場合は、Tursoの「ブランチング」機能を活用し、環境を切り替えること
+- "Single source of truth"の原則を徹底すること
+  - 定数・型定義など真実の源となるものがある場合、それらを使用し、新たに自前で実装しないこと
 
 ### 命名について
 - ファイル名・フォルダ名（dynamic routesを除く）はケバブケースを、変数名や関数名はキャメルケースを使用する
+
+### 型定義について
+**前提**
+1. 今回はAPI層ではHono RPCによるBFFを提供している
+2. DB層ではDrizzleによるSchemaを提供している
+
+- 上記のため、大元となる型が存在する場合、上記の型から型を生成・使用すること
+
+以下のように大元となる型を
+```ts
+import type { InferResponseType } from 'hono'
+import type { client } from '~/lib/rpc'
+import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
+import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
+import type { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
+
+type DailyReportsInWeeklyReportListTableProps = {
+  data: InferResponseType<
+    typeof client.api.weeklies.$get,
+    200
+  >['reports'][number]['dailyReports'][number]['dailyReportMissions']
+}
+
+type CreateWeeklyReportFormProps = {
+  promises: Promise<
+    [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
+  >
+  lastWeeklyReportMissions?: Awaited<ReturnType<typeof getLastWeeklyReportMissions>>
+}
+```
+
+
 
 ### 関数定義について
 - propsなど、個々人の記述に差異がでないよう関数宣言を使用してください（例: export default async function sample() {}）
