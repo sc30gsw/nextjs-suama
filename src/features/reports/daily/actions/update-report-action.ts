@@ -1,17 +1,24 @@
 'use server'
 
 import { parseWithZod } from '@conform-to/zod'
-import { and, eq } from 'drizzle-orm'
+import { format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
+import { and, eq } from 'drizzle-orm'
+import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
+import {
+  GET_DAILY_REPORT_BY_ID_CACHE_KEY,
+  GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
+  GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
+} from '~/constants/cache-keys'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
-import { createDailyReportFormSchema } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
+import { updateDailyReportFormSchema } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function updateReportAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
-    schema: createDailyReportFormSchema,
+    schema: updateDailyReportFormSchema,
   })
 
   if (submission.status !== 'success') {
@@ -26,27 +33,21 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     })
   }
 
-  const reportId = formData.get('reportId') as string
-  if (!reportId) {
-    return submission.reply({
-      formErrors: ['Report ID is required'],
-    })
-  }
-
+  const reportId = submission.value.reportId
   const actionType = formData.get('action')
 
   const reportDateString = submission.value.reportDate
   // 日本時間として適切に処理
   const reportDate = fromZonedTime(`${reportDateString}T00:00:00`, 'Asia/Tokyo')
 
-  // 既存のレポートを確認（自分のものか確認）
+  // 既存の日報を確認（自分のものか確認）
   const existingReport = await db.query.dailyReports.findFirst({
     where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, session.user.id)),
   })
 
   if (!existingReport) {
     return submission.reply({
-      fieldErrors: { message: ['レポートが見つからないか、編集権限がありません'] },
+      fieldErrors: { message: ['日報が見つからないか、編集権限がありません'] },
     })
   }
 
@@ -57,14 +58,12 @@ export async function updateReportAction(_: unknown, formData: FormData) {
         .update(dailyReports)
         .set({
           reportDate,
-          impression: submission.value.impression || null,
+          impression: submission.value.impression ?? null,
           release: actionType === 'published',
           remote: submission.value.remote,
-          updatedAt: new Date(),
         })
         .where(eq(dailyReports.id, reportId))
 
-      // 既存のミッション情報を削除
       await tx.delete(dailyReportMissions).where(eq(dailyReportMissions.dailyReportId, reportId))
 
       // ミッション情報を再作成
@@ -107,7 +106,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
         })
       }
 
-      // 既存のトラブル情報を削除（このレポートに紐づくもの）
+      // 既存のトラブル情報を削除（この日報に紐づくもの）
       await tx
         .delete(troubles)
         .where(and(eq(troubles.userId, session.user.id), eq(troubles.resolved, false)))
@@ -126,6 +125,10 @@ export async function updateReportAction(_: unknown, formData: FormData) {
         })
       }
     })
+
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
   } catch (error) {
     console.error('Update report error:', error)
     return submission.reply({
@@ -133,10 +136,5 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     })
   }
 
-  // 更新成功後のリダイレクト
-  if (actionType === 'published') {
-    redirect('/daily/mine')
-  } else {
-    redirect('/daily/mine')
-  }
+  redirect('/daily/mine')
 }

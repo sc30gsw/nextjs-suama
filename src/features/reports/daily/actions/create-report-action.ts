@@ -1,8 +1,15 @@
 'use server'
 
 import { parseWithZod } from '@conform-to/zod'
+import { format } from 'date-fns'
+import { fromZonedTime } from 'date-fns-tz'
 import { and, eq } from 'drizzle-orm'
+import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
+import {
+  GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
+  GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
+} from '~/constants/cache-keys'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
 import { createDailyReportFormSchema } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import { db } from '~/index'
@@ -28,9 +35,8 @@ export async function createReportAction(_: unknown, formData: FormData) {
   const actionType = formData.get('action')
 
   const reportDateString = submission.value.reportDate
-  // 日本時間として扱うため、UTCで作成してから9時間を加算
-  const baseDate = new Date(`${reportDateString}T00:00:00.000Z`)
-  const reportDate = new Date(baseDate.getTime() + 9 * 60 * 60 * 1000) // +9時間
+  // 日本時間として適切に処理
+  const reportDate = fromZonedTime(`${reportDateString}T00:00:00`, 'Asia/Tokyo')
 
   const existingReport = await db.query.dailyReports.findFirst({
     where: and(eq(dailyReports.userId, session.user.id), eq(dailyReports.reportDate, reportDate)),
@@ -107,6 +113,9 @@ export async function createReportAction(_: unknown, formData: FormData) {
         })
       }
     })
+
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
   } catch (_) {
     return submission.reply({
       fieldErrors: { message: ['日報の作成に失敗しました'] },

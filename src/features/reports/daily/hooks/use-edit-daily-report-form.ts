@@ -4,39 +4,15 @@ import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
+import type { getReportById } from '~/features/reports/daily/server/fetcher'
 import {
-  type CreateDailyReportFormSchema,
-  createDailyReportFormSchema,
-} from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
+  type UpdateDailyReportFormSchema,
+  updateDailyReportFormSchema,
+} from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-type InitialData = {
-  reportDate: string;
-  remote: boolean;
-  impression: string;
-  reportEntries: Array<{
-    id: string;
-    project: string;
-    mission: string;
-    projectId: string;
-    missionId: string;
-    content: string;
-    hours: number;
-  }>;
-  appealEntries: Array<{
-    id: string;
-    categoryId?: string;
-    content?: string;
-  }>;
-  troubleEntries: Array<{
-    id: string;
-    categoryId?: string;
-    content?: string;
-  }>;
-}
-
-export function useEditDailyForm(reportId: string, initialData: InitialData) {
+export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getReportById>>) {
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
@@ -55,8 +31,8 @@ export function useEditDailyForm(reportId: string, initialData: InitialData) {
             return
           }
 
-          if (errorMessage?.includes('レポートが見つからない')) {
-            toast.error('レポートが見つからないか、編集権限がありません', {
+          if (errorMessage?.includes('日報が見つからない')) {
+            toast.error('日報が見つからないか、編集権限がありません', {
               cancel: {
                 label: '一覧に戻る',
                 onClick: () => router.push('/daily/mine'),
@@ -75,13 +51,14 @@ export function useEditDailyForm(reportId: string, initialData: InitialData) {
     null,
   )
 
-  const [form, fields] = useSafeForm<CreateDailyReportFormSchema>({
-    constraint: getZodConstraint(createDailyReportFormSchema),
+  const [form, fields] = useSafeForm<UpdateDailyReportFormSchema>({
+    constraint: getZodConstraint(updateDailyReportFormSchema),
     lastResult,
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: createDailyReportFormSchema })
+      return parseWithZod(formData, { schema: updateDailyReportFormSchema })
     },
     defaultValue: {
+      reportId: initialData.id,
       reportDate: initialData.reportDate,
       remote: initialData.remote,
       impression: initialData.impression,
@@ -112,8 +89,8 @@ export function useEditDailyForm(reportId: string, initialData: InitialData) {
       project: '',
       mission: '',
       content: '',
-      hours: '0',
-    }
+      hours: 0,
+    } as const satisfies UpdateDailyReportFormSchema['reportEntries'][number]
 
     form.insert({
       name: fields.reportEntries.name,

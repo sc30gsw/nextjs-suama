@@ -1,7 +1,5 @@
 import { useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { getLocalTimeZone, today } from '@internationalized/date'
-import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
@@ -23,7 +21,6 @@ export function useCreateDailyForm(
   )
 
   const router = useRouter()
-  const now = today(getLocalTimeZone())
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createReportAction, {
@@ -65,7 +62,7 @@ export function useCreateDailyForm(
       return parseWithZod(formData, { schema: createDailyReportFormSchema })
     },
     defaultValue: {
-      reportDate: format(now.toDate(getLocalTimeZone()), 'yyyy-MM-dd'),
+      reportDate: '',
       remote: undefined,
       impression: '',
       reportEntries: reportEntry.entries.map((entry) => ({

@@ -13,28 +13,17 @@ import { useQueryStates } from 'nuqs'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
+import { Loader } from '~/components/ui/intent-ui/loader'
 import { Table } from '~/components/ui/intent-ui/table'
 import { publishDraftAction } from '~/features/reports/daily/actions/publish-draft-action'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-type DailyReportForToday = {
-  id: string
-  date: string
-  username: string
-  totalHour: number
-  impression: string
-  isRemote: boolean
-  isTurnedIn: boolean
+type DailyReportUser = InferResponseType<typeof client.api.dailies.today.$get, 200>['users'][number]
+
+type DailyReportForToday = DailyReportUser & {
   operate: string
-  workContents: {
-    id: string
-    project: string
-    mission: string
-    workTime: number
-    workContent: string
-  }[]
 }
 
 const columnHelper = createColumnHelper<DailyReportForToday>()
@@ -75,7 +64,7 @@ const COLUMNS = [
       // TODO: ここで実際のユーザー情報を取得して、現在のユーザーと比較するロジックを実装する
       const isCurrentUser = report.isRemote
       const tableProps = table.options.meta as {
-        handlePublish: (id: string) => void
+        handlePublish: (id: DailyReportUser['id']) => void
         isPending: boolean
       }
 
@@ -90,7 +79,7 @@ const COLUMNS = [
           {isCurrentUser && (
             <div className="flex gap-2">
               <Link href={`/daily/edit/${report.id}`}>
-                <Button intent="outline" size="small">
+                <Button intent="outline" size="small" isDisabled={tableProps.isPending}>
                   修正
                   <IconDocumentEdit />
                 </Button>
@@ -102,8 +91,8 @@ const COLUMNS = [
                   onPress={() => tableProps.handlePublish(report.id)}
                   isDisabled={tableProps.isPending}
                 >
-                  公開
-                  <IconSend3 />
+                  {tableProps.isPending ? '公開中...' : '公開'}
+                  {tableProps.isPending ? <Loader /> : <IconSend3 />}
                 </Button>
               )}
               <Button intent="danger" size="small">
@@ -119,7 +108,6 @@ const COLUMNS = [
 ]
 
 type DailyReportsTableProps<T extends 'today' | 'mine'> = {
-  // TODO: 適切な型に修正（API側の修正でできるかも）
   reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
 }
 
@@ -128,22 +116,21 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
 }: DailyReportsTableProps<T>) {
   const [isPending, startTransition] = useTransition()
 
-  const initialData: DailyReportForToday[] = reports.users.map((user: any) => ({
-    id: user.id,
-    date: user.date,
-    username: user.username,
-    totalHour: user.totalHour,
-    impression: user.impression,
-    isRemote: user.isRemote,
-    isTurnedIn: user.isTurnedIn,
+  const initialData: DailyReportForToday[] = reports.users.map((user: DailyReportUser) => ({
+    ...user,
     operate: '',
-    workContents: user.workContents || [],
   }))
 
-  const handlePublish = (reportId: string) => {
+  const handlePublish = (reportId: DailyReportUser['id']) => {
     startTransition(async () => {
       try {
-        await publishDraftAction(reportId)
+        const result = await publishDraftAction(reportId)
+
+        if (result.status === 'error') {
+          toast.error(result.error.message[0])
+          return
+        }
+
         toast.success('日報を公開しました')
       } catch (error) {
         console.error('公開エラー:', error)
