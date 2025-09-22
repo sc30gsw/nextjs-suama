@@ -4,6 +4,7 @@ import { Hono } from 'hono'
 import { dailyReportMissions, dailyReports, missions, projects, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
+import { DateUtils } from '~/utils/date-utils'
 
 const app = new Hono()
   .get('/today', sessionMiddleware, async (c) => {
@@ -111,18 +112,16 @@ const app = new Hono()
     const limitNumber = Number(limit) || 10
 
     try {
+      // デフォルト値設定（前月〜今日）
+      const today = new Date()
+      const defaultStartDate = DateUtils.toJstStartOfDay(
+        format(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()), 'yyyy-MM-dd'),
+      )
+      const defaultEndDate = DateUtils.toJstEndOfDay(format(today, 'yyyy-MM-dd'))
+
       // 日付範囲の条件を構築
-      const dateConditions: Parameters<typeof and>[0][] = []
-
-      if (startDate) {
-        const start = new Date(startDate)
-        dateConditions.push(gte(dailyReports.reportDate, start))
-      }
-
-      if (endDate) {
-        const end = endOfDay(new Date(endDate))
-        dateConditions.push(lte(dailyReports.reportDate, end))
-      }
+      const start = startDate ? DateUtils.toJstStartOfDay(startDate) : defaultStartDate
+      const end = endDate ? DateUtils.toJstEndOfDay(endDate) : defaultEndDate
 
       // 自分の日報を取得
       const query = db
@@ -137,7 +136,13 @@ const app = new Hono()
         })
         .from(dailyReports)
         .innerJoin(users, eq(dailyReports.userId, users.id))
-        .where(and(eq(dailyReports.userId, userId), ...dateConditions))
+        .where(
+          and(
+            eq(dailyReports.userId, userId),
+            gte(dailyReports.reportDate, start),
+            lte(dailyReports.reportDate, end),
+          ),
+        )
         .orderBy(desc(dailyReports.reportDate))
 
       const allReports = await query
@@ -225,7 +230,6 @@ const app = new Hono()
         },
       })
 
-      // TODO 該当ユーザーの未解決トラブルを取得。withで取得したかったが、テーブル定義にReportIdがないので相談。
       const userTroubles = await db.query.troubles.findMany({
         where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
         with: {
@@ -242,14 +246,14 @@ const app = new Hono()
         reportDate: report.reportDate ? format(new Date(report.reportDate), 'yyyy-MM-dd') : '',
         remote: report.remote,
         impression: report.impression || '',
-        reportEntries: report.dailyReportMissions.map((drm) => ({
-          id: drm.id,
-          project: drm.mission.project.name,
-          mission: drm.mission.name,
-          projectId: drm.mission.project.id,
-          missionId: drm.mission.id,
-          content: drm.workContent,
-          hours: drm.hours || 0,
+        reportEntries: report.dailyReportMissions.map((dailyReportMissions) => ({
+          id: dailyReportMissions.id,
+          project: dailyReportMissions.mission.project.name,
+          mission: dailyReportMissions.mission.name,
+          projectId: dailyReportMissions.mission.project.id,
+          missionId: dailyReportMissions.mission.id,
+          content: dailyReportMissions.workContent,
+          hours: dailyReportMissions.hours || 0,
         })),
         appealEntries: report.appeals.map((appeal) => ({
           id: appeal.id,

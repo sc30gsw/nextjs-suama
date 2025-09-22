@@ -2,7 +2,6 @@
 
 import { parseWithZod } from '@conform-to/zod'
 import { format } from 'date-fns'
-import { fromZonedTime } from 'date-fns-tz'
 import { and, eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -14,6 +13,7 @@ import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '
 import { createDailyReportFormSchema } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
+import { DateUtils } from '~/utils/date-utils'
 
 export async function createReportAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -35,8 +35,8 @@ export async function createReportAction(_: unknown, formData: FormData) {
   const actionType = formData.get('action')
 
   const reportDateString = submission.value.reportDate
-  // 日本時間として適切に処理
-  const reportDate = fromZonedTime(`${reportDateString}T00:00:00`, 'Asia/Tokyo')
+  // JSTの日の開始時刻としてUTCに変換
+  const reportDate = DateUtils.toJstStartOfDay(reportDateString)
 
   const existingReport = await db.query.dailyReports.findFirst({
     where: and(eq(dailyReports.userId, session.user.id), eq(dailyReports.reportDate, reportDate)),
