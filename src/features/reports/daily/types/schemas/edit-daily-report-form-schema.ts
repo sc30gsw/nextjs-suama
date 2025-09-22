@@ -5,7 +5,6 @@ import {
   troubleEntrySchema,
 } from './create-daily-report-form-schema'
 
-// Update用のスキーマ。CreateからExtendできなかったためreportIdを追加して作成。
 export const updateDailyReportFormSchema = z
   .object({
     reportId: z.string().uuid(),
