@@ -9,8 +9,7 @@ export async function getTroubleCategories(
   params?: { skip: number; limit: number; names: string[] },
   userId?: string,
 ) {
-  'use cache'
-  cacheTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
+  'use cache'; cacheTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
 
   const url = client.api.troubles.categories.$url()
 

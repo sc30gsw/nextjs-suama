@@ -13,8 +13,7 @@ export async function getWeeklyReportMissionsById(
   params: InferRequestType<(typeof client.api.weeklies)[':weeklyReportId']['$get']>['param'],
   userId?: string,
 ) {
-  'use cache'
-  cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${params.weeklyReportId}`)
+  'use cache'; cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${params.weeklyReportId}`)
 
   const url = client.api.weeklies[':weeklyReportId'].$url({
     param: params,
@@ -36,8 +35,7 @@ export async function getWeeklyReportMissions(
   >['param'],
   userId?: string,
 ) {
-  'use cache'
-  cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)
+  'use cache'; cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)
 
   const url = client.api.weeklies['current-user'][':year'][':week'].$url({
     param: params,
@@ -62,8 +60,7 @@ export async function getLastWeeklyReportMissions(
   >['param'],
   userId?: string,
 ) {
-  'use cache'
-  cacheTag(`${GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)
+  'use cache'; cacheTag(`${GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)
 
   const url = client.api.weeklies['last-week'][':year'][':week'].$url({
     param: params,

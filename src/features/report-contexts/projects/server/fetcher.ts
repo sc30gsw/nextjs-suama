@@ -9,8 +9,7 @@ export async function getProjects(
   params?: { skip: number; limit: number; names: string[] },
   userId?: string,
 ) {
-  'use cache'
-  cacheTag(GET_PROJECTS_CACHE_KEY)
+  'use cache'; cacheTag(GET_PROJECTS_CACHE_KEY)
 
   const url = client.api.projects.$url()
   type ResType = InferResponseType<typeof client.api.projects.$get, 200>
