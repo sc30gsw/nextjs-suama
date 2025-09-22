@@ -35,7 +35,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
   const actionType = formData.get('action')
 
   const reportDateString = submission.value.reportDate
-  // JSTの日の開始時刻としてUTCに変換
+  // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
   const reportDate = DateUtils.toJstStartOfDay(reportDateString)
 
   const existingReport = await db.query.dailyReports.findFirst({

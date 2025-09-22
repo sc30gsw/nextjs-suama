@@ -7,14 +7,14 @@ type DateUtilsType = {
 }
 
 export const DateUtils = {
-  // JSTの日の開始時刻としてUTCに変換
+  // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
   toJstStartOfDay: (dateString: string): Date => {
     // ISO文字列が来た場合はyyyy-MM-dd部分だけ抽出
     const cleanDateString = dateString.includes('T') ? dateString.split('T')[0] : dateString
     return fromZonedTime(`${cleanDateString}${DateConstants.DATE_START_TIME}`, DateConstants.APP_TIMEZONE)
   },
 
-  // JSTの日の終了時刻としてUTCに変換
+  // 日付範囲検索用：指定日のJST終了時刻をUTCで取得
   toJstEndOfDay: (dateString: string): Date => {
     // ISO文字列が来た場合はyyyy-MM-dd部分だけ抽出
     const cleanDateString = dateString.includes('T') ? dateString.split('T')[0] : dateString
