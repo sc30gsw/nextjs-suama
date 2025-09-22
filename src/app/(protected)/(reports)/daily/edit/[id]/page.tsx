@@ -22,7 +22,7 @@ import type { NextPageProps } from '~/types'
 
 export default async function EditDailyReportPage({
   params,
-}: NextPageProps<{ id: string }, SearchParams>) {
+}: NextPageProps<Record<'id', string>, SearchParams>) {
   const session = await getServerSession()
 
   if (!session) {
@@ -35,7 +35,7 @@ export default async function EditDailyReportPage({
   const projectPromise = getProjects(undefined, session.user.id)
   const missionPromise = getMissions(undefined, session.user.id)
 
-  const promises = Promise.all([reportPromise, projectPromise, missionPromise])
+  const promises = Promise.all([projectPromise, missionPromise])
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
@@ -45,77 +45,96 @@ export default async function EditDailyReportPage({
           <Button intent="outline">一覧に戻る</Button>
         </Link>
       </div>
-      <EditDailyForm
-        promises={promises}
-        troubleHeadings={
-          <div className="mt-4 flex items-center">
-            <Heading level={3}>困っていること</Heading>
+      <Suspense
+        fallback={
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-32" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-32 w-full" />
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-20" />
+              <Skeleton className="h-10 w-20" />
+            </div>
           </div>
         }
-        troubles={
-          <Suspense
-            fallback={
-              <>
-                <Button size="square-petite" className="mt-4 rounded-full">
-                  <IconPlus />
-                </Button>
-                {Array.from({ length: 3 }).map(() => (
-                  <div
-                    key={crypto.randomUUID()}
-                    className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
-                  >
-                    <Skeleton className="col-span-3 h-16" />
-                    <Skeleton className="col-span-2 h-7" />
-                    <Skeleton className="col-span-1 h-7" />
-                    <Skeleton className="col-span-1 size-9 rounded-full" />
-                  </div>
-                ))}
-              </>
+      >
+        {reportPromise.then((reportData) => (
+          <EditDailyForm
+            reportData={reportData}
+            promises={promises}
+            troubleHeadings={
+              <div className="mt-4 flex items-center">
+                <Heading level={3}>困っていること</Heading>
+              </div>
             }
-          >
-            {getTroubleCategories(undefined, session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<TroubleCategoriesResponse['troubleCategories']>
-                items={res.troubleCategories}
-                kind="trouble"
-              />
-            ))}
-          </Suspense>
-        }
-        appealHeadings={
-          <div className="mt-4 flex items-center">
-            <Heading level={3}>アピールポイント</Heading>
-          </div>
-        }
-        appeals={
-          <Suspense
-            fallback={
-              <>
-                <Button size="square-petite" className="mt-4 rounded-full">
-                  <IconPlus />
-                </Button>
-                {Array.from({ length: 3 }).map(() => (
-                  <div
-                    key={crypto.randomUUID()}
-                    className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
+            troubles={
+              <Suspense
+                fallback={
+                  <>
+                    <Button size="square-petite" className="mt-4 rounded-full">
+                      <IconPlus />
+                    </Button>
+                    {Array.from({ length: 3 }).map(() => (
+                      <div
+                        key={crypto.randomUUID()}
+                        className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
+                      >
+                        <Skeleton className="col-span-3 h-16" />
+                        <Skeleton className="col-span-2 h-7" />
+                        <Skeleton className="col-span-1 h-7" />
+                        <Skeleton className="col-span-1 size-9 rounded-full" />
+                      </div>
+                    ))}
+                  </>
+                }
+              >
+                {getTroubleCategories(undefined, session.user.id).then((res) => (
+                  <ReportAppealAndTroubleInputEntries<
+                    TroubleCategoriesResponse['troubleCategories']
                   >
-                    <Skeleton className="col-span-3 h-16" />
-                    <Skeleton className="col-span-2 h-7" />
-                    <Skeleton className="col-span-1 h-7" />
-                    <Skeleton className="col-span-1 size-9 rounded-full" />
-                  </div>
+                    items={res.troubleCategories}
+                    kind="trouble"
+                  />
                 ))}
-              </>
+              </Suspense>
             }
-          >
-            {getAppealCategories(undefined, session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
-                items={res.appealCategories}
-                kind="appeal"
-              />
-            ))}
-          </Suspense>
-        }
-      />
+            appealHeadings={
+              <div className="mt-4 flex items-center">
+                <Heading level={3}>アピールポイント</Heading>
+              </div>
+            }
+            appeals={
+              <Suspense
+                fallback={
+                  <>
+                    <Button size="square-petite" className="mt-4 rounded-full">
+                      <IconPlus />
+                    </Button>
+                    {Array.from({ length: 3 }).map(() => (
+                      <div
+                        key={crypto.randomUUID()}
+                        className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
+                      >
+                        <Skeleton className="col-span-3 h-16" />
+                        <Skeleton className="col-span-2 h-7" />
+                        <Skeleton className="col-span-1 h-7" />
+                        <Skeleton className="col-span-1 size-9 rounded-full" />
+                      </div>
+                    ))}
+                  </>
+                }
+              >
+                {getAppealCategories(undefined, session.user.id).then((res) => (
+                  <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
+                    items={res.appealCategories}
+                    kind="appeal"
+                  />
+                ))}
+              </Suspense>
+            }
+          />
+        ))}
+      </Suspense>
     </div>
   )
 }

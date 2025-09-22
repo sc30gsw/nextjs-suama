@@ -26,12 +26,9 @@ import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
 
 type EditDailyFormProps = {
+  reportData: Awaited<ReturnType<typeof getReportById>>
   promises: Promise<
-    [
-      Awaited<ReturnType<typeof getReportById>>,
-      Awaited<ReturnType<typeof getProjects>>,
-      Awaited<ReturnType<typeof getMissions>>,
-    ]
+    [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
   >
   troubleHeadings: JSX.Element
   troubles: JSX.Element
@@ -40,13 +37,14 @@ type EditDailyFormProps = {
 }
 
 export function EditDailyForm({
+  reportData,
   promises,
   troubleHeadings,
   troubles,
   appealHeadings,
   appeals,
 }: EditDailyFormProps) {
-  const [reportData, projectsResponse, missionsResponse] = use(promises)
+  const [projectsResponse, missionsResponse] = use(promises)
 
   const {
     action,
