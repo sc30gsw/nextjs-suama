@@ -109,7 +109,7 @@ export default async function MyDailyPage({
             }
           >
             {reportsPromise.then((res) => (
-              <DailyReportsTable<'mine'> reports={res} />
+              <DailyReportsTable<'mine'> reports={res} userId={session.user.id} />
             ))}
           </Suspense>
         </Card.Content>

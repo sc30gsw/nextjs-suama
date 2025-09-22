@@ -24,77 +24,78 @@ type DailyReportForToday = DailyReportUser & {
 
 const columnHelper = createColumnHelper<DailyReportForToday>()
 
-const COLUMNS = [
-  columnHelper.accessor('date', {
-    header: '日付',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('username', {
-    header: 'ユーザー名',
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('totalHour', {
-    header: '合計時間',
-    cell: (info) => `${info.getValue()} 時間`,
-  }),
-  columnHelper.accessor('impression', {
-    header: '所感',
-    cell: (info) => `${info.getValue()} / 5`,
-  }),
-  columnHelper.accessor('isRemote', {
-    header: 'リモート勤務',
-    cell: ({ row }) => {
-      return row.original.isRemote ? 'リモート' : '出社'
-    },
-  }),
-  columnHelper.accessor('isTurnedIn', {
-    header: '提出',
-    cell: ({ row }) => {
-      return row.original.isTurnedIn ? '提出済み' : '下書き'
-    },
-  }),
-  columnHelper.accessor('operate', {
-    header: '操作',
-    cell: ({ row }) => {
-      const report = row.original
-      // TODO: ここで実際のユーザー情報を取得して、現在のユーザーと比較するロジックを実装する
-      const isCurrentUser = report.isRemote
-
-      return (
-        <div className="flex items-center gap-2">
-          <DailyReportWorkContentPopover contents={report.workContents}>
-            <Button size="small">
-              職務内容
-              <IconFileText />
-            </Button>
-          </DailyReportWorkContentPopover>
-          {isCurrentUser && (
-            <div className="flex gap-2">
-              <Link href={`/daily/edit/${report.id}`}>
-                <Button intent="outline" size="small">
-                  修正
-                  <IconDocumentEdit />
-                </Button>
-              </Link>
-              <Button intent="danger" size="small">
-                削除
-                <IconTrashEmpty />
-              </Button>
-            </div>
-          )}
-        </div>
-      )
-    },
-  }),
-]
-
 type DailyReportsTableProps<T extends 'today' | 'mine'> = {
   reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
+  userId: DailyReportUser['id']
 }
 
 export function DailyReportsTable<T extends 'today' | 'mine'>({
   reports,
+  userId,
 }: DailyReportsTableProps<T>) {
+  const COLUMNS = [
+    columnHelper.accessor('date', {
+      header: '日付',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('username', {
+      header: 'ユーザー名',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('totalHour', {
+      header: '合計時間',
+      cell: (info) => `${info.getValue()} 時間`,
+    }),
+    columnHelper.accessor('impression', {
+      header: '所感',
+      cell: (info) => `${info.getValue()} / 5`,
+    }),
+    columnHelper.accessor('isRemote', {
+      header: 'リモート勤務',
+      cell: ({ row }) => {
+        return row.original.isRemote ? 'リモート' : '出社'
+      },
+    }),
+    columnHelper.accessor('isTurnedIn', {
+      header: '提出',
+      cell: ({ row }) => {
+        return row.original.isTurnedIn ? '提出済み' : '下書き'
+      },
+    }),
+    columnHelper.accessor('operate', {
+      header: '操作',
+      cell: ({ row }) => {
+        const report = row.original
+        const isCurrentUser = report.userId === userId
+
+        return (
+          <div className="flex items-center gap-2">
+            <DailyReportWorkContentPopover contents={report.workContents}>
+              <Button size="small">
+                職務内容
+                <IconFileText />
+              </Button>
+            </DailyReportWorkContentPopover>
+            {isCurrentUser && (
+              <div className="flex gap-2">
+                <Link href={`/daily/edit/${report.id}`}>
+                  <Button intent="outline" size="small">
+                    修正
+                    <IconDocumentEdit />
+                  </Button>
+                </Link>
+                <Button intent="danger" size="small">
+                  削除
+                  <IconTrashEmpty />
+                </Button>
+              </div>
+            )}
+          </div>
+        )
+      },
+    }),
+  ]
+
   const initialData: DailyReportForToday[] = reports.users.map((user: DailyReportUser) => ({
     ...user,
     operate: '',
