@@ -78,3 +78,4 @@ export const updateDailyReportFormSchema = z
     })
   })
 export type UpdateDailyReportFormSchema = z.infer<typeof updateDailyReportFormSchema>
+export type UpdateDailyReportEntrySchema = z.infer<typeof dailyReportEntrySchema>

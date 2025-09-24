@@ -6,34 +6,30 @@ import { filter, pipe } from 'remeda'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { useCreateDailyReportContentInputEntries } from '~/features/reports/daily/hooks/use-create-daily-report-content-input-entries'
+import { useEditDailyReportContentInputEntries } from '~/features/reports/daily/hooks/use-edit-daily-report-content-input-entries'
 import type {
-  CreateDailyReportFormSchema,
-  DailyReportEntrySchema,
-} from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
-import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
-import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+  UpdateDailyReportEntrySchema,
+  UpdateDailyReportFormSchema,
+} from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import type { client } from '~/lib/rpc'
 
-type CreateDailyReportContentInputEntriesProps = {
-  id?: DailyReportEntrySchema['id']
+type EditDailyReportContentInputEntriesProps = {
+  id?: UpdateDailyReportEntrySchema['id']
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
   missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
   formId: string
-  name: FieldName<DailyReportEntrySchema, CreateDailyReportFormSchema>
+  name: FieldName<UpdateDailyReportEntrySchema, UpdateDailyReportFormSchema>
   removeButton: JSX.Element
-  initialDailyInputCountSearchParamsParsers?: DailyInputCountSearchParams
 }
 
-export function CreateDailyReportContentInputEntries({
+export function EditDailyReportContentInputEntries({
   id,
   projects,
   missions,
   formId,
   name,
   removeButton,
-  initialDailyInputCountSearchParamsParsers,
-}: CreateDailyReportContentInputEntriesProps) {
+}: EditDailyReportContentInputEntriesProps) {
   const {
     field,
     hoursInput,
@@ -42,12 +38,7 @@ export function CreateDailyReportContentInputEntries({
     missionId,
     handleChangeItem,
     handleChangeValue,
-  } = useCreateDailyReportContentInputEntries(
-    initialDailyInputCountSearchParamsParsers ?? inputCountSearchParamsParsers,
-    formId,
-    name,
-    projects,
-  )
+  } = useEditDailyReportContentInputEntries(formId, name, projects)
 
   const { pending } = useFormStatus()
 

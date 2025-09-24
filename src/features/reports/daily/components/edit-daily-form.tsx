@@ -21,7 +21,7 @@ import { TextField } from '~/components/ui/intent-ui/text-field'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
-import { CreateDailyReportContentInputEntries } from '~/features/reports/daily/components/create-daily-report-content-input-entries'
+import { EditDailyReportContentInputEntries } from '~/features/reports/daily/components/edit-daily-report-content-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
 
@@ -100,14 +100,13 @@ export function EditDailyForm({
           </Button>
 
           {dailyReports.map((dailyReport) => (
-            <CreateDailyReportContentInputEntries
+            <EditDailyReportContentInputEntries
               key={dailyReport.key}
               id={dailyReport.value?.id}
               formId={form.id}
               name={dailyReport.name}
               projects={projectsResponse.projects}
               missions={missionsResponse.missions}
-              initialDailyInputCountSearchParamsParsers={undefined}
               removeButton={
                 <Button
                   size="square-petite"
