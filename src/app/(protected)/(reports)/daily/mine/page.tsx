@@ -59,7 +59,7 @@ export default async function MyDailyPage({
       </Form>
       <RowsPerPageSelect />
 
-      <Card className="mt-4 max-w-full py-2">
+      <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, startDate, endDate })}
