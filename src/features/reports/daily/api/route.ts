@@ -136,14 +136,14 @@ const app = new Hono()
     try {
       // デフォルト値設定（前月〜今日）
       const today = new Date()
-      const defaultStartDate = DateUtils.toJstStartOfDay(
+      const defaultStartDate = DateUtils.convertJstDateToUtcStartOfDay(
         format(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()), 'yyyy-MM-dd'),
       )
-      const defaultEndDate = DateUtils.toJstEndOfDay(format(today, 'yyyy-MM-dd'))
+      const defaultEndDate = DateUtils.convertJstDateToUtcEndOfDay(format(today, 'yyyy-MM-dd'))
 
       // 日付範囲の条件を構築
-      const start = startDate ? DateUtils.toJstStartOfDay(startDate) : defaultStartDate
-      const end = endDate ? DateUtils.toJstEndOfDay(endDate) : defaultEndDate
+      const start = startDate ? DateUtils.convertJstDateToUtcStartOfDay(startDate) : defaultStartDate
+      const end = endDate ? DateUtils.convertJstDateToUtcEndOfDay(endDate) : defaultEndDate
 
       // フィルタリングされた全件数を取得
       const totalQuery = db
