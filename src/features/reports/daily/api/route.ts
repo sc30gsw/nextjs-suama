@@ -1,7 +1,7 @@
 import { endOfDay, format, startOfDay } from 'date-fns'
-import { and, desc, eq, gte, lte } from 'drizzle-orm'
+import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { dailyReportMissions, dailyReports, missions, projects, troubles, users } from '~/db/schema'
+import { dailyReports, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 import { DateUtils } from '~/utils/date-utils'
@@ -21,79 +21,101 @@ const app = new Hono()
     const todayEnd = endOfDay(today)
 
     try {
-      // 本日の日報を取得
-      const query = db
-        .select({
-          id: dailyReports.id,
-          reportDate: dailyReports.reportDate,
-          impression: dailyReports.impression,
-          remote: dailyReports.remote,
-          release: dailyReports.release,
-          userName: users.name,
-          userId: users.id,
-        })
+      // WHERE句の基本条件
+      const baseConditions = [
+        gte(dailyReports.reportDate, todayStart),
+        lte(dailyReports.reportDate, todayEnd),
+      ]
+
+      // ユーザー名フィルタリング条件を含めたWHERE句を構築
+      const whereConditions =
+        userNamesArray.length > 0
+          ? [...baseConditions, or(...userNamesArray.map((name) => like(users.name, `%${name}%`)))]
+          : baseConditions
+
+      // フィルタリングされた全件数を取得
+      const totalQuery = db
+        .select({ count: count(dailyReports.id) })
         .from(dailyReports)
         .innerJoin(users, eq(dailyReports.userId, users.id))
-        .where(
-          and(gte(dailyReports.reportDate, todayStart), lte(dailyReports.reportDate, todayEnd)),
-        )
+        .where(and(...whereConditions))
+
+      const totalResult = await totalQuery
+      const totalFilteredReports = totalResult[0].count
+
+      const reportIdsQuery = db
+        .select({ id: dailyReports.id })
+        .from(dailyReports)
+        .innerJoin(users, eq(dailyReports.userId, users.id))
+        .where(and(...whereConditions))
         .orderBy(desc(dailyReports.createdAt))
+        .limit(limitNumber)
+        .offset(skipNumber)
 
-      const allReports = await query
+      const reportIds = await reportIdsQuery
 
-      // ユーザー名でフィルタリング
-      const filteredReports =
-        userNamesArray.length > 0
-          ? allReports.filter((report) =>
-              userNamesArray.some((name) => report.userName.includes(name)),
-            )
-          : allReports
+      // レポートが見つからない場合は早期リターン
+      if (reportIds.length === 0) {
+        return c.json(
+          {
+            users: [],
+            total: totalFilteredReports,
+            skip: skipNumber,
+            limit: limitNumber,
+          },
+          200,
+        )
+      }
 
-      // ページネーション
-      const paginatedReports = filteredReports.slice(skipNumber, skipNumber + limitNumber)
+      // 関連データを取得
+      const reports = await db.query.dailyReports.findMany({
+        where: inArray(
+          dailyReports.id,
+          reportIds.map((reportId) => reportId.id),
+        ),
+        with: {
+          user: true,
+          dailyReportMissions: {
+            with: {
+              mission: {
+                with: {
+                  project: true,
+                },
+              },
+            },
+          },
+        },
+      })
 
-      // 各日報の作業内容を取得
-      const reportsWithMissions = await Promise.all(
-        paginatedReports.map(async (report) => {
-          const reportMissions = await db
-            .select({
-              id: dailyReportMissions.id,
-              workContent: dailyReportMissions.workContent,
-              hours: dailyReportMissions.hours,
-              missionName: missions.name,
-              projectName: projects.name,
-            })
-            .from(dailyReportMissions)
-            .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
-            .innerJoin(projects, eq(missions.projectId, projects.id))
-            .where(eq(dailyReportMissions.dailyReportId, report.id))
+      const reportsWithMissions = reports.map((report) => {
+        const totalHours = report.dailyReportMissions.reduce(
+          (sum, mission) => sum + (mission.hours || 0),
+          0,
+        )
 
-          const totalHours = reportMissions.reduce((sum, mission) => sum + (mission.hours || 0), 0)
-
-          return {
-            id: report.id,
-            date: format(report.reportDate || new Date(), 'yyyy-MM-dd'),
-            username: report.userName,
-            totalHour: totalHours,
-            impression: report.impression || '',
-            isRemote: report.remote,
-            isTurnedIn: report.release,
-            userId: report.userId,
-            workContents: reportMissions.map((mission) => ({
-              id: mission.id,
-              project: mission.projectName,
-              mission: mission.missionName,
-              workTime: mission.hours || 0,
-              workContent: mission.workContent,
-            })),
-          }
-        }),
-      )
+        return {
+          id: report.id,
+          date: format(report.reportDate || new Date(), 'yyyy-MM-dd'),
+          username: report.user.name,
+          totalHour: totalHours,
+          impression: report.impression || '',
+          isRemote: report.remote,
+          isTurnedIn: report.release,
+          userId: report.userId,
+          workContents: report.dailyReportMissions.map((mission) => ({
+            id: mission.id,
+            project: mission.mission.project.name,
+            mission: mission.mission.name,
+            workTime: mission.hours || 0,
+            workContent: mission.workContent,
+          })),
+        }
+      })
 
       return c.json(
         {
           users: reportsWithMissions,
-          total: filteredReports.length,
+          total: totalFilteredReports,
           skip: skipNumber,
           limit: limitNumber,
         },
@@ -101,7 +123,7 @@ const app = new Hono()
       )
     } catch (error) {
       console.error('Error fetching today reports:', error)
-      return c.json({ error: 'Failed to fetch reports' }, 500)
+      return c.json({ error: 'Failed to fetch today reports' }, 500)
     }
   })
   .get('/mine', sessionMiddleware, async (c) => {
@@ -123,19 +145,24 @@ const app = new Hono()
       const start = startDate ? DateUtils.toJstStartOfDay(startDate) : defaultStartDate
       const end = endDate ? DateUtils.toJstEndOfDay(endDate) : defaultEndDate
 
-      // 自分の日報を取得
-      const query = db
-        .select({
-          id: dailyReports.id,
-          reportDate: dailyReports.reportDate,
-          impression: dailyReports.impression,
-          remote: dailyReports.remote,
-          release: dailyReports.release,
-          userName: users.name,
-          userId: users.id,
-        })
+      // フィルタリングされた全件数を取得
+      const totalQuery = db
+        .select({ count: count(dailyReports.id) })
         .from(dailyReports)
-        .innerJoin(users, eq(dailyReports.userId, users.id))
+        .where(
+          and(
+            eq(dailyReports.userId, userId),
+            gte(dailyReports.reportDate, start),
+            lte(dailyReports.reportDate, end),
+          ),
+        )
+
+      const totalResult = await totalQuery
+      const totalFilteredReports = totalResult[0].count
+
+      const reportIdsQuery = db
+        .select({ id: dailyReports.id })
+        .from(dailyReports)
         .where(
           and(
             eq(dailyReports.userId, userId),
@@ -144,54 +171,76 @@ const app = new Hono()
           ),
         )
         .orderBy(desc(dailyReports.reportDate))
+        .limit(limitNumber)
+        .offset(skipNumber)
 
-      const allReports = await query
+      const reportIds = await reportIdsQuery
 
-      // ページネーション
-      const paginatedReports = allReports.slice(skipNumber, skipNumber + limitNumber)
+      // レポートが見つからない場合は早期リターン
+      if (reportIds.length === 0) {
+        return c.json(
+          {
+            users: [],
+            total: totalFilteredReports,
+            skip: skipNumber,
+            limit: limitNumber,
+            startDate,
+            endDate,
+            userId,
+          },
+          200,
+        )
+      }
 
-      // 各日報の作業内容を取得
-      const reportsWithMissions = await Promise.all(
-        paginatedReports.map(async (report) => {
-          const reportMissions = await db
-            .select({
-              id: dailyReportMissions.id,
-              workContent: dailyReportMissions.workContent,
-              hours: dailyReportMissions.hours,
-              missionName: missions.name,
-              projectName: projects.name,
-            })
-            .from(dailyReportMissions)
-            .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
-            .innerJoin(projects, eq(missions.projectId, projects.id))
-            .where(eq(dailyReportMissions.dailyReportId, report.id))
+      // 関連データを取得
+      const reports = await db.query.dailyReports.findMany({
+        where: inArray(
+          dailyReports.id,
+          reportIds.map((r) => r.id),
+        ),
+        with: {
+          user: true,
+          dailyReportMissions: {
+            with: {
+              mission: {
+                with: {
+                  project: true,
+                },
+              },
+            },
+          },
+        },
+      })
 
-          const totalHours = reportMissions.reduce((sum, mission) => sum + (mission.hours || 0), 0)
+      const reportsWithMissions = reports.map((report) => {
+        const totalHours = report.dailyReportMissions.reduce(
+          (sum, mission) => sum + (mission.hours || 0),
+          0,
+        )
 
-          return {
-            id: report.id,
-            date: format(report.reportDate || new Date(), 'yyyy-MM-dd'),
-            username: report.userName,
-            totalHour: totalHours,
-            impression: report.impression || '',
-            isRemote: report.remote,
-            isTurnedIn: report.release,
-            userId: report.userId,
-            workContents: reportMissions.map((mission) => ({
-              id: mission.id,
-              project: mission.projectName,
-              mission: mission.missionName,
-              workTime: mission.hours || 0,
-              workContent: mission.workContent,
-            })),
-          }
-        }),
-      )
+        return {
+          id: report.id,
+          date: format(report.reportDate || new Date(), 'yyyy-MM-dd'),
+          username: report.user.name,
+          totalHour: totalHours,
+          impression: report.impression || '',
+          isRemote: report.remote,
+          isTurnedIn: report.release,
+          userId: report.userId,
+          workContents: report.dailyReportMissions.map((mission) => ({
+            id: mission.id,
+            project: mission.mission.project.name,
+            mission: mission.mission.name,
+            workTime: mission.hours || 0,
+            workContent: mission.workContent,
+          })),
+        }
+      })
 
       return c.json(
         {
           users: reportsWithMissions,
-          total: allReports.length,
+          total: totalFilteredReports,
           skip: skipNumber,
           limit: limitNumber,
           startDate,
@@ -202,7 +251,7 @@ const app = new Hono()
       )
     } catch (error) {
       console.error('Error fetching mine reports:', error)
-      return c.json({ error: 'Failed to fetch reports' }, 500)
+      return c.json({ error: 'Failed to fetch mine reports' }, 500)
     }
   })
   .get('/:id', sessionMiddleware, async (c) => {
@@ -269,8 +318,8 @@ const app = new Hono()
 
       return c.json(formattedReport, 200)
     } catch (error) {
-      console.error('Error fetching report:', error)
-      return c.json({ error: 'Failed to fetch report' }, 500)
+      console.error('Error fetching individual report:', error)
+      return c.json({ error: 'Failed to fetch individual report' }, 500)
     }
   })
 
