@@ -198,6 +198,7 @@ const app = new Hono()
           dailyReports.id,
           reportIds.map((r) => r.id),
         ),
+        orderBy: desc(dailyReports.reportDate),
         with: {
           user: true,
           dailyReportMissions: {
