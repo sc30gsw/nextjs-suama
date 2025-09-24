@@ -16,7 +16,7 @@ import { withCallbacks } from '~/utils/with-callbacks'
 export function useCreateDailyForm(
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
 ) {
-  const { reportEntry, setReportEntry } = useDailyReportSearchParams(
+  const { reportEntry, appealsAndTroublesEntry, setReportEntry } = useDailyReportSearchParams(
     initialDailyInputCountSearchParamsParsers,
   )
 
@@ -71,8 +71,16 @@ export function useCreateDailyForm(
         mission: entry.mission ?? '',
         hours: entry.hours.toString(),
       })),
-      appealEntries: [],
-      troubleEntries: [],
+      appealEntries: appealsAndTroublesEntry.appeals.entries.map((entry) => ({
+        id: entry.id,
+        categoryId: entry.item || undefined,
+        content: entry.content || undefined,
+      })),
+      troubleEntries: appealsAndTroublesEntry.troubles.entries.map((entry) => ({
+        id: entry.id,
+        categoryId: entry.item || undefined,
+        content: entry.content || undefined,
+      })),
     },
   })
 

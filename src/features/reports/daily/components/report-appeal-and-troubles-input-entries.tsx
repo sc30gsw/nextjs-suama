@@ -166,7 +166,7 @@ export function ReportAppealAndTroubleInputEntries<
 
       if (kind === 'appeal') {
         const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((e) =>
-          e.id === id ? { ...e, item: Number(newItem) } : e,
+          e.id === id ? { ...e, item: newItem ? String(newItem) : null } : e,
         )
 
         return {
@@ -182,7 +182,7 @@ export function ReportAppealAndTroubleInputEntries<
       }
 
       const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((e) =>
-        e.id === id ? { ...e, item: Number(newItem) } : e,
+        e.id === id ? { ...e, item: newItem ? String(newItem) : null } : e,
       )
 
       return {
@@ -212,15 +212,15 @@ export function ReportAppealAndTroubleInputEntries<
             className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
           >
             {/* Hidden inputs for form data structure */}
-            <input type="hidden" name={`${namePrefix}[${index}][id]`} value={entry.id} />
+            <input type="hidden" name={`${namePrefix}[${index}].id`} value={entry.id} />
             <input
               type="hidden"
-              name={`${namePrefix}[${index}][content]`}
+              name={`${namePrefix}[${index}].content`}
               value={entry.content || ''}
             />
             <input
               type="hidden"
-              name={`${namePrefix}[${index}][categoryId]`}
+              name={`${namePrefix}[${index}].categoryId`}
               value={entry.item || ''}
             />
 

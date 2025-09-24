@@ -12,7 +12,7 @@ const reportEntrySchema = z.object({
 const appealsAndTroublesEntrySchema = z.object({
   id: z.string(),
   content: z.string(),
-  item: z.number().nullable(),
+  item: z.string().nullable(),
   resolved: z.boolean().optional(),
 })
 
