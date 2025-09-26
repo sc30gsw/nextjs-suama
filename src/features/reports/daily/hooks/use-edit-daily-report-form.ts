@@ -3,6 +3,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { ERROR_STATUS, type ErrorStatus } from '~/constants'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
 import {
@@ -21,31 +22,35 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
         if (result.error) {
           const errorMessage = result.error.message
 
-          switch (errorMessage?.[0]) {
-            case 'Unauthorized':
-              toast.error('セッションが切れました。再度ログインしてください', {
-                cancel: {
-                  label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
-                },
-              })
-              return
-            case 'NotFound':
-              toast.error('日報が見つかりません', {
-                cancel: {
-                  label: '一覧に戻る',
-                  onClick: () => router.push('/daily/mine'),
-                },
-              })
-              return
-            case 'Forbidden':
-              toast.error('この日報を編集する権限がありません', {
-                cancel: {
-                  label: '一覧に戻る',
-                  onClick: () => router.push('/daily/mine'),
-                },
-              })
-              return
+          if (errorMessage?.[0]) {
+            const errorStatus = errorMessage[0]
+
+            switch (errorStatus as ErrorStatus) {
+              case ERROR_STATUS.UNAUTHORIZED:
+                toast.error('セッションが切れました。再度ログインしてください', {
+                  cancel: {
+                    label: 'ログイン',
+                    onClick: () => router.push('/sign-in'),
+                  },
+                })
+                return
+              case ERROR_STATUS.NOT_FOUND:
+                toast.error('日報が見つかりません', {
+                  cancel: {
+                    label: '一覧に戻る',
+                    onClick: () => router.push('/daily/mine'),
+                  },
+                })
+                return
+              case ERROR_STATUS.FOR_BIDDEN:
+                toast.error('この日報を編集する権限がありません', {
+                  cancel: {
+                    label: '一覧に戻る',
+                    onClick: () => router.push('/daily/mine'),
+                  },
+                })
+                return
+            }
           }
         }
 

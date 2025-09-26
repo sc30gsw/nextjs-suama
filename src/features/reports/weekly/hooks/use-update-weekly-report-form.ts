@@ -2,6 +2,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { ERROR_STATUS, type ErrorStatus } from '~/constants'
 import { updateWeeklyReportAction } from '~/features/reports/weekly/actions/update-weekly-report-action'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
@@ -37,31 +38,35 @@ export function useUpdateWeeklyReportForm(
         if (result.error) {
           const errorMessage = result.error.message
 
-          switch (errorMessage?.[0]) {
-            case 'Unauthorized':
-              toast.error('セッションが切れました。再度ログインしてください', {
-                cancel: {
-                  label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
-                },
-              })
-              return
-            case 'NotFound':
-              toast.error('週報が見つかりません', {
-                cancel: {
-                  label: '一覧に戻る',
-                  onClick: () => router.push(`/weekly/list/${dates}`),
-                },
-              })
-              return
-            case 'Forbidden':
-              toast.error('この週報を編集する権限がありません', {
-                cancel: {
-                  label: '一覧に戻る',
-                  onClick: () => router.push(`/weekly/list/${dates}`),
-                },
-              })
-              return
+          if (errorMessage?.[0]) {
+            const errorStatus = errorMessage[0]
+
+            switch (errorStatus as ErrorStatus) {
+              case ERROR_STATUS.UNAUTHORIZED:
+                toast.error('セッションが切れました。再度ログインしてください', {
+                  cancel: {
+                    label: 'ログイン',
+                    onClick: () => router.push('/sign-in'),
+                  },
+                })
+                return
+              case ERROR_STATUS.NOT_FOUND:
+                toast.error('週報が見つかりません', {
+                  cancel: {
+                    label: '一覧に戻る',
+                    onClick: () => router.push(`/weekly/list/${dates}`),
+                  },
+                })
+                return
+              case ERROR_STATUS.FOR_BIDDEN:
+                toast.error('この週報を編集する権限がありません', {
+                  cancel: {
+                    label: '一覧に戻る',
+                    onClick: () => router.push(`/weekly/list/${dates}`),
+                  },
+                })
+                return
+            }
           }
         }
 

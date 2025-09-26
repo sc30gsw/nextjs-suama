@@ -10,3 +10,11 @@ export const MAX_IMAGE_SIZE_MB = 5
 
 // TODO: 開発時のloadMore検証時には1件などにして検証（50件とかでも問題ないが一旦30件とする）
 export const WEEKLY_REPORTS_LIMIT = 30
+
+export const ERROR_STATUS = {
+  UNAUTHORIZED: 'Unauthorized',
+  NOT_FOUND: 'NotFound',
+  FOR_BIDDEN: 'Forbidden',
+} as const satisfies Record<string, string>
+
+export type ErrorStatus = (typeof ERROR_STATUS)[keyof typeof ERROR_STATUS]
