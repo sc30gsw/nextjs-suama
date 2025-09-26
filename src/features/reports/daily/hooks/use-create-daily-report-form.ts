@@ -62,7 +62,7 @@ export function useCreateDailyForm(
       return parseWithZod(formData, { schema: createDailyReportFormSchema })
     },
     defaultValue: {
-      reportDate: '',
+      reportDate: '', // ? comment  初期値が本日の日付だと、登録時に入力した日ではなく、本日の日付で登録されてしまうため初期値は空にする
       remote: undefined,
       impression: '',
       reportEntries: reportEntry.entries.map((entry) => ({
@@ -73,13 +73,13 @@ export function useCreateDailyForm(
       })),
       appealEntries: appealsAndTroublesEntry.appeals.entries.map((entry) => ({
         id: entry.id,
-        categoryId: entry.item || undefined,
-        content: entry.content || undefined,
+        categoryId: entry.item ?? undefined,
+        content: entry.content ?? undefined,
       })),
       troubleEntries: appealsAndTroublesEntry.troubles.entries.map((entry) => ({
         id: entry.id,
-        categoryId: entry.item || undefined,
-        content: entry.content || undefined,
+        categoryId: entry.item ?? undefined,
+        content: entry.content ?? undefined,
       })),
     },
   })
