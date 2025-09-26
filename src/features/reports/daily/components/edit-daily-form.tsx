@@ -77,6 +77,8 @@ export function EditDailyForm({
       </div>
       <FormProvider context={form.context}>
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
+          {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
+          {/* // ? https://ja.conform.guide/integration/ui-libraries */}
           <DatePicker
             isDisabled={isPending}
             value={parseDate(reportDate.value ?? format(new Date(), 'yyyy-MM-dd'))}

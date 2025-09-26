@@ -116,6 +116,8 @@ export function CreateMissionModal({ projects }: CreateMissionModalProps) {
               </span>
             </div>
             <div>
+              {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
+              {/* // ? https://ja.conform.guide/integration/ui-libraries */}
               <ComboBox
                 {...getInputProps(fields.projectId, { type: 'text' })}
                 label="プロジェクト"
