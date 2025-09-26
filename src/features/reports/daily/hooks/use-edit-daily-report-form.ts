@@ -21,24 +21,31 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
         if (result.error) {
           const errorMessage = result.error.message
 
-          if (errorMessage?.includes('Unauthorized')) {
-            toast.error('セッションが切れました。再度ログインしてください', {
-              cancel: {
-                label: 'ログイン',
-                onClick: () => router.push('/sign-in'),
-              },
-            })
-            return
-          }
-
-          if (errorMessage?.includes('日報が見つからない')) {
-            toast.error('日報が見つからないか、編集権限がありません', {
-              cancel: {
-                label: '一覧に戻る',
-                onClick: () => router.push('/daily/mine'),
-              },
-            })
-            return
+          switch (errorMessage?.[0]) {
+            case 'Unauthorized':
+              toast.error('セッションが切れました。再度ログインしてください', {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+              return
+            case 'NotFound':
+              toast.error('日報が見つかりません', {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/daily/mine'),
+                },
+              })
+              return
+            case 'Forbidden':
+              toast.error('この日報を編集する権限がありません', {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/daily/mine'),
+                },
+              })
+              return
           }
         }
 

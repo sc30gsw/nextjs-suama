@@ -34,13 +34,13 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
 
     if (!weeklyReport) {
       return submission.reply({
-        fieldErrors: { message: ['週報が存在しません'] },
+        fieldErrors: { message: ['NotFound'] },
       })
     }
 
     if (weeklyReport.userId !== session.user.id) {
       return submission.reply({
-        fieldErrors: { message: ['他のユーザーの週報は更新できません。'] },
+        fieldErrors: { message: ['Forbidden'] },
       })
     }
 

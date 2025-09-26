@@ -40,14 +40,19 @@ export async function updateReportAction(_: unknown, formData: FormData) {
   // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
   const reportDate = dateUtils.convertJstDateToUtcStartOfDay(reportDateString)
 
-  // 既存の日報を確認（自分のものか確認）
-  const existingReport = await db.query.dailyReports.findFirst({
-    where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, session.user.id)),
+  const report = await db.query.dailyReports.findFirst({
+    where: eq(dailyReports.id, reportId),
   })
 
-  if (!existingReport) {
+  if (!report) {
     return submission.reply({
-      fieldErrors: { message: ['日報が見つからないか、編集権限がありません'] },
+      fieldErrors: { message: ['NotFound'] },
+    })
+  }
+
+  if (report.userId !== session.user.id) {
+    return submission.reply({
+      fieldErrors: { message: ['Forbidden'] },
     })
   }
 

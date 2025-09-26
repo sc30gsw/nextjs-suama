@@ -35,16 +35,33 @@ export function useUpdateWeeklyReportForm(
       },
       onError(result) {
         if (result.error) {
-          const isUnauthorized = result.error.message?.includes('Unauthorized')
+          const errorMessage = result.error.message
 
-          if (isUnauthorized) {
-            toast.error('セッションが切れました。再度ログインしてください', {
-              cancel: {
-                label: 'ログイン',
-                onClick: () => router.push('/sign-in'),
-              },
-            })
-            return
+          switch (errorMessage?.[0]) {
+            case 'Unauthorized':
+              toast.error('セッションが切れました。再度ログインしてください', {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+              return
+            case 'NotFound':
+              toast.error('週報が見つかりません', {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/weekly/list/'),
+                },
+              })
+              return
+            case 'Forbidden':
+              toast.error('この週報を編集する権限がありません', {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/weekly/list/'),
+                },
+              })
+              return
           }
         }
 
