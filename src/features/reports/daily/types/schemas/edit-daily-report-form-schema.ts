@@ -3,7 +3,7 @@ import {
   appealEntrySchema,
   dailyReportEntrySchema,
   troubleEntrySchema,
-} from './create-daily-report-form-schema'
+} from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 
 export const updateDailyReportFormSchema = z
   .object({
