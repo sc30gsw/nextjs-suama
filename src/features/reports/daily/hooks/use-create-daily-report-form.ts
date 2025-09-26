@@ -1,5 +1,6 @@
-import { useInputControl } from '@conform-to/react'
+import { useControl } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
@@ -62,7 +63,7 @@ export function useCreateDailyForm(
       return parseWithZod(formData, { schema: createDailyReportFormSchema })
     },
     defaultValue: {
-      reportDate: '', // ? 初期値が本日の日付だと、登録時に入力した日ではなく、本日の日付で登録されてしまうため初期値は空にする
+      reportDate: format(new Date(), 'yyyy-MM-dd'),
       remote: undefined,
       impression: '',
       reportEntries: reportEntry.entries.map((entry) => ({
@@ -84,7 +85,9 @@ export function useCreateDailyForm(
     },
   })
 
-  const reportDate = useInputControl(fields.reportDate)
+  const reportDate = useControl({
+    defaultValue: fields.reportDate.initialValue,
+  })
 
   // Conformによるformの増減等状態管理は以下を参照
   // ? https://zenn.dev/coji/articles/remix-conform-nested-array
