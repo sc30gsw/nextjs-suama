@@ -62,7 +62,7 @@ export function useCreateDailyForm(
       return parseWithZod(formData, { schema: createDailyReportFormSchema })
     },
     defaultValue: {
-      reportDate: '', // ? comment  初期値が本日の日付だと、登録時に入力した日ではなく、本日の日付で登録されてしまうため初期値は空にする
+      reportDate: '', // ? 初期値が本日の日付だと、登録時に入力した日ではなく、本日の日付で登録されてしまうため初期値は空にする
       remote: undefined,
       impression: '',
       reportEntries: reportEntry.entries.map((entry) => ({
