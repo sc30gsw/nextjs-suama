@@ -9,7 +9,8 @@ export async function getClients(
   params?: { skip: number; limit: number; names: string[] },
   userId?: string,
 ) {
-  'use cache'; cacheTag(GET_CLIENTS_CACHE_KEY)
+  'use cache'
+  cacheTag(GET_CLIENTS_CACHE_KEY)
 
   const url = client.api.clients.$url()
   type ResType = InferResponseType<typeof client.api.clients.$get, 200>

@@ -9,7 +9,8 @@ export async function getMissions(
   params?: { skip: number; limit: number; names: string[] },
   userId?: string,
 ) {
-  'use cache'; cacheTag(GET_MISSIONS_CACHE_KEY)
+  'use cache'
+  cacheTag(GET_MISSIONS_CACHE_KEY)
 
   const url = client.api.missions.$url()
   type ResType = InferResponseType<typeof client.api.missions.$get, 200>
