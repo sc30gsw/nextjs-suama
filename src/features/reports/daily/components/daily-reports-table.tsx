@@ -18,11 +18,7 @@ import { paginationSearchParamsParsers } from '~/types/search-params/pagination-
 
 type DailyReportUser = InferResponseType<typeof client.api.dailies.today.$get, 200>['users'][number]
 
-type DailyReportForToday = DailyReportUser & {
-  operate: string
-}
-
-const columnHelper = createColumnHelper<DailyReportForToday>()
+const columnHelper = createColumnHelper<DailyReportUser>()
 
 type DailyReportsTableProps<T extends 'today' | 'mine'> = {
   reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
@@ -62,7 +58,8 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
         return row.original.isTurnedIn ? '提出済み' : '下書き'
       },
     }),
-    columnHelper.accessor('operate', {
+    columnHelper.display({
+      id: 'operate',
       header: '操作',
       cell: ({ row }) => {
         const report = row.original
@@ -96,10 +93,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
     }),
   ]
 
-  const initialData: DailyReportForToday[] = reports.users.map((user: DailyReportUser) => ({
-    ...user,
-    operate: '',
-  }))
+  const initialData: DailyReportUser[] = reports.users
 
   const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
     history: 'push',
