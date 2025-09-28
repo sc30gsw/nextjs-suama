@@ -1,4 +1,4 @@
-export const APP_TIMEZONE = 'Asia/Tokyo' as const
+export const APP_TIMEZONE = 'Asia/Tokyo'
 
 export const DATE_TIME = {
   START: ' 00:00:00',

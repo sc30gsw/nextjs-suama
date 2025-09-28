@@ -1,18 +1,18 @@
 import { fromZonedTime } from 'date-fns-tz'
 import { APP_TIMEZONE, DATE_TIME } from '~/constants/date'
 
-export const dateUtils = {
-  // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
-  convertJstDateToUtcStartOfDay: (dateString: string): Date => {
-    // ISO文字列が来た場合はyyyy-MM-dd部分だけ抽出
-    const cleanDateString = dateString.includes('T') ? dateString.split('T')[0] : dateString
-    return fromZonedTime(`${cleanDateString}${DATE_TIME.START}`, APP_TIMEZONE)
-  },
+const SEPARATOR = 'T'
 
-  // 日付範囲検索用：指定日のJST終了時刻をUTCで取得
-  convertJstDateToUtcEndOfDay: (dateString: string): Date => {
+type DateInput = string | `${string}-${string}-${string}T${string}`
+type DateType = 'start' | 'end'
+
+export const dateUtils = {
+  // 日付範囲検索用：指定日のJST開始/終了時刻をUTCで取得
+  convertJstDateToUtc: (dateStr: DateInput, type: 'start' | 'end'): Date => {
     // ISO文字列が来た場合はyyyy-MM-dd部分だけ抽出
-    const cleanDateString = dateString.includes('T') ? dateString.split('T')[0] : dateString
-    return fromZonedTime(`${cleanDateString}${DATE_TIME.END}`, APP_TIMEZONE)
+    const cleanDateString = dateStr.includes(SEPARATOR) ? dateStr.split(SEPARATOR)[0] : dateStr
+    const dateTime = type === 'start' ? DATE_TIME.START : DATE_TIME.END
+
+    return fromZonedTime(`${cleanDateString}${dateTime}`, APP_TIMEZONE)
   },
-} as const satisfies Record<string, (dateString: string) => Date>
+} as const satisfies Record<string, (dateString: DateInput, type: DateType) => Date>

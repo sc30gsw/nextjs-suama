@@ -38,7 +38,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
 
   const reportDateString = submission.value.reportDate
   // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
-  const reportDate = dateUtils.convertJstDateToUtcStartOfDay(reportDateString)
+  const reportDate = dateUtils.convertJstDateToUtc(reportDateString, 'start')
 
   const report = await db.query.dailyReports.findFirst({
     where: eq(dailyReports.id, reportId),
