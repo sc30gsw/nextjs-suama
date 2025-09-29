@@ -3,7 +3,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
-import { ERROR_STATUS, TOAST_MESSAGES, type ErrorStatus } from '~/constants'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
 import {
@@ -11,6 +11,7 @@ import {
   updateDailyReportFormSchema,
 } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getReportById>>) {
@@ -19,43 +20,39 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateReportAction, {
       onError(result) {
-        if (result.error) {
-          const errorMessage = result.error.message
+        const errorMessage = result?.error?.message?.[0]
 
-          if (errorMessage?.[0]) {
-            const errorStatus = errorMessage[0]
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
 
-            switch (errorStatus as ErrorStatus) {
-              case ERROR_STATUS.UNAUTHORIZED:
-                toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
-                  cancel: {
-                    label: 'ログイン',
-                    onClick: () => router.push('/sign-in'),
-                  },
-                })
+              return
 
-                return
+            case ERROR_STATUS.NOT_FOUND:
+              toast.error(TOAST_MESSAGES.NOT_FOUND_DAILY_REPORT, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/daily/mine'),
+                },
+              })
 
-              case ERROR_STATUS.NOT_FOUND:
-                toast.error(TOAST_MESSAGES.NOT_FOUND_DAILY_REPORT, {
-                  cancel: {
-                    label: '一覧に戻る',
-                    onClick: () => router.push('/daily/mine'),
-                  },
-                })
+              return
 
-                return
+            case ERROR_STATUS.FOR_BIDDEN:
+              toast.error(TOAST_MESSAGES.FORBIDDEN_DAILY_REPORT, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/daily/mine'),
+                },
+              })
 
-              case ERROR_STATUS.FOR_BIDDEN:
-                toast.error(TOAST_MESSAGES.FORBIDDEN_DAILY_REPORT, {
-                  cancel: {
-                    label: '一覧に戻る',
-                    onClick: () => router.push('/daily/mine'),
-                  },
-                })
-
-                return
-            }
+              return
           }
         }
 

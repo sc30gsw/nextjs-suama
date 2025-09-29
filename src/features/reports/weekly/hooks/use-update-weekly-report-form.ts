@@ -2,7 +2,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
-import { ERROR_STATUS, TOAST_MESSAGES, type ErrorStatus } from '~/constants'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants'
 import { updateWeeklyReportAction } from '~/features/reports/weekly/actions/update-weekly-report-action'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
@@ -12,6 +12,7 @@ import {
 } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
 import type { UpdateWeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useUpdateWeeklyReportForm(
@@ -35,43 +36,38 @@ export function useUpdateWeeklyReportForm(
         router.push(`/weekly/list/${dates}`)
       },
       onError(result) {
-        if (result.error) {
-          const errorMessage = result.error.message
+        const errorMessage = result?.error?.message?.[0]
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
 
-          if (errorMessage?.[0]) {
-            const errorStatus = errorMessage[0]
+              return
 
-            switch (errorStatus as ErrorStatus) {
-              case ERROR_STATUS.UNAUTHORIZED:
-                toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
-                  cancel: {
-                    label: 'ログイン',
-                    onClick: () => router.push('/sign-in'),
-                  },
-                })
+            case ERROR_STATUS.NOT_FOUND:
+              toast.error(TOAST_MESSAGES.NOT_FOUND_WEEKLY_REPORT, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push(`/weekly/list/${dates}`),
+                },
+              })
 
-                return
+              return
 
-              case ERROR_STATUS.NOT_FOUND:
-                toast.error(TOAST_MESSAGES.NOT_FOUND_WEEKLY_REPORT, {
-                  cancel: {
-                    label: '一覧に戻る',
-                    onClick: () => router.push(`/weekly/list/${dates}`),
-                  },
-                })
+            case ERROR_STATUS.FOR_BIDDEN:
+              toast.error(TOAST_MESSAGES.FORBIDDEN_WEEKLY_REPORT, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push(`/weekly/list/${dates}`),
+                },
+              })
 
-                return
-
-              case ERROR_STATUS.FOR_BIDDEN:
-                toast.error(TOAST_MESSAGES.FORBIDDEN_WEEKLY_REPORT, {
-                  cancel: {
-                    label: '一覧に戻る',
-                    onClick: () => router.push(`/weekly/list/${dates}`),
-                  },
-                })
-
-                return
-            }
+              return
           }
         }
 
