@@ -44,7 +44,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
     }),
     columnHelper.accessor('impression', {
       header: '所感',
-      cell: (info) => `${info.getValue()} / 5`,
+      cell: (info) => `${info.getValue()}`,
     }),
     columnHelper.accessor('isRemote', {
       header: 'リモート勤務',
