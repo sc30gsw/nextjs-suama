@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { and, eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { ERROR_STATUS } from '~/constants'
 import {
   GET_DAILY_REPORT_BY_ID_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
@@ -29,7 +30,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
 
   if (!session) {
     return submission.reply({
-      fieldErrors: { message: ['Unauthorized'] },
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
     })
   }
 
@@ -46,13 +47,13 @@ export async function updateReportAction(_: unknown, formData: FormData) {
 
   if (!report) {
     return submission.reply({
-      fieldErrors: { message: ['NotFound'] },
+      fieldErrors: { message: [ERROR_STATUS.NOT_FOUND] },
     })
   }
 
   if (report.userId !== session.user.id) {
     return submission.reply({
-      fieldErrors: { message: ['Forbidden'] },
+      fieldErrors: { message: [ERROR_STATUS.FOR_BIDDEN] },
     })
   }
 
@@ -136,6 +137,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
   } catch (error) {
     console.error('Update report error:', error)
+
     return submission.reply({
       fieldErrors: { message: ['日報の更新に失敗しました'] },
     })

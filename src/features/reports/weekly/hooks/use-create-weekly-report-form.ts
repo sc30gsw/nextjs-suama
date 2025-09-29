@@ -2,6 +2,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { ERROR_STATUS } from '~/constants'
 import { createWeeklyReportAction } from '~/features/reports/weekly/actions/create-weekly-report-action'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import {
@@ -34,7 +35,7 @@ export function useCreateWeeklyForm(
       },
       onError(result) {
         if (result.error) {
-          const isUnauthorized = result.error.message?.includes('Unauthorized')
+          const isUnauthorized = result.error.message?.includes(ERROR_STATUS.UNAUTHORIZED)
 
           if (isUnauthorized) {
             toast.error('セッションが切れました。再度ログインしてください', {
@@ -146,7 +147,7 @@ export function useCreateWeeklyForm(
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
-        (msg) => !msg.includes('Unauthorized'),
+        (msg) => !msg.includes(ERROR_STATUS.UNAUTHORIZED),
       )
 
       return filteredMessages.length > 0 ? filteredMessages.join(', ') : undefined

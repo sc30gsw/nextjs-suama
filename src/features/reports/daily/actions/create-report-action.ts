@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { and, eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { ERROR_STATUS } from '~/constants'
 import {
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
@@ -28,7 +29,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
 
   if (!session) {
     return submission.reply({
-      fieldErrors: { message: ['Unauthorized'] },
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
     })
   }
 

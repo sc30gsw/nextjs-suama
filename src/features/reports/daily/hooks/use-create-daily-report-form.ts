@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { ERROR_STATUS } from '~/constants'
 import { createReportAction } from '~/features/reports/daily/actions/create-report-action'
 import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
 import {
@@ -29,7 +30,7 @@ export function useCreateDailyForm(
         if (result.error) {
           const errorMessage = result.error.message
 
-          if (errorMessage?.includes('Unauthorized')) {
+          if (errorMessage?.includes(ERROR_STATUS.UNAUTHORIZED)) {
             toast.error('セッションが切れました。再度ログインしてください', {
               cancel: {
                 label: 'ログイン',
@@ -168,7 +169,7 @@ export function useCreateDailyForm(
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
-        (msg) => !msg.includes('Unauthorized'),
+        (msg) => !msg.includes(ERROR_STATUS.UNAUTHORIZED),
       )
 
       return filteredMessages.length > 0 ? filteredMessages.join(', ') : undefined

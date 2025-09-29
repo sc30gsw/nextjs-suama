@@ -49,7 +49,9 @@ export function useUpdateWeeklyReportForm(
                     onClick: () => router.push('/sign-in'),
                   },
                 })
+
                 return
+
               case ERROR_STATUS.NOT_FOUND:
                 toast.error('週報が見つかりません', {
                   cancel: {
@@ -57,7 +59,9 @@ export function useUpdateWeeklyReportForm(
                     onClick: () => router.push(`/weekly/list/${dates}`),
                   },
                 })
+
                 return
+
               case ERROR_STATUS.FOR_BIDDEN:
                 toast.error('この週報を編集する権限がありません', {
                   cancel: {
@@ -65,6 +69,7 @@ export function useUpdateWeeklyReportForm(
                     onClick: () => router.push(`/weekly/list/${dates}`),
                   },
                 })
+
                 return
             }
           }
@@ -168,7 +173,7 @@ export function useUpdateWeeklyReportForm(
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
-        (msg) => !msg.includes('Unauthorized'),
+        (msg) => !msg.includes(ERROR_STATUS.UNAUTHORIZED),
       )
 
       return filteredMessages.length > 0 ? filteredMessages.join(', ') : undefined

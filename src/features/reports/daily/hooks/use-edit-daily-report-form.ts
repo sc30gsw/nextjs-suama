@@ -33,7 +33,9 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
                     onClick: () => router.push('/sign-in'),
                   },
                 })
+
                 return
+
               case ERROR_STATUS.NOT_FOUND:
                 toast.error('日報が見つかりません', {
                   cancel: {
@@ -41,7 +43,9 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
                     onClick: () => router.push('/daily/mine'),
                   },
                 })
+
                 return
+
               case ERROR_STATUS.FOR_BIDDEN:
                 toast.error('この日報を編集する権限がありません', {
                   cancel: {
@@ -49,6 +53,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
                     onClick: () => router.push('/daily/mine'),
                   },
                 })
+
                 return
             }
           }
@@ -126,7 +131,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
-        (msg) => !msg.includes('Unauthorized'),
+        (msg) => !msg.includes(ERROR_STATUS.UNAUTHORIZED),
       )
 
       return filteredMessages.length > 0 ? filteredMessages.join(', ') : undefined

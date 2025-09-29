@@ -4,6 +4,7 @@ import { parseWithZod } from '@conform-to/zod'
 import { eq, inArray } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { filter, map, pipe } from 'remeda'
+import { ERROR_STATUS } from '~/constants'
 import { GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY } from '~/constants/cache-keys'
 import { missions, weeklyReportMissions, weeklyReports } from '~/db/schema'
 import { updateWeeklyReportFormSchema } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
@@ -23,7 +24,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
 
   if (!session) {
     return submission.reply({
-      fieldErrors: { message: ['Unauthorized'] },
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
     })
   }
 
@@ -34,13 +35,13 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
 
     if (!weeklyReport) {
       return submission.reply({
-        fieldErrors: { message: ['NotFound'] },
+        fieldErrors: { message: [ERROR_STATUS.NOT_FOUND] },
       })
     }
 
     if (weeklyReport.userId !== session.user.id) {
       return submission.reply({
-        fieldErrors: { message: ['Forbidden'] },
+        fieldErrors: { message: [ERROR_STATUS.FOR_BIDDEN] },
       })
     }
 
