@@ -3,7 +3,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
-import { ERROR_STATUS, type ErrorStatus } from '~/constants'
+import { ERROR_STATUS, TOAST_MESSAGES, type ErrorStatus } from '~/constants'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
 import {
@@ -27,7 +27,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
 
             switch (errorStatus as ErrorStatus) {
               case ERROR_STATUS.UNAUTHORIZED:
-                toast.error('セッションが切れました。再度ログインしてください', {
+                toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
                   cancel: {
                     label: 'ログイン',
                     onClick: () => router.push('/sign-in'),
@@ -37,7 +37,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
                 return
 
               case ERROR_STATUS.NOT_FOUND:
-                toast.error('日報が見つかりません', {
+                toast.error(TOAST_MESSAGES.NOT_FOUND_DAILY_REPORT, {
                   cancel: {
                     label: '一覧に戻る',
                     onClick: () => router.push('/daily/mine'),
@@ -47,7 +47,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
                 return
 
               case ERROR_STATUS.FOR_BIDDEN:
-                toast.error('この日報を編集する権限がありません', {
+                toast.error(TOAST_MESSAGES.FORBIDDEN_DAILY_REPORT, {
                   cancel: {
                     label: '一覧に戻る',
                     onClick: () => router.push('/daily/mine'),
@@ -59,10 +59,10 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
           }
         }
 
-        toast.error('日報の更新に失敗しました')
+        toast.error(TOAST_MESSAGES.UPDATE_DAILY_REPORT_FAILED)
       },
       onSuccess() {
-        toast.success('日報を更新しました')
+        toast.success(TOAST_MESSAGES.UPDATE_DAILY_REPORT_SUCCESS)
       },
     }),
     null,

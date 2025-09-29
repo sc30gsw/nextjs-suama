@@ -11,6 +11,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { createAppealCategoryAction } from '~/features/report-contexts/appeals/actions/create-appeal-category-action'
 import {
   type CreateAppealCategoryInputSchema,
@@ -25,11 +26,11 @@ export function CreateAppealCategoryModal() {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createAppealCategoryAction, {
       onSuccess() {
-        toast.success('アピールポイントカテゴリーの登録に成功しました')
+        toast.success(TOAST_MESSAGES.APPEAL_CATEGORY_CREATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error('アピールポイントカテゴリーの登録に失敗しました')
+        toast.error(TOAST_MESSAGES.APPEAL_CATEGORY_CREATE_FAILED)
       },
     }),
     null,

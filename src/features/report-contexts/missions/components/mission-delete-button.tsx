@@ -4,6 +4,7 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { TOAST_MESSAGES } from '~/constants'
 import { deleteMissionAction } from '~/features/report-contexts/missions/actions/delete-mission-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
@@ -31,13 +32,13 @@ export function MissionDeleteButton({ id }: MissionDeleteButtonProps) {
         const result = await deleteMissionAction(id)
 
         if (result.status === 'error') {
-          toast.error('ミッションの削除に失敗しました')
+          toast.error(TOAST_MESSAGES.MISSION_DELETE_FAILED)
           return
         }
 
-        toast.success('ミッションの削除に成功しました')
+        toast.success(TOAST_MESSAGES.MISSION_DELETE_SUCCESS)
       } catch (_) {
-        toast.error('ミッションの削除に失敗しました')
+        toast.error(TOAST_MESSAGES.MISSION_DELETE_FAILED)
       }
     })
   }

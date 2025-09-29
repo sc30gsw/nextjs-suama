@@ -11,6 +11,7 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { resetPasswordAction } from '~/features/auth/actions/reset-password-action'
 import {
   type PasswordResetInputSchema,
@@ -31,7 +32,7 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(resetPasswordAction, {
       onSuccess() {
-        toast.success('パスワードリセットに成功しました')
+        toast.success(TOAST_MESSAGES.PASSWORD_RESET_SUCCESS)
         router.push('/sign-in')
       },
       onError(result) {
@@ -41,7 +42,7 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
           return
         }
 
-        toast.error('パスワードリセットに失敗しました')
+        toast.error(TOAST_MESSAGES.PASSWORD_RESET_FAILED)
       },
     }),
     null,

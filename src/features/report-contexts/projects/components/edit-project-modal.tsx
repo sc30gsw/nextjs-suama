@@ -13,6 +13,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { updateProjectAction } from '~/features/report-contexts/projects/actions/update-project-action'
 import {
   type EditProjectInputSchema,
@@ -43,13 +44,13 @@ export function EditProjectModal({
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateProjectAction, {
       onSuccess(result) {
-        toast.success('プロジェクトの更新に成功しました')
+        toast.success(TOAST_MESSAGES.PROJECT_UPDATE_SUCCESS)
         toggle(false)
         setClient(result.initialValue?.clientId.toString() ?? '')
         setChecked(result.initialValue?.isArchive === 'on')
       },
       onError() {
-        toast.error('プロジェクトの更新に失敗しました')
+        toast.error(TOAST_MESSAGES.PROJECT_UPDATE_FAILED)
       },
     }),
     null,

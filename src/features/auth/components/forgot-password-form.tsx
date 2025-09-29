@@ -10,6 +10,7 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { forgotPasswordAction } from '~/features/auth/actions/forgot-password-action'
 import {
   type SignInInputSchema,
@@ -22,7 +23,7 @@ export function ForgotPasswordForm({ children }: { children: ReactNode }) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(forgotPasswordAction, {
       onSuccess() {
-        toast.success('パスワードリセット画面にリダイレクトします')
+        toast.success(TOAST_MESSAGES.PASSWORD_RESET_REDIRECT)
       },
       onError(result) {
         if (result?.error && Array.isArray(result.error.message)) {
@@ -31,7 +32,7 @@ export function ForgotPasswordForm({ children }: { children: ReactNode }) {
           return
         }
 
-        toast.error('パスワードリセット画面にリダイレクトできませんでした')
+        toast.error(TOAST_MESSAGES.PASSWORD_RESET_REDIRECT_FAILED)
       },
     }),
     null,

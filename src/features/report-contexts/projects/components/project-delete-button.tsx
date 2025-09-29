@@ -4,6 +4,7 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { TOAST_MESSAGES } from '~/constants'
 import { deleteProjectAction } from '~/features/report-contexts/projects/actions/delete-project-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
@@ -32,13 +33,13 @@ export function ProjectDeleteButton({ id }: ProjectDeleteButtonProps) {
         const result = await deleteProjectAction(id)
 
         if (result.status === 'error') {
-          toast.error('プロジェクトの削除に失敗しました')
+          toast.error(TOAST_MESSAGES.PROJECT_DELETE_FAILED)
           return
         }
 
-        toast.success('プロジェクトの削除に成功しました')
+        toast.success(TOAST_MESSAGES.PROJECT_DELETE_SUCCESS)
       } catch (_) {
-        toast.error('プロジェクトの削除に失敗しました')
+        toast.error(TOAST_MESSAGES.PROJECT_DELETE_FAILED)
       }
     })
   }

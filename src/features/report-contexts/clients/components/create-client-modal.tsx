@@ -11,6 +11,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { createClientAction } from '~/features/report-contexts/clients/actions/create-client-action'
 import {
   type CreateClientInputSchema,
@@ -25,11 +26,11 @@ export function CreateClientModal() {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createClientAction, {
       onSuccess() {
-        toast.success('クライアントの登録に成功しました')
+        toast.success(TOAST_MESSAGES.CLIENT_CREATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error('クライアントの登録に失敗しました')
+        toast.error(TOAST_MESSAGES.CLIENT_CREATE_FAILED)
       },
     }),
     null,

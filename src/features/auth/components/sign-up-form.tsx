@@ -11,6 +11,7 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { signUpAction } from '~/features/auth/actions/sign-up-action'
 
 import {
@@ -32,7 +33,7 @@ export function SignUpForm({
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(signUpAction, {
       onSuccess() {
-        toast.success('サインアップしました')
+        toast.success(TOAST_MESSAGES.SIGN_UP_SUCCESS)
         router.push('/daily')
       },
       onError(result) {
@@ -42,7 +43,7 @@ export function SignUpForm({
           return
         }
 
-        toast.error('サインアップに失敗しました')
+        toast.error(TOAST_MESSAGES.SIGN_UP_FAILED)
       },
     }),
     null,

@@ -11,6 +11,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { createTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/create-trouble-category-action'
 import {
   type CreateTroubleCategoryInputSchema,
@@ -25,11 +26,11 @@ export function CreateTroubleCategoryModal() {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createTroubleCategoryAction, {
       onSuccess() {
-        toast.success('困っていることカテゴリーの登録に成功しました')
+        toast.success(TOAST_MESSAGES.TROUBLE_CATEGORY_CREATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error('困っていることカテゴリーの登録に失敗しました')
+        toast.error(TOAST_MESSAGES.TROUBLE_CATEGORY_CREATE_FAILED)
       },
     }),
     null,

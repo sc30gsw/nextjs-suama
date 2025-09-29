@@ -15,6 +15,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { createProjectAction } from '~/features/report-contexts/projects/actions/create-project-action'
 import {
   type CreateProjectInputSchema,
@@ -37,13 +38,13 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createProjectAction, {
       onSuccess() {
-        toast.success('プロジェクトの登録に成功しました')
+        toast.success(TOAST_MESSAGES.PROJECT_CREATE_SUCCESS)
         toggle(false)
         setClient(null)
         setChecked(false)
       },
       onError() {
-        toast.error('プロジェクトの登録に失敗しました')
+        toast.error(TOAST_MESSAGES.PROJECT_CREATE_FAILED)
       },
     }),
     null,

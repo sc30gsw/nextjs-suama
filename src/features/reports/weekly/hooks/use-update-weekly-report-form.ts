@@ -2,7 +2,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
-import { ERROR_STATUS, type ErrorStatus } from '~/constants'
+import { ERROR_STATUS, TOAST_MESSAGES, type ErrorStatus } from '~/constants'
 import { updateWeeklyReportAction } from '~/features/reports/weekly/actions/update-weekly-report-action'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
@@ -31,7 +31,7 @@ export function useUpdateWeeklyReportForm(
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateWeeklyReportAction, {
       onSuccess() {
-        toast.success('週報の更新に成功しました')
+        toast.success(TOAST_MESSAGES.UPDATE_WEEKLY_REPORT_SUCCESS)
         router.push(`/weekly/list/${dates}`)
       },
       onError(result) {
@@ -43,7 +43,7 @@ export function useUpdateWeeklyReportForm(
 
             switch (errorStatus as ErrorStatus) {
               case ERROR_STATUS.UNAUTHORIZED:
-                toast.error('セッションが切れました。再度ログインしてください', {
+                toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
                   cancel: {
                     label: 'ログイン',
                     onClick: () => router.push('/sign-in'),
@@ -53,7 +53,7 @@ export function useUpdateWeeklyReportForm(
                 return
 
               case ERROR_STATUS.NOT_FOUND:
-                toast.error('週報が見つかりません', {
+                toast.error(TOAST_MESSAGES.NOT_FOUND_WEEKLY_REPORT, {
                   cancel: {
                     label: '一覧に戻る',
                     onClick: () => router.push(`/weekly/list/${dates}`),
@@ -63,7 +63,7 @@ export function useUpdateWeeklyReportForm(
                 return
 
               case ERROR_STATUS.FOR_BIDDEN:
-                toast.error('この週報を編集する権限がありません', {
+                toast.error(TOAST_MESSAGES.FORBIDDEN_WEEKLY_REPORT, {
                   cancel: {
                     label: '一覧に戻る',
                     onClick: () => router.push(`/weekly/list/${dates}`),
@@ -75,7 +75,7 @@ export function useUpdateWeeklyReportForm(
           }
         }
 
-        toast.error('週報の更新に失敗しました')
+        toast.error(TOAST_MESSAGES.UPDATE_WEEKLY_REPORT_FAILED)
       },
     }),
     null,

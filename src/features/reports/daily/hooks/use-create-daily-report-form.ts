@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
-import { ERROR_STATUS } from '~/constants'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants'
 import { createReportAction } from '~/features/reports/daily/actions/create-report-action'
 import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
 import {
@@ -31,7 +31,7 @@ export function useCreateDailyForm(
           const errorMessage = result.error.message
 
           if (errorMessage?.includes(ERROR_STATUS.UNAUTHORIZED)) {
-            toast.error('セッションが切れました。再度ログインしてください', {
+            toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
               cancel: {
                 label: 'ログイン',
                 onClick: () => router.push('/sign-in'),
@@ -40,8 +40,8 @@ export function useCreateDailyForm(
             return
           }
 
-          if (errorMessage?.includes('本日の日報は既に作成されています')) {
-            toast.error('本日の日報は既に作成されています', {
+          if (errorMessage?.includes(TOAST_MESSAGES.DAILY_REPORT_ALREADY_EXISTS)) {
+            toast.error(TOAST_MESSAGES.DAILY_REPORT_ALREADY_EXISTS, {
               cancel: {
                 label: '日報一覧へ',
                 onClick: () => router.push('/mine'),
@@ -51,7 +51,7 @@ export function useCreateDailyForm(
           }
         }
 
-        toast.error('日報の作成に失敗しました')
+        toast.error(TOAST_MESSAGES.CREATE_DAILY_REPORT_FAILED)
       },
     }),
     null,

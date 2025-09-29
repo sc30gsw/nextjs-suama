@@ -5,6 +5,7 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { TOAST_MESSAGES } from '~/constants'
 import { deleteUserAction } from '~/features/users/actions/delete-user-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
@@ -34,14 +35,14 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
         const result = await deleteUserAction(id)
 
         if (result.status === 'error') {
-          toast.error('ユーザーの削除に失敗しました')
+          toast.error(TOAST_MESSAGES.USER_DELETE_FAILED)
           return
         }
 
-        toast.success('ユーザーの削除に成功しました')
+        toast.success(TOAST_MESSAGES.USER_DELETE_SUCCESS)
         router.push('/sign-in')
       } catch (_) {
-        toast.error('ユーザーの削除に失敗しました')
+        toast.error(TOAST_MESSAGES.USER_DELETE_FAILED)
       }
     })
   }

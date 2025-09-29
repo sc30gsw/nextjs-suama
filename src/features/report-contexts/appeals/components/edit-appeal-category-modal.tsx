@@ -9,6 +9,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { TOAST_MESSAGES } from '~/constants'
 import { updateAppealCategoryAction } from '~/features/report-contexts/appeals/actions/update-appeal-category-action'
 import {
   type EditAppealCategoryInputSchema,
@@ -29,11 +30,11 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateAppealCategoryAction, {
       onSuccess() {
-        toast.success('アピールポイントことカテゴリー更新に成功しました')
+        toast.success(TOAST_MESSAGES.APPEAL_CATEGORY_UPDATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error('アピールポイントカテゴリーの更新に失敗しました')
+        toast.error(TOAST_MESSAGES.APPEAL_CATEGORY_UPDATE_FAILED)
       },
     }),
     null,
