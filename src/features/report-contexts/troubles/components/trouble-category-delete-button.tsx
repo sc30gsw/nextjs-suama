@@ -3,7 +3,8 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { deleteTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/delete-trouble-category-action'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { Confirm } from '~/hooks/use-confirm'
@@ -31,13 +32,13 @@ export function TroubleCategoryDeleteButton({ id }: TroubleCategoryDeleteButtonP
         const result = await deleteTroubleCategoryAction(id)
 
         if (result.status === 'error') {
-          toast.error(TOAST_MESSAGES.TROUBLE_CATEGORY_DELETE_FAILED)
+          toast.error(TOAST_MESSAGES.TROUBLE.DELETE_FAILED)
           return
         }
 
-        toast.success(TOAST_MESSAGES.TROUBLE_CATEGORY_DELETE_SUCCESS)
+        toast.success(TOAST_MESSAGES.TROUBLE.DELETE_SUCCESS)
       } catch (_) {
-        toast.error(TOAST_MESSAGES.TROUBLE_CATEGORY_DELETE_FAILED)
+        toast.error(TOAST_MESSAGES.TROUBLE.DELETE_FAILED)
       }
     })
   }

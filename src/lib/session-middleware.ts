@@ -2,7 +2,7 @@ import 'server-only'
 
 import { eq } from 'drizzle-orm'
 import { createMiddleware } from 'hono/factory'
-import { ERROR_STATUS } from '~/constants'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { db } from '~/index'
 

@@ -12,7 +12,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateMissionAction } from '~/features/report-contexts/missions/actions/update-mission-action'
 import {
   type EditMissionInputSchema,
@@ -41,12 +42,12 @@ export function EditMissionModal({
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateMissionAction, {
       onSuccess(result) {
-        toast.success(TOAST_MESSAGES.MISSION_UPDATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.MISSION.UPDATE_SUCCESS)
         toggle(false)
         setProject(result.initialValue?.projectId.toString() ?? '')
       },
       onError() {
-        toast.error(TOAST_MESSAGES.MISSION_UPDATE_FAILED)
+        toast.error(TOAST_MESSAGES.MISSION.UPDATE_FAILED)
       },
     }),
     null,

@@ -15,7 +15,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { createProjectAction } from '~/features/report-contexts/projects/actions/create-project-action'
 import {
   type CreateProjectInputSchema,
@@ -38,13 +39,13 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createProjectAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.PROJECT_CREATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.PROJECT.CREATE_SUCCESS)
         toggle(false)
         setClient(null)
         setChecked(false)
       },
       onError() {
-        toast.error(TOAST_MESSAGES.PROJECT_CREATE_FAILED)
+        toast.error(TOAST_MESSAGES.PROJECT.CREATE_FAILED)
       },
     }),
     null,

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
 import { authClient } from '~/lib/auth-client'
 
 export function useSignOut() {
@@ -13,11 +13,11 @@ export function useSignOut() {
       await authClient.signOut({
         fetchOptions: {
           onSuccess: () => {
-            toast.success(TOAST_MESSAGES.SIGN_OUT_SUCCESS)
+            toast.success(TOAST_MESSAGES.AUTH.SIGN_OUT_SUCCESS)
             router.push('/sign-in')
           },
           onError: () => {
-            toast.error(TOAST_MESSAGES.SIGN_OUT_FAILED)
+            toast.error(TOAST_MESSAGES.AUTH.SIGN_OUT_FAILED)
           },
         },
       })

@@ -12,7 +12,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateClientAction } from '~/features/report-contexts/clients/actions/update-client-action'
 import {
   type EditClientInputSchema,
@@ -33,11 +34,11 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateClientAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.CLIENT_UPDATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.CLIENT.UPDATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error(TOAST_MESSAGES.CLIENT_UPDATE_FAILED)
+        toast.error(TOAST_MESSAGES.CLIENT.UPDATE_FAILED)
       },
     }),
     null,

@@ -9,7 +9,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateAppealCategoryAction } from '~/features/report-contexts/appeals/actions/update-appeal-category-action'
 import {
   type EditAppealCategoryInputSchema,
@@ -30,11 +31,11 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateAppealCategoryAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.APPEAL_CATEGORY_UPDATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.APPEAL.UPDATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error(TOAST_MESSAGES.APPEAL_CATEGORY_UPDATE_FAILED)
+        toast.error(TOAST_MESSAGES.APPEAL.UPDATE_FAILED)
       },
     }),
     null,

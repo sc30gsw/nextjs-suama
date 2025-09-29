@@ -9,7 +9,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/update-trouble-category-action'
 import {
   type EditTroubleCategoryInputSchema,
@@ -30,11 +31,11 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateTroubleCategoryAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.TROUBLE_CATEGORY_UPDATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.TROUBLE.UPDATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error(TOAST_MESSAGES.TROUBLE_CATEGORY_UPDATE_FAILED)
+        toast.error(TOAST_MESSAGES.TROUBLE.UPDATE_FAILED)
       },
     }),
     null,

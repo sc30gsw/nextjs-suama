@@ -4,7 +4,8 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { deleteClientAction } from '~/features/report-contexts/clients/actions/delete-client-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
@@ -33,13 +34,13 @@ export function ClientDeleteButton({ id }: ClientDeleteButtonProps) {
         const result = await deleteClientAction(id)
 
         if (result.status === 'error') {
-          toast.error(TOAST_MESSAGES.CLIENT_DELETE_FAILED)
+          toast.error(TOAST_MESSAGES.CLIENT.DELETE_FAILED)
           return
         }
 
-        toast.success(TOAST_MESSAGES.CLIENT_DELETE_SUCCESS)
+        toast.success(TOAST_MESSAGES.CLIENT.DELETE_SUCCESS)
       } catch (_) {
-        toast.error(TOAST_MESSAGES.CLIENT_DELETE_FAILED)
+        toast.error(TOAST_MESSAGES.CLIENT.DELETE_FAILED)
       }
     })
   }

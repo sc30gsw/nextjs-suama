@@ -11,7 +11,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { createTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/create-trouble-category-action'
 import {
   type CreateTroubleCategoryInputSchema,
@@ -26,11 +27,11 @@ export function CreateTroubleCategoryModal() {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createTroubleCategoryAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.TROUBLE_CATEGORY_CREATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.TROUBLE.CREATE_SUCCESS)
         toggle(false)
       },
       onError() {
-        toast.error(TOAST_MESSAGES.TROUBLE_CATEGORY_CREATE_FAILED)
+        toast.error(TOAST_MESSAGES.TROUBLE.CREATE_FAILED)
       },
     }),
     null,

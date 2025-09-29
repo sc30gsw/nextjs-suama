@@ -14,7 +14,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { createMissionAction } from '~/features/report-contexts/missions/actions/create-mission-action'
 import {
   type CreateMissionInputSchema,
@@ -36,12 +37,12 @@ export function CreateMissionModal({ projects }: CreateMissionModalProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createMissionAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.MISSION_CREATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.MISSION.CREATE_SUCCESS)
         toggle(false)
         setProject(null)
       },
       onError() {
-        toast.error(TOAST_MESSAGES.MISSION_CREATE_FAILED)
+        toast.error(TOAST_MESSAGES.MISSION.CREATE_FAILED)
       },
     }),
     null,

@@ -14,7 +14,7 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
 import { changePasswordAction } from '~/features/users/actions/change-password-action'
 import {
   type ChangePasswordInputSchema,
@@ -33,10 +33,10 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(changePasswordAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.PASSWORD_CHANGE_SUCCESS)
+        toast.success(TOAST_MESSAGES.PASSWORD.CHANGE_SUCCESS)
       },
       onError() {
-        toast.error(TOAST_MESSAGES.PASSWORD_CHANGE_FAILED)
+        toast.error(TOAST_MESSAGES.PASSWORD.CHANGE_FAILED)
       },
     }),
     null,

@@ -3,7 +3,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
 import {
@@ -25,7 +25,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
         if (isErrorStatus(errorMessage)) {
           switch (errorMessage) {
             case ERROR_STATUS.UNAUTHORIZED:
-              toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
                   onClick: () => router.push('/sign-in'),
@@ -35,7 +35,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
               return
 
             case ERROR_STATUS.NOT_FOUND:
-              toast.error(TOAST_MESSAGES.NOT_FOUND_DAILY_REPORT, {
+              toast.error(TOAST_MESSAGES.DAILY_REPORT.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
                   onClick: () => router.push('/daily/mine'),
@@ -45,7 +45,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
               return
 
             case ERROR_STATUS.FOR_BIDDEN:
-              toast.error(TOAST_MESSAGES.FORBIDDEN_DAILY_REPORT, {
+              toast.error(TOAST_MESSAGES.DAILY_REPORT.FORBIDDEN, {
                 cancel: {
                   label: '一覧に戻る',
                   onClick: () => router.push('/daily/mine'),
@@ -56,10 +56,10 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
           }
         }
 
-        toast.error(TOAST_MESSAGES.UPDATE_DAILY_REPORT_FAILED)
+        toast.error(TOAST_MESSAGES.DAILY_REPORT.UPDATE_FAILED)
       },
       onSuccess() {
-        toast.success(TOAST_MESSAGES.UPDATE_DAILY_REPORT_SUCCESS)
+        toast.success(TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS)
       },
     }),
     null,

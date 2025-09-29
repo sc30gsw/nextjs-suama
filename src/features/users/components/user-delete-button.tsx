@@ -5,7 +5,8 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { deleteUserAction } from '~/features/users/actions/delete-user-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
@@ -35,14 +36,14 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
         const result = await deleteUserAction(id)
 
         if (result.status === 'error') {
-          toast.error(TOAST_MESSAGES.USER_DELETE_FAILED)
+          toast.error(TOAST_MESSAGES.USER.DELETE_FAILED)
           return
         }
 
-        toast.success(TOAST_MESSAGES.USER_DELETE_SUCCESS)
+        toast.success(TOAST_MESSAGES.USER.DELETE_SUCCESS)
         router.push('/sign-in')
       } catch (_) {
-        toast.error(TOAST_MESSAGES.USER_DELETE_FAILED)
+        toast.error(TOAST_MESSAGES.USER.DELETE_FAILED)
       }
     })
   }

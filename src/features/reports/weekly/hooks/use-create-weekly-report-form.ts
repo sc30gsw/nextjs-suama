@@ -2,7 +2,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { createWeeklyReportAction } from '~/features/reports/weekly/actions/create-weekly-report-action'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import {
@@ -30,7 +30,7 @@ export function useCreateWeeklyForm(
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createWeeklyReportAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.CREATE_WEEKLY_REPORT_SUCCESS)
+        toast.success(TOAST_MESSAGES.WEEKLY_REPORT.CREATE_SUCCESS)
         router.push(`/weekly/list/${date.dates}`)
       },
       onError(result) {
@@ -38,7 +38,7 @@ export function useCreateWeeklyForm(
           const isUnauthorized = result.error.message?.includes(ERROR_STATUS.UNAUTHORIZED)
 
           if (isUnauthorized) {
-            toast.error(TOAST_MESSAGES.UNAUTHORIZED, {
+            toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
               cancel: {
                 label: 'ログイン',
                 onClick: () => router.push('/sign-in'),
@@ -48,7 +48,7 @@ export function useCreateWeeklyForm(
           }
         }
 
-        toast.error(TOAST_MESSAGES.CREATE_WEEKLY_REPORT_FAILED)
+        toast.error(TOAST_MESSAGES.WEEKLY_REPORT.CREATE_FAILED)
       },
     }),
     null,

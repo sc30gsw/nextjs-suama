@@ -3,7 +3,8 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { deleteAppealCategoryAction } from '~/features/report-contexts/appeals/actions/delete-appeal-category-action'
 import type { AppealCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { Confirm } from '~/hooks/use-confirm'
@@ -31,13 +32,13 @@ export function AppealCategoryDeleteButton({ id }: AppealCategoryDeleteButtonPro
         const result = await deleteAppealCategoryAction(id)
 
         if (result.status === 'error') {
-          toast.error(TOAST_MESSAGES.APPEAL_CATEGORY_DELETE_FAILED)
+          toast.error(TOAST_MESSAGES.APPEAL.DELETE_FAILED)
           return
         }
 
-        toast.success(TOAST_MESSAGES.APPEAL_CATEGORY_DELETE_SUCCESS)
+        toast.success(TOAST_MESSAGES.APPEAL.DELETE_SUCCESS)
       } catch (_) {
-        toast.error(TOAST_MESSAGES.APPEAL_CATEGORY_DELETE_FAILED)
+        toast.error(TOAST_MESSAGES.APPEAL.DELETE_FAILED)
       }
     })
   }

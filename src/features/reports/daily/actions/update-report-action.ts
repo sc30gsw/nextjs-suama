@@ -5,12 +5,12 @@ import { format } from 'date-fns'
 import { and, eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { ERROR_STATUS } from '~/constants'
 import {
   GET_DAILY_REPORT_BY_ID_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
 } from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
 import { updateDailyReportFormSchema } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import { db } from '~/index'

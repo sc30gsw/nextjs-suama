@@ -13,7 +13,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
+
 import { signInAction } from '~/features/auth/actions/sign-in-action'
 import {
   type SignInInputSchema,
@@ -37,11 +38,11 @@ export function SignInForm({
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(signInAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.SIGN_IN_SUCCESS)
+        toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
         router.push('/daily')
       },
       onError() {
-        toast.error(TOAST_MESSAGES.SIGN_IN_FAILED)
+        toast.error(TOAST_MESSAGES.AUTH.SIGN_IN_FAILED)
       },
     }),
     null,
@@ -148,12 +149,12 @@ export function SignInForm({
                 const data = await authClient.signIn.passkey()
 
                 if (data?.error) {
-                  toast.error(TOAST_MESSAGES.SIGN_IN_FAILED)
+                  toast.error(TOAST_MESSAGES.AUTH.SIGN_IN_FAILED)
 
                   return
                 }
 
-                toast.success(TOAST_MESSAGES.SIGN_IN_SUCCESS)
+                toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
                 router.push('/daily')
               })
             }}

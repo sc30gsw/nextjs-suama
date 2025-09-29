@@ -14,7 +14,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB, TOAST_MESSAGES } from '~/constants'
+import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
   type SettingUserInputSchema,
@@ -38,13 +39,13 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateUserAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.USER_UPDATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.USER.UPDATE_SUCCESS)
         toggle(false)
         setImageError('')
         location.reload()
       },
       onError() {
-        toast.error(TOAST_MESSAGES.USER_UPDATE_FAILED)
+        toast.error(TOAST_MESSAGES.USER.UPDATE_FAILED)
       },
     }),
     null,

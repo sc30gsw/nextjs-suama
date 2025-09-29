@@ -22,7 +22,8 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
-import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB, TOAST_MESSAGES } from '~/constants'
+import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
 import { settingUserAction } from '~/features/users/actions/setting-user-action'
 import {
   type SettingUserInputSchema,
@@ -47,12 +48,12 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(settingUserAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.USER_UPDATE_SUCCESS)
+        toast.success(TOAST_MESSAGES.USER.UPDATE_SUCCESS)
         setImageError('')
         location.reload()
       },
       onError() {
-        toast.error(TOAST_MESSAGES.USER_UPDATE_FAILED)
+        toast.error(TOAST_MESSAGES.USER.UPDATE_FAILED)
       },
     }),
     null,
@@ -204,12 +205,12 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               const data = await authClient.passkey.addPasskey()
 
               if (data?.error) {
-                toast.error(TOAST_MESSAGES.PASSKEY_ADD_FAILED)
+                toast.error(TOAST_MESSAGES.USER.PASSKEY_ADD_FAILED)
 
                 return
               }
 
-              toast.success(TOAST_MESSAGES.PASSKEY_ADD_SUCCESS)
+              toast.success(TOAST_MESSAGES.USER.PASSKEY_ADD_SUCCESS)
             })
           }}
           className="w-full"
