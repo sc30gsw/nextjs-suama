@@ -139,7 +139,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     console.error('Update report error:', error)
 
     return submission.reply({
-      fieldErrors: { message: ['日報の更新に失敗しました'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 

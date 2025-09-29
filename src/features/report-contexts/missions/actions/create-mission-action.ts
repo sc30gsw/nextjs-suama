@@ -4,6 +4,7 @@ import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { missions, projects } from '~/db/schema'
 import { createMissionInputSchema } from '~/features/report-contexts/missions/types/schemas/create-mission-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
@@ -25,7 +26,7 @@ export async function createMissionAction(_: unknown, formData: FormData) {
 
     if (!project) {
       return submission.reply({
-        fieldErrors: { clientId: ['未登録のプロジェクトが選択されています。'] },
+        fieldErrors: { clientId: [ERROR_STATUS.INVALID_RELATION] },
       })
     }
 
@@ -40,7 +41,7 @@ export async function createMissionAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }

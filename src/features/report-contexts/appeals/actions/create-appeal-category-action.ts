@@ -3,6 +3,7 @@
 import { parseWithZod } from '@conform-to/zod'
 import { revalidateTag } from 'next/cache'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
 import { createAppealCategoryInputSchema } from '~/features/report-contexts/appeals/types/schemas/create-appeal-category-input-schema'
 import { db } from '~/index'
@@ -26,7 +27,7 @@ export async function createAppealCategoryAction(_: unknown, formData: FormData)
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }

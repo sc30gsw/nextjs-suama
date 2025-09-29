@@ -84,7 +84,7 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }

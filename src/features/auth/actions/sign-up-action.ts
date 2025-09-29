@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod'
 import { or } from 'drizzle-orm'
-
+import { ERROR_STATUS } from '~/constants/error-message'
 import { signUpInputSchema } from '~/features/auth/types/schemas/sign-up-input-schema'
 import { db } from '~/index'
 import { auth } from '~/lib/auth'
@@ -39,7 +39,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }
