@@ -3,7 +3,7 @@ import { APP_TIMEZONE, DATE_TIME } from '~/constants/date'
 
 const SEPARATOR = 'T'
 
-type DateInput = string | `${string}-${string}-${string}T${string}`
+type DateInput = string | `${string}-${string}-${string}${typeof SEPARATOR}${string}`
 type DateType = 'start' | 'end'
 
 // TODO: 今後、関数の追加があれば、dateUtilsオブジェクトを追加する。
