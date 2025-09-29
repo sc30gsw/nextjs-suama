@@ -37,6 +37,7 @@ export function useUpdateWeeklyReportForm(
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
+
         if (isErrorStatus(errorMessage)) {
           switch (errorMessage) {
             case ERROR_STATUS.UNAUTHORIZED:
@@ -73,7 +74,8 @@ export function useUpdateWeeklyReportForm(
 
         toast.error(TOAST_MESSAGES.WEEKLY_REPORT.UPDATE_FAILED)
       },
-    }),
+    }
+  ),
     null,
   )
 

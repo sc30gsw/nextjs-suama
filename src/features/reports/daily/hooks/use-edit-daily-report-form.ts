@@ -61,7 +61,8 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
       onSuccess() {
         toast.success(TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS)
       },
-    }),
+    }
+  ),
     null,
   )
 

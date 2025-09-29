@@ -20,19 +20,19 @@ const app = new Hono()
     const todayStart = startOfDay(today)
     const todayEnd = endOfDay(today)
 
+    // WHERE句の基本条件
+    const baseConditions = [
+      gte(dailyReports.reportDate, todayStart),
+      lte(dailyReports.reportDate, todayEnd),
+    ]
+
+    // ユーザー名フィルタリング条件を含めたWHERE句を構築
+    const whereConditions =
+      userNamesArray.length > 0
+        ? [...baseConditions, or(...userNamesArray.map((name) => like(users.name, `%${name}%`)))]
+        : baseConditions
+
     try {
-      // WHERE句の基本条件
-      const baseConditions = [
-        gte(dailyReports.reportDate, todayStart),
-        lte(dailyReports.reportDate, todayEnd),
-      ]
-
-      // ユーザー名フィルタリング条件を含めたWHERE句を構築
-      const whereConditions =
-        userNamesArray.length > 0
-          ? [...baseConditions, or(...userNamesArray.map((name) => like(users.name, `%${name}%`)))]
-          : baseConditions
-
       // フィルタリングされた全件数を取得
       const totalQuery = db
         .select({ count: count(dailyReports.id) })
@@ -123,6 +123,7 @@ const app = new Hono()
       )
     } catch (error) {
       console.error('Error fetching today reports:', error)
+
       return c.json({ error: 'Failed to fetch today reports' }, 500)
     }
   })
@@ -133,19 +134,19 @@ const app = new Hono()
     const skipNumber = Number(skip) || 0
     const limitNumber = Number(limit) || 10
 
+    // デフォルト値設定（前月〜今日）
+    const today = new Date()
+    const defaultStartDate = convertJstDateToUtc(
+      format(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()), 'yyyy-MM-dd'),
+      'start',
+    )
+    const defaultEndDate = convertJstDateToUtc(format(today, 'yyyy-MM-dd'), 'start')
+
+    // 日付範囲の条件を構築
+    const start = startDate ? convertJstDateToUtc(startDate, 'start') : defaultStartDate
+    const end = endDate ? convertJstDateToUtc(endDate, 'start') : defaultEndDate
+
     try {
-      // デフォルト値設定（前月〜今日）
-      const today = new Date()
-      const defaultStartDate = convertJstDateToUtc(
-        format(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()), 'yyyy-MM-dd'),
-        'start',
-      )
-      const defaultEndDate = convertJstDateToUtc(format(today, 'yyyy-MM-dd'), 'start')
-
-      // 日付範囲の条件を構築
-      const start = startDate ? convertJstDateToUtc(startDate, 'start') : defaultStartDate
-      const end = endDate ? convertJstDateToUtc(endDate, 'start') : defaultEndDate
-
       // フィルタリングされた全件数を取得
       const totalQuery = db
         .select({ count: count(dailyReports.id) })
@@ -253,6 +254,7 @@ const app = new Hono()
       )
     } catch (error) {
       console.error('Error fetching mine reports:', error)
+
       return c.json({ error: 'Failed to fetch mine reports' }, 500)
     }
   })
@@ -321,6 +323,7 @@ const app = new Hono()
       return c.json(formattedReport, 200)
     } catch (error) {
       console.error('Error fetching individual report:', error)
+
       return c.json({ error: 'Failed to fetch individual report' }, 500)
     }
   })
