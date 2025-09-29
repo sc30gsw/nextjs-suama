@@ -4,7 +4,7 @@ import { Hono } from 'hono'
 import { dailyReports, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { dateUtils } from '~/utils/date-utils'
+import { convertJstDateToUtc } from '~/utils/date-utils'
 
 const app = new Hono()
   .get('/today', sessionMiddleware, async (c) => {
@@ -136,15 +136,15 @@ const app = new Hono()
     try {
       // デフォルト値設定（前月〜今日）
       const today = new Date()
-      const defaultStartDate = dateUtils.convertJstDateToUtc(
+      const defaultStartDate = convertJstDateToUtc(
         format(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()), 'yyyy-MM-dd'),
         'start',
       )
-      const defaultEndDate = dateUtils.convertJstDateToUtc(format(today, 'yyyy-MM-dd'), 'start')
+      const defaultEndDate = convertJstDateToUtc(format(today, 'yyyy-MM-dd'), 'start')
 
       // 日付範囲の条件を構築
-      const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
-      const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'start') : defaultEndDate
+      const start = startDate ? convertJstDateToUtc(startDate, 'start') : defaultStartDate
+      const end = endDate ? convertJstDateToUtc(endDate, 'start') : defaultEndDate
 
       // フィルタリングされた全件数を取得
       const totalQuery = db

@@ -15,7 +15,7 @@ import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '
 import { updateDailyReportFormSchema } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
-import { dateUtils } from '~/utils/date-utils'
+import { convertJstDateToUtc } from '~/utils/date-utils'
 
 export async function updateReportAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -39,7 +39,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
 
   const reportDateString = submission.value.reportDate
   // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
-  const reportDate = dateUtils.convertJstDateToUtc(reportDateString, 'start')
+  const reportDate = convertJstDateToUtc(reportDateString, 'start')
 
   const report = await db.query.dailyReports.findFirst({
     where: eq(dailyReports.id, reportId),
