@@ -2,6 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { changePasswordInputSchema } from '~/features/users/types/schemas/change-password-input-schema'
 import { db } from '~/index'
@@ -23,7 +24,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
 
     if (!user) {
       return submission.reply({
-        fieldErrors: { message: ['ユーザーが見つかりませんでした'] },
+        fieldErrors: { message: [ERROR_STATUS.NOT_FOUND] },
       })
     }
 
@@ -34,7 +35,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }

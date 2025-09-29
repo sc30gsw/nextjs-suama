@@ -4,6 +4,7 @@ import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
 import { editAppealCategoryInputSchema } from '~/features/report-contexts/appeals/types/schemas/edit-appeal-category-input-schema'
 import { db } from '~/index'
@@ -18,6 +19,16 @@ export async function updateAppealCategoryAction(_: unknown, formData: FormData)
   }
 
   try {
+    const category = await db.query.categoryOfAppeals.findFirst({
+      where: eq(categoryOfAppeals.id, submission.value.id),
+    })
+
+    if (!category) {
+      return submission.reply({
+        fieldErrors: { message: [ERROR_STATUS.NOT_FOUND] },
+      })
+    }
+
     await db
       .update(categoryOfAppeals)
       .set({
@@ -30,7 +41,7 @@ export async function updateAppealCategoryAction(_: unknown, formData: FormData)
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }

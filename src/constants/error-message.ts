@@ -2,11 +2,18 @@ export const ERROR_STATUS = {
   UNAUTHORIZED: 'Unauthorized',
   NOT_FOUND: 'NotFound',
   FOR_BIDDEN: 'Forbidden',
+  ALREADY_EXISTS: 'AlreadyExists',
+  INVALID_RELATION: 'InvalidRelation',
+  SOMETHING_WENT_WRONG: 'SomethingWentWrong',
 } as const satisfies Record<string, string>
 
 export type ErrorStatus = (typeof ERROR_STATUS)[keyof typeof ERROR_STATUS]
 
 export const TOAST_MESSAGES = {
+  COMMON: {
+    SOMETHING_WENT_WRONG: '予期しないエラーが発生しました',
+  },
+
   AUTH: {
     SIGN_IN_SUCCESS: 'サインインしました',
     SIGN_IN_FAILED: 'サインインに失敗しました',
@@ -31,6 +38,8 @@ export const TOAST_MESSAGES = {
     UPDATE_FAILED: 'ユーザーの更新に失敗しました',
     DELETE_SUCCESS: 'ユーザーの削除に成功しました',
     DELETE_FAILED: 'ユーザーの削除に失敗しました',
+    NOT_FOUND: 'ユーザーが見つかりません',
+    EMAIL_ALREADY_EXISTS: '入力されたメールアドレスは既に使用されています',
     PASSKEY_ADD_SUCCESS: 'Passkeyの追加に成功しました',
     PASSKEY_ADD_FAILED: 'パスキーの追加に失敗しました',
   },
@@ -61,6 +70,7 @@ export const TOAST_MESSAGES = {
     UPDATE_FAILED: 'クライアントの更新に失敗しました',
     DELETE_SUCCESS: 'クライアントの削除に成功しました',
     DELETE_FAILED: 'クライアントの削除に失敗しました',
+    NOT_FOUND: 'クライアントが見つかりません',
   },
 
   PROJECT: {
@@ -70,6 +80,8 @@ export const TOAST_MESSAGES = {
     UPDATE_FAILED: 'プロジェクトの更新に失敗しました',
     DELETE_SUCCESS: 'プロジェクトの削除に成功しました',
     DELETE_FAILED: 'プロジェクトの削除に失敗しました',
+    NOT_FOUND: 'プロジェクトが見つかりません',
+    INVALID_CLIENT: '未登録のクライアントが選択されています',
   },
 
   MISSION: {
@@ -79,6 +91,8 @@ export const TOAST_MESSAGES = {
     UPDATE_FAILED: 'ミッションの更新に失敗しました',
     DELETE_SUCCESS: 'ミッションの削除に成功しました',
     DELETE_FAILED: 'ミッションの削除に失敗しました',
+    NOT_FOUND: 'ミッションが見つかりません',
+    INVALID_PROJECT: '未登録のプロジェクトが選択されています',
   },
 
   APPEAL: {
@@ -88,6 +102,7 @@ export const TOAST_MESSAGES = {
     UPDATE_FAILED: 'アピールポイントカテゴリーの更新に失敗しました',
     DELETE_SUCCESS: 'アピールポイントカテゴリーの削除に成功しました',
     DELETE_FAILED: 'アピールポイントカテゴリーの削除に失敗しました',
+    NOT_FOUND: 'アピールポイントカテゴリーが見つかりません',
   },
 
   TROUBLE: {
@@ -97,5 +112,6 @@ export const TOAST_MESSAGES = {
     UPDATE_FAILED: '困っていることカテゴリーの更新に失敗しました',
     DELETE_SUCCESS: '困っていることカテゴリーの削除に成功しました',
     DELETE_FAILED: '困っていることカテゴリーの削除に失敗しました',
+    NOT_FOUND: '困っていることカテゴリーが見つかりません',
   },
 } as const satisfies Record<string, Record<string, string>>

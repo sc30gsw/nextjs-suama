@@ -45,7 +45,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
 
   if (existingReport) {
     return submission.reply({
-      fieldErrors: { message: ['本日の日報は既に作成されています'] },
+      fieldErrors: { message: [ERROR_STATUS.ALREADY_EXISTS] },
     })
   }
 
@@ -119,7 +119,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['日報の作成に失敗しました'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 
