@@ -11,7 +11,7 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { resetPasswordAction } from '~/features/auth/actions/reset-password-action'
 import {
   type PasswordResetInputSchema,
@@ -19,6 +19,7 @@ import {
 } from '~/features/auth/types/schemas/reset-password-input-schema'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type ResetPasswordFormProps = {
@@ -36,10 +37,15 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
         router.push('/sign-in')
       },
       onError(result) {
-        if (result?.error && Array.isArray(result.error.message)) {
-          toast.error(result.error.message.join(', '))
+        const errorMessage = result?.error?.message?.[0]
 
-          return
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.SOMETHING_WENT_WRONG:
+              toast.error(TOAST_MESSAGES.PASSWORD.RESET_FAILED)
+
+              return
+          }
         }
 
         toast.error(TOAST_MESSAGES.PASSWORD.RESET_FAILED)

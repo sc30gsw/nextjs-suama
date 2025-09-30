@@ -76,9 +76,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       if (!project) {
         return submission.reply({
           fieldErrors: {
-            message: [
-              'プロジェクトが存在しません。再度、選択し直すか、プロジェクトの登録を行ってください。',
-            ],
+            message: [ERROR_STATUS.INVALID_PROJECT_RELATION],
           },
         })
       }
@@ -90,9 +88,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       if (!mission) {
         return submission.reply({
           fieldErrors: {
-            message: [
-              'ミッションが存在しません。再度、選択し直すか、ミッションの登録を行ってください。',
-            ],
+            message: [ERROR_STATUS.INVALID_MISSION_RELATION],
           },
         })
       }

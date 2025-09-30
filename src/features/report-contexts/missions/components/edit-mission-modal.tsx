@@ -73,6 +73,11 @@ export function EditMissionModal({
               })
 
               return
+
+            case ERROR_STATUS.INVALID_PROJECT_RELATION:
+              toast.error(TOAST_MESSAGES.PROJECT.INVALID_RELATION)
+
+              return
           }
         }
 

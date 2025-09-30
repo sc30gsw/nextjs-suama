@@ -11,7 +11,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { createTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/create-trouble-category-action'
 import {
@@ -19,6 +19,7 @@ import {
   createTroubleCategoryInputSchema,
 } from '~/features/report-contexts/troubles/types/schemas/create-trouble-category-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function CreateTroubleCategoryModal() {
@@ -30,7 +31,18 @@ export function CreateTroubleCategoryModal() {
         toast.success(TOAST_MESSAGES.TROUBLE.CREATE_SUCCESS)
         toggle(false)
       },
-      onError() {
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
+
+              return
+          }
+        }
+
         toast.error(TOAST_MESSAGES.TROUBLE.CREATE_FAILED)
       },
     }),

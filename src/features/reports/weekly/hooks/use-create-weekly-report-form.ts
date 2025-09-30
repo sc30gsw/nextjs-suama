@@ -11,6 +11,7 @@ import {
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import type { WeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useCreateWeeklyForm(
@@ -34,17 +35,29 @@ export function useCreateWeeklyForm(
         router.push(`/weekly/list/${date.dates}`)
       },
       onError(result) {
-        if (result.error) {
-          const isUnauthorized = result.error.message?.includes(ERROR_STATUS.UNAUTHORIZED)
+        const errorMessage = result?.error?.message?.[0]
 
-          if (isUnauthorized) {
-            toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
-              cancel: {
-                label: 'ログイン',
-                onClick: () => router.push('/sign-in'),
-              },
-            })
-            return
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.INVALID_PROJECT_RELATION:
+              toast.error(TOAST_MESSAGES.PROJECT.INVALID_RELATION)
+
+              return
+
+            case ERROR_STATUS.INVALID_MISSION_RELATION:
+              toast.error(TOAST_MESSAGES.MISSION.INVALID_RELATION)
+
+              return
           }
         }
 

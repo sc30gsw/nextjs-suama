@@ -8,6 +8,7 @@ import { clients } from '~/db/schema'
 import { createClientInputSchema } from '~/features/report-contexts/clients/types/schemas/create-client-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
 import { db } from '~/index'
+import { getServerSession } from '~/lib/get-server-session'
 
 export async function createClientAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -16,6 +17,14 @@ export async function createClientAction(_: unknown, formData: FormData) {
 
   if (submission.status !== 'success') {
     return submission.reply()
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    })
   }
 
   try {

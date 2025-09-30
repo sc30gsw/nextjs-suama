@@ -15,7 +15,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { createProjectAction } from '~/features/report-contexts/projects/actions/create-project-action'
 import {
@@ -24,6 +24,7 @@ import {
 } from '~/features/report-contexts/projects/types/schemas/create-project-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type CreateProjectModalProps = {
@@ -44,7 +45,23 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
         setClient(null)
         setChecked(false)
       },
-      onError() {
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
+
+              return
+
+            case ERROR_STATUS.INVALID_CLIENT_RELATION:
+              toast.error(TOAST_MESSAGES.PROJECT.INVALID_RELATION)
+
+              return
+          }
+        }
+
         toast.error(TOAST_MESSAGES.PROJECT.CREATE_FAILED)
       },
     }),

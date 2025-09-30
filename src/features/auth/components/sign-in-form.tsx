@@ -13,7 +13,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { signInAction } from '~/features/auth/actions/sign-in-action'
 import {
@@ -23,6 +23,7 @@ import {
 
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function SignInForm({
@@ -41,7 +42,18 @@ export function SignInForm({
         toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
         router.push('/daily')
       },
-      onError() {
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.SOMETHING_WENT_WRONG:
+              toast.error(TOAST_MESSAGES.AUTH.SIGN_IN_FAILED)
+
+              return
+          }
+        }
+
         toast.error(TOAST_MESSAGES.AUTH.SIGN_IN_FAILED)
       },
     }),

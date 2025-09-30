@@ -13,6 +13,7 @@ import {
 } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useCreateDailyForm(
@@ -27,27 +28,34 @@ export function useCreateDailyForm(
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createReportAction, {
       onError(result) {
-        if (result.error) {
-          const errorMessage = result.error.message
+        const errorMessage = result?.error?.message?.[0]
 
-          if (errorMessage?.includes(ERROR_STATUS.UNAUTHORIZED)) {
-            toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
-              cancel: {
-                label: 'ログイン',
-                onClick: () => router.push('/sign-in'),
-              },
-            })
-            return
-          }
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
 
-          if (errorMessage?.includes(TOAST_MESSAGES.DAILY_REPORT.ALREADY_EXISTS)) {
-            toast.error(TOAST_MESSAGES.DAILY_REPORT.ALREADY_EXISTS, {
-              cancel: {
-                label: '日報一覧へ',
-                onClick: () => router.push('/mine'),
-              },
-            })
-            return
+              return
+
+            case ERROR_STATUS.ALREADY_EXISTS:
+              toast.error(TOAST_MESSAGES.DAILY_REPORT.ALREADY_EXISTS, {
+                cancel: {
+                  label: '日報一覧へ',
+                  onClick: () => router.push('/mine'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.INVALID_MISSION_RELATION:
+              toast.error(TOAST_MESSAGES.MISSION.INVALID_RELATION)
+
+              return
           }
         }
 

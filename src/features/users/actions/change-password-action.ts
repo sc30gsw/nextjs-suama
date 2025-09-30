@@ -7,6 +7,7 @@ import { users } from '~/db/schema'
 import { changePasswordInputSchema } from '~/features/users/types/schemas/change-password-input-schema'
 import { db } from '~/index'
 import { auth } from '~/lib/auth'
+import { getServerSession } from '~/lib/get-server-session'
 
 export async function changePasswordAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -15,6 +16,14 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
 
   if (submission.status !== 'success') {
     return submission.reply()
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    })
   }
 
   try {

@@ -53,6 +53,11 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
               })
 
               return
+
+            case ERROR_STATUS.INVALID_MISSION_RELATION:
+              toast.error(TOAST_MESSAGES.MISSION.INVALID_RELATION)
+
+              return
           }
         }
 
@@ -61,8 +66,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
       onSuccess() {
         toast.success(TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS)
       },
-    }
-  ),
+    }),
     null,
   )
 

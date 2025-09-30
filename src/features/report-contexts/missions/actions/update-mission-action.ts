@@ -9,6 +9,7 @@ import { missions, projects } from '~/db/schema'
 import { editMissionInputSchema } from '~/features/report-contexts/missions/types/schemas/edit-mission-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
 import { db } from '~/index'
+import { getServerSession } from '~/lib/get-server-session'
 
 export async function updateMissionAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -19,6 +20,14 @@ export async function updateMissionAction(_: unknown, formData: FormData) {
     return submission.reply()
   }
 
+  const session = await getServerSession()
+
+  if (!session) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    })
+  }
+
   try {
     const project = await db.query.projects.findFirst({
       where: eq(projects.id, submission.value.projectId),
@@ -26,7 +35,7 @@ export async function updateMissionAction(_: unknown, formData: FormData) {
 
     if (!project) {
       return submission.reply({
-        fieldErrors: { clientId: [ERROR_STATUS.INVALID_RELATION] },
+        fieldErrors: { clientId: [ERROR_STATUS.INVALID_PROJECT_RELATION] },
       })
     }
 

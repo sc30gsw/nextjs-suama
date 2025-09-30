@@ -72,9 +72,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
 
         if (!mission) {
           return submission.reply({
-            formErrors: [
-              'ミッションが存在しません。再度、選択し直すか、ミッションの登録を行ってください。',
-            ],
+            fieldErrors: { message: [ERROR_STATUS.INVALID_MISSION_RELATION] },
           })
         }
 

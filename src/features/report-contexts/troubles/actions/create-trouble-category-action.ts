@@ -7,6 +7,7 @@ import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfTroubles } from '~/db/schema'
 import { createTroubleCategoryInputSchema } from '~/features/report-contexts/troubles/types/schemas/create-trouble-category-input-schema'
 import { db } from '~/index'
+import { getServerSession } from '~/lib/get-server-session'
 
 export async function createTroubleCategoryAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -15,6 +16,14 @@ export async function createTroubleCategoryAction(_: unknown, formData: FormData
 
   if (submission.status !== 'success') {
     return submission.reply()
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    })
   }
 
   try {

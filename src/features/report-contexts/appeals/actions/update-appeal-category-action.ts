@@ -8,6 +8,7 @@ import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
 import { editAppealCategoryInputSchema } from '~/features/report-contexts/appeals/types/schemas/edit-appeal-category-input-schema'
 import { db } from '~/index'
+import { getServerSession } from '~/lib/get-server-session'
 
 export async function updateAppealCategoryAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -16,6 +17,14 @@ export async function updateAppealCategoryAction(_: unknown, formData: FormData)
 
   if (submission.status !== 'success') {
     return submission.reply()
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    })
   }
 
   try {

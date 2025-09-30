@@ -77,6 +77,11 @@ export function EditProjectModal({
               })
 
               return
+
+            case ERROR_STATUS.INVALID_CLIENT_RELATION:
+              toast.error(TOAST_MESSAGES.CLIENT.INVALID_RELATION)
+
+              return
           }
         }
 

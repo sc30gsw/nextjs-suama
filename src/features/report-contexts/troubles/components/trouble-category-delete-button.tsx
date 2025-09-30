@@ -3,11 +3,12 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
-import { TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/delete-trouble-category-action'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { Confirm } from '~/hooks/use-confirm'
+import { isErrorStatus } from '~/utils'
 
 type TroubleCategoryDeleteButtonProps = Pick<
   TroubleCategoriesResponse['troubleCategories'][number],
@@ -29,9 +30,23 @@ export function TroubleCategoryDeleteButton({ id }: TroubleCategoryDeleteButtonP
 
     startTransition(async () => {
       try {
-        const result = await deleteTroubleCategoryAction(id)
+        const formData = new FormData()
+        formData.append('id', id)
+
+        const result = await deleteTroubleCategoryAction(undefined, formData)
 
         if (result.status === 'error') {
+          const errorMessage = result?.error?.message?.[0]
+
+          if (isErrorStatus(errorMessage)) {
+            switch (errorMessage) {
+              case ERROR_STATUS.UNAUTHORIZED:
+                toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
+
+                return
+            }
+          }
+
           toast.error(TOAST_MESSAGES.TROUBLE.DELETE_FAILED)
           return
         }

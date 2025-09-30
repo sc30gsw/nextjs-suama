@@ -3,8 +3,11 @@ export const ERROR_STATUS = {
   NOT_FOUND: 'NotFound',
   FOR_BIDDEN: 'Forbidden',
   ALREADY_EXISTS: 'AlreadyExists',
-  INVALID_RELATION: 'InvalidRelation',
   SOMETHING_WENT_WRONG: 'SomethingWentWrong',
+  EMAIL_NOT_FOUND: 'EmailNotFound',
+  INVALID_PROJECT_RELATION: 'InvalidProjectRelation',
+  INVALID_MISSION_RELATION: 'InvalidMissionRelation',
+  INVALID_CLIENT_RELATION: 'InvalidClientRelation',
 } as const satisfies Record<string, string>
 
 export type ErrorStatus = (typeof ERROR_STATUS)[keyof typeof ERROR_STATUS]
@@ -42,6 +45,8 @@ export const TOAST_MESSAGES = {
     EMAIL_ALREADY_EXISTS: '入力されたメールアドレスは既に使用されています',
     PASSKEY_ADD_SUCCESS: 'Passkeyの追加に成功しました',
     PASSKEY_ADD_FAILED: 'パスキーの追加に失敗しました',
+    EMAIL_NOT_FOUND: 'そのメールアドレスは登録されていません',
+    NAME_OR_EMAIL_ALREADY_EXISTS: 'メールアドレスまたは名前は既に使用されています',
   },
 
   DAILY_REPORT: {
@@ -71,6 +76,8 @@ export const TOAST_MESSAGES = {
     DELETE_SUCCESS: 'クライアントの削除に成功しました',
     DELETE_FAILED: 'クライアントの削除に失敗しました',
     NOT_FOUND: 'クライアントが見つかりません',
+    INVALID_RELATION:
+      'クライアントが存在しません。再度、選択し直すか、クライアントの登録を行ってください。',
   },
 
   PROJECT: {
@@ -82,6 +89,8 @@ export const TOAST_MESSAGES = {
     DELETE_FAILED: 'プロジェクトの削除に失敗しました',
     NOT_FOUND: 'プロジェクトが見つかりません',
     INVALID_CLIENT: '未登録のクライアントが選択されています',
+    INVALID_RELATION:
+      'プロジェクトが存在しません。再度、選択し直すか、プロジェクトの登録を行ってください。',
   },
 
   MISSION: {
@@ -93,6 +102,8 @@ export const TOAST_MESSAGES = {
     DELETE_FAILED: 'ミッションの削除に失敗しました',
     NOT_FOUND: 'ミッションが見つかりません',
     INVALID_PROJECT: '未登録のプロジェクトが選択されています',
+    INVALID_RELATION:
+      'ミッションが存在しません。再度、選択し直すか、ミッションの登録を行ってください。',
   },
 
   APPEAL: {

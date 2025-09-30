@@ -23,7 +23,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
     if (existingUser) {
       return submission.reply({
         fieldErrors: {
-          message: ['メールアドレスまたは名前は既に使用されています'],
+          message: [ERROR_STATUS.ALREADY_EXISTS],
         },
       })
     }

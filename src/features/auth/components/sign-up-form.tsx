@@ -11,7 +11,7 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { signUpAction } from '~/features/auth/actions/sign-up-action'
 
@@ -20,6 +20,7 @@ import {
   signUpInputSchema,
 } from '~/features/auth/types/schemas/sign-up-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function SignUpForm({
@@ -38,10 +39,15 @@ export function SignUpForm({
         router.push('/daily')
       },
       onError(result) {
-        if (result?.error && Array.isArray(result.error.message)) {
-          toast.error(result.error.message.join(', '))
+        const errorMessage = result?.error?.message?.[0]
 
-          return
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.ALREADY_EXISTS:
+              toast.error(TOAST_MESSAGES.USER.NAME_OR_EMAIL_ALREADY_EXISTS)
+
+              return
+          }
         }
 
         toast.error(TOAST_MESSAGES.AUTH.SIGN_UP_FAILED)

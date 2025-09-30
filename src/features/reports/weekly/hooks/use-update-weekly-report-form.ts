@@ -69,13 +69,22 @@ export function useUpdateWeeklyReportForm(
               })
 
               return
+
+            case ERROR_STATUS.INVALID_PROJECT_RELATION:
+              toast.error(TOAST_MESSAGES.PROJECT.INVALID_RELATION)
+
+              return
+
+            case ERROR_STATUS.INVALID_MISSION_RELATION:
+              toast.error(TOAST_MESSAGES.MISSION.INVALID_RELATION)
+
+              return
           }
         }
 
         toast.error(TOAST_MESSAGES.WEEKLY_REPORT.UPDATE_FAILED)
       },
-    }
-  ),
+    }),
     null,
   )
 
