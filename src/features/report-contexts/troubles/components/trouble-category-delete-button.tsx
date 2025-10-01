@@ -30,16 +30,18 @@ export function TroubleCategoryDeleteButton({ id }: TroubleCategoryDeleteButtonP
 
     startTransition(async () => {
       try {
-        const formData = new FormData()
-        formData.append('id', id)
-
-        const result = await deleteTroubleCategoryAction(undefined, formData)
+        const result = await deleteTroubleCategoryAction(id)
 
         if (result.status === 'error') {
           const errorMessage = result?.error?.message?.[0]
 
           if (isErrorStatus(errorMessage)) {
             switch (errorMessage) {
+              case ERROR_STATUS.SOMETHING_WENT_WRONG:
+                toast.error(TOAST_MESSAGES.TROUBLE.DELETE_FAILED)
+
+                return
+
               case ERROR_STATUS.UNAUTHORIZED:
                 toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
 

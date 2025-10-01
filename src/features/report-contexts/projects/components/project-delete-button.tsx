@@ -32,16 +32,18 @@ export function ProjectDeleteButton({ id }: ProjectDeleteButtonProps) {
 
     startTransition(async () => {
       try {
-        const formData = new FormData()
-        formData.append('id', id)
-
-        const result = await deleteProjectAction(undefined, formData)
+        const result = await deleteProjectAction(id)
 
         if (result.status === 'error') {
           const errorMessage = result?.error?.message?.[0]
 
           if (isErrorStatus(errorMessage)) {
             switch (errorMessage) {
+              case ERROR_STATUS.SOMETHING_WENT_WRONG:
+                toast.error(TOAST_MESSAGES.PROJECT.DELETE_FAILED)
+
+                return
+
               case ERROR_STATUS.UNAUTHORIZED:
                 toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
 

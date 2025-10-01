@@ -30,16 +30,18 @@ export function AppealCategoryDeleteButton({ id }: AppealCategoryDeleteButtonPro
 
     startTransition(async () => {
       try {
-        const formData = new FormData()
-        formData.append('id', id)
-
-        const result = await deleteAppealCategoryAction(undefined, formData)
+        const result = await deleteAppealCategoryAction(id)
 
         if (result.status === 'error') {
           const errorMessage = result?.error?.message?.[0]
 
           if (isErrorStatus(errorMessage)) {
             switch (errorMessage) {
+              case ERROR_STATUS.SOMETHING_WENT_WRONG:
+                toast.error(TOAST_MESSAGES.APPEAL.DELETE_FAILED)
+
+                return
+
               case ERROR_STATUS.UNAUTHORIZED:
                 toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
 

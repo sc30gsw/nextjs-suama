@@ -1,7 +1,6 @@
 'use server'
 
 import type { SubmissionResult } from '@conform-to/react'
-import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
@@ -11,23 +10,25 @@ import { users } from '~/db/schema'
 import { db } from '~/index'
 import { auth } from '~/lib/auth'
 import { getServerSession } from '~/lib/get-server-session'
-import { deleteInputSchema } from '~/types/schemas/delete-input-schema'
+import { commonDeleteIdSchema } from '~/types/schemas/common-delete-id-schema'
 
-export async function deleteUserAction(_: unknown, formData: FormData) {
-  const submission = parseWithZod(formData, {
-    schema: deleteInputSchema,
-  })
+export async function deleteUserAction(id: string) {
+  const parseResult = commonDeleteIdSchema.safeParse({ id })
 
-  if (submission.status !== 'success') {
-    return submission.reply()
+  if (!parseResult.success) {
+    return {
+      status: 'error',
+      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+    } as const satisfies SubmissionResult
   }
 
   const session = await getServerSession()
 
   if (!session) {
-    return submission.reply({
-      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
-    })
+    return {
+      status: 'error',
+      error: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    } as const satisfies SubmissionResult
   }
 
   try {
@@ -43,7 +44,7 @@ export async function deleteUserAction(_: unknown, formData: FormData) {
       } as const satisfies SubmissionResult
     }
 
-    await db.delete(users).where(eq(users.id, submission.value.id))
+    await db.delete(users).where(eq(users.id, parseResult.data.id))
 
     revalidateTag(GET_USERS_CACHE_KEY)
 
