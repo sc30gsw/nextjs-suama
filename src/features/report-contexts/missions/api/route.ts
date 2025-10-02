@@ -1,6 +1,7 @@
 import { count, like, or } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { MAX_LIMIT } from '~/constants'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { missions } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
@@ -52,7 +53,7 @@ const app = new Hono().get('/', sessionMiddleware, async (c) => {
   } catch (_) {
     return c.json(
       {
-        error: 'Something went wrong',
+        error: ERROR_STATUS.SOMETHING_WENT_WRONG,
       },
       500,
     )

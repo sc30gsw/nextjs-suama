@@ -52,6 +52,7 @@ export function EditDailyForm({
     form,
     fields,
     reportDate,
+    remote,
     dailyReports,
     totalHours,
     handleAdd,
@@ -77,7 +78,7 @@ export function EditDailyForm({
       </div>
       <FormProvider context={form.context}>
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
-          {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
+          {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
           {/* // ? https://ja.conform.guide/integration/ui-libraries */}
           <DatePicker
             isDisabled={isPending}
@@ -127,8 +128,14 @@ export function EditDailyForm({
 
           <Separator orientation="horizontal" />
           <div className="my-4 space-y-2">
+            {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
+            {/* // ? https://ja.conform.guide/integration/ui-libraries */}
             <Checkbox
-              {...getInputProps(fields.remote, { type: 'checkbox' })}
+              name={fields.remote.name}
+              isSelected={remote.value === 'on'}
+              onChange={(checked) => remote.change(checked ? 'on' : '')}
+              onFocus={remote.focus}
+              onBlur={remote.blur}
               isDisabled={isPending}
               size="lg"
               className="mt-2 cursor-pointer"

@@ -2,13 +2,16 @@
 
 import { IconMinus, IconPlus } from '@intentui/icons'
 import { useQueryStates } from 'nuqs'
+import { useEffect } from 'react'
 import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
+import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { Textarea } from '~/components/ui/intent-ui/textarea'
 import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
+  unResolvedTroublesResponse,
 } from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 
@@ -19,13 +22,14 @@ type ReportAppealAndTroublesInputEntriesProps<
 > = {
   items: T
   kind: 'appeal' | 'trouble'
+  unResolvedTroubles?: unResolvedTroublesResponse
 }
 
 export function ReportAppealAndTroubleInputEntries<
   T extends
     | AppealCategoriesResponse['appealCategories']
     | TroubleCategoriesResponse['troubleCategories'],
->({ items, kind }: ReportAppealAndTroublesInputEntriesProps<T>) {
+>({ items, kind, unResolvedTroubles }: ReportAppealAndTroublesInputEntriesProps<T>) {
   const [{ appealsAndTroublesEntry }, setAppealsAndTroublesState] = useQueryStates(
     inputCountSearchParamsParsers,
     {
@@ -34,10 +38,49 @@ export function ReportAppealAndTroubleInputEntries<
     },
   )
 
+  // TODO: useEffectを使わずに実装する方法を検討。初期値がある場合、entriesの頭に既存データを差し込む方法を試してみる。or
+  // TODO: 一別の配列として分けてmapで回す。リロード時も検証。サーバー側の処理の視点も考慮。こっちが優勢？
+  // ?:nuqsとの同期を取るために仕方なくuseEffectを使用
+  // 1. このコンポーネントの状態は`nuqs`によってURLで管理されています。
+  // 2. トラブルの初期データはunResolvedTroublesとして、propsとして渡されます。
+  // 3. nuqsがURLを見た時は空なので、初期データをセットしてあげないとunResolvedTroublesの値が無視されることになる。
+  useEffect(() => {
+    if (kind === 'trouble' && unResolvedTroubles && unResolvedTroubles.length > 0) {
+      const hasEntries = appealsAndTroublesEntry.troubles.entries.length > 0
+
+      if (!hasEntries) {
+        const initialEntries = unResolvedTroubles.map((trouble) => ({
+          id: trouble.id,
+          content: trouble.trouble,
+          item: trouble.categoryOfTroubleId,
+          resolved: false,
+        }))
+
+        setAppealsAndTroublesState({
+          appealsAndTroublesEntry: {
+            ...appealsAndTroublesEntry,
+            troubles: {
+              count: initialEntries.length,
+              entries: initialEntries,
+            },
+          },
+        })
+      }
+    }
+  }, [kind, unResolvedTroubles, appealsAndTroublesEntry, setAppealsAndTroublesState])
+
   const entries =
     kind === 'appeal'
       ? appealsAndTroublesEntry.appeals.entries
       : appealsAndTroublesEntry.troubles.entries
+
+  // 既存のtroubleかどうかを判定する関数
+  const isExistingTrouble = (entryId: string) => {
+    if (kind === 'trouble' && unResolvedTroubles) {
+      return unResolvedTroubles.some((trouble) => trouble.id === entryId)
+    }
+    return false
+  }
 
   const handleAdd = () => {
     const newEntry = {
@@ -198,6 +241,29 @@ export function ReportAppealAndTroubleInputEntries<
     })
   }
 
+  const handleChangeResolved = (id: string, resolved: boolean) => {
+    setAppealsAndTroublesState((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((e) =>
+        e.id === id ? { ...e, resolved } : e,
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            count: updatedEntries.length,
+            entries: updatedEntries,
+          },
+        },
+      }
+    })
+  }
+
   return (
     <>
       <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
@@ -243,17 +309,33 @@ export function ReportAppealAndTroubleInputEntries<
                 {(item) => <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>}
               </ComboBox.List>
             </ComboBox>
-            <Button
-              size="square-petite"
-              intent="danger"
-              onPress={() => handleRemove(entry.id)}
-              className="col-span-1 mt-6 rounded-full"
-            >
-              <IconMinus />
-            </Button>
+            {isExistingTrouble(entry.id) ? (
+              <Checkbox
+                isSelected={entry.resolved ?? false}
+                onChange={(checked) => handleChangeResolved(entry.id, checked)}
+                className="col-span-1 mt-6"
+              >
+                解決済み
+              </Checkbox>
+            ) : (
+              <Button
+                size="square-petite"
+                intent="danger"
+                onPress={() => handleRemove(entry.id)}
+                className="col-span-1 mt-6 rounded-full"
+              >
+                <IconMinus />
+              </Button>
+            )}
           </div>
         )
       })}
+
+      {entries.length >= 1 && (
+        <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
+          <IconPlus />
+        </Button>
+      )}
     </>
   )
 }
