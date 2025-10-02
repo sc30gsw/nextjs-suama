@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod'
 import { format } from 'date-fns'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 import {
@@ -65,24 +65,35 @@ export async function createReportAction(_: unknown, formData: FormData) {
         .returning({ id: dailyReports.id })
 
       // ミッション情報を作成
-      for (const entry of submission.value.reportEntries) {
-        // ミッションの存在確認
-        const mission = await tx.query.missions.findFirst({
-          where: eq(missions.id, entry.mission),
-        })
+      const reportEntries = submission.value.reportEntries
+      if (reportEntries.length > 0) {
+        const submittedMissionIds = reportEntries
+          .map((entry) => entry.mission)
+          .filter((missionId) => missionId)
 
-        if (!mission) {
-          return submission.reply({
-            fieldErrors: { message: [ERROR_STATUS.INVALID_MISSION_RELATION] },
+        // [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
+        const uniqueMissionIds = [...new Set(submittedMissionIds)]
+
+        if (uniqueMissionIds.length > 0) {
+          const existingMissions = await tx.query.missions.findMany({
+            where: inArray(missions.id, uniqueMissionIds),
+            columns: { id: true },
           })
+
+          if (existingMissions.length !== uniqueMissionIds.length) {
+            // 1つでも存在しないmissionIdがあればエラーをスローしてロールバック
+            throw new Error(ERROR_STATUS.INVALID_MISSION_RELATION)
+          }
         }
 
-        await tx.insert(dailyReportMissions).values({
-          dailyReportId: newDailyReport.id,
-          missionId: entry.mission,
-          workContent: entry.content,
-          hours: entry.hours,
-        })
+        await tx.insert(dailyReportMissions).values(
+          reportEntries.map((entry) => ({
+            dailyReportId: newDailyReport.id,
+            missionId: entry.mission,
+            workContent: entry.content,
+            hours: entry.hours,
+          })),
+        )
       }
 
       // アピール情報を作成
@@ -90,13 +101,15 @@ export async function createReportAction(_: unknown, formData: FormData) {
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
-      for (const entry of validAppealEntries) {
-        await tx.insert(appeals).values({
-          userId: session.user.id,
-          dailyReportId: newDailyReport.id,
-          categoryOfAppealId: entry.categoryId!,
-          appeal: entry.content!,
-        })
+      if (validAppealEntries.length > 0) {
+        await tx.insert(appeals).values(
+          validAppealEntries.map((entry) => ({
+            userId: session.user.id,
+            dailyReportId: newDailyReport.id,
+            categoryOfAppealId: entry.categoryId!,
+            appeal: entry.content!,
+          })),
+        )
       }
 
       // トラブル情報を作成
@@ -105,29 +118,37 @@ export async function createReportAction(_: unknown, formData: FormData) {
       )
 
       // upsertで既存はresolved更新、新規は追加
-      for (const entry of validTroubleEntries) {
-        await tx
-          .insert(troubles)
-          .values({
-            id: entry.id,
-            userId: session.user.id,
-            categoryOfTroubleId: entry.categoryId!,
-            trouble: entry.content!,
-            resolved: entry.resolved,
-          })
-          .onConflictDoUpdate({
-            target: troubles.id,
-            set: {
+      if (validTroubleEntries.length > 0) {
+        for (const entry of validTroubleEntries) {
+          await tx
+            .insert(troubles)
+            .values({
+              id: entry.id,
+              userId: session.user.id,
+              categoryOfTroubleId: entry.categoryId!,
+              trouble: entry.content!,
               resolved: entry.resolved,
-            },
-          })
+            })
+            .onConflictDoUpdate({
+              target: troubles.id,
+              set: {
+                resolved: entry.resolved,
+              },
+            })
+        }
       }
     })
 
     revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
-  } catch (_) {
+  } catch (err) {
+    if (err instanceof Error && err.message === ERROR_STATUS.INVALID_MISSION_RELATION) {
+      return submission.reply({
+        fieldErrors: { message: [ERROR_STATUS.INVALID_MISSION_RELATION] },
+      })
+    }
+
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
