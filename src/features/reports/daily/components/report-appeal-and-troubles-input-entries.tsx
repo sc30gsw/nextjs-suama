@@ -13,6 +13,7 @@ import type {
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import type { Kind } from './report-appeal-or-trouble-container'
 
 type ReportAppealAndTroublesInputEntriesProps<
   T extends
@@ -20,7 +21,7 @@ type ReportAppealAndTroublesInputEntriesProps<
     | TroubleCategoriesResponse['troubleCategories'],
 > = {
   items: T
-  kind: 'appeal' | 'trouble'
+  kind: Kind
   unResolvedTroubles?: TroubleCategoriesResponse['unResolvedTroubles']
   existingAppeals?: AppealCategoriesResponse['existingAppeals']
 }
