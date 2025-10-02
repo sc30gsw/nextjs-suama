@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation'
 import {
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
-  GET_UNRESOLVED_TROUBLES_CACHE_KEY,
+  GET_TROUBLE_CATEGORIES_CACHE_KEY,
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
@@ -126,7 +126,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
 
     revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_UNRESOLVED_TROUBLES_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
   } catch (_) {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },

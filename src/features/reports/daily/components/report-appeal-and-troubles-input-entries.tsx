@@ -11,7 +11,6 @@ import { Textarea } from '~/components/ui/intent-ui/textarea'
 import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
-  unResolvedTroublesResponse,
 } from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 
@@ -22,8 +21,8 @@ type ReportAppealAndTroublesInputEntriesProps<
 > = {
   items: T
   kind: 'appeal' | 'trouble'
-  unResolvedTroubles?: unResolvedTroublesResponse
-  existingAppeals?: Array<{ id: string; categoryId: string; content: string }>
+  unResolvedTroubles?: TroubleCategoriesResponse['unResolvedTroubles']
+  existingAppeals?: AppealCategoriesResponse['existingAppeals']
 }
 
 export function ReportAppealAndTroubleInputEntries<

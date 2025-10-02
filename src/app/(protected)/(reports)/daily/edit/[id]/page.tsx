@@ -9,10 +9,7 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
-import {
-  getTroubleCategories,
-  getTroubles,
-} from '~/features/report-contexts/troubles/server/fetcher'
+import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { EditDailyForm } from '~/features/reports/daily/components/edit-daily-form'
 import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/components/report-appeal-and-troubles-input-entries'
 import { getReportById } from '~/features/reports/daily/server/fetcher'
@@ -34,10 +31,7 @@ export default async function EditDailyReportPage({
 
   const reportId = (await params).id
 
-  const [reportData, unResolvedTroubles] = await Promise.all([
-    getReportById(reportId, session.user.id),
-    getTroubles(session.user.id),
-  ])
+  const reportData = await getReportById(reportId, session.user.id)
 
   const projectPromise = getProjects(undefined, session.user.id)
   const missionPromise = getMissions(undefined, session.user.id)
@@ -94,10 +88,10 @@ export default async function EditDailyReportPage({
                 </>
               }
             >
-              {getTroubleCategories(undefined, session.user.id).then((res) => (
+              {getTroubleCategories({ withData: true }, session.user.id).then((res) => (
                 <ReportAppealAndTroubleInputEntries<TroubleCategoriesResponse['troubleCategories']>
                   items={res.troubleCategories}
-                  unResolvedTroubles={unResolvedTroubles}
+                  unResolvedTroubles={res.unResolvedTroubles}
                   kind="trouble"
                 />
               ))}
@@ -129,11 +123,11 @@ export default async function EditDailyReportPage({
                 </>
               }
             >
-              {getAppealCategories(undefined, session.user.id).then((res) => (
+              {getAppealCategories({ withData: true, reportId }, session.user.id).then((res) => (
                 <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
                   items={res.appealCategories}
                   kind="appeal"
-                  existingAppeals={reportData.appealEntries}
+                  existingAppeals={res.existingAppeals}
                 />
               ))}
             </Suspense>

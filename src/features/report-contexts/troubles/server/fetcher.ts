@@ -1,37 +1,25 @@
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
-import {
-  GET_TROUBLE_CATEGORIES_CACHE_KEY,
-  GET_UNRESOLVED_TROUBLES_CACHE_KEY,
-} from '~/constants/cache-keys'
-import type {
-  TroubleCategoriesResponse,
-  unResolvedTroublesResponse,
-} from '~/features/reports/daily/types/api-response'
+import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
+import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
-export async function getTroubles(userId: string) {
-  'use cache'
-  cacheTag(`${GET_UNRESOLVED_TROUBLES_CACHE_KEY}-${userId}`)
-
-  const url = client.api.troubles.$url()
-
-  const res = await upfetch<unResolvedTroublesResponse>(url, {
-    headers: {
-      Authorization: userId,
-    },
-  })
-
-  return res
-}
-
 export async function getTroubleCategories(
-  params?: { skip: number; limit: number; names: string[] },
+  params?: {
+    skip?: number
+    limit?: number
+    names?: string[]
+    withData?: boolean
+  },
   userId?: string,
 ) {
   'use cache'
-  cacheTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
+  // withDataがtrueの場合、ユーザー固有のキャッシュキーを追加して、他の場所でrevalidateできるようにする
+  const cacheKey = params?.withData
+    ? `${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${userId}`
+    : GET_TROUBLE_CATEGORIES_CACHE_KEY
+  cacheTag(cacheKey)
 
   const url = client.api.troubles.categories.$url()
 
