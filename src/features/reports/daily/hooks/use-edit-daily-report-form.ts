@@ -1,5 +1,4 @@
 import { useInputControl } from '@conform-to/react'
-import { useControl } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
@@ -95,9 +94,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
   })
 
   const reportDate = useInputControl(fields.reportDate)
-  const remote = useControl({
-    defaultValue: initialData.remote ? 'on' : undefined,
-  })
+  const remote = useInputControl(fields.remote)
 
   const dailyReports = fields.reportEntries.getFieldList()
 
