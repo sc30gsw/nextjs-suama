@@ -2,7 +2,7 @@
 
 import { IconMinus, IconPlus } from '@intentui/icons'
 import { useQueryStates } from 'nuqs'
-import { useEffect, useRef } from 'react'
+import { useState } from 'react'
 import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
@@ -43,91 +43,15 @@ export function ReportAppealAndTroubleInputEntries<
     },
   )
 
-  // 初期化済みフラグを管理
-  const initializedRef = useRef({ troubles: false, appeals: false })
-
-  // TODO: useEffectを使わずに実装する方法を検討。初期値がある場合、entriesの頭に既存データを差し込む方法を試してみる。or
-  // TODO: 一別の配列として分けてmapで回す。リロード時も検証。サーバー側の処理の視点も考慮。こっちが優勢？
-  // ?:nuqsとの同期を取るために仕方なくuseEffectを使用
-  // 1. このコンポーネントの状態は`nuqs`によってURLで管理されています。
-  // 2. トラブルの初期データはunResolvedTroublesとして、propsとして渡されます。
-  // 3. nuqsがURLを見た時は空なので、初期データをセットしてあげないとunResolvedTroublesの値が無視されることになる。
-  useEffect(() => {
-    if (kind === 'trouble' && unResolvedTroubles && unResolvedTroubles.length > 0) {
-      if (!initializedRef.current.troubles) {
-        setAppealsAndTroublesState((prev) => {
-          // 既にentriesがある場合はスキップ
-          if (prev.appealsAndTroublesEntry.troubles.entries.length > 0) {
-            return prev
-          }
-
-          const initialEntries = unResolvedTroubles.map((trouble) => ({
-            id: trouble.id,
-            content: trouble.trouble,
-            item: trouble.categoryOfTroubleId,
-            resolved: false,
-          }))
-
-          return {
-            ...prev,
-            appealsAndTroublesEntry: {
-              ...prev.appealsAndTroublesEntry,
-              troubles: {
-                count: initialEntries.length,
-                entries: initialEntries,
-              },
-            },
-          }
-        })
-
-        initializedRef.current.troubles = true
-      }
-    }
-
-    if (kind === 'appeal' && existingAppeals && existingAppeals.length > 0) {
-      if (!initializedRef.current.appeals) {
-        setAppealsAndTroublesState((prev) => {
-          // 既にentriesがある場合はスキップ
-          if (prev.appealsAndTroublesEntry.appeals.entries.length > 0) {
-            return prev
-          }
-
-          const initialEntries = existingAppeals.map((appeal) => ({
-            id: appeal.id,
-            content: appeal.content,
-            item: appeal.categoryId,
-            resolved: undefined,
-          }))
-
-          return {
-            ...prev,
-            appealsAndTroublesEntry: {
-              ...prev.appealsAndTroublesEntry,
-              appeals: {
-                count: initialEntries.length,
-                entries: initialEntries,
-              },
-            },
-          }
-        })
-
-        initializedRef.current.appeals = true
-      }
-    }
-  }, [kind, unResolvedTroubles, existingAppeals, setAppealsAndTroublesState])
+  const [mutableUnresolvedTroubles, setMutableUnresolvedTroubles] = useState(
+    unResolvedTroubles || [],
+  )
+  const [mutableExistingAppeals, setMutableExistingAppeals] = useState(existingAppeals || [])
 
   const entries =
     kind === 'appeal'
       ? appealsAndTroublesEntry.appeals.entries
       : appealsAndTroublesEntry.troubles.entries
-
-  // 既存のtroubleかどうかを判定する関数
-  const isExistingTrouble = (entryId: string) => {
-    if (kind === 'trouble' && unResolvedTroubles) {
-      return unResolvedTroubles.some((trouble) => trouble.id === entryId)
-    }
-    return false
-  }
 
   const handleAdd = () => {
     const newEntry = {
@@ -169,6 +93,20 @@ export function ReportAppealAndTroubleInputEntries<
   }
 
   const handleRemove = (id: string) => {
+    if (kind === 'trouble') {
+      if (mutableUnresolvedTroubles.some((t) => t.id === id)) {
+        setMutableUnresolvedTroubles((prev) => prev.filter((t) => t.id !== id))
+
+        return
+      }
+    } else if (kind === 'appeal') {
+      if (mutableExistingAppeals.some((a) => a.id === id)) {
+        setMutableExistingAppeals((prev) => prev.filter((a) => a.id !== id))
+
+        return
+      }
+    }
+
     setAppealsAndTroublesState((prev) => {
       if (!prev) {
         return prev
@@ -209,6 +147,24 @@ export function ReportAppealAndTroubleInputEntries<
   }
 
   const handleChangeContent = (id: string, newContent: string) => {
+    if (kind === 'trouble') {
+      if (mutableUnresolvedTroubles.some((t) => t.id === id)) {
+        setMutableUnresolvedTroubles((prev) =>
+          prev.map((t) => (t.id === id ? { ...t, trouble: newContent } : t)),
+        )
+
+        return
+      }
+    } else if (kind === 'appeal') {
+      if (mutableExistingAppeals.some((a) => a.id === id)) {
+        setMutableExistingAppeals((prev) =>
+          prev.map((a) => (a.id === id ? { ...a, appeal: newContent } : a)),
+        )
+
+        return
+      }
+    }
+
     setAppealsAndTroublesState((prev) => {
       if (!prev) {
         return prev
@@ -249,6 +205,24 @@ export function ReportAppealAndTroubleInputEntries<
   }
 
   const handleChangeItem = (id: string, newItem: Key | null) => {
+    if (kind === 'trouble') {
+      if (mutableUnresolvedTroubles.some((t) => t.id === id)) {
+        setMutableUnresolvedTroubles((prev) =>
+          prev.map((t) => (t.id === id ? { ...t, categoryOfTroubleId: String(newItem) } : t)),
+        )
+
+        return
+      }
+    } else if (kind === 'appeal') {
+      if (mutableExistingAppeals.some((a) => a.id === id)) {
+        setMutableExistingAppeals((prev) =>
+          prev.map((a) => (a.id === id ? { ...a, categoryOfAppealId: String(newItem) } : a)),
+        )
+
+        return
+      }
+    }
+
     setAppealsAndTroublesState((prev) => {
       if (!prev) {
         return prev
@@ -289,26 +263,68 @@ export function ReportAppealAndTroubleInputEntries<
   }
 
   const handleChangeResolved = (id: string, resolved: boolean) => {
-    setAppealsAndTroublesState((prev) => {
-      if (!prev) {
-        return prev
-      }
+    setMutableUnresolvedTroubles((prev) => prev.map((t) => (t.id === id ? { ...t, resolved } : t)))
+  }
 
-      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((e) =>
-        e.id === id ? { ...e, resolved } : e,
-      )
+  const renderEntry = (
+    entry: { id: string; content: string; item: string | null; resolved?: boolean },
+    index: number,
+    isExisting: boolean,
+    namePrefix: string,
+  ) => {
+    return (
+      <div key={entry.id} className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2">
+        {/* Hidden inputs for form data structure */}
+        <input type="hidden" name={`${namePrefix}[${index}].id`} value={entry.id} />
+        <input type="hidden" name={`${namePrefix}[${index}].content`} value={entry.content || ''} />
+        <input type="hidden" name={`${namePrefix}[${index}].categoryId`} value={entry.item || ''} />
+        {kind === 'trouble' && (
+          <input
+            type="hidden"
+            name={`${namePrefix}[${index}].resolved`}
+            value={entry.resolved ? 'true' : 'false'}
+          />
+        )}
 
-      return {
-        ...prev,
-        appealsAndTroublesEntry: {
-          ...prev.appealsAndTroublesEntry,
-          troubles: {
-            count: updatedEntries.length,
-            entries: updatedEntries,
-          },
-        },
-      }
-    })
+        <Textarea
+          label="内容"
+          placeholder="内容を入力"
+          value={entry.content}
+          onChange={(val) => handleChangeContent(entry.id, val)}
+          className="col-span-3"
+        />
+        <ComboBox
+          label={kind === 'appeal' ? 'アピールポイント' : 'トラブルカテゴリー'}
+          placeholder="カテゴリーを選択"
+          selectedKey={entry.item ?? undefined}
+          onSelectionChange={(key) => handleChangeItem(entry.id, key)}
+          className="col-span-2"
+        >
+          <ComboBox.Input />
+          <ComboBox.List items={items}>
+            {(item) => <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>}
+          </ComboBox.List>
+        </ComboBox>
+        {kind === 'trouble' && isExisting ? (
+          <Checkbox
+            isSelected={entry.resolved ?? false}
+            onChange={(checked) => handleChangeResolved(entry.id, checked)}
+            className="col-span-1 mt-6"
+          >
+            解決済み
+          </Checkbox>
+        ) : (
+          <Button
+            size="square-petite"
+            intent="danger"
+            onPress={() => handleRemove(entry.id)}
+            className="col-span-1 mt-6 rounded-full"
+          >
+            <IconMinus />
+          </Button>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -316,74 +332,51 @@ export function ReportAppealAndTroubleInputEntries<
       <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
         <IconPlus />
       </Button>
-      {entries.map((entry, index) => {
-        const namePrefix = kind === 'appeal' ? 'appealEntries' : 'troubleEntries'
 
-        return (
-          <div
-            key={entry.id}
-            className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
-          >
-            {/* Hidden inputs for form data structure */}
-            <input type="hidden" name={`${namePrefix}[${index}].id`} value={entry.id} />
-            <input
-              type="hidden"
-              name={`${namePrefix}[${index}].content`}
-              value={entry.content || ''}
-            />
-            <input
-              type="hidden"
-              name={`${namePrefix}[${index}].categoryId`}
-              value={entry.item || ''}
-            />
-            {kind === 'trouble' && (
-              <input
-                type="hidden"
-                name={`${namePrefix}[${index}].resolved`}
-                value={entry.resolved ? 'true' : 'false'}
-              />
-            )}
+      {kind === 'trouble' &&
+        mutableUnresolvedTroubles.map((entry, index) =>
+          renderEntry(
+            {
+              id: entry.id,
+              content: entry.trouble,
+              item: entry.categoryOfTroubleId,
+              resolved: entry.resolved,
+            },
+            index,
+            true,
+            'troubleEntries',
+          ),
+        )}
 
-            <Textarea
-              label="内容"
-              placeholder="内容を入力"
-              value={entry.content}
-              onChange={(val) => handleChangeContent(entry.id, val)}
-              className="col-span-3"
-            />
-            <ComboBox
-              label={kind === 'appeal' ? 'アピールポイント' : 'トラブルカテゴリー'}
-              placeholder="カテゴリーを選択"
-              selectedKey={entry.item ?? undefined}
-              onSelectionChange={(key) => handleChangeItem(entry.id, key)}
-              className="col-span-2"
-            >
-              <ComboBox.Input />
-              <ComboBox.List items={items}>
-                {(item) => <ComboBox.Option id={item.id}>{item.name}</ComboBox.Option>}
-              </ComboBox.List>
-            </ComboBox>
-            {isExistingTrouble(entry.id) ? (
-              <Checkbox
-                isSelected={entry.resolved ?? false}
-                onChange={(checked) => handleChangeResolved(entry.id, checked)}
-                className="col-span-1 mt-6"
-              >
-                解決済み
-              </Checkbox>
-            ) : (
-              <Button
-                size="square-petite"
-                intent="danger"
-                onPress={() => handleRemove(entry.id)}
-                className="col-span-1 mt-6 rounded-full"
-              >
-                <IconMinus />
-              </Button>
-            )}
-          </div>
-        )
-      })}
+      {kind === 'appeal' &&
+        mutableExistingAppeals.map((entry, index) =>
+          renderEntry(
+            {
+              id: entry.id,
+              content: entry.content,
+              item: entry.categoryId,
+              resolved: undefined,
+            },
+            index,
+            true,
+            'appealEntries',
+          ),
+        )}
+
+      {entries.map((entry, index) =>
+        renderEntry(
+          {
+            id: entry.id,
+            content: entry.content,
+            item: entry.item,
+            resolved: entry.resolved,
+          },
+          index +
+            (kind === 'trouble' ? mutableUnresolvedTroubles.length : mutableExistingAppeals.length),
+          false,
+          kind === 'appeal' ? 'appealEntries' : 'troubleEntries',
+        ),
+      )}
 
       {entries.length >= 1 && (
         <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
