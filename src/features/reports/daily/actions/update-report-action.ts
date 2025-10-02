@@ -2,13 +2,14 @@
 
 import { parseWithZod } from '@conform-to/zod'
 import { format } from 'date-fns'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, inArray, not } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
 import {
   GET_DAILY_REPORT_BY_ID_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
+  GET_UNRESOLVED_TROUBLES_CACHE_KEY,
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
@@ -93,46 +94,73 @@ export async function updateReportAction(_: unknown, formData: FormData) {
         })
       }
 
-      // 既存のアピール情報を削除
-      await tx.delete(appeals).where(eq(appeals.dailyReportId, reportId))
-
-      // アピール情報を再作成
+      // アピール情報の処理
       const validAppealEntries = submission.value.appealEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
+      // upsertで既存は更新、新規は追加
       for (const entry of validAppealEntries) {
-        await tx.insert(appeals).values({
-          userId: session.user.id,
-          dailyReportId: reportId,
-          categoryOfAppealId: entry.categoryId!,
-          appeal: entry.content!,
-        })
+        await tx
+          .insert(appeals)
+          .values({
+            id: entry.id,
+            userId: session.user.id,
+            dailyReportId: reportId,
+            categoryOfAppealId: entry.categoryId!,
+            appeal: entry.content!,
+          })
+          .onConflictDoUpdate({
+            target: appeals.id,
+            set: {
+              categoryOfAppealId: entry.categoryId!,
+              appeal: entry.content!,
+            },
+          })
       }
 
-      // 既存のトラブル情報を削除（この日報に紐づくもの）
-      await tx
-        .delete(troubles)
-        .where(and(eq(troubles.userId, session.user.id), eq(troubles.resolved, false)))
+      // 送信されなかったAppealsを削除
+      if (validAppealEntries.length > 0) {
+        const submittedAppealIds = validAppealEntries.map((e) => e.id)
+        await tx
+          .delete(appeals)
+          .where(
+            and(eq(appeals.dailyReportId, reportId), not(inArray(appeals.id, submittedAppealIds))),
+          )
+      } else {
+        // 全て削除
+        await tx.delete(appeals).where(eq(appeals.dailyReportId, reportId))
+      }
 
-      // トラブル情報を再作成
+      // トラブル情報の処理
       const validTroubleEntries = submission.value.troubleEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
+      // upsertで既存はresolved更新、新規は追加
       for (const entry of validTroubleEntries) {
-        await tx.insert(troubles).values({
-          userId: session.user.id,
-          categoryOfTroubleId: entry.categoryId!,
-          trouble: entry.content!,
-          resolved: false,
-        })
+        await tx
+          .insert(troubles)
+          .values({
+            id: entry.id,
+            userId: session.user.id,
+            categoryOfTroubleId: entry.categoryId!,
+            trouble: entry.content!,
+            resolved: entry.resolved,
+          })
+          .onConflictDoUpdate({
+            target: troubles.id,
+            set: {
+              resolved: entry.resolved,
+            },
+          })
       }
     })
 
     revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
+    revalidateTag(`${GET_UNRESOLVED_TROUBLES_CACHE_KEY}-${session.user.id}`)
   } catch (error) {
     console.error('Update report error:', error)
 

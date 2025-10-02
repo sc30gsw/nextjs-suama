@@ -133,6 +133,7 @@ export default async function EditDailyReportPage({
                 <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
                   items={res.appealCategories}
                   kind="appeal"
+                  existingAppeals={reportData.appealEntries}
                 />
               ))}
             </Suspense>

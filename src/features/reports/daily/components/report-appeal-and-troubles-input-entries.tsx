@@ -2,7 +2,7 @@
 
 import { IconMinus, IconPlus } from '@intentui/icons'
 import { useQueryStates } from 'nuqs'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
@@ -23,13 +23,19 @@ type ReportAppealAndTroublesInputEntriesProps<
   items: T
   kind: 'appeal' | 'trouble'
   unResolvedTroubles?: unResolvedTroublesResponse
+  existingAppeals?: Array<{ id: string; categoryId: string; content: string }>
 }
 
 export function ReportAppealAndTroubleInputEntries<
   T extends
     | AppealCategoriesResponse['appealCategories']
     | TroubleCategoriesResponse['troubleCategories'],
->({ items, kind, unResolvedTroubles }: ReportAppealAndTroublesInputEntriesProps<T>) {
+>({
+  items,
+  kind,
+  unResolvedTroubles,
+  existingAppeals,
+}: ReportAppealAndTroublesInputEntriesProps<T>) {
   const [{ appealsAndTroublesEntry }, setAppealsAndTroublesState] = useQueryStates(
     inputCountSearchParamsParsers,
     {
@@ -37,6 +43,9 @@ export function ReportAppealAndTroubleInputEntries<
       shallow: false,
     },
   )
+
+  // 初期化済みフラグを管理
+  const initializedRef = useRef({ troubles: false, appeals: false })
 
   // TODO: useEffectを使わずに実装する方法を検討。初期値がある場合、entriesの頭に既存データを差し込む方法を試してみる。or
   // TODO: 一別の配列として分けてmapで回す。リロード時も検証。サーバー側の処理の視点も考慮。こっちが優勢？
@@ -46,28 +55,67 @@ export function ReportAppealAndTroubleInputEntries<
   // 3. nuqsがURLを見た時は空なので、初期データをセットしてあげないとunResolvedTroublesの値が無視されることになる。
   useEffect(() => {
     if (kind === 'trouble' && unResolvedTroubles && unResolvedTroubles.length > 0) {
-      const hasEntries = appealsAndTroublesEntry.troubles.entries.length > 0
+      if (!initializedRef.current.troubles) {
+        setAppealsAndTroublesState((prev) => {
+          // 既にentriesがある場合はスキップ
+          if (prev.appealsAndTroublesEntry.troubles.entries.length > 0) {
+            return prev
+          }
 
-      if (!hasEntries) {
-        const initialEntries = unResolvedTroubles.map((trouble) => ({
-          id: trouble.id,
-          content: trouble.trouble,
-          item: trouble.categoryOfTroubleId,
-          resolved: false,
-        }))
+          const initialEntries = unResolvedTroubles.map((trouble) => ({
+            id: trouble.id,
+            content: trouble.trouble,
+            item: trouble.categoryOfTroubleId,
+            resolved: false,
+          }))
 
-        setAppealsAndTroublesState({
-          appealsAndTroublesEntry: {
-            ...appealsAndTroublesEntry,
-            troubles: {
-              count: initialEntries.length,
-              entries: initialEntries,
+          return {
+            ...prev,
+            appealsAndTroublesEntry: {
+              ...prev.appealsAndTroublesEntry,
+              troubles: {
+                count: initialEntries.length,
+                entries: initialEntries,
+              },
             },
-          },
+          }
         })
+
+        initializedRef.current.troubles = true
       }
     }
-  }, [kind, unResolvedTroubles, appealsAndTroublesEntry, setAppealsAndTroublesState])
+
+    if (kind === 'appeal' && existingAppeals && existingAppeals.length > 0) {
+      if (!initializedRef.current.appeals) {
+        setAppealsAndTroublesState((prev) => {
+          // 既にentriesがある場合はスキップ
+          if (prev.appealsAndTroublesEntry.appeals.entries.length > 0) {
+            return prev
+          }
+
+          const initialEntries = existingAppeals.map((appeal) => ({
+            id: appeal.id,
+            content: appeal.content,
+            item: appeal.categoryId,
+            resolved: undefined,
+          }))
+
+          return {
+            ...prev,
+            appealsAndTroublesEntry: {
+              ...prev.appealsAndTroublesEntry,
+              appeals: {
+                count: initialEntries.length,
+                entries: initialEntries,
+              },
+            },
+          }
+        })
+
+        initializedRef.current.appeals = true
+      }
+    }
+  }, [kind, unResolvedTroubles, existingAppeals, setAppealsAndTroublesState])
 
   const entries =
     kind === 'appeal'
@@ -289,6 +337,13 @@ export function ReportAppealAndTroubleInputEntries<
               name={`${namePrefix}[${index}].categoryId`}
               value={entry.item || ''}
             />
+            {kind === 'trouble' && (
+              <input
+                type="hidden"
+                name={`${namePrefix}[${index}].resolved`}
+                value={entry.resolved ? 'true' : 'false'}
+              />
+            )}
 
             <Textarea
               label="内容"

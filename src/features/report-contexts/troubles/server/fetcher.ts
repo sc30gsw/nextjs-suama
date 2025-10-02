@@ -13,7 +13,7 @@ import { client } from '~/lib/rpc'
 
 export async function getTroubles(userId: string) {
   'use cache'
-  cacheTag(GET_UNRESOLVED_TROUBLES_CACHE_KEY)
+  cacheTag(`${GET_UNRESOLVED_TROUBLES_CACHE_KEY}-${userId}`)
 
   const url = client.api.troubles.$url()
 

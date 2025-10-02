@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation'
 import {
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
+  GET_UNRESOLVED_TROUBLES_CACHE_KEY,
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
@@ -103,18 +104,29 @@ export async function createReportAction(_: unknown, formData: FormData) {
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
+      // upsertで既存はresolved更新、新規は追加
       for (const entry of validTroubleEntries) {
-        await tx.insert(troubles).values({
-          userId: session.user.id,
-          categoryOfTroubleId: entry.categoryId!,
-          trouble: entry.content!,
-          resolved: false,
-        })
+        await tx
+          .insert(troubles)
+          .values({
+            id: entry.id,
+            userId: session.user.id,
+            categoryOfTroubleId: entry.categoryId!,
+            trouble: entry.content!,
+            resolved: entry.resolved,
+          })
+          .onConflictDoUpdate({
+            target: troubles.id,
+            set: {
+              resolved: entry.resolved,
+            },
+          })
       }
     })
 
     revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_UNRESOLVED_TROUBLES_CACHE_KEY}-${session.user.id}`)
   } catch (_) {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },

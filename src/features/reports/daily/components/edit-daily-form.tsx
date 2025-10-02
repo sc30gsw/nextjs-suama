@@ -78,6 +78,7 @@ export function EditDailyForm({
       </div>
       <FormProvider context={form.context}>
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
+          <input {...getInputProps(fields.reportId, { type: 'hidden' })} />
           {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
           {/* // ? https://ja.conform.guide/integration/ui-libraries */}
           <DatePicker
