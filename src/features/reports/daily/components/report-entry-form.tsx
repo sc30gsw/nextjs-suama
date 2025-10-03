@@ -8,6 +8,7 @@ import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
+import type { AppealsAndTroublesEntry } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { Kind } from './report-appeal-or-trouble-container'
 
 type Item =
@@ -15,7 +16,7 @@ type Item =
   | TroubleCategoriesResponse['troubleCategories'][number]
 
 type ReportEntryFormProps = {
-  entry: { id: string; content: string; item: string | null; resolved?: boolean }
+  entry: AppealsAndTroublesEntry
   index: number
   isExisting: boolean
   kind: Kind

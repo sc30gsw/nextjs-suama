@@ -57,3 +57,4 @@ export const inputCountSearchParamsParsers = {
 export const inputCountSearchParamsCache = createSearchParamsCache(inputCountSearchParamsParsers)
 
 export type DailyInputCountSearchParams = typeof inputCountSearchParamsParsers
+export type AppealsAndTroublesEntry = z.infer<typeof appealsAndTroublesEntrySchema>
