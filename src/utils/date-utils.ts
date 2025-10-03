@@ -1,7 +1,7 @@
 import { fromZonedTime } from 'date-fns-tz'
 import { APP_TIMEZONE, DATE_TIME } from '~/constants/date'
 
-const SEPARATOR = 'T'
+export const SEPARATOR = 'T'
 
 type DateInput = string | `${string}-${string}-${string}${typeof SEPARATOR}${string}`
 type DateType = 'start' | 'end'

@@ -1,4 +1,5 @@
 import { createParser, createSearchParamsCache } from 'nuqs/server'
+import { SEPARATOR } from '~/utils/date-utils'
 
 // ? nuqsのparseAsIsoDateは無効値の場合に「2001年」を返すため、作成
 const parseAsOptionalIsoDate = createParser({
@@ -11,7 +12,7 @@ const parseAsOptionalIsoDate = createParser({
     return Number.isNaN(date.getTime()) ? null : date
   },
 
-  serialize: (value) => value?.toISOString().split('T')[0] ?? '',
+  serialize: (value) => value?.toISOString().split(SEPARATOR)[0] ?? '',
 })
 
 export const dailyReportForMineSearchParamsParsers = {
