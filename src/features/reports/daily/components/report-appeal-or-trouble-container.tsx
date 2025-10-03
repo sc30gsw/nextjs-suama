@@ -56,7 +56,7 @@ export async function ReportAppealOrTroubleContainer({
       }
     >
       {kind === 'trouble'
-        ? getTroubleCategories({ withData: true }, session.user.id).then((res) => (
+        ? getTroubleCategories(session.user.id, { withData: true }).then((res) => (
             <ReportAppealAndTroubleInputEntries<TroubleCategoriesResponse['troubleCategories']>
               items={res.troubleCategories}
               kind="trouble"
