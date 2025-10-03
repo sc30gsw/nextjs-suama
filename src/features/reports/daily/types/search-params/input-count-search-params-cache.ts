@@ -32,22 +32,26 @@ export const reportStateSchema = z.object({
 })
 
 export const inputCountSearchParamsParsers = {
-  reportEntry: parseAsJson(reportStateSchema.parse).withDefault({
-    count: 1,
-    entries: [
-      {
-        id: crypto.randomUUID(),
-        project: null,
-        mission: null,
-        hours: 0,
-        content: '',
-      },
-    ],
-  }),
-  appealsAndTroublesEntry: parseAsJson(appealsAndTroublesStateSchema.parse).withDefault({
-    appeals: { count: 0, entries: [] },
-    troubles: { count: 0, entries: [] },
-  }),
+  reportEntry: parseAsJson(reportStateSchema.parse)
+    .withDefault({
+      count: 1,
+      entries: [
+        {
+          id: crypto.randomUUID(),
+          project: null,
+          mission: null,
+          hours: 0,
+          content: '',
+        },
+      ],
+    })
+    .withOptions({ throttleMs: 1000 }),
+  appealsAndTroublesEntry: parseAsJson(appealsAndTroublesStateSchema.parse)
+    .withDefault({
+      appeals: { count: 0, entries: [] },
+      troubles: { count: 0, entries: [] },
+    })
+    .withOptions({ throttleMs: 1000 }),
 }
 
 export const inputCountSearchParamsCache = createSearchParamsCache(inputCountSearchParamsParsers)
