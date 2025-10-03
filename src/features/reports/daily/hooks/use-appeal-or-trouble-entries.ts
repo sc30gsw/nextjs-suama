@@ -79,18 +79,16 @@ export function useAppealOrTroubleEntries({
   }
 
   const handleRemove = (id: string) => {
-    if (kind === 'trouble') {
-      if (mutableUnresolvedTroubles.some((t) => t.id === id)) {
-        setMutableUnresolvedTroubles((prev) => prev.filter((t) => t.id !== id))
+    if (kind === 'trouble' && mutableUnresolvedTroubles.some((trouble) => trouble.id === id)) {
+      setMutableUnresolvedTroubles((prev) => prev.filter((trouble) => trouble.id !== id))
 
-        return
-      }
-    } else if (kind === 'appeal') {
-      if (mutableExistingAppeals.some((a) => a.id === id)) {
-        setMutableExistingAppeals((prev) => prev.filter((a) => a.id !== id))
+      return
+    }
 
-        return
-      }
+    if (kind === 'appeal' && mutableExistingAppeals.some((appeal) => appeal.id === id)) {
+      setMutableExistingAppeals((prev) => prev.filter((appeal) => appeal.id !== id))
+
+      return
     }
 
     setAppealsAndTroublesState((prev) => {
@@ -100,7 +98,7 @@ export function useAppealOrTroubleEntries({
 
       if (kind === 'appeal') {
         const filteredEntries = prev.appealsAndTroublesEntry.appeals.entries.filter(
-          (e) => e.id !== id,
+          (entry) => entry.id !== id,
         )
 
         return {
@@ -116,7 +114,7 @@ export function useAppealOrTroubleEntries({
       }
 
       const filteredEntries = prev.appealsAndTroublesEntry.troubles.entries.filter(
-        (e) => e.id !== id,
+        (entry) => entry.id !== id,
       )
 
       return {
@@ -133,22 +131,20 @@ export function useAppealOrTroubleEntries({
   }
 
   const handleChangeContent = (id: string, newContent: string) => {
-    if (kind === 'trouble') {
-      if (mutableUnresolvedTroubles.some((t) => t.id === id)) {
-        setMutableUnresolvedTroubles((prev) =>
-          prev.map((t) => (t.id === id ? { ...t, trouble: newContent } : t)),
-        )
+    if (kind === 'trouble' && mutableUnresolvedTroubles.some((trouble) => trouble.id === id)) {
+      setMutableUnresolvedTroubles((prev) =>
+        prev.map((trouble) => (trouble.id === id ? { ...trouble, trouble: newContent } : trouble)),
+      )
 
-        return
-      }
-    } else if (kind === 'appeal') {
-      if (mutableExistingAppeals.some((a) => a.id === id)) {
-        setMutableExistingAppeals((prev) =>
-          prev.map((a) => (a.id === id ? { ...a, appeal: newContent } : a)),
-        )
+      return
+    }
 
-        return
-      }
+    if (kind === 'appeal' && mutableExistingAppeals.some((appeal) => appeal.id === id)) {
+      setMutableExistingAppeals((prev) =>
+        prev.map((appeal) => (appeal.id === id ? { ...appeal, appeal: newContent } : appeal)),
+      )
+
+      return
     }
 
     setAppealsAndTroublesState((prev) => {
@@ -157,8 +153,8 @@ export function useAppealOrTroubleEntries({
       }
 
       if (kind === 'appeal') {
-        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((e) =>
-          e.id === id ? { ...e, content: newContent } : e,
+        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((entry) =>
+          entry.id === id ? { ...entry, content: newContent } : entry,
         )
 
         return {
@@ -173,8 +169,8 @@ export function useAppealOrTroubleEntries({
         }
       }
 
-      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((e) =>
-        e.id === id ? { ...e, content: newContent } : e,
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((entry) =>
+        entry.id === id ? { ...entry, content: newContent } : entry,
       )
 
       return {
@@ -191,22 +187,24 @@ export function useAppealOrTroubleEntries({
   }
 
   const handleChangeItem = (id: string, newItem: Key | null) => {
-    if (kind === 'trouble') {
-      if (mutableUnresolvedTroubles.some((t) => t.id === id)) {
-        setMutableUnresolvedTroubles((prev) =>
-          prev.map((t) => (t.id === id ? { ...t, categoryOfTroubleId: String(newItem) } : t)),
-        )
+    if (kind === 'trouble' && mutableUnresolvedTroubles.some((trouble) => trouble.id === id)) {
+      setMutableUnresolvedTroubles((prev) =>
+        prev.map((trouble) =>
+          trouble.id === id ? { ...trouble, categoryOfTroubleId: String(newItem) } : trouble,
+        ),
+      )
 
-        return
-      }
-    } else if (kind === 'appeal') {
-      if (mutableExistingAppeals.some((a) => a.id === id)) {
-        setMutableExistingAppeals((prev) =>
-          prev.map((a) => (a.id === id ? { ...a, categoryOfAppealId: String(newItem) } : a)),
-        )
+      return
+    }
 
-        return
-      }
+    if (kind === 'appeal' && mutableExistingAppeals.some((appeal) => appeal.id === id)) {
+      setMutableExistingAppeals((prev) =>
+        prev.map((appeal) =>
+          appeal.id === id ? { ...appeal, categoryOfAppealId: String(newItem) } : appeal,
+        ),
+      )
+
+      return
     }
 
     setAppealsAndTroublesState((prev) => {
@@ -215,8 +213,8 @@ export function useAppealOrTroubleEntries({
       }
 
       if (kind === 'appeal') {
-        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((e) =>
-          e.id === id ? { ...e, item: newItem ? String(newItem) : null } : e,
+        const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((entry) =>
+          entry.id === id ? { ...entry, item: newItem ? String(newItem) : null } : entry,
         )
 
         return {
@@ -231,8 +229,8 @@ export function useAppealOrTroubleEntries({
         }
       }
 
-      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((e) =>
-        e.id === id ? { ...e, item: newItem ? String(newItem) : null } : e,
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((entry) =>
+        entry.id === id ? { ...entry, item: newItem ? String(newItem) : null } : entry,
       )
 
       return {
@@ -249,7 +247,9 @@ export function useAppealOrTroubleEntries({
   }
 
   const handleChangeResolved = (id: string, resolved: boolean) => {
-    setMutableUnresolvedTroubles((prev) => prev.map((t) => (t.id === id ? { ...t, resolved } : t)))
+    setMutableUnresolvedTroubles((prev) =>
+      prev.map((trouble) => (trouble.id === id ? { ...trouble, resolved } : trouble)),
+    )
   }
 
   return {
