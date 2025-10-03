@@ -8,6 +8,7 @@ import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
 import {
+  type UpdateDailyReportEntrySchema,
   type UpdateDailyReportFormSchema,
   updateDailyReportFormSchema,
 } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
@@ -121,7 +122,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
     })
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (id: UpdateDailyReportEntrySchema['id']) => {
     const index = dailyReports.findIndex((entry) => entry.value?.id === id)
 
     if (index === -1) {

@@ -107,5 +107,3 @@ export const createDailyReportFormSchema = z
 
 export type CreateDailyReportFormSchema = z.infer<typeof createDailyReportFormSchema>
 export type DailyReportEntrySchema = z.infer<typeof dailyReportEntrySchema>
-// export type AppealEntrySchema = z.infer<typeof appealEntrySchema>
-// export type TroubleEntrySchema = z.infer<typeof troubleEntrySchema>

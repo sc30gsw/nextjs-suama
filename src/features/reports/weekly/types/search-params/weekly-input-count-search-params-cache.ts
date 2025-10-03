@@ -1,7 +1,7 @@
 import { createSearchParamsCache, parseAsBoolean, parseAsJson } from 'nuqs/server'
 import { z } from 'zod'
 
-const weeklyReportEntrySchema = z.object({
+export const weeklyReportEntrySchema = z.object({
   id: z.string().uuid(),
   project: z.string(),
   mission: z.string(),
@@ -30,8 +30,8 @@ export const weeklyInputCountSearchParamsParsers = {
   isReference: parseAsBoolean.withDefault(false),
 }
 
+export type WeeklyReportEntry = z.infer<typeof weeklyReportEntrySchema>
 export type WeeklyInputCountSearchParams = typeof weeklyInputCountSearchParamsParsers
-
 export type UpdateWeeklyInputCountSearchParams = Omit<WeeklyInputCountSearchParams, 'isReference'>
 
 export const weeklyInputCountSearchParamsCache = createSearchParamsCache(

@@ -1,7 +1,7 @@
 import { createSearchParamsCache, parseAsJson } from 'nuqs/server'
 import { z } from 'zod'
 
-const reportEntrySchema = z.object({
+export const reportEntrySchema = z.object({
   id: z.string(),
   project: z.string().nullable(),
   mission: z.string().nullable(),
@@ -9,7 +9,7 @@ const reportEntrySchema = z.object({
   content: z.string(),
 })
 
-const appealsAndTroublesEntrySchema = z.object({
+export const appealsAndTroublesEntrySchema = z.object({
   id: z.string(),
   content: z.string(),
   item: z.string().nullable(),
@@ -56,5 +56,6 @@ export const inputCountSearchParamsParsers = {
 
 export const inputCountSearchParamsCache = createSearchParamsCache(inputCountSearchParamsParsers)
 
+export type ReportEntry = z.infer<typeof reportEntrySchema>
 export type DailyInputCountSearchParams = typeof inputCountSearchParamsParsers
 export type AppealsAndTroublesEntry = z.infer<typeof appealsAndTroublesEntrySchema>

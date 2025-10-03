@@ -8,6 +8,7 @@ import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use
 import type { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
 import {
   type UpdateWeeklyReportFormSchema,
+  type UpdateWeeklyReportSchema,
   updateWeeklyReportFormSchema,
 } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
 import type { UpdateWeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
@@ -147,7 +148,7 @@ export function useUpdateWeeklyReportForm(
     })
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (id: UpdateWeeklyReportSchema['id']) => {
     const index = weeklyReports.findIndex((entry) => entry.value?.id === id)
 
     if (index === -1) {

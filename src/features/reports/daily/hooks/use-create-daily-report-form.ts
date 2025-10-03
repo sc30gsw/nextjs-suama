@@ -10,6 +10,7 @@ import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-d
 import {
   type CreateDailyReportFormSchema,
   createDailyReportFormSchema,
+  type DailyReportEntrySchema,
 } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
@@ -144,7 +145,7 @@ export function useCreateDailyForm(
     })
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (id: DailyReportEntrySchema['id']) => {
     const index = dailyReports.findIndex((entry) => entry.value?.id === id)
 
     if (index === -1) {

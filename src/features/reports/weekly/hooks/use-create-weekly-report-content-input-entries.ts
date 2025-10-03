@@ -8,7 +8,10 @@ import type {
   CreateWeeklyReportFormSchema,
   CreateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
-import type { WeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+import type {
+  WeeklyInputCountSearchParams,
+  WeeklyReportEntry,
+} from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 export function useCreateWeeklyReportContentInputEntries(
@@ -33,7 +36,11 @@ export function useCreateWeeklyReportContentInputEntries(
   const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
   const [missionId, setMissionId] = useState<Key | null>(missionInput.value ?? null)
 
-  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
+  const handleChangeItem = (
+    id: WeeklyReportEntry['id'],
+    newItem: Key | null,
+    kind: 'project' | 'mission',
+  ) => {
     if (!(id && newItem)) {
       return
     }
@@ -124,7 +131,10 @@ export function useCreateWeeklyReportContentInputEntries(
     }
   }
 
-  const handleChangeValue = (id: string, newValue: string | number) => {
+  const handleChangeValue = (
+    id: WeeklyReportEntry['id'],
+    newValue: WeeklyReportEntry['content'] | WeeklyReportEntry['hours'],
+  ) => {
     if (!id) {
       return
     }
