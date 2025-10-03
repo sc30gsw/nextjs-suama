@@ -1,4 +1,5 @@
 import { useInputControl } from '@conform-to/react'
+import { useControl } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
@@ -79,7 +80,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
     defaultValue: {
       reportId: initialData.id,
       reportDate: initialData.reportDate,
-      remote: initialData.remote,
+      remote: initialData.remote ? 'on' : undefined,
       impression: initialData.impression,
       reportEntries: initialData.reportEntries.map((entry) => ({
         id: entry.id,
@@ -93,7 +94,9 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
     },
   })
 
-  const reportDate = useInputControl(fields.reportDate)
+  const reportDate = useControl({
+    defaultValue: fields.reportDate.initialValue,
+  })
   const remote = useInputControl(fields.remote)
 
   const dailyReports = fields.reportEntries.getFieldList()

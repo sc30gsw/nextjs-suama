@@ -92,7 +92,12 @@ export function EditDailyForm({
             label="日付"
             className="max-w-3xs"
           />
-          <input {...getInputProps(fields.reportDate, { type: 'hidden' })} disabled={isPending} />
+          <input
+            ref={reportDate.register}
+            name={fields.reportDate.name}
+            type="hidden"
+            disabled={isPending}
+          />
 
           <Button
             size="square-petite"
