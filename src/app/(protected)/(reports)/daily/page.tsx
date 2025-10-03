@@ -23,8 +23,8 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
   const troubleCount = appealsAndTroublesEntry.troubles.count
   const appealCount = appealsAndTroublesEntry.appeals.count
 
-  const projectPromise = getProjects(undefined, session.user.id)
-  const missionPromise = getMissions(undefined, session.user.id)
+  const projectPromise = getProjects(session.user.id)
+  const missionPromise = getMissions(session.user.id)
 
   const promises = Promise.all([projectPromise, missionPromise])
 

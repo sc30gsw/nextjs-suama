@@ -1,14 +1,19 @@
 'use client'
 
+import type { InferSelectModel } from 'drizzle-orm'
 import { useQueryStates } from 'nuqs'
 import { useState } from 'react'
 import type { Key } from 'react-aria-components'
+import type { appeals, troubles } from '~/db/schema'
 import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { Kind } from '../components/report-appeal-or-trouble-container'
+
+type AppealId = InferSelectModel<typeof appeals>['id']
+type TroubleId = InferSelectModel<typeof troubles>['id']
 
 type UseAppealOrTroubleEntriesParams = {
   kind: Kind
@@ -78,7 +83,7 @@ export function useAppealOrTroubleEntries({
     })
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (id: AppealId | TroubleId) => {
     if (kind === 'trouble' && mutableUnresolvedTroubles.some((trouble) => trouble.id === id)) {
       setMutableUnresolvedTroubles((prev) => prev.filter((trouble) => trouble.id !== id))
 
@@ -130,7 +135,7 @@ export function useAppealOrTroubleEntries({
     })
   }
 
-  const handleChangeContent = (id: string, newContent: string) => {
+  const handleChangeContent = (id: AppealId | TroubleId, newContent: string) => {
     if (kind === 'trouble' && mutableUnresolvedTroubles.some((trouble) => trouble.id === id)) {
       setMutableUnresolvedTroubles((prev) =>
         prev.map((trouble) => (trouble.id === id ? { ...trouble, trouble: newContent } : trouble)),
@@ -186,7 +191,7 @@ export function useAppealOrTroubleEntries({
     })
   }
 
-  const handleChangeItem = (id: string, newItem: Key | null) => {
+  const handleChangeItem = (id: AppealId | TroubleId, newItem: Key | null) => {
     if (kind === 'trouble' && mutableUnresolvedTroubles.some((trouble) => trouble.id === id)) {
       setMutableUnresolvedTroubles((prev) =>
         prev.map((trouble) =>
@@ -246,7 +251,7 @@ export function useAppealOrTroubleEntries({
     })
   }
 
-  const handleChangeResolved = (id: string, resolved: boolean) => {
+  const handleChangeResolved = (id: AppealId | TroubleId, resolved: boolean) => {
     setMutableUnresolvedTroubles((prev) =>
       prev.map((trouble) => (trouble.id === id ? { ...trouble, resolved } : trouble)),
     )

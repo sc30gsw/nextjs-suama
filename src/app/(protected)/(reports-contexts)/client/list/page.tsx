@@ -31,19 +31,16 @@ export default async function ClientListPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const clientsPromise = getClients(
-    {
-      skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-      limit:
-        rowsPerPage > MAX_ROWS_PER_PAGE
-          ? MAX_ROWS_PER_PAGE
-          : rowsPerPage < MIN_ROWS_PER_PAGE
-            ? MIN_ROWS_PER_PAGE
-            : rowsPerPage,
-      names,
-    },
-    session.user.id,
-  )
+  const clientsPromise = getClients(session.user.id, {
+    skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
+    limit:
+      rowsPerPage > MAX_ROWS_PER_PAGE
+        ? MAX_ROWS_PER_PAGE
+        : rowsPerPage < MIN_ROWS_PER_PAGE
+          ? MIN_ROWS_PER_PAGE
+          : rowsPerPage,
+    names,
+  })
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">

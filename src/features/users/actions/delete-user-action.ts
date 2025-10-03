@@ -10,9 +10,12 @@ import { users } from '~/db/schema'
 import { db } from '~/index'
 import { auth } from '~/lib/auth'
 import { getServerSession } from '~/lib/get-server-session'
-import { commonDeleteIdSchema } from '~/types/schemas/common-delete-id-schema'
+import {
+  type CommonDeleteIdSchema,
+  commonDeleteIdSchema,
+} from '~/types/schemas/common-delete-id-schema'
 
-export async function deleteUserAction(id: string) {
+export async function deleteUserAction(id: CommonDeleteIdSchema['id']) {
   const parseResult = commonDeleteIdSchema.safeParse({ id })
 
   if (!parseResult.success) {

@@ -1,7 +1,10 @@
 import { IconPlus } from '@intentui/icons'
+import type { InferSelectModel } from 'drizzle-orm'
+import { unauthorized } from 'next/navigation'
 import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
+import type { dailyReports } from '~/db/schema'
 import { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/components/report-appeal-and-troubles-input-entries'
@@ -15,7 +18,7 @@ export type Kind = 'appeal' | 'trouble'
 
 type ReportAppealOrTroubleContainerProps = {
   kind: Kind
-  reportId?: NonNullable<Parameters<typeof getAppealCategories>[0]>['reportId']
+  reportId?: InferSelectModel<typeof dailyReports>['id']
   count?: number
 }
 
@@ -25,6 +28,11 @@ export async function ReportAppealOrTroubleContainer({
   count = 3,
 }: ReportAppealOrTroubleContainerProps) {
   const session = await getServerSession()
+
+  if (!session) {
+    unauthorized()
+  }
+
   return (
     <Suspense
       fallback={
@@ -48,7 +56,7 @@ export async function ReportAppealOrTroubleContainer({
       }
     >
       {kind === 'trouble'
-        ? getTroubleCategories({ withData: true }, session?.user.id).then((res) => (
+        ? getTroubleCategories({ withData: true }, session.user.id).then((res) => (
             <ReportAppealAndTroubleInputEntries<TroubleCategoriesResponse['troubleCategories']>
               items={res.troubleCategories}
               kind="trouble"
@@ -56,8 +64,8 @@ export async function ReportAppealOrTroubleContainer({
             />
           ))
         : getAppealCategories(
+            session.user.id,
             reportId ? { withData: true, reportId } : undefined,
-            session?.user.id,
           ).then((res) => (
             <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
               items={res.appealCategories}

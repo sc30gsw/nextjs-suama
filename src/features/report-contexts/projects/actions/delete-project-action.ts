@@ -8,9 +8,12 @@ import { ERROR_STATUS } from '~/constants/error-message'
 import { projects } from '~/db/schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
-import { commonDeleteIdSchema } from '~/types/schemas/common-delete-id-schema'
+import {
+  type CommonDeleteIdSchema,
+  commonDeleteIdSchema,
+} from '~/types/schemas/common-delete-id-schema'
 
-export async function deleteProjectAction(id: string) {
+export async function deleteProjectAction(id: CommonDeleteIdSchema['id']) {
   const parseResult = commonDeleteIdSchema.safeParse({ id })
 
   if (!parseResult.success) {
