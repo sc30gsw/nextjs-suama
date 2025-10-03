@@ -6,12 +6,6 @@ import { appeals, categoryOfAppeals } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-type ExistingAppeals = {
-  id: InferSelectModel<typeof appeals>['id']
-  categoryId: InferSelectModel<typeof appeals>['categoryOfAppealId']
-  content: InferSelectModel<typeof appeals>['appeal']
-}
-
 const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
   // アピールカテゴリーと、withData=trueかつreportIdがある場合には既存のアピールも取得するAPI
   const { skip, limit, names, withData, reportId } = c.req.query()
@@ -36,7 +30,10 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
 
     const total = await db.select({ count: count() }).from(categoryOfAppeals).where(whereClause)
 
-    let existingAppeals: ExistingAppeals[]
+    let existingAppeals: Pick<
+      InferSelectModel<typeof appeals>,
+      'id' | 'categoryOfAppealId' | 'appeal'
+    >[] = []
 
     if (withData === 'true' && reportId) {
       const appealsData = await db.query.appeals.findMany({
@@ -49,13 +46,7 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
         orderBy: (appeals, { desc }) => [desc(appeals.createdAt)],
       })
 
-      existingAppeals = appealsData.map((appeal) => ({
-        id: appeal.id,
-        categoryId: appeal.categoryOfAppealId,
-        content: appeal.appeal,
-      }))
-    } else {
-      existingAppeals = []
+      existingAppeals = appealsData
     }
 
     return c.json(

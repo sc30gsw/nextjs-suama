@@ -79,8 +79,8 @@ export function ReportAppealAndTroubleInputEntries<
             key={entry.id}
             entry={{
               id: entry.id,
-              content: entry.content,
-              item: entry.categoryId,
+              content: entry.appeal,
+              item: entry.categoryOfAppealId,
               resolved: undefined,
             }}
             index={index}

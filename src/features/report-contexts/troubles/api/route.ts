@@ -6,11 +6,6 @@ import { categoryOfTroubles, troubles } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-type UnResolvedTrouble = Pick<
-  InferSelectModel<typeof troubles>,
-  'id' | 'categoryOfTroubleId' | 'trouble' | 'resolved'
->
-
 const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
   // トラブルカテゴリーと、withData=trueの場合には未解決のトラブルも取得するAPI
   const { skip, limit, names, withData } = c.req.query()
@@ -35,7 +30,10 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
 
     const total = await db.select({ count: count() }).from(categoryOfTroubles).where(whereClause)
 
-    let unResolvedTroubles: UnResolvedTrouble[]
+    let unResolvedTroubles: Pick<
+      InferSelectModel<typeof troubles>,
+      'id' | 'categoryOfTroubleId' | 'trouble' | 'resolved'
+    >[] = []
 
     if (withData === 'true') {
       unResolvedTroubles = await db.query.troubles.findMany({
@@ -48,8 +46,6 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
         where: eq(troubles.resolved, false),
         orderBy: (troubles, { desc }) => [desc(troubles.createdAt)],
       })
-    } else {
-      unResolvedTroubles = []
     }
 
     return c.json(
