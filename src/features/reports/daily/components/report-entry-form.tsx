@@ -1,15 +1,15 @@
 import { IconMinus } from '@intentui/icons'
-import type { Key } from 'react-aria-components'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { Textarea } from '~/components/ui/intent-ui/textarea'
+import type { Kind } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
+import type { useAppealOrTroubleEntries } from '~/features/reports/daily/hooks/use-appeal-or-trouble-entries'
 import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
 import type { AppealsAndTroublesEntry } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
-import type { Kind } from './report-appeal-or-trouble-container'
 
 type Item =
   | AppealCategoriesResponse['appealCategories'][number]
@@ -21,10 +21,10 @@ type ReportEntryFormProps = {
   isExisting: boolean
   kind: Kind
   items: Item[]
-  onChangeContent: (id: string, content: string) => void
-  onChangeItem: (id: string, item: Key | null) => void
-  onChangeResolved: (id: string, resolved: boolean) => void
-  onRemove: (id: string) => void
+  onChangeContent: ReturnType<typeof useAppealOrTroubleEntries>['handleChangeContent']
+  onChangeItem: ReturnType<typeof useAppealOrTroubleEntries>['handleChangeItem']
+  onChangeResolved: ReturnType<typeof useAppealOrTroubleEntries>['handleChangeResolved']
+  onRemove: ReturnType<typeof useAppealOrTroubleEntries>['handleRemove']
 }
 
 export function ReportEntryForm({

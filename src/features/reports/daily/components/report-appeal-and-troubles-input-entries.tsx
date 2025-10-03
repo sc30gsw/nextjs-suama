@@ -2,13 +2,13 @@
 
 import { IconPlus } from '@intentui/icons'
 import { Button } from '~/components/ui/intent-ui/button'
+import type { Kind } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
+import { ReportEntryForm } from '~/features/reports/daily/components/report-entry-form'
 import { useAppealOrTroubleEntries } from '~/features/reports/daily/hooks/use-appeal-or-trouble-entries'
 import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
-import type { Kind } from './report-appeal-or-trouble-container'
-import { ReportEntryForm } from './report-entry-form'
 
 type ReportAppealAndTroublesInputEntriesProps<
   T extends

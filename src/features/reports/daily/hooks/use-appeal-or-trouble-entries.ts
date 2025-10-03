@@ -5,12 +5,13 @@ import { useQueryStates } from 'nuqs'
 import { useState } from 'react'
 import type { Key } from 'react-aria-components'
 import type { appeals, troubles } from '~/db/schema'
+import type { Kind } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
 import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
+import type { AppealsAndTroublesEntry } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
-import type { Kind } from '../components/report-appeal-or-trouble-container'
 
 type AppealId = InferSelectModel<typeof appeals>['id']
 type TroubleId = InferSelectModel<typeof troubles>['id']
@@ -35,9 +36,9 @@ export function useAppealOrTroubleEntries({
   )
 
   const [mutableUnresolvedTroubles, setMutableUnresolvedTroubles] = useState(
-    unResolvedTroubles || [],
+    unResolvedTroubles ?? [],
   )
-  const [mutableExistingAppeals, setMutableExistingAppeals] = useState(existingAppeals || [])
+  const [mutableExistingAppeals, setMutableExistingAppeals] = useState(existingAppeals ?? [])
 
   const entries =
     kind === 'appeal'
@@ -135,7 +136,10 @@ export function useAppealOrTroubleEntries({
     })
   }
 
-  const handleChangeContent = (id: AppealId | TroubleId, newContent: string) => {
+  const handleChangeContent = (
+    id: AppealId | TroubleId,
+    newContent: AppealsAndTroublesEntry['content'],
+  ) => {
     if (kind === 'trouble' && mutableUnresolvedTroubles.some((trouble) => trouble.id === id)) {
       setMutableUnresolvedTroubles((prev) =>
         prev.map((trouble) => (trouble.id === id ? { ...trouble, trouble: newContent } : trouble)),
@@ -251,7 +255,10 @@ export function useAppealOrTroubleEntries({
     })
   }
 
-  const handleChangeResolved = (id: AppealId | TroubleId, resolved: boolean) => {
+  const handleChangeResolved = (
+    id: AppealId | TroubleId,
+    resolved: NonNullable<AppealsAndTroublesEntry['resolved']>,
+  ) => {
     setMutableUnresolvedTroubles((prev) =>
       prev.map((trouble) => (trouble.id === id ? { ...trouble, resolved } : trouble)),
     )
