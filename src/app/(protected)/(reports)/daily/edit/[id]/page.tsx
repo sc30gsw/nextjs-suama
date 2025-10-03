@@ -60,19 +60,13 @@ export default async function EditDailyReportPage({
               <Heading level={3}>困っていること</Heading>
             </div>
           }
-          troubles={<ReportAppealOrTroubleContainer kind="trouble" userId={session.user.id} />}
+          troubles={<ReportAppealOrTroubleContainer kind="trouble" />}
           appealHeadings={
             <div className="mt-4 flex items-center">
               <Heading level={3}>アピールポイント</Heading>
             </div>
           }
-          appeals={
-            <ReportAppealOrTroubleContainer
-              kind="appeal"
-              reportId={reportId}
-              userId={session.user.id}
-            />
-          }
+          appeals={<ReportAppealOrTroubleContainer kind="appeal" reportId={reportId} />}
         />
       </Suspense>
     </div>

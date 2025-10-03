@@ -9,22 +9,22 @@ import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
+import { getServerSession } from '~/lib/get-server-session'
 
 export type Kind = 'appeal' | 'trouble'
 
 type ReportAppealOrTroubleContainerProps = {
   kind: Kind
   reportId?: NonNullable<Parameters<typeof getAppealCategories>[0]>['reportId']
-  userId: NonNullable<Parameters<typeof getAppealCategories>[1]>
   count?: number
 }
 
-export function ReportAppealOrTroubleContainer({
+export async function ReportAppealOrTroubleContainer({
   kind,
   reportId,
-  userId,
   count = 3,
 }: ReportAppealOrTroubleContainerProps) {
+  const session = await getServerSession()
   return (
     <Suspense
       fallback={
@@ -48,22 +48,23 @@ export function ReportAppealOrTroubleContainer({
       }
     >
       {kind === 'trouble'
-        ? getTroubleCategories({ withData: true }, userId).then((res) => (
+        ? getTroubleCategories({ withData: true }, session?.user.id).then((res) => (
             <ReportAppealAndTroubleInputEntries<TroubleCategoriesResponse['troubleCategories']>
               items={res.troubleCategories}
               kind="trouble"
               unResolvedTroubles={res.unResolvedTroubles}
             />
           ))
-        : getAppealCategories(reportId ? { withData: true, reportId } : undefined, userId).then(
-            (res) => (
-              <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
-                items={res.appealCategories}
-                kind="appeal"
-                existingAppeals={res.existingAppeals}
-              />
-            ),
-          )}
+        : getAppealCategories(
+            reportId ? { withData: true, reportId } : undefined,
+            session?.user.id,
+          ).then((res) => (
+            <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
+              items={res.appealCategories}
+              kind="appeal"
+              existingAppeals={res.existingAppeals}
+            />
+          ))}
     </Suspense>
   )
 }

@@ -41,7 +41,6 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
         troubles={
           <ReportAppealOrTroubleContainer
             kind="trouble"
-            userId={session.user.id}
             count={troubleCount > 0 ? troubleCount : 0}
           />
         }
@@ -51,11 +50,7 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
           </div>
         }
         appeals={
-          <ReportAppealOrTroubleContainer
-            kind="appeal"
-            userId={session.user.id}
-            count={appealCount > 0 ? appealCount : 0}
-          />
+          <ReportAppealOrTroubleContainer kind="appeal" count={appealCount > 0 ? appealCount : 0} />
         }
       />
     </div>
