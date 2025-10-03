@@ -48,6 +48,7 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
         where: eq(appeals.dailyReportId, reportId),
         orderBy: (appeals, { desc }) => [desc(appeals.createdAt)],
       })
+
       existingAppeals = appealsData.map((appeal) => ({
         id: appeal.id,
         categoryId: appeal.categoryOfAppealId,
