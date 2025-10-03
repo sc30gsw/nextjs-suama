@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { and, eq, inArray, not } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { filter, isDefined, map, pipe } from 'remeda'
 import {
   GET_APPEAL_CATEGORIES_CACHE_KEY,
   GET_DAILY_REPORT_BY_ID_CACHE_KEY,
@@ -75,9 +76,11 @@ export async function updateReportAction(_: unknown, formData: FormData) {
       const reportEntries = submission.value.reportEntries
 
       if (reportEntries.length > 0) {
-        const submittedMissionIds = reportEntries
-          .map((entry) => entry.mission)
-          .filter((missionId) => missionId)
+        const submittedMissionIds = pipe(
+          reportEntries,
+          map((entry) => entry.mission),
+          filter(isDefined),
+        )
 
         // [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
         const uniqueMissionIds = [...new Set(submittedMissionIds)]
