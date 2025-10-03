@@ -73,6 +73,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
         .where(eq(dailyReports.id, reportId))
 
       const reportEntries = submission.value.reportEntries
+
       if (reportEntries.length > 0) {
         const submittedMissionIds = reportEntries
           .map((entry) => entry.mission)
@@ -98,6 +99,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
         // ?:そのため、どのレコードをUPDATEすれば良いかを特定できず、onConflictDoUpdate を使ったUpsertができない。※UNIQUE 制約がある場合、午前と午後で同じミッションだけど内容を分けて書きたい場合、エラーになる。
         // ?:代わりに、トランザクション内で一度関連レコードを全て削除し、送信された内容で再作成することでデータの整合性を保つ。。
         await tx.delete(dailyReportMissions).where(eq(dailyReportMissions.dailyReportId, reportId))
+
         await tx.insert(dailyReportMissions).values(
           reportEntries.map((entry) => ({
             dailyReportId: reportId,
@@ -141,6 +143,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
       // 送信されなかったAppealsを削除
       if (validAppealEntries.length > 0) {
         const submittedAppealIds = validAppealEntries.map((e) => e.id)
+
         await tx
           .delete(appeals)
           .where(

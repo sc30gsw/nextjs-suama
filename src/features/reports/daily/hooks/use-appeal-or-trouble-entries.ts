@@ -261,5 +261,5 @@ export function useAppealOrTroubleEntries({
     handleChangeContent,
     handleChangeItem,
     handleChangeResolved,
-  }
+  } as const
 }
