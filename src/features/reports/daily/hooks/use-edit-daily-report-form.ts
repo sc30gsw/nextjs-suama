@@ -80,7 +80,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
     defaultValue: {
       reportId: initialData.id,
       reportDate: initialData.reportDate,
-      remote: initialData.remote ? 'on' : undefined,
+      remote: initialData.remote,
       impression: initialData.impression,
       reportEntries: initialData.reportEntries.map((entry) => ({
         id: entry.id,
