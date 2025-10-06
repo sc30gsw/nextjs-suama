@@ -13,7 +13,9 @@ export const settingUserInputSchema = z.object({
     .max(7_000_000, {
       error: '画像のサイズが大きすぎます（最大約5MB）',
     })
-    .regex(/^data:image\/(jpeg|png|webp);base64,/, '画像はjpeg・png・webpのみ選択可能です')
+    .regex(/^data:image\/(jpeg|png|webp);base64,/, {
+      error: '画像はjpeg・png・webpのみ選択可能です',
+    })
     .optional(),
 })
 
