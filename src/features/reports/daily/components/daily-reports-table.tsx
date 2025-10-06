@@ -1,6 +1,6 @@
 'use client'
 
-import { IconDocumentEdit, IconFileText, IconTrashEmpty } from '@intentui/icons'
+import { IconDocumentEdit, IconFileText } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useQueryStates } from 'nuqs'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
+import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
@@ -73,6 +74,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
                 <IconFileText />
               </Button>
             </DailyReportWorkContentPopover>
+
             {isCurrentUser && (
               <div className="flex gap-2">
                 <Link href={`/daily/edit/${report.id}`}>
@@ -81,10 +83,8 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
                     <IconDocumentEdit />
                   </Button>
                 </Link>
-                <Button intent="danger" size="small">
-                  削除
-                  <IconTrashEmpty />
-                </Button>
+
+                <DailyReportDeleteButton id={report.id} />
               </div>
             )}
           </div>
