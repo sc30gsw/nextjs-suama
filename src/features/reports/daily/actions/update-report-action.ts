@@ -1,0 +1,207 @@
+'use server'
+
+import { parseWithZod } from '@conform-to/zod'
+import { format } from 'date-fns'
+import { and, eq, inArray, not } from 'drizzle-orm'
+import { revalidateTag } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { filter, isDefined, map, pipe } from 'remeda'
+import {
+  GET_APPEAL_CATEGORIES_CACHE_KEY,
+  GET_DAILY_REPORT_BY_ID_CACHE_KEY,
+  GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
+  GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
+  GET_TROUBLE_CATEGORIES_CACHE_KEY,
+} from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
+import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
+import { updateDailyReportFormSchema } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
+import { db } from '~/index'
+import { getServerSession } from '~/lib/get-server-session'
+import { convertJstDateToUtc } from '~/utils/date-utils'
+
+export async function updateReportAction(_: unknown, formData: FormData) {
+  const submission = parseWithZod(formData, {
+    schema: updateDailyReportFormSchema,
+  })
+
+  if (submission.status !== 'success') {
+    return submission.reply()
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    })
+  }
+
+  const reportId = submission.value.reportId
+  const actionType = formData.get('action')
+
+  const reportDateString = submission.value.reportDate
+  // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
+  const reportDate = convertJstDateToUtc(reportDateString, 'start')
+
+  const report = await db.query.dailyReports.findFirst({
+    where: eq(dailyReports.id, reportId),
+  })
+
+  if (!report) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.NOT_FOUND] },
+    })
+  }
+
+  if (report.userId !== session.user.id) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.FOR_BIDDEN] },
+    })
+  }
+
+  try {
+    await db.transaction(async (tx) => {
+      // 日報の基本情報を更新
+      await tx
+        .update(dailyReports)
+        .set({
+          reportDate,
+          impression: submission.value.impression ?? null,
+          release: actionType === 'published',
+          remote: submission.value.remote,
+        })
+        .where(eq(dailyReports.id, reportId))
+
+      const reportEntries = submission.value.reportEntries
+
+      if (reportEntries.length > 0) {
+        const submittedMissionIds = pipe(
+          reportEntries,
+          map((entry) => entry.mission),
+          filter(isDefined),
+        )
+
+        // [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
+        const uniqueMissionIds = [...new Set(submittedMissionIds)]
+
+        if (uniqueMissionIds.length > 0) {
+          const existingMissions = await tx.query.missions.findMany({
+            where: inArray(missions.id, uniqueMissionIds),
+            columns: { id: true },
+          })
+
+          if (existingMissions.length !== uniqueMissionIds.length) {
+            // 1つでも存在しないmissionIdがあればエラーをスローしてロールバック
+            throw new Error(ERROR_STATUS.INVALID_MISSION_RELATION)
+          }
+        }
+
+        // 既存の関連を一旦削除し、新しい情報で再作成
+        // ?:現在のスキーマでは dailyReportMissions テーブルに (dailyReportId, missionId) の UNIQUE 制約がない。
+        // ?:そのため、どのレコードをUPDATEすれば良いかを特定できず、onConflictDoUpdate を使ったUpsertができない。※UNIQUE 制約がある場合、午前と午後で同じミッションだけど内容を分けて書きたい場合、エラーになる。
+        // ?:代わりに、トランザクション内で一度関連レコードを全て削除し、送信された内容で再作成することでデータの整合性を保つ。。
+        await tx.delete(dailyReportMissions).where(eq(dailyReportMissions.dailyReportId, reportId))
+
+        await tx.insert(dailyReportMissions).values(
+          reportEntries.map((entry) => ({
+            dailyReportId: reportId,
+            missionId: entry.mission,
+            workContent: entry.content,
+            hours: entry.hours,
+          })),
+        )
+      } else {
+        // 送信された業務内容が0件の場合、関連を全て削除
+        await tx.delete(dailyReportMissions).where(eq(dailyReportMissions.dailyReportId, reportId))
+      }
+
+      // アピール情報の処理
+      const validAppealEntries = submission.value.appealEntries.filter(
+        (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
+      )
+
+      // upsertで既存は更新、新規は追加
+      if (validAppealEntries.length > 0) {
+        for (const entry of validAppealEntries) {
+          await tx
+            .insert(appeals)
+            .values({
+              id: entry.id,
+              userId: session.user.id,
+              dailyReportId: reportId,
+              categoryOfAppealId: entry.categoryId!,
+              appeal: entry.content!,
+            })
+            .onConflictDoUpdate({
+              target: appeals.id,
+              set: {
+                categoryOfAppealId: entry.categoryId!,
+                appeal: entry.content!,
+              },
+            })
+        }
+      }
+
+      // 送信されなかったAppealsを削除
+      if (validAppealEntries.length > 0) {
+        const submittedAppealIds = validAppealEntries.map((e) => e.id)
+
+        await tx
+          .delete(appeals)
+          .where(
+            and(eq(appeals.dailyReportId, reportId), not(inArray(appeals.id, submittedAppealIds))),
+          )
+      } else {
+        // 全て削除
+        await tx.delete(appeals).where(eq(appeals.dailyReportId, reportId))
+      }
+
+      // トラブル情報の処理
+      const validTroubleEntries = submission.value.troubleEntries.filter(
+        (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
+      )
+
+      // upsertで既存はresolved更新、新規は追加
+      if (validTroubleEntries.length > 0) {
+        for (const entry of validTroubleEntries) {
+          await tx
+            .insert(troubles)
+            .values({
+              id: entry.id,
+              userId: session.user.id,
+              categoryOfTroubleId: entry.categoryId!,
+              trouble: entry.content!,
+              resolved: entry.resolved,
+            })
+            .onConflictDoUpdate({
+              target: troubles.id,
+              set: {
+                resolved: entry.resolved,
+              },
+            })
+        }
+      }
+    })
+
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
+    revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_APPEAL_CATEGORIES_CACHE_KEY}-${reportId}`)
+  } catch (error) {
+    if (error instanceof Error && error.message === ERROR_STATUS.INVALID_MISSION_RELATION) {
+      return submission.reply({
+        fieldErrors: { message: [ERROR_STATUS.INVALID_MISSION_RELATION] },
+      })
+    }
+
+    console.error('Update report error:', error)
+
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+    })
+  }
+
+  redirect('/daily/mine')
+}

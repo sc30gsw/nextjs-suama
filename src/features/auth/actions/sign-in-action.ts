@@ -1,8 +1,8 @@
 'use server'
 
 import { parseWithZod } from '@conform-to/zod'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
-
 import { auth } from '~/lib/auth'
 
 export async function signInAction(_: unknown, formData: FormData) {
@@ -23,7 +23,7 @@ export async function signInAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }

@@ -2,14 +2,17 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { createWeeklyReportAction } from '~/features/reports/weekly/actions/create-weekly-report-action'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import {
   type CreateWeeklyReportFormSchema,
+  type CreateWeeklyReportSchema,
   createWeeklyReportFormSchema,
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import type { WeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useCreateWeeklyForm(
@@ -29,25 +32,37 @@ export function useCreateWeeklyForm(
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createWeeklyReportAction, {
       onSuccess() {
-        toast.success('週報の作成に成功しました')
+        toast.success(TOAST_MESSAGES.WEEKLY_REPORT.CREATE_SUCCESS)
         router.push(`/weekly/list/${date.dates}`)
       },
       onError(result) {
-        if (result.error) {
-          const isUnauthorized = result.error.message?.includes('Unauthorized')
+        const errorMessage = result?.error?.message?.[0]
 
-          if (isUnauthorized) {
-            toast.error('セッションが切れました。再度ログインしてください', {
-              cancel: {
-                label: 'ログイン',
-                onClick: () => router.push('/sign-in'),
-              },
-            })
-            return
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.INVALID_PROJECT_RELATION:
+              toast.error(TOAST_MESSAGES.PROJECT.INVALID_RELATION)
+
+              return
+
+            case ERROR_STATUS.INVALID_MISSION_RELATION:
+              toast.error(TOAST_MESSAGES.MISSION.INVALID_RELATION)
+
+              return
           }
         }
 
-        toast.error('週報の作成に失敗しました')
+        toast.error(TOAST_MESSAGES.WEEKLY_REPORT.CREATE_FAILED)
       },
     }),
     null,
@@ -113,7 +128,7 @@ export function useCreateWeeklyForm(
     })
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (id: CreateWeeklyReportSchema['id']) => {
     const index = weeklyReports.findIndex((entry) => entry.value?.id === id)
 
     if (index === -1) {
@@ -146,7 +161,7 @@ export function useCreateWeeklyForm(
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
-        (msg) => !msg.includes('Unauthorized'),
+        (msg) => !msg.includes(ERROR_STATUS.UNAUTHORIZED),
       )
 
       return filteredMessages.length > 0 ? filteredMessages.join(', ') : undefined

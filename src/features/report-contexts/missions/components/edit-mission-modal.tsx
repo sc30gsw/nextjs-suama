@@ -2,6 +2,7 @@ import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
+import { useRouter } from 'next/navigation'
 import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
 import { useToggle } from 'react-use'
@@ -12,6 +13,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateMissionAction } from '~/features/report-contexts/missions/actions/update-mission-action'
 import {
   type EditMissionInputSchema,
@@ -19,6 +22,7 @@ import {
 } from '~/features/report-contexts/missions/types/schemas/edit-mission-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditMissionModalProps = Pick<
@@ -36,16 +40,48 @@ export function EditMissionModal({
 }: EditMissionModalProps) {
   const [open, toggle] = useToggle(false)
   const [project, setProject] = useState<Key | null>(projectId)
+  const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateMissionAction, {
       onSuccess(result) {
-        toast.success('ミッションの更新に成功しました')
+        toast.success(TOAST_MESSAGES.MISSION.UPDATE_SUCCESS)
         toggle(false)
         setProject(result.initialValue?.projectId.toString() ?? '')
       },
-      onError() {
-        toast.error('ミッションの更新に失敗しました')
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.NOT_FOUND:
+              toast.error(TOAST_MESSAGES.MISSION.NOT_FOUND, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/mission'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.INVALID_PROJECT_RELATION:
+              toast.error(TOAST_MESSAGES.PROJECT.INVALID_RELATION)
+
+              return
+          }
+        }
+
+        toast.error(TOAST_MESSAGES.MISSION.UPDATE_FAILED)
       },
     }),
     null,
@@ -125,6 +161,8 @@ export function EditMissionModal({
               </span>
             </div>
             <div>
+              {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
+              {/* // ? https://ja.conform.guide/integration/ui-libraries */}
               <ComboBox
                 {...getInputProps(fields.projectId, { type: 'text' })}
                 label="プロジェクト"

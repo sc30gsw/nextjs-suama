@@ -3,10 +3,12 @@
 import { parseWithZod } from '@conform-to/zod'
 import { revalidateTag } from 'next/cache'
 import { GET_CLIENTS_CACHE_KEY } from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { clients } from '~/db/schema'
 import { createClientInputSchema } from '~/features/report-contexts/clients/types/schemas/create-client-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
 import { db } from '~/index'
+import { getServerSession } from '~/lib/get-server-session'
 
 export async function createClientAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -15,6 +17,14 @@ export async function createClientAction(_: unknown, formData: FormData) {
 
   if (submission.status !== 'success') {
     return submission.reply()
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    })
   }
 
   try {
@@ -28,7 +38,7 @@ export async function createClientAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: ['Something went wrong'] },
+      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
 }

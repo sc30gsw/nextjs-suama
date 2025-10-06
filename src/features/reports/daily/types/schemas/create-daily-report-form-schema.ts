@@ -26,6 +26,10 @@ export const troubleEntrySchema = z.object({
   id: z.string().uuid(),
   categoryId: z.string().optional(),
   content: z.string().optional(),
+  resolved: z
+    .union([z.literal('true'), z.literal('false'), z.boolean()])
+    .transform((val) => val === 'true' || val === true)
+    .default(false),
 })
 
 // メインのフォームスキーマ
@@ -103,5 +107,3 @@ export const createDailyReportFormSchema = z
 
 export type CreateDailyReportFormSchema = z.infer<typeof createDailyReportFormSchema>
 export type DailyReportEntrySchema = z.infer<typeof dailyReportEntrySchema>
-// export type AppealEntrySchema = z.infer<typeof appealEntrySchema>
-// export type TroubleEntrySchema = z.infer<typeof troubleEntrySchema>

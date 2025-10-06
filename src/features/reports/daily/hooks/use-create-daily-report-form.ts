@@ -1,58 +1,66 @@
-import { useInputControl } from '@conform-to/react'
+import { useControl } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
-import { getLocalTimeZone, today } from '@internationalized/date'
 import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { createReportAction } from '~/features/reports/daily/actions/create-report-action'
 import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
 import {
   type CreateDailyReportFormSchema,
   createDailyReportFormSchema,
+  type DailyReportEntrySchema,
 } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useCreateDailyForm(
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
 ) {
-  const { reportEntry, setReportEntry } = useDailyReportSearchParams(
+  const { reportEntry, appealsAndTroublesEntry, setReportEntry } = useDailyReportSearchParams(
     initialDailyInputCountSearchParamsParsers,
   )
 
   const router = useRouter()
-  const now = today(getLocalTimeZone())
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createReportAction, {
       onError(result) {
-        if (result.error) {
-          const errorMessage = result.error.message
+        const errorMessage = result?.error?.message?.[0]
 
-          if (errorMessage?.includes('Unauthorized')) {
-            toast.error('セッションが切れました。再度ログインしてください', {
-              cancel: {
-                label: 'ログイン',
-                onClick: () => router.push('/sign-in'),
-              },
-            })
-            return
-          }
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
 
-          if (errorMessage?.includes('本日の日報は既に作成されています')) {
-            toast.error('本日の日報は既に作成されています', {
-              cancel: {
-                label: '日報一覧へ',
-                onClick: () => router.push('/mine'),
-              },
-            })
-            return
+              return
+
+            case ERROR_STATUS.ALREADY_EXISTS:
+              toast.error(TOAST_MESSAGES.DAILY_REPORT.ALREADY_EXISTS, {
+                cancel: {
+                  label: '日報一覧へ',
+                  onClick: () => router.push('/mine'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.INVALID_MISSION_RELATION:
+              toast.error(TOAST_MESSAGES.MISSION.INVALID_RELATION)
+
+              return
           }
         }
 
-        toast.error('日報の作成に失敗しました')
+        toast.error(TOAST_MESSAGES.DAILY_REPORT.CREATE_FAILED)
       },
     }),
     null,
@@ -65,7 +73,7 @@ export function useCreateDailyForm(
       return parseWithZod(formData, { schema: createDailyReportFormSchema })
     },
     defaultValue: {
-      reportDate: format(now.toDate(getLocalTimeZone()), 'yyyy-MM-dd'),
+      reportDate: format(new Date(), 'yyyy-MM-dd'),
       remote: undefined,
       impression: '',
       reportEntries: reportEntry.entries.map((entry) => ({
@@ -74,12 +82,22 @@ export function useCreateDailyForm(
         mission: entry.mission ?? '',
         hours: entry.hours.toString(),
       })),
-      appealEntries: [],
-      troubleEntries: [],
+      appealEntries: appealsAndTroublesEntry.appeals.entries.map((entry) => ({
+        id: entry.id,
+        categoryId: entry.item ?? undefined,
+        content: entry.content ?? undefined,
+      })),
+      troubleEntries: appealsAndTroublesEntry.troubles.entries.map((entry) => ({
+        id: entry.id,
+        categoryId: entry.item ?? undefined,
+        content: entry.content ?? undefined,
+      })),
     },
   })
 
-  const reportDate = useInputControl(fields.reportDate)
+  const reportDate = useControl({
+    defaultValue: fields.reportDate.initialValue,
+  })
 
   // Conformによるformの増減等状態管理は以下を参照
   // ? https://zenn.dev/coji/articles/remix-conform-nested-array
@@ -127,7 +145,7 @@ export function useCreateDailyForm(
     })
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (id: DailyReportEntrySchema['id']) => {
     const index = dailyReports.findIndex((entry) => entry.value?.id === id)
 
     if (index === -1) {
@@ -160,7 +178,7 @@ export function useCreateDailyForm(
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
-        (msg) => !msg.includes('Unauthorized'),
+        (msg) => !msg.includes(ERROR_STATUS.UNAUTHORIZED),
       )
 
       return filteredMessages.length > 0 ? filteredMessages.join(', ') : undefined

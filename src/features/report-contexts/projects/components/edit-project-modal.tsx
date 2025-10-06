@@ -2,6 +2,7 @@ import { getCollectionProps, getFormProps, getInputProps, useInputControl } from
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
+import { useRouter } from 'next/navigation'
 import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
 import { useToggle } from 'react-use'
@@ -13,6 +14,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateProjectAction } from '~/features/report-contexts/projects/actions/update-project-action'
 import {
   type EditProjectInputSchema,
@@ -20,6 +23,7 @@ import {
 } from '~/features/report-contexts/projects/types/schemas/edit-project-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditProjectModalProps = Pick<
@@ -39,17 +43,49 @@ export function EditProjectModal({
   const [open, toggle] = useToggle(false)
   const [client, setClient] = useState<Key | null>(clientId)
   const [checked, setChecked] = useState(isArchived)
+  const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateProjectAction, {
       onSuccess(result) {
-        toast.success('プロジェクトの更新に成功しました')
+        toast.success(TOAST_MESSAGES.PROJECT.UPDATE_SUCCESS)
         toggle(false)
         setClient(result.initialValue?.clientId.toString() ?? '')
         setChecked(result.initialValue?.isArchive === 'on')
       },
-      onError() {
-        toast.error('プロジェクトの更新に失敗しました')
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.NOT_FOUND:
+              toast.error(TOAST_MESSAGES.PROJECT.NOT_FOUND, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/project'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.INVALID_CLIENT_RELATION:
+              toast.error(TOAST_MESSAGES.CLIENT.INVALID_RELATION)
+
+              return
+          }
+        }
+
+        toast.error(TOAST_MESSAGES.PROJECT.UPDATE_FAILED)
       },
     }),
     null,
@@ -130,6 +166,8 @@ export function EditProjectModal({
               </span>
             </div>
             <div>
+              {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
+              {/* // ? https://ja.conform.guide/integration/ui-libraries */}
               <ComboBox
                 {...getInputProps(fields.clientId, { type: 'text' })}
                 label="クライアント"

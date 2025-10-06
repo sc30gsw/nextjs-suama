@@ -5,11 +5,35 @@ import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import { GET_USERS_CACHE_KEY } from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { db } from '~/index'
 import { auth } from '~/lib/auth'
+import { getServerSession } from '~/lib/get-server-session'
+import {
+  type CommonDeleteIdSchema,
+  commonDeleteIdSchema,
+} from '~/types/schemas/common-delete-id-schema'
 
-export async function deleteUserAction(userId: string) {
+export async function deleteUserAction(id: CommonDeleteIdSchema['id']) {
+  const parseResult = commonDeleteIdSchema.safeParse({ id })
+
+  if (!parseResult.success) {
+    return {
+      status: 'error',
+      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+    } as const satisfies SubmissionResult
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return {
+      status: 'error',
+      error: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    } as const satisfies SubmissionResult
+  }
+
   try {
     const result = await auth.api.signOut({
       method: 'POST',
@@ -19,11 +43,11 @@ export async function deleteUserAction(userId: string) {
     if (!result.success) {
       return {
         status: 'error',
-        error: { message: ['Sign-out failed'] },
+        error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
       } as const satisfies SubmissionResult
     }
 
-    await db.delete(users).where(eq(users.id, userId))
+    await db.delete(users).where(eq(users.id, parseResult.data.id))
 
     revalidateTag(GET_USERS_CACHE_KEY)
 
@@ -33,7 +57,7 @@ export async function deleteUserAction(userId: string) {
   } catch (_) {
     return {
       status: 'error',
-      error: { message: ['Something went wrong'] },
+      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     } as const satisfies SubmissionResult
   }
 }

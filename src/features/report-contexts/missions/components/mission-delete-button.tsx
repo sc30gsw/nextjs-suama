@@ -4,9 +4,12 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+
 import { deleteMissionAction } from '~/features/report-contexts/missions/actions/delete-mission-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
+import { isErrorStatus } from '~/utils'
 
 type MissionDeleteButtonProps = Pick<
   InferResponseType<typeof client.api.missions.$get, 200>['missions'][number],
@@ -31,13 +34,30 @@ export function MissionDeleteButton({ id }: MissionDeleteButtonProps) {
         const result = await deleteMissionAction(id)
 
         if (result.status === 'error') {
-          toast.error('ミッションの削除に失敗しました')
+          const errorMessage = result?.error?.message?.[0]
+
+          if (isErrorStatus(errorMessage)) {
+            switch (errorMessage) {
+              case ERROR_STATUS.SOMETHING_WENT_WRONG:
+                toast.error(TOAST_MESSAGES.MISSION.DELETE_FAILED)
+
+                return
+
+              case ERROR_STATUS.UNAUTHORIZED:
+                toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
+
+                return
+            }
+          }
+
+          toast.error(TOAST_MESSAGES.MISSION.DELETE_FAILED)
+
           return
         }
 
-        toast.success('ミッションの削除に成功しました')
+        toast.success(TOAST_MESSAGES.MISSION.DELETE_SUCCESS)
       } catch (_) {
-        toast.error('ミッションの削除に失敗しました')
+        toast.error(TOAST_MESSAGES.MISSION.DELETE_FAILED)
       }
     })
   }

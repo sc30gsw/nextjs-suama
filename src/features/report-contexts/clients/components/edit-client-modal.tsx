@@ -4,6 +4,7 @@ import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
+import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
@@ -12,6 +13,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateClientAction } from '~/features/report-contexts/clients/actions/update-client-action'
 import {
   type EditClientInputSchema,
@@ -19,6 +22,7 @@ import {
 } from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditClientModalProps = Pick<
@@ -28,15 +32,42 @@ type EditClientModalProps = Pick<
 
 export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps) {
   const [open, toggle] = useToggle(false)
+  const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateClientAction, {
       onSuccess() {
-        toast.success('クライアントの更新に成功しました')
+        toast.success(TOAST_MESSAGES.CLIENT.UPDATE_SUCCESS)
         toggle(false)
       },
-      onError() {
-        toast.error('クライアントの更新に失敗しました')
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.NOT_FOUND:
+              toast.error(TOAST_MESSAGES.CLIENT.NOT_FOUND, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/client'),
+                },
+              })
+
+              return
+          }
+        }
+
+        toast.error(TOAST_MESSAGES.CLIENT.UPDATE_FAILED)
       },
     }),
     null,

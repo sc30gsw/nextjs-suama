@@ -2,6 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
 import { db } from '~/index'
@@ -23,7 +24,7 @@ export async function forgotPasswordAction(_: unknown, formData: FormData) {
   if (!existingUser) {
     return submission.reply({
       fieldErrors: {
-        message: ['そのメールアドレスは登録されていません'],
+        message: [ERROR_STATUS.EMAIL_NOT_FOUND],
       },
     })
   }

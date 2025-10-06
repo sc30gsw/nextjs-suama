@@ -11,12 +11,15 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+
 import { createClientAction } from '~/features/report-contexts/clients/actions/create-client-action'
 import {
   type CreateClientInputSchema,
   createClientInputSchema,
 } from '~/features/report-contexts/clients/types/schemas/create-client-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function CreateClientModal() {
@@ -25,11 +28,22 @@ export function CreateClientModal() {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createClientAction, {
       onSuccess() {
-        toast.success('クライアントの登録に成功しました')
+        toast.success(TOAST_MESSAGES.CLIENT.CREATE_SUCCESS)
         toggle(false)
       },
-      onError() {
-        toast.error('クライアントの登録に失敗しました')
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
+
+              return
+          }
+        }
+
+        toast.error(TOAST_MESSAGES.CLIENT.CREATE_FAILED)
       },
     }),
     null,

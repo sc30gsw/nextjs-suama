@@ -1,6 +1,7 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
+import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
@@ -9,6 +10,8 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+
 import { updateTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/update-trouble-category-action'
 import {
   type EditTroubleCategoryInputSchema,
@@ -16,6 +19,7 @@ import {
 } from '~/features/report-contexts/troubles/types/schemas/edit-trouble-category-input-schema'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditTroubleCategoryModalProps = Pick<
@@ -25,15 +29,42 @@ type EditTroubleCategoryModalProps = Pick<
 
 export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalProps) {
   const [open, toggle] = useToggle(false)
+  const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateTroubleCategoryAction, {
       onSuccess() {
-        toast.success('困っていることカテゴリー更新に成功しました')
+        toast.success(TOAST_MESSAGES.TROUBLE.UPDATE_SUCCESS)
         toggle(false)
       },
-      onError() {
-        toast.error('困っていることカテゴリーの更新に失敗しました')
+      onError(result) {
+        const errorMessage = result?.error?.message?.[0]
+
+        if (isErrorStatus(errorMessage)) {
+          switch (errorMessage) {
+            case ERROR_STATUS.UNAUTHORIZED:
+              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
+                cancel: {
+                  label: 'ログイン',
+                  onClick: () => router.push('/sign-in'),
+                },
+              })
+
+              return
+
+            case ERROR_STATUS.NOT_FOUND:
+              toast.error(TOAST_MESSAGES.TROUBLE.NOT_FOUND, {
+                cancel: {
+                  label: '一覧に戻る',
+                  onClick: () => router.push('/trouble'),
+                },
+              })
+
+              return
+          }
+        }
+
+        toast.error(TOAST_MESSAGES.TROUBLE.UPDATE_FAILED)
       },
     }),
     null,
