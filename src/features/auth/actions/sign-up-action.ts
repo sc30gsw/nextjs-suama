@@ -1,6 +1,6 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod/v4'
 import { or } from 'drizzle-orm'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { signUpInputSchema } from '~/features/auth/types/schemas/sign-up-input-schema'

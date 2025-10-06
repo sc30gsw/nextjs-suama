@@ -1,6 +1,6 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod/v4'
 import { eq, inArray } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { filter, map, pipe } from 'remeda'

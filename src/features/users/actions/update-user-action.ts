@@ -1,6 +1,6 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod/v4'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { GET_USERS_CACHE_KEY } from '~/constants/cache-keys'

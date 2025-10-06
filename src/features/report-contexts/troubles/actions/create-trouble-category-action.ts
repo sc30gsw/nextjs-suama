@@ -1,6 +1,6 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod/v4'
 import { revalidateTag } from 'next/cache'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'

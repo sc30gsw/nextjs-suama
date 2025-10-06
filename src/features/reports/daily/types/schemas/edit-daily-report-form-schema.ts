@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 import {
   appealEntrySchema,
   dailyReportEntrySchema,
@@ -7,8 +7,8 @@ import {
 
 export const updateDailyReportFormSchema = z
   .object({
-    reportId: z.string().uuid(),
-    reportDate: z.string({ required_error: '日付を選択してください' }),
+    reportId: z.uuid(),
+    reportDate: z.string({ error: '日付を選択してください' }),
     remote: z
       .union([z.literal('on'), z.undefined()])
       .optional()
@@ -24,24 +24,24 @@ export const updateDailyReportFormSchema = z
       if (entry.content && entry.content.length > 0) {
         if (!entry.categoryId) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'カテゴリーを選択してください',
+            code: 'custom',
+            error: 'カテゴリーを選択してください',
             path: ['appealEntries', index, 'categoryId'],
           })
         }
 
         if (entry.content.length === 0) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容を入力してください',
+            code: 'custom',
+            error: '内容を入力してください',
             path: ['appealEntries', index, 'content'],
           })
         }
 
         if (entry.content.length > 256) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容は256文字以下で入力してください',
+            code: 'custom',
+            error: '内容は256文字以下で入力してください',
             path: ['appealEntries', index, 'content'],
           })
         }
@@ -53,24 +53,24 @@ export const updateDailyReportFormSchema = z
       if (entry.content && entry.content.length > 0) {
         if (!entry.categoryId) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'カテゴリーを選択してください',
+            code: 'custom',
+            error: 'カテゴリーを選択してください',
             path: ['troubleEntries', index, 'categoryId'],
           })
         }
 
         if (entry.content.length === 0) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容を入力してください',
+            code: 'custom',
+            error: '内容を入力してください',
             path: ['troubleEntries', index, 'content'],
           })
         }
 
         if (entry.content.length > 256) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容は256文字以下で入力してください',
+            code: 'custom',
+            error: '内容は256文字以下で入力してください',
             path: ['troubleEntries', index, 'content'],
           })
         }

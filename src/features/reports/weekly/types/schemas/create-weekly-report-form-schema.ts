@@ -1,15 +1,15 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 export const createWeeklyReportSchema = z.object({
-  id: z.string().uuid(),
-  project: z.string({ required_error: 'プロジェクトを選択してください' }),
-  mission: z.string({ required_error: 'ミッションを選択してください' }),
-  content: z.string({ required_error: '内容を入力してください' }),
+  id: z.uuid(),
+  project: z.string({ error: 'プロジェクトを選択してください' }),
+  mission: z.string({ error: 'ミッションを選択してください' }),
+  content: z.string({ error: '内容を入力してください' }),
   hours: z
     .string()
     .transform((value) => Number(value))
     .refine((data) => data > 0, {
-      message: '0より大きい数値で入力してください',
+      error: '0より大きい数値で入力してください',
     }),
 })
 

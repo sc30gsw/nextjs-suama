@@ -1,6 +1,6 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod'
+import { parseWithZod } from '@conform-to/zod/v4'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
 import { auth } from '~/lib/auth'

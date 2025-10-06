@@ -1,7 +1,7 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 export const commonDeleteIdSchema = z.object({
-  id: z.string({ required_error: 'IDを入力してください' }),
+  id: z.string({ error: 'IDを入力してください' }),
 })
 
 export type CommonDeleteIdSchema = z.infer<typeof commonDeleteIdSchema>

@@ -1,4 +1,4 @@
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'

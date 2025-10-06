@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconPlus, IconTriangleExclamation } from '@intentui/icons'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
