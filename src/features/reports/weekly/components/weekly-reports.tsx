@@ -7,8 +7,9 @@ import type { VirtuosoHandle } from 'react-virtuoso'
 import type { users } from '~/db/schema'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsCards } from '~/features/reports/weekly/components/weekly-reports-cards'
-import { WeeklyReportsNavigation } from '~/features/reports/weekly/components/weekly-reports-navigation'
+
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
+import { WeeklyReportsNavigationButton } from './WeeklyReportsNavigationButton'
 
 type WeeklyReportsProps = {
   userId: InferSelectModel<typeof users>['id']
@@ -47,7 +48,7 @@ export function WeeklyReports({ year, week, userId }: WeeklyReportsProps) {
           loadMore={loadMore}
         />
       </div>
-      <WeeklyReportsNavigation data={data} virtuosoRef={virtuosoRef} />
+      <WeeklyReportsNavigationButton data={data} virtuosoRef={virtuosoRef} />
     </>
   )
 }
