@@ -1,4 +1,5 @@
 import { z } from 'zod/v4'
+import { PASSWORD_REGEX } from '~/constants/validation'
 
 export const passwordResetInputSchema = z
   .object({
@@ -6,7 +7,7 @@ export const passwordResetInputSchema = z
       .string({ error: 'パスワードは必須です' })
       .min(8, { error: 'パスワードは8文字以上で入力してください' })
       .max(128, { error: 'パスワードが長すぎます（最大128文字）' })
-      .regex(/^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/, {
+      .regex(PASSWORD_REGEX, {
         error: 'パスワードには、英字・数字・記号を含めてください',
       }),
     token: z.string({

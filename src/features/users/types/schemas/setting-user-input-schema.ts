@@ -1,4 +1,5 @@
 import { z } from 'zod/v4'
+import { IMAGE_REGEX } from '~/constants/validation'
 
 export const settingUserInputSchema = z.object({
   id: z.string({ error: 'ユーザーIDを入力してください' }),
@@ -13,7 +14,7 @@ export const settingUserInputSchema = z.object({
     .max(7_000_000, {
       error: '画像のサイズが大きすぎます（最大約5MB）',
     })
-    .regex(/^data:image\/(jpeg|png|webp);base64,/, {
+    .regex(IMAGE_REGEX, {
       error: '画像はjpeg・png・webpのみ選択可能です',
     })
     .optional(),
