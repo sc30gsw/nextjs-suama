@@ -38,7 +38,7 @@ export default async function WeeklyReportRegisterPage({
   const { dates } = await params
   const { startDate, endDate } = splitDates(dates)
   const { nextStartDate, nextEndDate } = getNextWeekDates(startDate, endDate)
-  const { year, week } = getYearAndWeek(startDate)
+  const { year, week } = getYearAndWeek(nextStartDate)
 
   const res = await getWeeklyReportMissions(
     { year: year.toString(), week: week.toString() },
