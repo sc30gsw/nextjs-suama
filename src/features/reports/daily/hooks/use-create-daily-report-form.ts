@@ -1,5 +1,5 @@
 import { useControl } from '@conform-to/react/future'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'

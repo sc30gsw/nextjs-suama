@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconKey, IconTriangleExclamation } from '@intentui/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'

@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconCirclePerson, IconTriangleExclamation, IconUnlocked } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'

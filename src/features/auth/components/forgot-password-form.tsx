@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconTriangleExclamation } from '@intentui/icons'
 import { type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
