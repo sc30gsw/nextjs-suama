@@ -39,7 +39,9 @@ export function WeeklyReportsNavigation({
       for (const report of reports) {
         const element = document.getElementById(`user-${report.user.id}`)
 
-        if (!element) continue
+        if (!element) {
+          continue
+        }
 
         const { offsetTop, offsetHeight } = element
 
