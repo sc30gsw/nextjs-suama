@@ -2,6 +2,8 @@
 
 import type { InferSelectModel } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
+import { useRef } from 'react'
+import type { VirtuosoHandle } from 'react-virtuoso'
 import type { users } from '~/db/schema'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsCards } from '~/features/reports/weekly/components/weekly-reports-cards'
@@ -16,6 +18,7 @@ type WeeklyReportsProps = {
 
 export function WeeklyReports({ year, week, userId }: WeeklyReportsProps) {
   const { use: useWeeklyReports } = fetchWeeklyReportsInfiniteQuery({ year, week }, userId)
+  const virtuosoRef = useRef<VirtuosoHandle>(null)
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useWeeklyReports()
@@ -38,12 +41,13 @@ export function WeeklyReports({ year, week, userId }: WeeklyReportsProps) {
       <div className="flex-1">
         <WeeklyReportsCards
           data={data}
+          ref={virtuosoRef}
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           loadMore={loadMore}
         />
       </div>
-      <WeeklyReportsNavigation data={data} />
+      <WeeklyReportsNavigation data={data} virtuosoRef={virtuosoRef} />
     </>
   )
 }
