@@ -55,8 +55,6 @@ export default async function WeeklyReportRegisterPage({
   let lastWeeklyReportMission: Awaited<ReturnType<typeof getLastWeeklyReportMissions>> | undefined
 
   if (isReference) {
-    const { year, week } = getYearAndWeek(startDate)
-
     lastWeeklyReportMission = await getLastWeeklyReportMissions(
       { year: year.toString(), week: week.toString() },
       session.user.id,
