@@ -17,8 +17,9 @@ export function DailyReportDeleteButton({ id }: DailyReportDeleteButtonProps) {
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
-      title: '日報を削除',
-      message: 'この日報を削除してもよろしいですか？',
+      title: '日報を削除しますか？',
+      message:
+        'この操作は取り消せません。日報を削除すると、関連する職務内容、コメント、アピールも全て削除されます。',
     })
 
     if (!ok) {
