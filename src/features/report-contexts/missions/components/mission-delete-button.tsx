@@ -4,6 +4,7 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteMissionAction } from '~/features/report-contexts/missions/actions/delete-mission-action'
@@ -56,6 +57,11 @@ export function MissionDeleteButton({ id }: MissionDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.MISSION.DELETE_SUCCESS)
+
+        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        setTimeout(() => {
+          window.location.reload()
+        }, RELOAD_DELAY)
       } catch (_) {
         toast.error(TOAST_MESSAGES.MISSION.DELETE_FAILED)
       }

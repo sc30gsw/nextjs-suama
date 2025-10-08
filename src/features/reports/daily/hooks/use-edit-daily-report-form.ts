@@ -4,6 +4,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
@@ -21,6 +22,15 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateReportAction, {
+      onSuccess() {
+        toast.success(TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS)
+
+        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする。reloadだと、nuqsのstateと競合するため、replaceを使用。
+        setTimeout(() => {
+          window.location.replace(`/daily/edit/${initialData.id}`)
+        }, RELOAD_DELAY)
+      },
+
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
 
@@ -64,9 +74,6 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
         }
 
         toast.error(TOAST_MESSAGES.DAILY_REPORT.UPDATE_FAILED)
-      },
-      onSuccess() {
-        toast.success(TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS)
       },
     }),
     null,
