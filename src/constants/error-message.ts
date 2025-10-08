@@ -54,6 +54,8 @@ export const TOAST_MESSAGES = {
     CREATE_FAILED: '日報の作成に失敗しました',
     UPDATE_SUCCESS: '日報を更新しました',
     UPDATE_FAILED: '日報の更新に失敗しました',
+    DELETE_SUCCESS: '日報を削除しました',
+    DELETE_FAILED: '日報の削除に失敗しました',
     NOT_FOUND: '日報が見つかりません',
     FORBIDDEN: 'この日報を編集する権限がありません',
     ALREADY_EXISTS: '本日の日報は既に作成されています',
