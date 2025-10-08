@@ -2,7 +2,7 @@ import { type FieldName, useField, useInputControl } from '@conform-to/react'
 import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
-import { filter, find, pipe } from 'remeda'
+import { find, pipe } from 'remeda'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type {
   CreateWeeklyReportFormSchema,
@@ -87,12 +87,6 @@ export function useCreateWeeklyReportContentInputEntries(
         }
       })
     } else {
-      missionId
-        ? pipe(
-            projects,
-            filter((project) => project.missions.some((mission) => mission.id === missionId)),
-          )
-        : projects
       setMissionId(newItem)
       missionInput.change(newItem.toString())
 
@@ -114,6 +108,7 @@ export function useCreateWeeklyReportContentInputEntries(
               project: findProject?.id ?? '',
             }
           }
+
           return e
         })
 
@@ -167,7 +162,6 @@ export function useCreateWeeklyReportContentInputEntries(
 
   return {
     field,
-    missionInput,
     contentInput,
     hoursInput,
     projectId,

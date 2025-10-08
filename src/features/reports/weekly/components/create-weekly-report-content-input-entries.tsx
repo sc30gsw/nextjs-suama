@@ -58,7 +58,6 @@ export function CreateWeeklyReportContentInputEntries({
 
   const {
     field,
-    missionInput,
     contentInput,
     hoursInput,
     projectId,
@@ -115,7 +114,7 @@ export function CreateWeeklyReportContentInputEntries({
           <ComboBox.Input />
           <ComboBox.List
             items={
-              projectId && !missionInput.value
+              projectId
                 ? pipe(
                     missions,
                     filter((mission) => mission.projectId === projectId),
