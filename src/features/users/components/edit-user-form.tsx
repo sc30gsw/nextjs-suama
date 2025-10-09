@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import {
   IconDocumentEdit,
   IconLock,
@@ -11,7 +11,6 @@ import {
 } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useActionState, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -24,7 +23,6 @@ import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { settingUserAction } from '~/features/users/actions/setting-user-action'
 import {
   type SettingUserInputSchema,
@@ -34,7 +32,6 @@ import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
 import type { client } from '~/lib/rpc'
-import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditUserFormProps = Pick<
@@ -46,43 +43,16 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
   const [pending, startTransition] = useTransition()
   const [imageError, setImageError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null!)
-  const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(settingUserAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.USER.UPDATE_SUCCESS)
+        toast.success('ユーザーの更新に成功しました')
         setImageError('')
         location.reload()
       },
-      onError(result) {
-        const errorMessage = result?.error?.message?.[0]
-
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.UNAUTHORIZED:
-              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
-                cancel: {
-                  label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
-                },
-              })
-
-              return
-
-            case ERROR_STATUS.NOT_FOUND:
-              toast.error(TOAST_MESSAGES.USER.NOT_FOUND, {
-                cancel: {
-                  label: '一覧に戻る',
-                  onClick: () => router.push('/user'),
-                },
-              })
-
-              return
-          }
-        }
-
-        toast.error(TOAST_MESSAGES.USER.UPDATE_FAILED)
+      onError() {
+        toast.error('ユーザーの更新に失敗しました')
       },
     }),
     null,
@@ -234,12 +204,12 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               const data = await authClient.passkey.addPasskey()
 
               if (data?.error) {
-                toast.error(TOAST_MESSAGES.USER.PASSKEY_ADD_FAILED)
+                toast.error('パスキーの追加に失敗しました')
 
                 return
               }
 
-              toast.success(TOAST_MESSAGES.USER.PASSKEY_ADD_SUCCESS)
+              toast.success('Passkeyの追加に成功しました')
             })
           }}
           className="w-full"

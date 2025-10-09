@@ -1,8 +1,8 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod/v4'
+import { parseWithZod } from '@conform-to/zod'
 import { or } from 'drizzle-orm'
-import { ERROR_STATUS } from '~/constants/error-message'
+
 import { signUpInputSchema } from '~/features/auth/types/schemas/sign-up-input-schema'
 import { db } from '~/index'
 import { auth } from '~/lib/auth'
@@ -23,7 +23,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
     if (existingUser) {
       return submission.reply({
         fieldErrors: {
-          message: [ERROR_STATUS.ALREADY_EXISTS],
+          message: ['メールアドレスまたは名前は既に使用されています'],
         },
       })
     }
@@ -39,7 +39,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+      fieldErrors: { message: ['Something went wrong'] },
     })
   }
 }

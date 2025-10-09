@@ -8,10 +8,7 @@ import type {
   CreateDailyReportFormSchema,
   DailyReportEntrySchema,
 } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
-import type {
-  DailyInputCountSearchParams,
-  ReportEntry,
-} from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 export function useCreateDailyReportContentInputEntries(
@@ -34,11 +31,7 @@ export function useCreateDailyReportContentInputEntries(
   const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
   const [missionId, setMissionId] = useState<Key | null>(missionInput.value ?? null)
 
-  const handleChangeItem = (
-    id: ReportEntry['id'],
-    newItem: Key | null,
-    kind: 'project' | 'mission',
-  ) => {
+  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
     if (!(id && newItem)) {
       return
     }
@@ -129,10 +122,7 @@ export function useCreateDailyReportContentInputEntries(
     }
   }
 
-  const handleChangeValue = (
-    id: ReportEntry['id'],
-    newValue: ReportEntry['content'] | ReportEntry['hours'],
-  ) => {
+  const handleChangeValue = (id: string, newValue: string | number) => {
     if (!id) {
       return
     }

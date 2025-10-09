@@ -2,16 +2,13 @@ import { type FieldName, useField, useInputControl } from '@conform-to/react'
 import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
-import { find, pipe } from 'remeda'
+import { filter, find, pipe } from 'remeda'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type {
   CreateWeeklyReportFormSchema,
   CreateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
-import type {
-  WeeklyInputCountSearchParams,
-  WeeklyReportEntry,
-} from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+import type { WeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 export function useCreateWeeklyReportContentInputEntries(
@@ -36,11 +33,7 @@ export function useCreateWeeklyReportContentInputEntries(
   const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
   const [missionId, setMissionId] = useState<Key | null>(missionInput.value ?? null)
 
-  const handleChangeItem = (
-    id: WeeklyReportEntry['id'],
-    newItem: Key | null,
-    kind: 'project' | 'mission',
-  ) => {
+  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
     if (!(id && newItem)) {
       return
     }
@@ -87,6 +80,12 @@ export function useCreateWeeklyReportContentInputEntries(
         }
       })
     } else {
+      missionId
+        ? pipe(
+            projects,
+            filter((project) => project.missions.some((mission) => mission.id === missionId)),
+          )
+        : projects
       setMissionId(newItem)
       missionInput.change(newItem.toString())
 
@@ -108,7 +107,6 @@ export function useCreateWeeklyReportContentInputEntries(
               project: findProject?.id ?? '',
             }
           }
-
           return e
         })
 
@@ -126,10 +124,7 @@ export function useCreateWeeklyReportContentInputEntries(
     }
   }
 
-  const handleChangeValue = (
-    id: WeeklyReportEntry['id'],
-    newValue: WeeklyReportEntry['content'] | WeeklyReportEntry['hours'],
-  ) => {
+  const handleChangeValue = (id: string, newValue: string | number) => {
     if (!id) {
       return
     }
@@ -162,6 +157,7 @@ export function useCreateWeeklyReportContentInputEntries(
 
   return {
     field,
+    missionInput,
     contentInput,
     hoursInput,
     projectId,

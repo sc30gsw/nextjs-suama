@@ -1,13 +1,12 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod/v4'
+import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import {
-  GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
   GET_WEEKLY_REPORTS_CACHE_KEY,
+  GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
 } from '~/constants/cache-keys'
-import { ERROR_STATUS } from '~/constants/error-message'
 import { missions, weeklyReportMissions, weeklyReports } from '~/db/schema'
 import { createWeeklyReportFormSchema } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import { db } from '~/index'
@@ -26,7 +25,7 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
 
   if (!session) {
     return submission.reply({
-      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
+      fieldErrors: { message: ['Unauthorized'] },
     })
   }
 
@@ -47,7 +46,9 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
       if (!project) {
         return submission.reply({
           fieldErrors: {
-            message: [ERROR_STATUS.INVALID_PROJECT_RELATION],
+            message: [
+              'プロジェクトが存在しません。再度、選択し直すか、プロジェクトの登録を行ってください。',
+            ],
           },
         })
       }
@@ -59,7 +60,9 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
       if (!mission) {
         return submission.reply({
           fieldErrors: {
-            message: [ERROR_STATUS.INVALID_MISSION_RELATION],
+            message: [
+              'ミッションが存在しません。再度、選択し直すか、ミッションの登録を行ってください。',
+            ],
           },
         })
       }
@@ -80,7 +83,7 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+      fieldErrors: { message: ['Something went wrong'] },
     })
   }
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconTriangleExclamation } from '@intentui/icons'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState } from 'react'
@@ -11,7 +11,6 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { resetPasswordAction } from '~/features/auth/actions/reset-password-action'
 import {
   type PasswordResetInputSchema,
@@ -19,7 +18,6 @@ import {
 } from '~/features/auth/types/schemas/reset-password-input-schema'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type ResetPasswordFormProps = {
@@ -33,22 +31,17 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(resetPasswordAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.PASSWORD.RESET_SUCCESS)
+        toast.success('パスワードリセットに成功しました')
         router.push('/sign-in')
       },
       onError(result) {
-        const errorMessage = result?.error?.message?.[0]
+        if (result?.error && Array.isArray(result.error.message)) {
+          toast.error(result.error.message.join(', '))
 
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.SOMETHING_WENT_WRONG:
-              toast.error(TOAST_MESSAGES.PASSWORD.RESET_FAILED)
-
-              return
-          }
+          return
         }
 
-        toast.error(TOAST_MESSAGES.PASSWORD.RESET_FAILED)
+        toast.error('パスワードリセットに失敗しました')
       },
     }),
     null,

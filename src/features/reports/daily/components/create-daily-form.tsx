@@ -9,6 +9,7 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
+import { format } from 'date-fns'
 import { type JSX, use } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
@@ -74,11 +75,9 @@ export function CreateDailyForm({
       </div>
       <FormProvider context={form.context}>
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
-          {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
-          {/* // ? https://ja.conform.guide/integration/ui-libraries */}
           <DatePicker
             isDisabled={isPending}
-            value={reportDate.value ? parseDate(reportDate.value) : null}
+            value={parseDate(reportDate.value ?? format(new Date(), 'yyyy-MM-dd'))}
             onChange={(newValue) => {
               if (newValue) {
                 reportDate.change(newValue.toString())
@@ -88,10 +87,9 @@ export function CreateDailyForm({
             className="max-w-3xs"
           />
           <input
-            ref={reportDate.register}
-            name={fields.reportDate.name}
-            type="hidden"
+            {...getInputProps(fields.reportDate, { type: 'hidden' })}
             disabled={isPending}
+            value={reportDate.value}
           />
           <Button
             size="square-petite"

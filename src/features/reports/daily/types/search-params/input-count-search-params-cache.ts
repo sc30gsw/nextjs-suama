@@ -1,7 +1,7 @@
 import { createSearchParamsCache, parseAsJson } from 'nuqs/server'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
-export const reportEntrySchema = z.object({
+const reportEntrySchema = z.object({
   id: z.string(),
   project: z.string().nullable(),
   mission: z.string().nullable(),
@@ -9,10 +9,10 @@ export const reportEntrySchema = z.object({
   content: z.string(),
 })
 
-export const appealsAndTroublesEntrySchema = z.object({
+const appealsAndTroublesEntrySchema = z.object({
   id: z.string(),
   content: z.string(),
-  item: z.string().nullable(),
+  item: z.number().nullable(),
   resolved: z.boolean().optional(),
 })
 
@@ -32,30 +32,24 @@ export const reportStateSchema = z.object({
 })
 
 export const inputCountSearchParamsParsers = {
-  reportEntry: parseAsJson(reportStateSchema.parse)
-    .withDefault({
-      count: 1,
-      entries: [
-        {
-          id: crypto.randomUUID(),
-          project: null,
-          mission: null,
-          hours: 0,
-          content: '',
-        },
-      ],
-    })
-    .withOptions({ throttleMs: 1000 }),
-  appealsAndTroublesEntry: parseAsJson(appealsAndTroublesStateSchema.parse)
-    .withDefault({
-      appeals: { count: 0, entries: [] },
-      troubles: { count: 0, entries: [] },
-    })
-    .withOptions({ throttleMs: 1000 }),
+  reportEntry: parseAsJson(reportStateSchema.parse).withDefault({
+    count: 1,
+    entries: [
+      {
+        id: crypto.randomUUID(),
+        project: null,
+        mission: null,
+        hours: 0,
+        content: '',
+      },
+    ],
+  }),
+  appealsAndTroublesEntry: parseAsJson(appealsAndTroublesStateSchema.parse).withDefault({
+    appeals: { count: 0, entries: [] },
+    troubles: { count: 0, entries: [] },
+  }),
 }
 
 export const inputCountSearchParamsCache = createSearchParamsCache(inputCountSearchParamsParsers)
 
-export type ReportEntry = z.infer<typeof reportEntrySchema>
 export type DailyInputCountSearchParams = typeof inputCountSearchParamsParsers
-export type AppealsAndTroublesEntry = z.infer<typeof appealsAndTroublesEntrySchema>

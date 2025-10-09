@@ -8,10 +8,7 @@ import type {
   UpdateWeeklyReportFormSchema,
   UpdateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
-import type {
-  UpdateWeeklyInputCountSearchParams,
-  WeeklyReportEntry,
-} from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+import type { UpdateWeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 export function useUpdatedWeeklyReportContentInputEntries(
@@ -36,11 +33,7 @@ export function useUpdatedWeeklyReportContentInputEntries(
     initialWeeklyInputCountSearchParamsParsers,
   )
 
-  const handleChangeItem = (
-    id: WeeklyReportEntry['id'],
-    newItem: Key | null,
-    kind: 'project' | 'mission',
-  ) => {
+  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
     if (!(id && newItem)) {
       return
     }
@@ -113,10 +106,7 @@ export function useUpdatedWeeklyReportContentInputEntries(
     }
   }
 
-  const handleChangeValue = (
-    id: WeeklyReportEntry['id'],
-    newValue: WeeklyReportEntry['content'] | WeeklyReportEntry['hours'],
-  ) => {
+  const handleChangeValue = (id: string, newValue: string | number) => {
     if (!id) {
       return
     }

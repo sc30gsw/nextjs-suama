@@ -53,8 +53,6 @@ export function UpdateWeeklyReportContentInputEntries({
     <div className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2">
       <input {...getInputProps(field.id, { type: 'hidden' })} />
       <div className="col-span-2">
-        {/* // TODO useInputControl を使用して不具合が出る場合、useControl を使用してみてください。 */}
-        {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
           {...getInputProps(field.project, { type: 'text' })}
           label="プロジェクト"
@@ -75,8 +73,6 @@ export function UpdateWeeklyReportContentInputEntries({
         </span>
       </div>
       <div className="col-span-2">
-        {/* // TODO useInputControl を使用して不具合が出る場合、useControl を使用してみてください。 */}
-        {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
           {...getInputProps(field.mission, { type: 'text' })}
           label="ミッション"

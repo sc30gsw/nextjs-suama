@@ -2,7 +2,6 @@ import 'server-only'
 
 import { eq } from 'drizzle-orm'
 import { createMiddleware } from 'hono/factory'
-import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { db } from '~/index'
 
@@ -17,7 +16,7 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(async (c, n
   const userId = c.req.header('Authorization')
 
   if (!userId) {
-    return c.json({ error: { message: ERROR_STATUS.UNAUTHORIZED } }, 401)
+    return c.json({ error: { message: 'Unauthorized' } }, 401)
   }
 
   const user = await db.query.users.findFirst({

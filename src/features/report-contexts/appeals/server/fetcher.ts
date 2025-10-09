@@ -1,28 +1,16 @@
-import type { InferSelectModel } from 'drizzle-orm'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
+import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
-import type { dailyReports, users } from '~/db/schema'
 import type { AppealCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getAppealCategories(
-  userId: InferSelectModel<typeof users>['id'],
-  params?: {
-    skip?: number
-    limit?: number
-    names?: string[]
-    withData?: boolean
-    reportId?: InferSelectModel<typeof dailyReports>['id']
-  },
+  params?: { skip: number; limit: number; names: string[] },
+  userId?: string,
 ) {
   'use cache'
-  const cacheKey =
-    params?.withData && params?.reportId
-      ? `${GET_APPEAL_CATEGORIES_CACHE_KEY}-${params.reportId}`
-      : GET_APPEAL_CATEGORIES_CACHE_KEY
-  cacheTag(cacheKey)
+  cacheTag(GET_APPEAL_CATEGORIES_CACHE_KEY)
 
   const url = client.api.appeals.categories.$url()
 

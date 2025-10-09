@@ -12,17 +12,16 @@ import type {
   DailyReportEntrySchema,
 } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
-import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 type CreateDailyReportContentInputEntriesProps = {
-  id?: DailyReportEntrySchema['id']
+  id?: string
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
   missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
   formId: string
   name: FieldName<DailyReportEntrySchema, CreateDailyReportFormSchema>
   removeButton: JSX.Element
-  initialDailyInputCountSearchParamsParsers?: DailyInputCountSearchParams
+  initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams
 }
 
 export function CreateDailyReportContentInputEntries({
@@ -43,7 +42,7 @@ export function CreateDailyReportContentInputEntries({
     handleChangeItem,
     handleChangeValue,
   } = useCreateDailyReportContentInputEntries(
-    initialDailyInputCountSearchParamsParsers ?? inputCountSearchParamsParsers,
+    initialDailyInputCountSearchParamsParsers,
     formId,
     name,
     projects,
@@ -55,8 +54,6 @@ export function CreateDailyReportContentInputEntries({
     <div className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2">
       <input {...getInputProps(field.id, { type: 'hidden' })} />
       <div className="col-span-2">
-        {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
-        {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
           {...getInputProps(field.project, { type: 'text' })}
           label="プロジェクト"
@@ -77,8 +74,6 @@ export function CreateDailyReportContentInputEntries({
         </span>
       </div>
       <div className="col-span-2">
-        {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
-        {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
           {...getInputProps(field.mission, { type: 'text' })}
           label="ミッション"

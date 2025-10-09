@@ -1,21 +1,23 @@
-import { z } from 'zod/v4'
-import { IMAGE_REGEX } from '~/constants/validation'
+import { z } from 'zod'
 
 export const settingUserInputSchema = z.object({
-  id: z.string({ error: 'ユーザーIDを入力してください' }),
-  name: z.string({ error: 'ユーザー名を入力してください' }).max(128, {
-    error: 'ユーザー名は128文字以内で入力してください',
+  id: z.string({ required_error: 'ユーザーIDを入力してください' }),
+  name: z.string({ required_error: 'ユーザー名を入力してください' }).max(128, {
+    message: 'ユーザー名は128文字以内で入力してください',
   }),
-  email: z.email('メールアドレスの形式が正しくありません').max(128, {
-    error: 'メールアドレスは128文字以内で入力してください',
-  }),
+  email: z
+    .string({ required_error: 'メールアドレスを入力してください' })
+    .email({ message: 'メールアドレスの形式が正しくありません' })
+    .max(128, {
+      message: 'メールアドレスは128文字以内で入力してください',
+    }),
   image: z
     .string()
     .max(7_000_000, {
-      error: '画像のサイズが大きすぎます（最大約5MB）',
+      message: '画像のサイズが大きすぎます（最大約5MB）',
     })
-    .regex(IMAGE_REGEX, {
-      error: '画像はjpeg・png・webpのみ選択可能です',
+    .regex(/^data:image\/(jpeg|png|webp);base64,/, {
+      message: '画像はjpeg・png・webpのみ選択可能です',
     })
     .optional(),
 })

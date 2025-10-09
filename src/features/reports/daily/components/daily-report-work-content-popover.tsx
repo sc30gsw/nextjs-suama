@@ -1,11 +1,17 @@
 import type { ReactNode } from 'react'
 import { GridList } from '~/components/ui/intent-ui/grid-list'
 import { Popover } from '~/components/ui/intent-ui/popover'
-import type { WorkContentResponse } from '~/features/reports/daily/types/api-response'
 
 type DailyReportWorkContentPopoverProps = {
   children: ReactNode
-  contents: WorkContentResponse[]
+  // TODO: 適切な型に修正する
+  contents: {
+    id: string
+    project: string
+    mission: string
+    workTime: number
+    workContent: string
+  }[]
 }
 
 export function DailyReportWorkContentPopover({
