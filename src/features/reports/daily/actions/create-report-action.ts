@@ -145,7 +145,13 @@ export async function createReportAction(_: unknown, formData: FormData) {
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
 
-    return submission.reply()
+    return {
+      ...submission.reply(),
+      data: {
+        reportDate: format(reportDate, 'yyyy/MM/dd'),
+        isDraft: actionType !== 'published',
+      },
+    }
   } catch (err) {
     if (err instanceof Error && err.message === ERROR_STATUS.INVALID_MISSION_RELATION) {
       return submission.reply({

@@ -29,8 +29,13 @@ export function useCreateDailyForm(
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createReportAction, {
-      onSuccess() {
-        toast.success(TOAST_MESSAGES.DAILY_REPORT.CREATE_SUCCESS)
+      onSuccess(result) {
+        const data = 'data' in result ? result.data : undefined
+        const message = data?.isDraft
+          ? `${data.reportDate}の${TOAST_MESSAGES.DAILY_REPORT.CREATE_DRAFT_SUCCESS}`
+          : `${data?.reportDate}の${TOAST_MESSAGES.DAILY_REPORT.CREATE_SUCCESS}`
+
+        toast.success(message)
 
         // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする。reloadだと、nuqsのstateと競合するため、replaceを使用。
         setTimeout(() => {

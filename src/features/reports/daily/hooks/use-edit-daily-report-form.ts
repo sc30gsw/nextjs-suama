@@ -22,8 +22,13 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getRepor
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateReportAction, {
-      onSuccess() {
-        toast.success(TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS)
+      onSuccess(result) {
+        const data = 'data' in result ? result.data : undefined
+        const message = data?.isDraft
+          ? TOAST_MESSAGES.DAILY_REPORT.UPDATE_DRAFT_SUCCESS
+          : TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS
+
+        toast.success(message)
 
         // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする。reloadだと、nuqsのstateと競合するため、replaceを使用。
         setTimeout(() => {

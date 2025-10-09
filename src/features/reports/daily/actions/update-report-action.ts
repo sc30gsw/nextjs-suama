@@ -189,7 +189,12 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_APPEAL_CATEGORIES_CACHE_KEY}-${reportId}`)
 
-    return submission.reply()
+    return {
+      ...submission.reply(),
+      data: {
+        isDraft: actionType !== 'published',
+      },
+    }
   } catch (error) {
     if (error instanceof Error && error.message === ERROR_STATUS.INVALID_MISSION_RELATION) {
       return submission.reply({
