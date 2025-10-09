@@ -5,10 +5,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Table } from '~/components/ui/intent-ui/table'
+import type { users } from '~/db/schema'
 import { EditUserModal } from '~/features/users/components/edit-user-modal'
 import { UserDeleteButton } from '~/features/users/components/user-delete-button'
 import type { client } from '~/lib/rpc'
@@ -61,7 +63,7 @@ const COLUMNS = [
 
 type UsersTableProps = {
   users: InferResponseType<typeof client.api.users.$get, 200>
-  currentUserId: string
+  currentUserId: InferSelectModel<typeof users>['id']
 }
 
 export function UsersTable({ users, currentUserId }: UsersTableProps) {

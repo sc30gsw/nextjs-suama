@@ -55,8 +55,6 @@ export default async function WeeklyReportRegisterPage({
   let lastWeeklyReportMission: Awaited<ReturnType<typeof getLastWeeklyReportMissions>> | undefined
 
   if (isReference) {
-    const { year, week } = getYearAndWeek(startDate)
-
     lastWeeklyReportMission = await getLastWeeklyReportMissions(
       { year: year.toString(), week: week.toString() },
       session.user.id,
@@ -65,8 +63,8 @@ export default async function WeeklyReportRegisterPage({
 
   const count = weeklyReportEntry.count
 
-  const projectPromise = getProjects(undefined, session.user.id)
-  const missionPromise = getMissions(undefined, session.user.id)
+  const projectPromise = getProjects(session.user.id)
+  const missionPromise = getMissions(session.user.id)
 
   const promises = Promise.all([projectPromise, missionPromise])
 

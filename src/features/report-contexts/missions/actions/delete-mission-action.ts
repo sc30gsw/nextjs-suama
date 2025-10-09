@@ -4,12 +4,36 @@ import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
+import { ERROR_STATUS } from '~/constants/error-message'
 import { missions } from '~/db/schema'
 import { db } from '~/index'
+import { getServerSession } from '~/lib/get-server-session'
+import {
+  type CommonDeleteIdSchema,
+  commonDeleteIdSchema,
+} from '~/types/schemas/common-delete-id-schema'
 
-export async function deleteMissionAction(missionId: string) {
+export async function deleteMissionAction(id: CommonDeleteIdSchema['id']) {
+  const parseResult = commonDeleteIdSchema.safeParse({ id })
+
+  if (!parseResult.success) {
+    return {
+      status: 'error',
+      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+    } as const satisfies SubmissionResult
+  }
+
+  const session = await getServerSession()
+
+  if (!session) {
+    return {
+      status: 'error',
+      error: { message: [ERROR_STATUS.UNAUTHORIZED] },
+    } as const satisfies SubmissionResult
+  }
+
   try {
-    await db.delete(missions).where(eq(missions.id, missionId))
+    await db.delete(missions).where(eq(missions.id, parseResult.data.id))
 
     revalidateTag(GET_MISSIONS_CACHE_KEY)
 
@@ -19,7 +43,7 @@ export async function deleteMissionAction(missionId: string) {
   } catch (_) {
     return {
       status: 'error',
-      error: { message: ['Something went wrong'] },
+      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     } as const satisfies SubmissionResult
   }
 }
