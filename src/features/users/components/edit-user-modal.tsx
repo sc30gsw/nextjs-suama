@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconDocumentEdit, IconTriangleExclamation, IconX } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import { useActionState, useRef, useState } from 'react'
@@ -14,8 +14,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB, RELOAD_DELAY } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
   type SettingUserInputSchema,
@@ -24,7 +23,6 @@ import {
 import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
-import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditUserModalProps = Pick<
@@ -40,29 +38,13 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(updateUserAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.USER.UPDATE_SUCCESS)
+        toast.success('ユーザーの更新に成功しました')
         toggle(false)
         setImageError('')
-
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
+        location.reload()
       },
-
-      onError(result) {
-        const errorMessage = result?.error?.message?.[0]
-
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.UNAUTHORIZED:
-              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
-
-              return
-          }
-        }
-
-        toast.error(TOAST_MESSAGES.USER.UPDATE_FAILED)
+      onError() {
+        toast.error('ユーザーの更新に失敗しました')
       },
     }),
     null,

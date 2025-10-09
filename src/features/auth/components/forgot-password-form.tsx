@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconTriangleExclamation } from '@intentui/icons'
 import { type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
@@ -10,36 +10,28 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
-
 import { forgotPasswordAction } from '~/features/auth/actions/forgot-password-action'
 import {
   type SignInInputSchema,
   signInInputSchema,
 } from '~/features/auth/types/schemas/sing-in-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function ForgotPasswordForm({ children }: { children: ReactNode }) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(forgotPasswordAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.PASSWORD.RESET_REDIRECT)
+        toast.success('パスワードリセット画面にリダイレクトします')
       },
       onError(result) {
-        const errorMessage = result?.error?.message?.[0]
+        if (result?.error && Array.isArray(result.error.message)) {
+          toast.error(result.error.message.join(', '))
 
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.EMAIL_NOT_FOUND:
-              toast.error(TOAST_MESSAGES.USER.EMAIL_NOT_FOUND)
-
-              return
-          }
+          return
         }
 
-        toast.error(TOAST_MESSAGES.PASSWORD.RESET_REDIRECT_FAILED)
+        toast.error('パスワードリセット画面にリダイレクトできませんでした')
       },
     }),
     null,

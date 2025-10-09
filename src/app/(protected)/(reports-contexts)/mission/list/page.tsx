@@ -32,18 +32,21 @@ export default async function MissionListPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const missionsPromise = getMissions(session.user.id, {
-    skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-    limit:
-      rowsPerPage > MAX_ROWS_PER_PAGE
-        ? MAX_ROWS_PER_PAGE
-        : rowsPerPage < MIN_ROWS_PER_PAGE
-          ? MIN_ROWS_PER_PAGE
-          : rowsPerPage,
-    names,
-  })
+  const missionsPromise = getMissions(
+    {
+      skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
+      limit:
+        rowsPerPage > MAX_ROWS_PER_PAGE
+          ? MAX_ROWS_PER_PAGE
+          : rowsPerPage < MIN_ROWS_PER_PAGE
+            ? MIN_ROWS_PER_PAGE
+            : rowsPerPage,
+      names,
+    },
+    session.user.id,
+  )
 
-  const projectsPromise = getProjects(session.user.id)
+  const projectsPromise = getProjects(undefined, session.user.id)
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
@@ -62,7 +65,7 @@ export default async function MissionListPage({
         <NameSearchTagField label="ミッション名" />
         <RowsPerPageSelect />
       </div>
-      <Card className="mt-4 max-w-full border-t-0 pt-0 ">
+      <Card className="mt-4 max-w-full py-2">
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, names })}

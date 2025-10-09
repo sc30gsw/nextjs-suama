@@ -1,7 +1,7 @@
 import { forbidden, unauthorized } from 'next/navigation'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
-import { ChangePasswordForm } from '~/features/users/components/change-password-form'
+import { ChangePasswordForm } from '~/features/users/components/change-passwor-form'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { type CalendarDate, parseDate } from '@internationalized/date'
-import { format } from 'date-fns'
 import { useQueryStates } from 'nuqs'
 import { DateRangePicker } from '~/components/ui/intent-ui/date-range-picker'
 import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
@@ -12,8 +11,8 @@ export function DailySearchDateRangePicker() {
   const defaultValue =
     startDate && endDate
       ? ({
-          start: parseDate(format(startDate, 'yyyy-MM-dd')),
-          end: parseDate(format(endDate, 'yyyy-MM-dd')),
+          start: parseDate(startDate.toISOString().slice(0, 10)),
+          end: parseDate(endDate.toISOString().slice(0, 10)),
         } as const satisfies Record<string, CalendarDate>)
       : undefined
 

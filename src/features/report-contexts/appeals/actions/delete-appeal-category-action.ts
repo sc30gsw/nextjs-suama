@@ -4,36 +4,12 @@ import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
-import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
 import { db } from '~/index'
-import { getServerSession } from '~/lib/get-server-session'
-import {
-  type CommonDeleteIdSchema,
-  commonDeleteIdSchema,
-} from '~/types/schemas/common-delete-id-schema'
 
-export async function deleteAppealCategoryAction(id: CommonDeleteIdSchema['id']) {
-  const parseResult = commonDeleteIdSchema.safeParse({ id })
-
-  if (!parseResult.success) {
-    return {
-      status: 'error',
-      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
-    } as const satisfies SubmissionResult
-  }
-
-  const session = await getServerSession()
-
-  if (!session) {
-    return {
-      status: 'error',
-      error: { message: [ERROR_STATUS.UNAUTHORIZED] },
-    } as const satisfies SubmissionResult
-  }
-
+export async function deleteAppealCategoryAction(categoryId: string) {
   try {
-    await db.delete(categoryOfAppeals).where(eq(categoryOfAppeals.id, parseResult.data.id))
+    await db.delete(categoryOfAppeals).where(eq(categoryOfAppeals.id, categoryId))
 
     revalidateTag(GET_APPEAL_CATEGORIES_CACHE_KEY)
 
@@ -43,7 +19,7 @@ export async function deleteAppealCategoryAction(id: CommonDeleteIdSchema['id'])
   } catch (_) {
     return {
       status: 'error',
-      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+      error: { message: ['Something went wrong'] },
     } as const satisfies SubmissionResult
   }
 }

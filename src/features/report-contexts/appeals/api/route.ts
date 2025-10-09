@@ -1,14 +1,12 @@
-import { count, eq, type InferSelectModel, like, or } from 'drizzle-orm'
+import { count, like, or } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { MAX_LIMIT } from '~/constants'
-import { ERROR_STATUS } from '~/constants/error-message'
-import { appeals, categoryOfAppeals } from '~/db/schema'
+import { categoryOfAppeals } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
 const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
-  // アピールカテゴリーと、withData=trueかつreportIdがある場合には既存のアピールも取得するAPI
-  const { skip, limit, names, withData, reportId } = c.req.query()
+  const { skip, limit, names } = c.req.query()
 
   const skipNumber = Number(skip) || 0
   const limitNumber = Number(limit) || MAX_LIMIT
@@ -30,39 +28,19 @@ const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
 
     const total = await db.select({ count: count() }).from(categoryOfAppeals).where(whereClause)
 
-    let existingAppeals: Pick<
-      InferSelectModel<typeof appeals>,
-      'id' | 'categoryOfAppealId' | 'appeal'
-    >[] = []
-
-    if (withData === 'true' && reportId) {
-      const appealsData = await db.query.appeals.findMany({
-        columns: {
-          id: true,
-          categoryOfAppealId: true,
-          appeal: true,
-        },
-        where: eq(appeals.dailyReportId, reportId),
-        orderBy: (appeals, { desc }) => [desc(appeals.createdAt)],
-      })
-
-      existingAppeals = appealsData
-    }
-
     return c.json(
       {
         appealCategories: categories,
         total: total[0].count,
         skip: skipNumber,
         limit: limitNumber,
-        existingAppeals,
       },
       200,
     )
   } catch (_) {
     return c.json(
       {
-        error: ERROR_STATUS.SOMETHING_WENT_WRONG,
+        error: 'Something went wrong',
       },
       500,
     )

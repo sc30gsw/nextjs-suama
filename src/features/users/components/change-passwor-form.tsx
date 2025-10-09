@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconCirclePerson, IconTriangleExclamation, IconUnlocked } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
@@ -14,7 +14,6 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { changePasswordAction } from '~/features/users/actions/change-password-action'
 import {
   type ChangePasswordInputSchema,
@@ -22,7 +21,6 @@ import {
 } from '~/features/users/types/schemas/change-password-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
-import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type ChangePasswordFormProps = Pick<
@@ -34,26 +32,10 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(changePasswordAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.PASSWORD.CHANGE_SUCCESS)
+        toast.success('パスワードの変更に成功しました')
       },
-      onError(result) {
-        const errorMessage = result?.error?.message?.[0]
-
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.UNAUTHORIZED:
-              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
-
-              return
-
-            case ERROR_STATUS.NOT_FOUND:
-              toast.error(TOAST_MESSAGES.USER.NOT_FOUND)
-
-              return
-          }
-        }
-
-        toast.error(TOAST_MESSAGES.PASSWORD.CHANGE_FAILED)
+      onError() {
+        toast.error('パスワードの変更に失敗しました')
       },
     }),
     null,

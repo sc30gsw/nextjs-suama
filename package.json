@@ -25,7 +25,6 @@
     "better-auth": "^1.2.7",
     "class-variance-authority": "^0.7.1",
     "date-fns": "^4.1.0",
-    "date-fns-tz": "^3.2.0",
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.44.2",
     "hono": "^4.7.8",
@@ -37,6 +36,7 @@
     "react-call": "^1.7.0",
     "react-dom": "^19.1.0",
     "react-scan": "^0.4.3",
+    "react-scroll": "^1.9.3",
     "react-stately": "^3.37.0",
     "react-use": "^17.6.0",
     "react-virtuoso": "^4.12.7",
@@ -46,7 +46,7 @@
     "tailwindcss-react-aria-components": "^2.0.0",
     "up-fetch": "^2.1.2",
     "vercel": "^46.0.2",
-    "zod": "^4.0.1"
+    "zod": "^3.25"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",

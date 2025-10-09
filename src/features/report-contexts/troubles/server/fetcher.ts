@@ -1,27 +1,16 @@
-import type { InferSelectModel } from 'drizzle-orm'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
+import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
-import type { users } from '~/db/schema'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getTroubleCategories(
-  userId: InferSelectModel<typeof users>['id'],
-  params?: {
-    skip?: number
-    limit?: number
-    names?: string[]
-    withData?: boolean
-  },
+  params?: { skip: number; limit: number; names: string[] },
+  userId?: string,
 ) {
   'use cache'
-  // withDataがtrueの場合、ユーザー固有のキャッシュキーを追加して、他の場所でrevalidateできるようにする
-  const cacheKey = params?.withData
-    ? `${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${userId}`
-    : GET_TROUBLE_CATEGORIES_CACHE_KEY
-  cacheTag(cacheKey)
+  cacheTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
 
   const url = client.api.troubles.categories.$url()
 
