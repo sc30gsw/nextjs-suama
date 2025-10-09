@@ -27,6 +27,12 @@ export function CreateAppealCategoryModal() {
       onSuccess() {
         toast.success('アピールポイントカテゴリーの登録に成功しました')
         toggle(false)
+
+        // ? use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        setTimeout(() => {
+          window.location.reload()
+        }, RELOAD_DELAY)
+
       },
       onError() {
         toast.error('アピールポイントカテゴリーの登録に失敗しました')
