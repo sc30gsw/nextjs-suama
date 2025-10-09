@@ -4,6 +4,7 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteClientAction } from '~/features/report-contexts/clients/actions/delete-client-action'
@@ -57,6 +58,11 @@ export function ClientDeleteButton({ id }: ClientDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.CLIENT.DELETE_SUCCESS)
+
+        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        setTimeout(() => {
+          window.location.reload()
+        }, RELOAD_DELAY)
       } catch (_) {
         toast.error(TOAST_MESSAGES.CLIENT.DELETE_FAILED)
       }

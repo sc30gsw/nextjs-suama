@@ -4,7 +4,6 @@ import { parseWithZod } from '@conform-to/zod/v4'
 import { format } from 'date-fns'
 import { and, eq, inArray } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { filter, isDefined, map, pipe } from 'remeda'
 import {
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
@@ -145,6 +144,14 @@ export async function createReportAction(_: unknown, formData: FormData) {
     revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
+
+    return {
+      ...submission.reply(),
+      data: {
+        reportDate: format(reportDate, 'yyyy/MM/dd'),
+        isDraft: actionType !== 'published',
+      },
+    }
   } catch (err) {
     if (err instanceof Error && err.message === ERROR_STATUS.INVALID_MISSION_RELATION) {
       return submission.reply({
@@ -156,6 +163,4 @@ export async function createReportAction(_: unknown, formData: FormData) {
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
   }
-
-  redirect('/daily')
 }

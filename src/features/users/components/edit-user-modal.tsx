@@ -14,7 +14,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
+import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB, RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
@@ -43,8 +43,13 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
         toast.success(TOAST_MESSAGES.USER.UPDATE_SUCCESS)
         toggle(false)
         setImageError('')
-        location.reload()
+
+        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        setTimeout(() => {
+          window.location.reload()
+        }, RELOAD_DELAY)
       },
+
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
 

@@ -51,8 +51,10 @@ export const TOAST_MESSAGES = {
 
   DAILY_REPORT: {
     CREATE_SUCCESS: '日報を作成しました',
+    CREATE_DRAFT_SUCCESS: '日報の下書きを保存しました',
     CREATE_FAILED: '日報の作成に失敗しました',
     UPDATE_SUCCESS: '日報を更新しました',
+    UPDATE_DRAFT_SUCCESS: '日報の下書きを保存しました',
     UPDATE_FAILED: '日報の更新に失敗しました',
     DELETE_SUCCESS: '日報を削除しました',
     DELETE_FAILED: '日報の削除に失敗しました',

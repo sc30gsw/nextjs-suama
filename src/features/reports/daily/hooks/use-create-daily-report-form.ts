@@ -4,6 +4,7 @@ import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
+import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { createReportAction } from '~/features/reports/daily/actions/create-report-action'
 import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
@@ -28,6 +29,20 @@ export function useCreateDailyForm(
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createReportAction, {
+      onSuccess(result) {
+        const data = 'data' in result ? result.data : undefined
+        const message = data?.isDraft
+          ? `${data.reportDate}の${TOAST_MESSAGES.DAILY_REPORT.CREATE_DRAFT_SUCCESS}`
+          : `${data?.reportDate}の${TOAST_MESSAGES.DAILY_REPORT.CREATE_SUCCESS}`
+
+        toast.success(message)
+
+        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする。reloadだと、nuqsのstateと競合するため、replaceを使用。
+        setTimeout(() => {
+          window.location.replace('/daily')
+        }, RELOAD_DELAY)
+      },
+
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
 

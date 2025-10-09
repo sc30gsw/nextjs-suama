@@ -3,6 +3,7 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { deleteReportAction } from '~/features/reports/daily/actions/delete-report-action'
 import { Confirm } from '~/hooks/use-confirm'
@@ -58,6 +59,11 @@ export function DailyReportDeleteButton({ id }: DailyReportDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.DAILY_REPORT.DELETE_SUCCESS)
+
+        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        setTimeout(() => {
+          window.location.reload()
+        }, RELOAD_DELAY)
       } catch (_) {
         toast.error(TOAST_MESSAGES.DAILY_REPORT.DELETE_FAILED)
       }

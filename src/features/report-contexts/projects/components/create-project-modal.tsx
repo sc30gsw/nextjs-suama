@@ -15,6 +15,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { createProjectAction } from '~/features/report-contexts/projects/actions/create-project-action'
@@ -44,7 +45,13 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
         toggle(false)
         setClient(null)
         setChecked(false)
+
+        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        setTimeout(() => {
+          window.location.reload()
+        }, RELOAD_DELAY)
       },
+
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
 
