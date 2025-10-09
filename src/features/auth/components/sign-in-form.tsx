@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconKey, IconTriangleExclamation } from '@intentui/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -13,8 +13,6 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
-
 import { signInAction } from '~/features/auth/actions/sign-in-action'
 import {
   type SignInInputSchema,
@@ -23,7 +21,6 @@ import {
 
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
-import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function SignInForm({
@@ -39,22 +36,11 @@ export function SignInForm({
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(signInAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
+        toast.success('サインインしました')
         router.push('/daily')
       },
-      onError(result) {
-        const errorMessage = result?.error?.message?.[0]
-
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.SOMETHING_WENT_WRONG:
-              toast.error(TOAST_MESSAGES.AUTH.SIGN_IN_FAILED)
-
-              return
-          }
-        }
-
-        toast.error(TOAST_MESSAGES.AUTH.SIGN_IN_FAILED)
+      onError() {
+        toast.error('サインインに失敗しました')
       },
     }),
     null,
@@ -161,12 +147,12 @@ export function SignInForm({
                 const data = await authClient.signIn.passkey()
 
                 if (data?.error) {
-                  toast.error(TOAST_MESSAGES.AUTH.SIGN_IN_FAILED)
+                  toast.error('サインインに失敗しました')
 
                   return
                 }
 
-                toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
+                toast.success('サインインしました')
                 router.push('/daily')
               })
             }}

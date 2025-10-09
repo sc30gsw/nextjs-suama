@@ -60,7 +60,7 @@ const app = new Hono()
             where: and(
               eq(weeklyReports.userId, user.id),
               eq(weeklyReports.year, Number(year)),
-              eq(weeklyReports.week, Number(week)),
+              eq(weeklyReports.week, Number(week) - 1),
             ),
             with: {
               weeklyReportMissions: {
@@ -193,7 +193,7 @@ const app = new Hono()
       where: and(
         eq(weeklyReports.userId, c.get('user').id),
         eq(weeklyReports.year, Number(year)),
-        eq(weeklyReports.week, Number(week) - 1),
+        eq(weeklyReports.week, Number(week)),
       ),
       with: {
         weeklyReportMissions: {

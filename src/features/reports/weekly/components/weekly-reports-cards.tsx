@@ -1,5 +1,3 @@
-import type { RefObject } from 'react'
-import type { VirtuosoHandle } from 'react-virtuoso'
 import { Virtuoso } from 'react-virtuoso'
 import { flatMap, pipe, reduce } from 'remeda'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -17,7 +15,6 @@ type WeeklyReportsCardsProps = {
     ReturnType<ReturnType<typeof fetchWeeklyReportsInfiniteQuery>['use']>['data'],
     undefined
   >
-  ref?: RefObject<VirtuosoHandle | null>
   hasNextPage: boolean
   isFetchingNextPage: boolean
   loadMore: () => void
@@ -25,14 +22,12 @@ type WeeklyReportsCardsProps = {
 
 export function WeeklyReportsCards({
   data,
-  ref,
   hasNextPage,
   isFetchingNextPage,
   loadMore,
 }: WeeklyReportsCardsProps) {
   return (
     <Virtuoso
-      ref={ref}
       useWindowScroll={true}
       className="min-h-dvh pb-0"
       data={data.pages.flatMap((page) => page.reports)}
@@ -62,6 +57,7 @@ export function WeeklyReportsCards({
         return (
           <Card id={`user-${report.user.id}`} className="mt-2">
             <Card.Header>
+              {/* TODO: 実際のデータにする */}
               <Card.Title className="flex items-center gap-2">
                 <Avatar
                   initials={report.user.name.charAt(0)}

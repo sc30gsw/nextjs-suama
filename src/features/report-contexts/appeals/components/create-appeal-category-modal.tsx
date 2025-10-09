@@ -1,7 +1,7 @@
 'use client'
 
 import { getFormProps, getInputProps } from '@conform-to/react'
-import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import { getZodConstraint, parseWithZod } from '@conform-to/zod'
 import { IconPlus, IconTriangleExclamation } from '@intentui/icons'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
@@ -11,16 +11,12 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { RELOAD_DELAY } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
-
 import { createAppealCategoryAction } from '~/features/report-contexts/appeals/actions/create-appeal-category-action'
 import {
   type CreateAppealCategoryInputSchema,
   createAppealCategoryInputSchema,
 } from '~/features/report-contexts/appeals/types/schemas/create-appeal-category-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function CreateAppealCategoryModal() {
@@ -29,28 +25,17 @@ export function CreateAppealCategoryModal() {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(createAppealCategoryAction, {
       onSuccess() {
-        toast.success(TOAST_MESSAGES.APPEAL.CREATE_SUCCESS)
+        toast.success('アピールポイントカテゴリーの登録に成功しました')
         toggle(false)
 
         // ? use cache が experimental で revalidateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
         }, RELOAD_DELAY)
+
       },
-
-      onError(result) {
-        const errorMessage = result?.error?.message?.[0]
-
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.UNAUTHORIZED:
-              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
-
-              return
-          }
-        }
-
-        toast.error(TOAST_MESSAGES.APPEAL.CREATE_FAILED)
+      onError() {
+        toast.error('アピールポイントカテゴリーの登録に失敗しました')
       },
     }),
     null,

@@ -1,19 +1,17 @@
-import type { InferSelectModel } from 'drizzle-orm'
 import type { InferRequestType, InferResponseType } from 'hono'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
+import { unstable_cacheTag as cacheTag } from 'next/cache'
 import {
   GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
   GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY,
   GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
 } from '~/constants/cache-keys'
-import type { users } from '~/db/schema'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getWeeklyReportMissionsById(
   params: InferRequestType<(typeof client.api.weeklies)[':weeklyReportId']['$get']>['param'],
-  userId: InferSelectModel<typeof users>['id'],
+  userId?: string,
 ) {
   'use cache'
   cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${params.weeklyReportId}`)
@@ -36,7 +34,7 @@ export async function getWeeklyReportMissions(
   params: InferRequestType<
     (typeof client.api.weeklies)['current-user'][':year'][':week']['$get']
   >['param'],
-  userId: InferSelectModel<typeof users>['id'],
+  userId?: string,
 ) {
   'use cache'
   cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)
@@ -62,7 +60,7 @@ export async function getLastWeeklyReportMissions(
   params: InferRequestType<
     (typeof client.api.weeklies)['last-week'][':year'][':week']['$get']
   >['param'],
-  userId: InferSelectModel<typeof users>['id'],
+  userId?: string,
 ) {
   'use cache'
   cacheTag(`${GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)

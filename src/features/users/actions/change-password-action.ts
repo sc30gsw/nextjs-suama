@@ -1,13 +1,11 @@
 'use server'
 
-import { parseWithZod } from '@conform-to/zod/v4'
+import { parseWithZod } from '@conform-to/zod'
 import { eq } from 'drizzle-orm'
-import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { changePasswordInputSchema } from '~/features/users/types/schemas/change-password-input-schema'
 import { db } from '~/index'
 import { auth } from '~/lib/auth'
-import { getServerSession } from '~/lib/get-server-session'
 
 export async function changePasswordAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -18,14 +16,6 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
     return submission.reply()
   }
 
-  const session = await getServerSession()
-
-  if (!session) {
-    return submission.reply({
-      fieldErrors: { message: [ERROR_STATUS.UNAUTHORIZED] },
-    })
-  }
-
   try {
     const user = await db.query.users.findFirst({
       where: eq(users.id, submission.value.id),
@@ -33,7 +23,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
 
     if (!user) {
       return submission.reply({
-        fieldErrors: { message: [ERROR_STATUS.NOT_FOUND] },
+        fieldErrors: { message: ['ユーザーが見つかりませんでした'] },
       })
     }
 
@@ -44,7 +34,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
     return submission.reply()
   } catch (_) {
     return submission.reply({
-      fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+      fieldErrors: { message: ['Something went wrong'] },
     })
   }
 }
