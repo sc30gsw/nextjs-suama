@@ -1,11 +1,11 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 import { LIKE_KEYWORDS_REGEX } from '~/constants'
 
 export const createMissionInputSchema = z.object({
-  name: z.string({ required_error: 'ミッション名を入力してください' }).max(128, {
-    message: 'ミッション名は128文字以内で入力してください',
+  name: z.string({ error: 'ミッション名を入力してください' }).max(128, {
+    error: 'ミッション名は128文字以内で入力してください',
   }),
-  likeKeywords: z.string({ required_error: '検索単語を入力してください' }).refine(
+  likeKeywords: z.string({ error: '検索単語を入力してください' }).refine(
     (value) => {
       if (value === undefined) {
         return true
@@ -19,10 +19,10 @@ export const createMissionInputSchema = z.object({
       return isValid
     },
     {
-      message: '検索単語はカンマ区切りで入力してください（例: apple,banana,orange）',
+      error: '検索単語はカンマ区切りで入力してください(例: apple,banana,orange)',
     },
   ),
-  projectId: z.string({ required_error: 'プロジェクトを選択してください' }),
+  projectId: z.string({ error: 'プロジェクトを選択してください' }),
 })
 
 export type CreateMissionInputSchema = z.infer<typeof createMissionInputSchema>

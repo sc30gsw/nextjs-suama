@@ -31,19 +31,16 @@ export default async function TroubleListPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const troubleCategoriesPromise = getTroubleCategories(
-    {
-      skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-      limit:
-        rowsPerPage > MAX_ROWS_PER_PAGE
-          ? MAX_ROWS_PER_PAGE
-          : rowsPerPage < MIN_ROWS_PER_PAGE
-            ? MIN_ROWS_PER_PAGE
-            : rowsPerPage,
-      names,
-    },
-    session.user.id,
-  )
+  const troubleCategoriesPromise = getTroubleCategories(session.user.id, {
+    skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
+    limit:
+      rowsPerPage > MAX_ROWS_PER_PAGE
+        ? MAX_ROWS_PER_PAGE
+        : rowsPerPage < MIN_ROWS_PER_PAGE
+          ? MIN_ROWS_PER_PAGE
+          : rowsPerPage,
+    names,
+  })
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
@@ -58,7 +55,7 @@ export default async function TroubleListPage({
         <NameSearchTagField label="カテゴリー名" />
         <RowsPerPageSelect />
       </div>
-      <Card className="mt-4 max-w-full py-2">
+      <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, names })}
