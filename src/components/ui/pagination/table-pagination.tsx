@@ -2,19 +2,19 @@
 
 import { useQueryStates } from 'nuqs'
 import { Pagination } from '~/components/ui/intent-ui/pagination'
-import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 export function TablePagination({ pageCount, page }: Record<'pageCount' | 'page', number>) {
   const pageIndex = page <= 1 ? 0 : page - 1
-  const [{ userNames }] = useQueryStates(userSearchParamsParsers, {
+
+  const [{ rowsPerPage }, setPaginationParams] = useQueryStates(paginationSearchParamsParsers, {
     history: 'push',
     shallow: false,
   })
-  const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
-    history: 'push',
-    shallow: false,
-  })
+
+  const goToPage = (targetPage: number) => {
+    setPaginationParams({ page: targetPage, rowsPerPage })
+  }
 
   const createPageNumbers = () => {
     const last = pageCount - 1
@@ -55,22 +55,12 @@ export function TablePagination({ pageCount, page }: Record<'pageCount' | 'page'
     <Pagination>
       <Pagination.List>
         <Pagination.Item
-          routerOptions={{ scroll: false }}
           segment="first"
-          href={
-            userNames.length > 0
-              ? `?page=1&rowsPerPage=${rowsPerPage}&userNames=${userNames}`
-              : `?page=1&rowsPerPage=${rowsPerPage}`
-          }
+          onAction={() => goToPage(1)}
           isDisabled={pageIndex === 0}
         />
         <Pagination.Item
-          routerOptions={{ scroll: false }}
-          href={
-            userNames.length > 0
-              ? `?page=${pageIndex}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`
-              : `?page=${pageIndex}&rowsPerPage=${rowsPerPage}`
-          }
+          onAction={() => goToPage(pageIndex)}
           segment="previous"
           isDisabled={pageIndex === 0}
         />
@@ -81,49 +71,33 @@ export function TablePagination({ pageCount, page }: Record<'pageCount' | 'page'
             value: p,
           }))}
         >
-          {(item) =>
-            typeof item.value === 'number' ? (
-              <Pagination.Item
-                key={item.id}
-                routerOptions={{ scroll: false }}
-                href={
-                  userNames.length > 0
-                    ? `?page=${item.value + 1}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`
-                    : `?page=${item.value + 1}&rowsPerPage=${rowsPerPage}`
-                }
-                isCurrent={item.value === pageIndex}
-              >
-                {item.value + 1}
-              </Pagination.Item>
-            ) : (
-              <Pagination.Item
-                key={item.id}
-                isDisabled={true}
-                routerOptions={{ scroll: false }}
-                segment="ellipsis"
-              >
+          {(item) => {
+            if (typeof item.value === 'number') {
+              const pageNumber = item.value
+              return (
+                <Pagination.Item
+                  key={item.id}
+                  onAction={() => goToPage(pageNumber + 1)}
+                  isCurrent={pageNumber === pageIndex}
+                >
+                  {pageNumber + 1}
+                </Pagination.Item>
+              )
+            }
+            return (
+              <Pagination.Item key={item.id} isDisabled={true} segment="ellipsis">
                 …
               </Pagination.Item>
             )
-          }
+          }}
         </Pagination.Section>
         <Pagination.Item
-          routerOptions={{ scroll: false }}
-          href={
-            userNames.length > 0
-              ? `?page=${pageIndex + 2}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`
-              : `?page=${pageIndex + 2}&rowsPerPage=${rowsPerPage}`
-          }
+          onAction={() => goToPage(pageIndex + 2)}
           segment="next"
           isDisabled={pageIndex === pageCount - 1}
         />
         <Pagination.Item
-          routerOptions={{ scroll: false }}
-          href={
-            userNames.length > 0
-              ? `?page=${pageCount}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`
-              : `?page=${pageCount}&rowsPerPage=${rowsPerPage}`
-          }
+          onAction={() => goToPage(pageCount)}
           segment="last"
           isDisabled={pageIndex === pageCount - 1}
         />
