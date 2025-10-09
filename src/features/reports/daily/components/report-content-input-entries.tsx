@@ -10,7 +10,10 @@ import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { TotalHours } from '~/features/reports/components/total-hours'
-import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import {
+  inputCountSearchParamsParsers,
+  type ReportEntry,
+} from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 type ReportContentInputEntriesProps = {
@@ -56,7 +59,7 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
     })
   }
 
-  const handleRemove = (id: string) => {
+  const handleRemove = (id: ReportEntry['id']) => {
     setReportState((prev) => {
       if (!prev) {
         return prev
@@ -75,7 +78,11 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
     })
   }
 
-  const handleChangeItem = (id: string, newItem: Key | null, kind: 'project' | 'mission') => {
+  const handleChangeItem = (
+    id: ReportEntry['id'],
+    newItem: Key | null,
+    kind: 'project' | 'mission',
+  ) => {
     setReportState((prev) => {
       if (!prev) {
         return prev
@@ -95,7 +102,10 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
     })
   }
 
-  const handleChangeValue = (id: string, newValue: string | number) => {
+  const handleChangeValue = (
+    id: ReportEntry['id'],
+    newValue: ReportEntry['content'] | ReportEntry['hours'],
+  ) => {
     setReportState((prev) => {
       if (!prev) {
         return prev

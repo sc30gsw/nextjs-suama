@@ -10,3 +10,5 @@ export const MAX_IMAGE_SIZE_MB = 5
 
 // TODO: 開発時のloadMore検証時には1件などにして検証（50件とかでも問題ないが一旦30件とする）
 export const WEEKLY_REPORTS_LIMIT = 30
+
+export const RELOAD_DELAY = 1000

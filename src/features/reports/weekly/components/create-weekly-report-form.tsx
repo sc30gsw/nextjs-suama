@@ -120,6 +120,18 @@ export function CreateWeeklyReportForm({
               }
             />
           ))}
+
+          {weeklyReports.length >= 1 && (
+            <Button
+              size="square-petite"
+              onPress={handleAdd}
+              className="mt-4 rounded-full"
+              isDisabled={isPending}
+            >
+              <IconPlus />
+            </Button>
+          )}
+
           <Separator orientation="horizontal" />
           <TotalHours totalHours={totalHours} />
           <Separator orientation="horizontal" />

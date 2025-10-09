@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 const singleHourSchema = z
   .string()
@@ -51,41 +51,45 @@ export const dailyReportFormSchema = z.object({
   workContent: z
     .union([singleWorkContentSchema, multipleWorkContentSchema])
     .refine((data) => (Array.isArray(data) ? data.every((d) => d.length > 0) : data.length > 0), {
-      message: '内容を入力してください',
+      error: '内容を入力してください',
     }),
   hours: z
     .union([singleHourSchema, multipleHoursSchema])
     .refine((data) => (Array.isArray(data) ? data.every((d) => d > 0) : data > 0), {
-      message: '0より大きい数値で入力してください',
+      error: '0より大きい数値で入力してください',
     }),
-  appeal: z.union([singleAppealSchema, multipleAppealSchema]).refine(
-    (data) =>
-      Array.isArray(data)
-        ? data.every((d) => {
-            if (d) {
-              return d.length <= 256
-            }
-            return true
-          })
-        : true,
-    {
-      message: '内容は256文字以下で入力してください',
-    },
-  ),
-  trouble: z.union([singleTroubleSchema, multipleTroubleSchema]).refine(
-    (data) =>
-      Array.isArray(data)
-        ? data.every((d) => {
-            if (d) {
-              return d.length <= 256
-            }
-            return true
-          })
-        : true,
-    {
-      message: '内容は256文字以下で入力してください',
-    },
-  ),
+  appeal: z
+    .union([singleAppealSchema, multipleAppealSchema])
+    .refine(
+      (data) =>
+        Array.isArray(data)
+          ? data.every((d) => {
+              if (d) {
+                return d.length <= 256
+              }
+              return true
+            })
+          : true,
+      {
+        error: '内容は256文字以下で入力してください',
+      },
+    ),
+  trouble: z
+    .union([singleTroubleSchema, multipleTroubleSchema])
+    .refine(
+      (data) =>
+        Array.isArray(data)
+          ? data.every((d) => {
+              if (d) {
+                return d.length <= 256
+              }
+              return true
+            })
+          : true,
+      {
+        error: '内容は256文字以下で入力してください',
+      },
+    ),
 })
 
 export type DailyReportFormSchema = z.infer<typeof dailyReportFormSchema>

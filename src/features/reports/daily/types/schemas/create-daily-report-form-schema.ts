@@ -1,37 +1,41 @@
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 // 個別のレポートエントリー（ミッション情報）
 export const dailyReportEntrySchema = z.object({
-  id: z.string().uuid(),
-  project: z.string({ required_error: 'プロジェクトを選択してください' }),
-  mission: z.string({ required_error: 'ミッションを選択してください' }),
-  content: z.string({ required_error: '内容を入力してください' }),
+  id: z.uuid(),
+  project: z.string({ error: 'プロジェクトを選択してください' }),
+  mission: z.string({ error: 'ミッションを選択してください' }),
+  content: z.string({ error: '内容を入力してください' }),
   hours: z
     .string()
     .transform((value) => Number(value))
     .refine((data) => data > 0, {
-      message: '0より大きい数値で入力してください',
+      error: '0より大きい数値で入力してください',
     }),
 })
 
 // アピールエントリー
 export const appealEntrySchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   categoryId: z.string().optional(),
   content: z.string().optional(),
 })
 
 // トラブルエントリー
 export const troubleEntrySchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   categoryId: z.string().optional(),
   content: z.string().optional(),
+  resolved: z
+    .union([z.literal('true'), z.literal('false'), z.boolean()])
+    .transform((val) => val === 'true' || val === true)
+    .default(false),
 })
 
 // メインのフォームスキーマ
 export const createDailyReportFormSchema = z
   .object({
-    reportDate: z.string({ required_error: '日付を選択してください' }),
+    reportDate: z.string({ error: '日付を選択してください' }),
     remote: z
       .union([z.literal('on'), z.undefined()])
       .optional()
@@ -42,66 +46,64 @@ export const createDailyReportFormSchema = z
     troubleEntries: z.array(troubleEntrySchema).default([]),
   })
   .superRefine((data, ctx) => {
-    // アピールエントリーのバリデーション
-    data.appealEntries.forEach((entry, index) => {
-      if (entry.content && entry.content.length > 0) {
-        if (!entry.categoryId) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'カテゴリーを選択してください',
-            path: ['appealEntries', index, 'categoryId'],
-          })
-        }
+      // アピールエントリーのバリデーション
+      data.appealEntries.forEach((entry, index) => {
+        if (entry.content && entry.content.length > 0) {
+          if (!entry.categoryId) {
+            ctx.addIssue({
+              code: 'custom',
+              error: 'カテゴリーを選択してください',
+              path: ['appealEntries', index, 'categoryId'],
+            })
+          }
 
-        if (entry.content.length === 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容を入力してください',
-            path: ['appealEntries', index, 'content'],
-          })
-        }
+          if (entry.content.length === 0) {
+            ctx.addIssue({
+              code: 'custom',
+              error: '内容を入力してください',
+              path: ['appealEntries', index, 'content'],
+            })
+          }
 
-        if (entry.content.length > 256) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容は256文字以下で入力してください',
-            path: ['appealEntries', index, 'content'],
-          })
+          if (entry.content.length > 256) {
+            ctx.addIssue({
+              code: 'custom',
+              error: '内容は256文字以下で入力してください',
+              path: ['appealEntries', index, 'content'],
+            })
+          }
         }
-      }
-    })
+      })
 
-    // トラブルエントリーのバリデーション
-    data.troubleEntries.forEach((entry, index) => {
-      if (entry.content && entry.content.length > 0) {
-        if (!entry.categoryId) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'カテゴリーを選択してください',
-            path: ['troubleEntries', index, 'categoryId'],
-          })
-        }
+      // トラブルエントリーのバリデーション
+      data.troubleEntries.forEach((entry, index) => {
+        if (entry.content && entry.content.length > 0) {
+          if (!entry.categoryId) {
+            ctx.addIssue({
+              code: 'custom',
+              error: 'カテゴリーを選択してください',
+              path: ['troubleEntries', index, 'categoryId'],
+            })
+          }
 
-        if (entry.content.length === 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容を入力してください',
-            path: ['troubleEntries', index, 'content'],
-          })
-        }
+          if (entry.content.length === 0) {
+            ctx.addIssue({
+              code: 'custom',
+              error: '内容を入力してください',
+              path: ['troubleEntries', index, 'content'],
+            })
+          }
 
-        if (entry.content.length > 256) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '内容は256文字以下で入力してください',
-            path: ['troubleEntries', index, 'content'],
-          })
+          if (entry.content.length > 256) {
+            ctx.addIssue({
+              code: 'custom',
+              error: '内容は256文字以下で入力してください',
+              path: ['troubleEntries', index, 'content'],
+            })
+          }
         }
-      }
-    })
+      })
   })
 
 export type CreateDailyReportFormSchema = z.infer<typeof createDailyReportFormSchema>
 export type DailyReportEntrySchema = z.infer<typeof dailyReportEntrySchema>
-// export type AppealEntrySchema = z.infer<typeof appealEntrySchema>
-// export type TroubleEntrySchema = z.infer<typeof troubleEntrySchema>

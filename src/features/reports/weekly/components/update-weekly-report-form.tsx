@@ -13,7 +13,7 @@ import type { getMissions } from '~/features/report-contexts/missions/server/fet
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
 import { UpdateWeeklyReportContentInputEntries } from '~/features/reports/weekly/components/update-weekly-report-content-input-entries'
-import { useUpdateWeeklyReportForm } from '~/features/reports/weekly/hooks/use-update-weekly-repor-form'
+import { useUpdateWeeklyReportForm } from '~/features/reports/weekly/hooks/use-update-weekly-report-form'
 import type { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
 import { weeklyReportStateSchema } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 
@@ -117,6 +117,18 @@ export function UpdateWeeklyReportForm({
               }
             />
           ))}
+
+          {weeklyReports.length >= 1 && (
+            <Button
+              size="square-petite"
+              onPress={handleAdd}
+              className="mt-4 rounded-full"
+              isDisabled={isPending}
+            >
+              <IconPlus />
+            </Button>
+          )}
+
           <Separator orientation="horizontal" />
           <TotalHours totalHours={totalHours} />
           <Separator orientation="horizontal" />

@@ -45,8 +45,8 @@ export default async function WeeklyReportIdPage({
 
   const count = weeklyReportEntry.count
 
-  const projectPromise = getProjects(undefined, session.user.id)
-  const missionPromise = getMissions(undefined, session.user.id)
+  const projectPromise = getProjects(session.user.id)
+  const missionPromise = getMissions(session.user.id)
 
   const promises = Promise.all([projectPromise, missionPromise])
 

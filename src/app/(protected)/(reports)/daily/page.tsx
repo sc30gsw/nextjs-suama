@@ -1,20 +1,10 @@
-import { IconPlus } from '@intentui/icons'
 import { unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
-import { Suspense } from 'react'
-import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
-import { Skeleton } from '~/components/ui/intent-ui/skeleton'
-import { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
-import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { CreateDailyForm } from '~/features/reports/daily/components/create-daily-form'
-import { ReportAppealAndTroubleInputEntries } from '~/features/reports/daily/components/report-appeal-and-troubles-input-entries'
-import type {
-  AppealCategoriesResponse,
-  TroubleCategoriesResponse,
-} from '~/features/reports/daily/types/api-response'
+import { ReportAppealOrTroubleContainer } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
 import { inputCountSearchParamsCache } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
@@ -33,8 +23,8 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
   const troubleCount = appealsAndTroublesEntry.troubles.count
   const appealCount = appealsAndTroublesEntry.appeals.count
 
-  const projectPromise = getProjects(undefined, session.user.id)
-  const missionPromise = getMissions(undefined, session.user.id)
+  const projectPromise = getProjects(session.user.id)
+  const missionPromise = getMissions(session.user.id)
 
   const promises = Promise.all([projectPromise, missionPromise])
 
@@ -49,35 +39,10 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
           </div>
         }
         troubles={
-          <Suspense
-            fallback={
-              <>
-                <Button size="square-petite" className="mt-4 rounded-full">
-                  <IconPlus />
-                </Button>
-                {Array.from({
-                  length: troubleCount > 0 ? troubleCount : 0,
-                }).map(() => (
-                  <div
-                    key={crypto.randomUUID()}
-                    className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
-                  >
-                    <Skeleton className="col-span-3 h-16" />
-                    <Skeleton className="col-span-2 h-7" />
-                    <Skeleton className="col-span-1 h-7" />
-                    <Skeleton className="col-span-1 size-9 rounded-full" />
-                  </div>
-                ))}
-              </>
-            }
-          >
-            {getTroubleCategories(undefined, session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<TroubleCategoriesResponse['troubleCategories']>
-                items={res.troubleCategories}
-                kind="trouble"
-              />
-            ))}
-          </Suspense>
+          <ReportAppealOrTroubleContainer
+            kind="trouble"
+            count={troubleCount > 0 ? troubleCount : 0}
+          />
         }
         appealHeadings={
           <div className="mt-4 flex items-center">
@@ -85,76 +50,9 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
           </div>
         }
         appeals={
-          <Suspense
-            fallback={
-              <>
-                <Button size="square-petite" className="mt-4 rounded-full">
-                  <IconPlus />
-                </Button>
-                {Array.from({
-                  length: appealCount > 0 ? appealCount : 0,
-                }).map(() => (
-                  <div
-                    key={crypto.randomUUID()}
-                    className="mx-auto grid grid-cols-12 grid-rows-1 items-center gap-4 py-2"
-                  >
-                    <Skeleton className="col-span-3 h-16" />
-                    <Skeleton className="col-span-2 h-7" />
-                    <Skeleton className="col-span-1 h-7" />
-                    <Skeleton className="col-span-1 size-9 rounded-full" />
-                  </div>
-                ))}
-              </>
-            }
-          >
-            {getAppealCategories(undefined, session.user.id).then((res) => (
-              <ReportAppealAndTroubleInputEntries<AppealCategoriesResponse['appealCategories']>
-                items={res.appealCategories}
-                kind="appeal"
-              />
-            ))}
-          </Suspense>
+          <ReportAppealOrTroubleContainer kind="appeal" count={appealCount > 0 ? appealCount : 0} />
         }
       />
-      {/* TODO: アピールと困っていることの登録 */}
-      {/* <Suspense
-          fallback={
-            <>
-              <Button size="square-petite" className="mt-4 rounded-full">
-                <IconPlus />
-              </Button>
-              {Array.from({ length: count > 0 ? count : 1 }).map(() => (
-                <div
-                  key={crypto.randomUUID()}
-                  className="mx-auto mt-10 grid grid-cols-11 grid-rows-1 items-center gap-4"
-                >
-                  <Skeleton className="col-span-2 h-7" />
-                  <Skeleton className="col-span-2 h-7" />
-                  <Skeleton className="col-span-2 h-7" />
-                  <Skeleton className="col-span-4 h-7" />
-                  <Skeleton className="col-span-1 size-9 rounded-full" />
-                </div>
-              ))}
-              <Separator orientation="horizontal" />
-
-              <div className="my-4">
-                <Checkbox className="cursor-pointer">リモート勤務</Checkbox>
-              </div>
-              <Separator orientation="horizontal" />
-              <div className="my-4 flex items-center gap-x-2">
-                <span className="text-sm">合計時間:</span>
-                <Heading className="text-lg text-muted-fg">0時間</Heading>
-              </div>
-            </>
-          }
-        >
-          {promises.then(([projectsResponse, missionsResponse]) => (
-            <ReportContentInputEntries
-              projects={projectsResponse.projects}
-              missions={missionsResponse.missions}
-            />
-          ))}
-        </Suspense> */}
     </div>
   )
 }
