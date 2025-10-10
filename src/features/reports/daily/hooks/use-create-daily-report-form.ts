@@ -16,6 +16,7 @@ import {
 import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { isErrorStatus } from '~/utils'
+import { DATE_FORMAT } from '~/utils/date-utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useCreateDailyForm(
@@ -88,7 +89,7 @@ export function useCreateDailyForm(
       return parseWithZod(formData, { schema: createDailyReportFormSchema })
     },
     defaultValue: {
-      reportDate: format(new Date(), 'yyyy-MM-dd'),
+      reportDate: format(new Date(), DATE_FORMAT),
       remote: undefined,
       impression: '',
       reportEntries: reportEntry.entries.map((entry) => ({

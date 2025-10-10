@@ -24,6 +24,7 @@ import { TotalHours } from '~/features/reports/components/total-hours'
 import { EditDailyReportContentInputEntries } from '~/features/reports/daily/components/edit-daily-report-content-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getReportById } from '~/features/reports/daily/server/fetcher'
+import { DATE_FORMAT } from '~/utils/date-utils'
 
 type EditDailyFormProps = {
   reportData: Awaited<ReturnType<typeof getReportById>>
@@ -83,7 +84,7 @@ export function EditDailyForm({
           {/* // ? https://ja.conform.guide/integration/ui-libraries */}
           <DatePicker
             isDisabled={isPending}
-            value={parseDate(reportDate.value ?? format(new Date(), 'yyyy-MM-dd'))}
+            value={parseDate(reportDate.value ?? format(new Date(), DATE_FORMAT))}
             onChange={(newValue) => {
               if (newValue) {
                 reportDate.change(newValue.toString())
