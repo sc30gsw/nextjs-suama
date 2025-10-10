@@ -20,7 +20,7 @@ export const dateUtils = {
     return formatInTimeZone(date, APP_TIMEZONE, formatStr)
   },
 
-  getTodayRangeByJST: (): { start: Date; end: Date } => {
+  getTodayRangeByJST: () => {
     const nowInJST = toZonedTime(new Date(), APP_TIMEZONE)
     const dateString = formatInTimeZone(nowInJST, APP_TIMEZONE, DATE_FORMAT)
 
