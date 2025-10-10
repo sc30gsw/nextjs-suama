@@ -15,7 +15,7 @@ import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '
 import { createDailyReportFormSchema } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
-import { dateUtils } from '~/utils/date-utils'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 export async function createReportAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -141,7 +141,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
       }
     })
 
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, DATE_FORMAT)}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
 

@@ -14,7 +14,7 @@ import {
 } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { dateUtils } from '~/utils/date-utils'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 function groupingReportMission<
   T extends typeof weeklyReportMissions.$inferSelect | typeof dailyReportMissions.$inferSelect,
@@ -50,8 +50,8 @@ const app = new Hono()
     const weekEndDate = addDays(weekStartDate, 6)
 
     // JST基準でUTC変換（DBクエリ用）
-    const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, 'yyyy-MM-dd'), 'start')
-    const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, 'yyyy-MM-dd'), 'end')
+    const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
+    const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
 
     const users = await db.query.users.findMany({
       limit: WEEKLY_REPORTS_LIMIT,

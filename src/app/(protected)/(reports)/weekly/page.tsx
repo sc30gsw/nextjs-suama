@@ -9,9 +9,10 @@ import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { MonthSelector } from '~/features/reports/weekly/components/month-selector'
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
 import { monthSelectSearchParamsCache } from '~/features/reports/weekly/types/search-params/month-select-search-params-cache'
-import { getWeeksByMonth } from '~/features/reports/weekly/utils/date-utils'
+import { getWeeksByMonth } from '~/features/reports/weekly/utils/weekly-date-utils'
 
 import type { NextPageProps } from '~/types'
+import { DATE_FORMAT } from '~/utils/date-utils'
 
 export default async function WeeklyPage({ searchParams }: NextPageProps<undefined, SearchParams>) {
   const { month } = await monthSelectSearchParamsCache.parse(searchParams)
@@ -38,7 +39,7 @@ export default async function WeeklyPage({ searchParams }: NextPageProps<undefin
             <div className="flex items-center justify-end">
               <Button size="extra-small" className="mt-2">
                 <Link
-                  href={`/weekly/list/${format(week.startDay, 'yyyy-MM-dd', { locale: ja })}-${format(week.endDay, 'yyyy-MM-dd', { locale: ja })}`}
+                  href={`/weekly/list/${format(week.startDay, DATE_FORMAT, { locale: ja })}-${format(week.endDay, DATE_FORMAT, { locale: ja })}`}
                   prefetch={false}
                   className="flex items-center justify-end gap-x-1.5"
                 >

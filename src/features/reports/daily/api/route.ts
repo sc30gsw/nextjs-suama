@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { dailyReports, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { dateUtils } from '~/utils/date-utils'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 const app = new Hono()
   .get('/today', sessionMiddleware, async (c) => {
@@ -134,10 +134,10 @@ const app = new Hono()
     // デフォルト値設定（前月〜今日）
     // JST基準で今日の日付を取得
     const { end: todayEnd } = dateUtils.getTodayRangeInJST()
-    const todayInJST = dateUtils.formatDateInJST(todayEnd, 'yyyy-MM-dd')
+    const todayInJST = dateUtils.formatDateInJST(todayEnd, DATE_FORMAT)
     const lastMonthInJST = dateUtils.formatDateInJST(
       new Date(todayEnd.getFullYear(), todayEnd.getMonth() - 1, todayEnd.getDate()),
-      'yyyy-MM-dd',
+      DATE_FORMAT,
     )
 
     const defaultStartDate = dateUtils.convertJstDateToUtc(lastMonthInJST, 'start')
