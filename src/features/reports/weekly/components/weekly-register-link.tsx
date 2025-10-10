@@ -8,7 +8,7 @@ import {
   getNextWeekDates,
   getYearAndWeek,
   splitDates,
-} from '~/features/reports/weekly/utils/date-utils'
+} from '~/features/reports/weekly/utils/weekly-date-utils'
 
 export async function WeeklyRegisterLink({ dates, userId }: Record<'dates' | 'userId', string>) {
   const { startDate, endDate } = splitDates(dates)
