@@ -16,6 +16,7 @@ import {
   type CommonDeleteIdSchema,
   commonDeleteIdSchema,
 } from '~/types/schemas/common-delete-id-schema'
+import { DATE_FORMAT } from '~/utils/date-utils'
 
 export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
   const parseResult = commonDeleteIdSchema.safeParse({ id })
@@ -63,7 +64,7 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
     // キャッシュを再検証
     if (existingReport.reportDate) {
       revalidateTag(
-        `${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(existingReport.reportDate, 'yyyy-MM-dd')}`,
+        `${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(existingReport.reportDate, DATE_FORMAT)}`,
       )
     }
 

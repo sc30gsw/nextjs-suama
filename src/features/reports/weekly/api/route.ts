@@ -1,4 +1,4 @@
-import { addDays, setWeek, setYear, startOfWeek } from 'date-fns'
+import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { pipe, sortBy } from 'remeda'
@@ -14,6 +14,7 @@ import {
 } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 function groupingReportMission<
   T extends typeof weeklyReportMissions.$inferSelect | typeof dailyReportMissions.$inferSelect,
@@ -43,10 +44,14 @@ const app = new Hono()
     const { year, week, offset } = c.req.query()
 
     // 週の開始日を取得（ISO準拠：月曜始まり）
-    const startDate = startOfWeek(setWeek(setYear(new Date(), Number(year)), Number(week)), {
+    const weekStartDate = startOfWeek(setWeek(setYear(new Date(), Number(year)), Number(week)), {
       weekStartsOn: 1,
     })
-    const endDate = addDays(startDate, 6)
+    const weekEndDate = addDays(weekStartDate, 6)
+
+    // JST基準でUTC変換（DBクエリ用）
+    const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
+    const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
 
     const users = await db.query.users.findMany({
       limit: WEEKLY_REPORTS_LIMIT,

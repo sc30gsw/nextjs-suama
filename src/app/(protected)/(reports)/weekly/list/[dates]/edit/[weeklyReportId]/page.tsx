@@ -12,7 +12,7 @@ import { UpdateWeeklyReportForm } from '~/features/reports/weekly/components/upd
 import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
 import { getWeeklyReportMissionsById } from '~/features/reports/weekly/server/fetcher'
 import { weeklyInputCountSearchParamsCache } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
-import { getNextWeekDates, splitDates } from '~/features/reports/weekly/utils/date-utils'
+import { getNextWeekDates, splitDates } from '~/features/reports/weekly/utils/weekly-date-utils'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 

@@ -11,13 +11,14 @@ import {
 import type { dailyReports, users } from '~/db/schema'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
+import { DATE_FORMAT } from '~/utils/date-utils'
 
 export async function getReportsForToday(
   params: { skip: number; limit: number; userNames?: string[] },
   userId: InferSelectModel<typeof users>['id'],
 ) {
   'use cache'
-  cacheTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(new Date(), 'yyyy-MM-dd')}`)
+  cacheTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(new Date(), DATE_FORMAT)}`)
 
   const url = client.api.dailies.today.$url()
   type ResType = InferResponseType<typeof client.api.dailies.today.$get, 200>

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Popover } from '~/components/ui/intent-ui/popover'
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
-import { getYearAndWeek } from '~/features/reports/weekly/utils/date-utils'
+import { getYearAndWeek } from '~/features/reports/weekly/utils/weekly-date-utils'
 
 type WeeklyCalendarHintProps = {
   children: ReactNode

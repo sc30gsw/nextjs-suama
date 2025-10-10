@@ -15,7 +15,7 @@ import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '
 import { createDailyReportFormSchema } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
-import { convertJstDateToUtc } from '~/utils/date-utils'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 export async function createReportAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -37,8 +37,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
   const actionType = formData.get('action')
 
   const reportDateString = submission.value.reportDate
-  // 日付範囲検索用：指定日のJST開始時刻をUTCで取得
-  const reportDate = convertJstDateToUtc(reportDateString, 'start')
+  const reportDate = dateUtils.convertJstDateToUtc(reportDateString, 'start')
 
   const existingReport = await db.query.dailyReports.findFirst({
     where: and(eq(dailyReports.userId, session.user.id), eq(dailyReports.reportDate, reportDate)),
@@ -58,7 +57,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
         .values({
           userId: session.user.id,
           reportDate,
-          impression: submission.value.impression || null,
+          impression: submission.value.impression ?? null,
           release: actionType === 'published',
           remote: submission.value.remote,
         })
@@ -141,14 +140,14 @@ export async function createReportAction(_: unknown, formData: FormData) {
       }
     })
 
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, 'yyyy-MM-dd')}`)
+    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, DATE_FORMAT)}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
 
     return {
       ...submission.reply(),
       data: {
-        reportDate: format(reportDate, 'yyyy/MM/dd'),
+        reportDate: dateUtils.formatDateByJST(reportDate, 'yyyy/MM/dd'),
         isDraft: actionType !== 'published',
       },
     }

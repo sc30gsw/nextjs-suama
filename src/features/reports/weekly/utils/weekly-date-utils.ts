@@ -10,6 +10,7 @@ import {
   startOfYear,
 } from 'date-fns'
 import { entries, groupBy, map, pipe, range, sortBy } from 'remeda'
+import { DATE_FORMAT } from '~/utils/date-utils'
 
 export const getWeeksByMonth = () => {
   const now = new Date()
@@ -74,8 +75,8 @@ export function getNextWeekDates(start: string, end: string) {
   const nextEnd = addWeeks(parseISO(end), 1)
 
   return {
-    nextStartDate: format(nextStart, 'yyyy-MM-dd'),
-    nextEndDate: format(nextEnd, 'yyyy-MM-dd'),
+    nextStartDate: format(nextStart, DATE_FORMAT),
+    nextEndDate: format(nextEnd, DATE_FORMAT),
   } as const
 }
 
