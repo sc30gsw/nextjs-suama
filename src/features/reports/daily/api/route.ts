@@ -1,24 +1,21 @@
-import { endOfDay, format, startOfDay } from 'date-fns'
 import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { dailyReports, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { convertJstDateToUtc } from '~/utils/date-utils'
+import { dateUtils } from '~/utils/date-utils'
 
 const app = new Hono()
   .get('/today', sessionMiddleware, async (c) => {
     const { skip, limit, userNames } = c.req.query()
 
-    const skipNumber = Number(skip) || 0
-    const limitNumber = Number(limit) || 10
+    const skipNumber = Number(skip) ?? 0
+    const limitNumber = Number(limit) ?? 10
 
     const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : []
 
     // 本日の日付を取得（日本時間）
-    const today = new Date()
-    const todayStart = startOfDay(today)
-    const todayEnd = endOfDay(today)
+    const { start: todayStart, end: todayEnd } = dateUtils.getTodayRangeInJST()
 
     // WHERE句の基本条件
     const baseConditions = [
@@ -89,16 +86,16 @@ const app = new Hono()
 
       const reportsWithMissions = reports.map((report) => {
         const totalHours = report.dailyReportMissions.reduce(
-          (sum, mission) => sum + (mission.hours || 0),
+          (sum, mission) => sum + (mission.hours ?? 0),
           0,
         )
 
         return {
           id: report.id,
-          date: format(report.reportDate || new Date(), 'yyyy-MM-dd'),
+          date: dateUtils.formatDateInJST(report.reportDate ?? new Date()),
           username: report.user.name,
           totalHour: totalHours,
-          impression: report.impression || '',
+          impression: report.impression ?? '',
           isRemote: report.remote,
           isTurnedIn: report.release,
           userId: report.userId,
@@ -106,7 +103,7 @@ const app = new Hono()
             id: mission.id,
             project: mission.mission.project.name,
             mission: mission.mission.name,
-            workTime: mission.hours || 0,
+            workTime: mission.hours ?? 0,
             workContent: mission.workContent,
           })),
         }
@@ -131,20 +128,24 @@ const app = new Hono()
     const { skip, limit, startDate, endDate } = c.req.query()
     const userId = c.get('user').id
 
-    const skipNumber = Number(skip) || 0
-    const limitNumber = Number(limit) || 10
+    const skipNumber = Number(skip) ?? 0
+    const limitNumber = Number(limit) ?? 10
 
     // デフォルト値設定（前月〜今日）
-    const today = new Date()
-    const defaultStartDate = convertJstDateToUtc(
-      format(new Date(today.getFullYear(), today.getMonth() - 1, today.getDate()), 'yyyy-MM-dd'),
-      'start',
+    // JST基準で今日の日付を取得
+    const { end: todayEnd } = dateUtils.getTodayRangeInJST()
+    const todayInJST = dateUtils.formatDateInJST(todayEnd, 'yyyy-MM-dd')
+    const lastMonthInJST = dateUtils.formatDateInJST(
+      new Date(todayEnd.getFullYear(), todayEnd.getMonth() - 1, todayEnd.getDate()),
+      'yyyy-MM-dd',
     )
-    const defaultEndDate = convertJstDateToUtc(format(today, 'yyyy-MM-dd'), 'start')
+
+    const defaultStartDate = dateUtils.convertJstDateToUtc(lastMonthInJST, 'start')
+    const defaultEndDate = dateUtils.convertJstDateToUtc(todayInJST, 'end')
 
     // 日付範囲の条件を構築
-    const start = startDate ? convertJstDateToUtc(startDate, 'start') : defaultStartDate
-    const end = endDate ? convertJstDateToUtc(endDate, 'start') : defaultEndDate
+    const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
+    const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
 
     try {
       // フィルタリングされた全件数を取得
@@ -217,16 +218,16 @@ const app = new Hono()
 
       const reportsWithMissions = reports.map((report) => {
         const totalHours = report.dailyReportMissions.reduce(
-          (sum, mission) => sum + (mission.hours || 0),
+          (sum, mission) => sum + (mission.hours ?? 0),
           0,
         )
 
         return {
           id: report.id,
-          date: format(report.reportDate || new Date(), 'yyyy-MM-dd'),
+          date: dateUtils.formatDateInJST(report.reportDate ?? new Date()),
           username: report.user.name,
           totalHour: totalHours,
-          impression: report.impression || '',
+          impression: report.impression ?? '',
           isRemote: report.remote,
           isTurnedIn: report.release,
           userId: report.userId,
@@ -234,7 +235,7 @@ const app = new Hono()
             id: mission.id,
             project: mission.mission.project.name,
             mission: mission.mission.name,
-            workTime: mission.hours || 0,
+            workTime: mission.hours ?? 0,
             workContent: mission.workContent,
           })),
         }
@@ -296,9 +297,11 @@ const app = new Hono()
 
       const formattedReport = {
         id: report.id,
-        reportDate: report.reportDate ? format(new Date(report.reportDate), 'yyyy-MM-dd') : '',
+        reportDate: report.reportDate
+          ? dateUtils.formatDateInJST(report.reportDate ?? new Date())
+          : '',
         remote: report.remote,
-        impression: report.impression || '',
+        impression: report.impression ?? '',
         reportEntries: report.dailyReportMissions.map((dailyReportMissions) => ({
           id: dailyReportMissions.id,
           project: dailyReportMissions.mission.project.name,
@@ -306,7 +309,7 @@ const app = new Hono()
           projectId: dailyReportMissions.mission.project.id,
           missionId: dailyReportMissions.mission.id,
           content: dailyReportMissions.workContent,
-          hours: dailyReportMissions.hours || 0,
+          hours: dailyReportMissions.hours ?? 0,
         })),
         appealEntries: report.appeals.map((appeal) => ({
           id: appeal.id,
