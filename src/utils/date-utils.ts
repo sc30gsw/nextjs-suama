@@ -2,6 +2,7 @@ import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { APP_TIMEZONE, DATE_TIME } from '~/constants/date'
 
 export const SEPARATOR = 'T'
+export const DATE_FORMAT = 'yyyy-MM-dd'
 
 type DateInput = string | `${string}-${string}-${string}${typeof SEPARATOR}${string}`
 type DateType = 'start' | 'end'
@@ -18,14 +19,14 @@ export const dateUtils = {
   },
 
   // JST基準で日付をフォーマット
-  formatDateInJST: (date: Date | number | string, formatStr = 'yyyy-MM-dd'): string => {
+  formatDateInJST: (date: Date | number | string, formatStr = DATE_FORMAT): string => {
     return formatInTimeZone(date, APP_TIMEZONE, formatStr)
   },
 
   // JSTの今日の開始/終了時刻をUTCで取得
   getTodayRangeInJST: (): { start: Date; end: Date } => {
     const nowInJST = toZonedTime(new Date(), APP_TIMEZONE)
-    const dateString = formatInTimeZone(nowInJST, APP_TIMEZONE, 'yyyy-MM-dd')
+    const dateString = formatInTimeZone(nowInJST, APP_TIMEZONE, DATE_FORMAT)
 
     return {
       start: dateUtils.convertJstDateToUtc(dateString, 'start'),
