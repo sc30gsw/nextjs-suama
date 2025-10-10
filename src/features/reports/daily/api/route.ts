@@ -15,7 +15,7 @@ const app = new Hono()
     const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : []
 
     // 本日の日付を取得（日本時間）
-    const { start: todayStart, end: todayEnd } = dateUtils.getTodayRangeInJST()
+    const { start: todayStart, end: todayEnd } = dateUtils.getTodayRangeByJST()
 
     // WHERE句の基本条件
     const baseConditions = [
@@ -92,7 +92,7 @@ const app = new Hono()
 
         return {
           id: report.id,
-          date: dateUtils.formatDateInJST(report.reportDate ?? new Date()),
+          date: dateUtils.formatDateByJST(report.reportDate ?? new Date()),
           username: report.user.name,
           totalHour: totalHours,
           impression: report.impression ?? '',
@@ -133,9 +133,9 @@ const app = new Hono()
 
     // デフォルト値設定（前月〜今日）
     // JST基準で今日の日付を取得
-    const { end: todayEnd } = dateUtils.getTodayRangeInJST()
-    const todayInJST = dateUtils.formatDateInJST(todayEnd, DATE_FORMAT)
-    const lastMonthInJST = dateUtils.formatDateInJST(
+    const { end: todayEnd } = dateUtils.getTodayRangeByJST()
+    const todayInJST = dateUtils.formatDateByJST(todayEnd, DATE_FORMAT)
+    const lastMonthInJST = dateUtils.formatDateByJST(
       new Date(todayEnd.getFullYear(), todayEnd.getMonth() - 1, todayEnd.getDate()),
       DATE_FORMAT,
     )
@@ -224,7 +224,7 @@ const app = new Hono()
 
         return {
           id: report.id,
-          date: dateUtils.formatDateInJST(report.reportDate ?? new Date()),
+          date: dateUtils.formatDateByJST(report.reportDate ?? new Date()),
           username: report.user.name,
           totalHour: totalHours,
           impression: report.impression ?? '',
@@ -298,7 +298,7 @@ const app = new Hono()
       const formattedReport = {
         id: report.id,
         reportDate: report.reportDate
-          ? dateUtils.formatDateInJST(report.reportDate ?? new Date())
+          ? dateUtils.formatDateByJST(report.reportDate ?? new Date())
           : '',
         remote: report.remote,
         impression: report.impression ?? '',

@@ -7,10 +7,8 @@ export const DATE_FORMAT = 'yyyy-MM-dd'
 type DateInput = string | `${string}-${string}-${string}${typeof SEPARATOR}${string}`
 type DateType = 'start' | 'end'
 
-// 日付ユーティリティ関数
 export const dateUtils = {
-  // 日付範囲検索用：指定日のJST開始/終了時刻をUTCで取得
-  convertJstDateToUtc: (dateStr: DateInput, type: DateType): Date => {
+  convertJstDateToUtc: (dateStr: DateInput, type: DateType) => {
     // ISO文字列が来た場合はyyyy-MM-dd部分だけ抽出
     const cleanDateString = dateStr.includes(SEPARATOR) ? dateStr.split(SEPARATOR)[0] : dateStr
     const dateTime = type === 'start' ? DATE_TIME.START : DATE_TIME.END
@@ -18,13 +16,11 @@ export const dateUtils = {
     return fromZonedTime(`${cleanDateString}${dateTime}`, APP_TIMEZONE)
   },
 
-  // JST基準で日付をフォーマット
-  formatDateInJST: (date: Date | number | string, formatStr = DATE_FORMAT): string => {
+  formatDateByJST: (date: Date, formatStr = DATE_FORMAT) => {
     return formatInTimeZone(date, APP_TIMEZONE, formatStr)
   },
 
-  // JSTの今日の開始/終了時刻をUTCで取得
-  getTodayRangeInJST: (): { start: Date; end: Date } => {
+  getTodayRangeByJST: (): { start: Date; end: Date } => {
     const nowInJST = toZonedTime(new Date(), APP_TIMEZONE)
     const dateString = formatInTimeZone(nowInJST, APP_TIMEZONE, DATE_FORMAT)
 
