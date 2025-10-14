@@ -196,31 +196,13 @@ export function useCreateDailyForm(
   }
 
   const handleChangeRemote = (isSelected: CreateDailyReportFormSchema['remote']) => {
-    setReportEntry((prev) => {
-      if (!prev) {
-        return prev
-      }
-
-      return {
-        ...prev,
-        remote: isSelected,
-      }
-    })
+    setReportEntry({ remote: isSelected })
 
     remoteInput.change(isSelected ? 'on' : undefined)
   }
 
   const handleChangeImpression = (value: CreateDailyReportFormSchema['impression']) => {
-    setReportEntry((prev) => {
-      if (!prev) {
-        return prev
-      }
-
-      return {
-        ...prev,
-        impression: value,
-      }
-    })
+    setReportEntry({ impression: value })
 
     impressionInput.change(value)
   }
