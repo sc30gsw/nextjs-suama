@@ -1,3 +1,4 @@
+import { useInputControl } from '@conform-to/react'
 import { useControl } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { format } from 'date-fns'
@@ -22,9 +23,8 @@ import { withCallbacks } from '~/utils/with-callbacks'
 export function useCreateDailyForm(
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
 ) {
-  const { reportEntry, appealsAndTroublesEntry, setReportEntry } = useDailyReportSearchParams(
-    initialDailyInputCountSearchParamsParsers,
-  )
+  const { reportEntry, appealsAndTroublesEntry, remote, impression, setReportEntry } =
+    useDailyReportSearchParams(initialDailyInputCountSearchParamsParsers)
 
   const router = useRouter()
 
@@ -90,8 +90,8 @@ export function useCreateDailyForm(
     },
     defaultValue: {
       reportDate: format(new Date(), DATE_FORMAT),
-      remote: undefined,
-      impression: '',
+      remote,
+      impression,
       reportEntries: reportEntry.entries.map((entry) => ({
         ...entry,
         project: entry.project ?? '',
@@ -111,6 +111,10 @@ export function useCreateDailyForm(
     },
   })
 
+  const remoteInput = useInputControl(fields.remote)
+  const impressionInput = useInputControl(fields.impression)
+
+  // ?: reportDate は useInputControl を使用すると不具合が発生したため、、useControl を使用
   const reportDate = useControl({
     defaultValue: fields.reportDate.initialValue,
   })
@@ -191,6 +195,36 @@ export function useCreateDailyForm(
     })
   }
 
+  const handleChangeRemote = (isSelected: CreateDailyReportFormSchema['remote']) => {
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        remote: isSelected,
+      }
+    })
+
+    remoteInput.change(isSelected ? 'on' : undefined)
+  }
+
+  const handleChangeImpression = (value: CreateDailyReportFormSchema['impression']) => {
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        impression: value,
+      }
+    })
+
+    impressionInput.change(value)
+  }
+
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
@@ -209,10 +243,14 @@ export function useCreateDailyForm(
     form,
     fields,
     reportDate,
+    remoteInput,
+    impressionInput,
     dailyReports,
     totalHours,
     handleAdd,
     handleRemove,
+    handleChangeRemote,
+    handleChangeImpression,
     getError,
   } as const
 }
