@@ -57,7 +57,15 @@ export default async function MyDailyPage({
           <IconSearch />
         </Button>
       </Form>
-      <RowsPerPageSelect />
+
+      <div className="flex items-end justify-between">
+        <RowsPerPageSelect />
+        <Suspense fallback={<Skeleton className="h-8 w-48" />}>
+          {reportsPromise.then((res) => (
+            <div className="font-bold text-lg">総合計時間: {res.grandTotalHour} 時間</div>
+          ))}
+        </Suspense>
+      </div>
 
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>

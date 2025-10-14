@@ -1,6 +1,6 @@
-import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
+import { and, count, desc, eq, gte, inArray, like, lte, or, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { dailyReports, troubles, users } from '~/db/schema'
+import { dailyReportMissions, dailyReports, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
@@ -148,60 +148,32 @@ const app = new Hono()
     const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
 
     try {
+      const where = and(
+        eq(dailyReports.userId, userId),
+        gte(dailyReports.reportDate, start),
+        lte(dailyReports.reportDate, end),
+      )
+
       // フィルタリングされた全件数を取得
       const totalQuery = db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
-        .where(
-          and(
-            eq(dailyReports.userId, userId),
-            gte(dailyReports.reportDate, start),
-            lte(dailyReports.reportDate, end),
-          ),
-        )
+        .where(where)
 
-      const totalResult = await totalQuery
-      const totalFilteredReports = totalResult[0].count
+      // 総合計時間を取得
+      const grandTotalHourQuery = db
+        .select({
+          total: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
+        })
+        .from(dailyReportMissions)
+        .leftJoin(dailyReports, eq(dailyReportMissions.dailyReportId, dailyReports.id))
+        .where(where)
 
-      const reportIdsQuery = db
-        .select({ id: dailyReports.id })
-        .from(dailyReports)
-        .where(
-          and(
-            eq(dailyReports.userId, userId),
-            gte(dailyReports.reportDate, start),
-            lte(dailyReports.reportDate, end),
-          ),
-        )
-        .orderBy(desc(dailyReports.reportDate))
-        .limit(limitNumber)
-        .offset(skipNumber)
-
-      const reportIds = await reportIdsQuery
-
-      // レポートが見つからない場合は早期リターン
-      if (reportIds.length === 0) {
-        return c.json(
-          {
-            users: [],
-            total: totalFilteredReports,
-            skip: skipNumber,
-            limit: limitNumber,
-            startDate,
-            endDate,
-            userId,
-          },
-          200,
-        )
-      }
-
-      // 関連データを取得
-      const reports = await db.query.dailyReports.findMany({
-        where: inArray(
-          dailyReports.id,
-          reportIds.map((r) => r.id),
-        ),
+      const reportsQuery = db.query.dailyReports.findMany({
+        where,
         orderBy: desc(dailyReports.reportDate),
+        limit: limitNumber,
+        offset: skipNumber,
         with: {
           user: true,
           dailyReportMissions: {
@@ -215,6 +187,32 @@ const app = new Hono()
           },
         },
       })
+
+      const [totalResult, grandTotalHourResult, reports] = await Promise.all([
+        totalQuery,
+        grandTotalHourQuery,
+        reportsQuery,
+      ])
+
+      const totalFilteredReports = totalResult[0].count
+      const grandTotalHour = grandTotalHourResult[0].total ?? 0
+
+      // レポートが見つからない場合は早期リターン
+      if (reports.length === 0) {
+        return c.json(
+          {
+            users: [],
+            total: totalFilteredReports,
+            grandTotalHour: 0,
+            skip: skipNumber,
+            limit: limitNumber,
+            startDate,
+            endDate,
+            userId,
+          },
+          200,
+        )
+      }
 
       const reportsWithMissions = reports.map((report) => {
         const totalHours = report.dailyReportMissions.reduce(
@@ -245,6 +243,7 @@ const app = new Hono()
         {
           users: reportsWithMissions,
           total: totalFilteredReports,
+          grandTotalHour,
           skip: skipNumber,
           limit: limitNumber,
           startDate,
