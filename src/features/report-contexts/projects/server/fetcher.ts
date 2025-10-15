@@ -1,14 +1,13 @@
-import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_PROJECTS_CACHE_KEY } from '~/constants/cache-keys'
-import type { users } from '~/db/schema'
+import type { auth } from '~/lib/auth'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getProjects(
-  userId: InferSelectModel<typeof users>['id'],
+  userId: typeof auth.$Infer.Session.user.id,
   params?: { skip: number; limit: number; names: string[] },
 ) {
   'use cache'

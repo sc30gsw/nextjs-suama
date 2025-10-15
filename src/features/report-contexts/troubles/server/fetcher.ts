@@ -1,14 +1,13 @@
-import type { InferSelectModel } from 'drizzle-orm'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
-import type { users } from '~/db/schema'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
+import type { auth } from '~/lib/auth'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getTroubleCategories(
-  userId: InferSelectModel<typeof users>['id'],
+  userId: typeof auth.$Infer.Session.user.id,
   params?: {
     skip?: number
     limit?: number

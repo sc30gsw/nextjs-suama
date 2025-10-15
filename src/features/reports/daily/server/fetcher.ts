@@ -9,14 +9,15 @@ import {
   GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
 } from '~/constants/cache-keys'
-import type { dailyReports, users } from '~/db/schema'
+import type { dailyReports } from '~/db/schema'
+import type { auth } from '~/lib/auth'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 import { DATE_FORMAT } from '~/utils/date-utils'
 
 export async function getReportsForToday(
   params: { skip: number; limit: number; userNames?: string[] },
-  userId: InferSelectModel<typeof users>['id'],
+  userId: typeof auth.$Infer.Session.user.id,
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(new Date(), DATE_FORMAT)}`)
@@ -38,7 +39,7 @@ export async function getReportsForToday(
 
 export async function getReportsForMine(
   params: { skip: number; limit: number; startDate?: Date; endDate?: Date },
-  userId: InferSelectModel<typeof users>['id'],
+  userId: typeof auth.$Infer.Session.user.id,
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${userId}`)
@@ -60,7 +61,7 @@ export async function getReportsForMine(
 
 export async function getReportById(
   reportId: InferSelectModel<typeof dailyReports>['id'],
-  userId: InferSelectModel<typeof users>['id'],
+  userId: typeof auth.$Infer.Session.user.id,
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
@@ -79,7 +80,7 @@ export async function getReportById(
 
 export async function getProjectSummaryForMine(
   params: { startDate?: Date; endDate?: Date; limit: number; skip: number },
-  userId: InferSelectModel<typeof users>['id'],
+  userId: typeof auth.$Infer.Session.user.id,
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${userId}`)

@@ -1,11 +1,10 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import type { InferSelectModel } from 'drizzle-orm'
-import type { users } from '~/db/schema'
 import { WeeklyReports } from '~/features/reports/weekly/components/weekly-reports'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
+import type { auth } from '~/lib/auth'
 
 type WeeklyReportsContainerProps = {
-  userId: InferSelectModel<typeof users>['id']
+  userId: typeof auth.$Infer.Session.user.id
   year: number
   week: number
 }
