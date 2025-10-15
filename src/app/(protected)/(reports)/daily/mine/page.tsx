@@ -11,8 +11,9 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 
 import { DAILY_REPORT_MINE_TABS, MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
-import MineDateTab from '~/features/reports/daily/components/mine-date-tab'
-import MineProjectTab from '~/features/reports/daily/components/mine-project-tab'
+import { MineDateTab } from '~/features/reports/daily/components/mine-date-tab'
+import { MineProjectTab } from '~/features/reports/daily/components/mine-project-tab'
+
 import {
   getProjectSummaryForMine,
   getReportsForMine,

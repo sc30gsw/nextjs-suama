@@ -15,7 +15,7 @@ type MineDateTabProps = {
   userId: InferResponseType<typeof client.api.dailies.mine.$get, 200>['userId']
 }
 
-export default async function MineDateTab({
+export async function MineDateTab({
   reportsPromise,
   page,
   rowsPerPage,

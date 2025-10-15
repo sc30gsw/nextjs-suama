@@ -16,7 +16,7 @@ type MineProjectTabProps = {
   endDate: Date | null
 }
 
-export default async function MineProjectTab({
+export async function MineProjectTab({
   summaryPromise,
   page,
   rowsPerPage,
