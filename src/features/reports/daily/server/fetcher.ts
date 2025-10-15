@@ -6,6 +6,7 @@ import 'server-only'
 import {
   GET_DAILY_REPORT_BY_ID_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
+  GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
 } from '~/constants/cache-keys'
 import type { dailyReports, users } from '~/db/schema'
@@ -81,7 +82,7 @@ export async function getProjectSummaryForMine(
   userId: InferSelectModel<typeof users>['id'],
 ) {
   'use cache'
-  cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${userId}-project-summary`)
+  cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${userId}`)
 
   const url = client.api.dailies.mine['summary-by-project'].$url()
   type ResType = InferResponseType<
