@@ -50,11 +50,7 @@ const COLUMNS = [
   }),
 ]
 
-type ProjectSummaryTableProps = {
-  summary: ProjectSummary[]
-}
-
-export function ProjectSummaryTable({ summary }: ProjectSummaryTableProps) {
+export function ProjectSummaryTable({ summary }: Record<'summary', ProjectSummary[]>) {
   const table = useReactTable({
     data: summary,
     columns: COLUMNS,
