@@ -6,7 +6,6 @@ import {
   eq,
   gte,
   inArray,
-  isNotNull,
   like,
   lte,
   max,
@@ -279,9 +278,9 @@ const app = new Hono()
         eq(dailyReports.userId, userId),
         gte(dailyReports.reportDate, start),
         lte(dailyReports.reportDate, end),
-        isNotNull(projects.id),
       )
 
+      // プロジェクトごとの作業時間を集計
       const summaryQuery = db
         .select({
           projectId: projects.id,
@@ -292,9 +291,9 @@ const app = new Hono()
           lastWorkDate: max(dailyReports.reportDate),
         })
         .from(dailyReports)
-        .leftJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
-        .leftJoin(missions, eq(dailyReportMissions.missionId, missions.id))
-        .leftJoin(projects, eq(missions.projectId, projects.id))
+        .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
+        .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
+        .innerJoin(projects, eq(missions.projectId, projects.id))
         .where(where)
         .groupBy(projects.id, projects.name)
         .orderBy(desc(sql<number>`sum(${dailyReportMissions.hours})`))
@@ -305,9 +304,9 @@ const app = new Hono()
       const totalProjectsQuery = db
         .select({ count: countDistinct(projects.id) })
         .from(dailyReports)
-        .leftJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
-        .leftJoin(missions, eq(dailyReportMissions.missionId, missions.id))
-        .leftJoin(projects, eq(missions.projectId, projects.id))
+        .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
+        .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
+        .innerJoin(projects, eq(missions.projectId, projects.id))
         .where(where)
 
       const whereForGrandTotal = and(

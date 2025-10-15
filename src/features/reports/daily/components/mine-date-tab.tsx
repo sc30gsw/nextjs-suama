@@ -25,6 +25,14 @@ export default async function MineDateTab({
 }: MineDateTabProps) {
   const reports = await reportsPromise
 
+  const pageCount = Math.ceil(reports.total / rowsPerPage)
+
+  if (page > pageCount && pageCount > 0) {
+    redirect(
+      `/daily/mine?tab=date&page=${pageCount}&rowsPerPage=${rowsPerPage}&startDate=${startDate}&endDate=${endDate}`,
+    )
+  }
+
   return (
     <>
       <RowsPerPageSelect />
@@ -40,17 +48,7 @@ export default async function MineDateTab({
         </Card.Content>
 
         <Card.Footer>
-          {(() => {
-            const pageCount = Math.ceil(reports.total / rowsPerPage)
-
-            if (page > pageCount && pageCount > 0) {
-              redirect(
-                `/daily/mine?tab=date&page=${pageCount}&rowsPerPage=${rowsPerPage}&startDate=${startDate}&endDate=${endDate}`,
-              )
-            }
-
-            return <TablePagination pageCount={pageCount} page={page} />
-          })()}
+          <TablePagination pageCount={pageCount} page={page} />
         </Card.Footer>
       </Card>
     </>

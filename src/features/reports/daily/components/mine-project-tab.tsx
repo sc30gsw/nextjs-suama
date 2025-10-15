@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { Card } from '~/components/ui/intent-ui/card'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { ProjectSummaryTable } from '~/features/reports/daily/components/ProjectSummaryTable'
+import { ProjectSummaryTable } from '~/features/reports/daily/components/project-summary-table'
 import type { client } from '~/lib/rpc'
 
 type MineProjectTabProps = {
@@ -25,6 +25,15 @@ export default async function MineProjectTab({
 }: MineProjectTabProps) {
   const summary = await summaryPromise
 
+  // ページ数の計算とリダイレクト処理
+  const pageCount = Math.ceil(summary.total / rowsPerPage)
+
+  if (page > pageCount && pageCount > 0) {
+    redirect(
+      `/daily/mine?tab=project&page=${pageCount}&rowsPerPage=${rowsPerPage}&startDate=${startDate}&endDate=${endDate}`,
+    )
+  }
+
   return (
     <>
       <RowsPerPageSelect />
@@ -40,15 +49,7 @@ export default async function MineProjectTab({
         </Card.Content>
 
         <Card.Footer>
-          {(() => {
-            const pageCount = Math.ceil(summary.total / rowsPerPage)
-            if (page > pageCount && pageCount > 0) {
-              redirect(
-                `/daily/mine?tab=project&page=${pageCount}&rowsPerPage=${rowsPerPage}&startDate=${startDate}&endDate=${endDate}`,
-              )
-            }
-            return <TablePagination pageCount={pageCount} page={page} />
-          })()}
+          <TablePagination pageCount={pageCount} page={page} />
         </Card.Footer>
       </Card>
     </>
