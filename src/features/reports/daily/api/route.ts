@@ -18,7 +18,7 @@ import { Hono } from 'hono'
 import { dailyReportMissions, dailyReports, missions, projects, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+import { dateUtils } from '~/utils/date-utils'
 
 const app = new Hono()
   .get('/today', sessionMiddleware, async (c) => {
@@ -146,17 +146,7 @@ const app = new Hono()
     const skipNumber = Number(skip) ?? 0
     const limitNumber = Number(limit) ?? 10
 
-    // デフォルト値設定（前月〜今日）
-    // JST基準で今日の日付を取得
-    const { end: todayEnd } = dateUtils.getTodayRangeByJST()
-    const todayInJST = dateUtils.formatDateByJST(todayEnd, DATE_FORMAT)
-    const lastMonthInJST = dateUtils.formatDateByJST(
-      new Date(todayEnd.getFullYear(), todayEnd.getMonth() - 1, todayEnd.getDate()),
-      DATE_FORMAT,
-    )
-
-    const defaultStartDate = dateUtils.convertJstDateToUtc(lastMonthInJST, 'start')
-    const defaultEndDate = dateUtils.convertJstDateToUtc(todayInJST, 'end')
+    const { start: defaultStartDate, end: defaultEndDate } = dateUtils.getOneMonthAgoRangeByJST()
 
     // 日付範囲の条件を構築
     const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
@@ -279,14 +269,7 @@ const app = new Hono()
     const limitNumber = Number(limit) ?? 10
     const skipNumber = Number(skip) ?? 0
 
-    const { end: todayEnd } = dateUtils.getTodayRangeByJST()
-    const todayInJST = dateUtils.formatDateByJST(todayEnd, DATE_FORMAT)
-    const lastMonthInJST = dateUtils.formatDateByJST(
-      new Date(todayEnd.getFullYear(), todayEnd.getMonth() - 1, todayEnd.getDate()),
-      DATE_FORMAT,
-    )
-    const defaultStartDate = dateUtils.convertJstDateToUtc(lastMonthInJST, 'start')
-    const defaultEndDate = dateUtils.convertJstDateToUtc(todayInJST, 'end')
+    const { start: defaultStartDate, end: defaultEndDate } = dateUtils.getOneMonthAgoRangeByJST()
 
     const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
     const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
@@ -327,15 +310,34 @@ const app = new Hono()
         .leftJoin(projects, eq(missions.projectId, projects.id))
         .where(where)
 
-      const [summary, totalResult] = await Promise.all([summaryQuery, totalProjectsQuery])
+      const whereForGrandTotal = and(
+        eq(dailyReports.userId, userId),
+        gte(dailyReports.reportDate, start),
+        lte(dailyReports.reportDate, end),
+      )
+
+      const grandTotalHourQuery = db
+        .select({
+          total: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
+        })
+        .from(dailyReportMissions)
+        .leftJoin(dailyReports, eq(dailyReportMissions.dailyReportId, dailyReports.id))
+        .where(whereForGrandTotal)
+
+      const [summary, totalResult, grandTotalHourResult] = await Promise.all([
+        summaryQuery,
+        totalProjectsQuery,
+        grandTotalHourQuery,
+      ])
       const totalProjects = totalResult[0].count
+      const grandTotalHour = grandTotalHourResult[0].total ?? 0
 
       const formattedSummary = summary.map((item) => ({
         ...item,
         averageHoursPerDay: item.workDays > 0 ? item.totalHours / item.workDays : 0,
       }))
 
-      return c.json({ summary: formattedSummary, total: totalProjects }, 200)
+      return c.json({ summary: formattedSummary, total: totalProjects, grandTotalHour }, 200)
     } catch (error) {
       console.error('Error fetching project summary:', error)
       return c.json({ error: 'Failed to fetch project summary' }, 500)
