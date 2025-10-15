@@ -16,4 +16,4 @@ export const RELOAD_DELAY = 1000
 export const DAILY_REPORT_MINE_TABS = [
   { id: 'date', name: '日付' },
   { id: 'project', name: 'プロジェクト' },
-]
+] as const satisfies { id: string; name: string }[]
