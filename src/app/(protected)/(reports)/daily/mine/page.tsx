@@ -82,6 +82,8 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
+      {/* // ?: intent ui の tab だと、react area のバージョンアップの必要があり、既存コンポーネントの影響範囲が大きかったこと。
+      また、ページネーションの挙動が不安定で修正が難しかったことからLinkで代用 */}
       <div className="border-b">
         <nav className="flex gap-x-2" aria-label="Tabs">
           {DAILY_REPORT_MINE_TABS.map((TAB) => (
@@ -109,7 +111,7 @@ export default async function MyDailyPage({
         </nav>
       </div>
 
-      {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、条件付きレンダリングを使用。
+      {/* // TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、条件付きレンダリングを使用。
       修正されたら Activity に変更する。
       https://github.com/vercel/next.js/issues/84489 */}
       {tab === 'date' && (
