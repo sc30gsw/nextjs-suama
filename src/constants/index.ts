@@ -12,3 +12,8 @@ export const MAX_IMAGE_SIZE_MB = 5
 export const WEEKLY_REPORTS_LIMIT = 30
 
 export const RELOAD_DELAY = 1000
+
+export const DAILY_REPORT_MINE_TABS = [
+  { id: 'date', name: '日付' },
+  { id: 'project', name: 'プロジェクト' },
+]

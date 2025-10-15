@@ -1,6 +1,21 @@
-import { and, count, desc, eq, gte, inArray, like, lte, or, sql } from 'drizzle-orm'
+import {
+  and,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  gte,
+  inArray,
+  isNotNull,
+  like,
+  lte,
+  max,
+  min,
+  or,
+  sql,
+} from 'drizzle-orm'
 import { Hono } from 'hono'
-import { dailyReportMissions, dailyReports, troubles, users } from '~/db/schema'
+import { dailyReportMissions, dailyReports, missions, projects, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
@@ -256,6 +271,74 @@ const app = new Hono()
       console.error('Error fetching mine reports:', error)
 
       return c.json({ error: 'Failed to fetch mine reports' }, 500)
+    }
+  })
+  .get('/mine/summary-by-project', sessionMiddleware, async (c) => {
+    const { startDate, endDate, limit, skip } = c.req.query()
+    const userId = c.get('user').id
+    const limitNumber = Number(limit) ?? 10
+    const skipNumber = Number(skip) ?? 0
+
+    const { end: todayEnd } = dateUtils.getTodayRangeByJST()
+    const todayInJST = dateUtils.formatDateByJST(todayEnd, DATE_FORMAT)
+    const lastMonthInJST = dateUtils.formatDateByJST(
+      new Date(todayEnd.getFullYear(), todayEnd.getMonth() - 1, todayEnd.getDate()),
+      DATE_FORMAT,
+    )
+    const defaultStartDate = dateUtils.convertJstDateToUtc(lastMonthInJST, 'start')
+    const defaultEndDate = dateUtils.convertJstDateToUtc(todayInJST, 'end')
+
+    const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
+    const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
+
+    try {
+      const where = and(
+        eq(dailyReports.userId, userId),
+        gte(dailyReports.reportDate, start),
+        lte(dailyReports.reportDate, end),
+        isNotNull(projects.id),
+      )
+
+      const summaryQuery = db
+        .select({
+          projectId: projects.id,
+          projectName: projects.name,
+          totalHours: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
+          workDays: countDistinct(dailyReports.reportDate),
+          firstWorkDate: min(dailyReports.reportDate),
+          lastWorkDate: max(dailyReports.reportDate),
+        })
+        .from(dailyReports)
+        .leftJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
+        .leftJoin(missions, eq(dailyReportMissions.missionId, missions.id))
+        .leftJoin(projects, eq(missions.projectId, projects.id))
+        .where(where)
+        .groupBy(projects.id, projects.name)
+        .orderBy(desc(sql<number>`sum(${dailyReportMissions.hours})`))
+        .limit(limitNumber)
+        .offset(skipNumber)
+
+      // 総プロジェクト数をカウントするクエリ
+      const totalProjectsQuery = db
+        .select({ count: countDistinct(projects.id) })
+        .from(dailyReports)
+        .leftJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
+        .leftJoin(missions, eq(dailyReportMissions.missionId, missions.id))
+        .leftJoin(projects, eq(missions.projectId, projects.id))
+        .where(where)
+
+      const [summary, totalResult] = await Promise.all([summaryQuery, totalProjectsQuery])
+      const totalProjects = totalResult[0].count
+
+      const formattedSummary = summary.map((item) => ({
+        ...item,
+        averageHoursPerDay: item.workDays > 0 ? item.totalHours / item.workDays : 0,
+      }))
+
+      return c.json({ summary: formattedSummary, total: totalProjects }, 200)
+    } catch (error) {
+      console.error('Error fetching project summary:', error)
+      return c.json({ error: 'Failed to fetch project summary' }, 500)
     }
   })
   .get('/:id', sessionMiddleware, async (c) => {

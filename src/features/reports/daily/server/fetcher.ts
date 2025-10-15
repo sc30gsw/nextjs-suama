@@ -75,3 +75,28 @@ export async function getReportById(
 
   return res
 }
+
+export async function getProjectSummaryForMine(
+  params: { startDate?: Date; endDate?: Date; limit: number; skip: number },
+  userId: InferSelectModel<typeof users>['id'],
+) {
+  'use cache'
+  cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${userId}-project-summary`)
+
+  const url = client.api.dailies.mine['summary-by-project'].$url()
+  type ResType = InferResponseType<
+    (typeof client.api.dailies.mine)['summary-by-project']['$get'],
+    200
+  >
+
+  const res = await upfetch<ResType>(url, {
+    headers: {
+      Authorization: userId,
+    },
+    params: {
+      ...params,
+    },
+  })
+
+  return res
+}
