@@ -22,14 +22,6 @@ const COLUMNS = [
   columnHelper.accessor('projectName', {
     header: 'プロジェクト名',
   }),
-  columnHelper.accessor('totalHours', {
-    header: '合計勤務時間',
-    cell: (info) => `${info.getValue()} 時間`,
-  }),
-  columnHelper.accessor('workDays', {
-    header: '作業日数',
-    cell: (info) => `${info.getValue()} 日`,
-  }),
   columnHelper.accessor(
     (row) => {
       if (!row.firstWorkDate || !row.lastWorkDate) {
@@ -44,8 +36,16 @@ const COLUMNS = [
       header: '期間',
     },
   ),
+  columnHelper.accessor('workDays', {
+    header: '作業日数',
+    cell: (info) => `${info.getValue()} 日`,
+  }),
+  columnHelper.accessor('totalHours', {
+    header: '合計勤務時間',
+    cell: (info) => `${info.getValue()} 時間`,
+  }),
   columnHelper.accessor('averageHoursPerDay', {
-    header: '平均作業時間/日',
+    header: '平均作業時間',
     cell: (info) => `${info.getValue().toFixed(2)} 時間`,
   }),
 ]
