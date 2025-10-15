@@ -42,7 +42,7 @@ export const dateUtils = {
 
     return {
       start: dateUtils.convertJstDateToUtc(lastMonthDateStr, 'start'),
-      end: dateUtils.getTodayRangeByJST(),
+      end: dateUtils.getTodayRangeByJST().end,
     }
   },
 } as const

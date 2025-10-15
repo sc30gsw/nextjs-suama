@@ -262,9 +262,11 @@ const app = new Hono()
       return c.json({ error: 'Failed to fetch mine reports' }, 500)
     }
   })
-  .get('/mine/summary-by-project', sessionMiddleware, async (c) => {
+  .get('/mine/summary', sessionMiddleware, async (c) => {
     const { startDate, endDate, limit, skip } = c.req.query()
+
     const userId = c.get('user').id
+
     const limitNumber = Number(limit) ?? 10
     const skipNumber = Number(skip) ?? 0
 

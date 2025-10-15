@@ -8,7 +8,7 @@ import type { client } from '~/lib/rpc'
 
 type MineProjectTabProps = {
   summaryPromise: Promise<
-    InferResponseType<(typeof client.api.dailies.mine)['summary-by-project']['$get'], 200>
+    InferResponseType<(typeof client.api.dailies.mine)['summary']['$get'], 200>
   >
   page: number
   rowsPerPage: number
