@@ -117,6 +117,7 @@ export default async function MyDailyPage({
       https://github.com/vercel/next.js/issues/84489 */}
       {tab === 'date' && (
         <Suspense
+          key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
           fallback={
             <>
               <div className="flex items-center justify-between">
@@ -156,7 +157,6 @@ export default async function MyDailyPage({
           }
         >
           <MineDateTab
-            key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
             reportsPromise={reportsPromise}
             page={page}
             rowsPerPage={rowsPerPage}
@@ -169,6 +169,7 @@ export default async function MyDailyPage({
 
       {tab === 'project' && (
         <Suspense
+          key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
           fallback={
             <>
               <div className="flex items-center justify-between">
@@ -208,7 +209,6 @@ export default async function MyDailyPage({
           }
         >
           <MineProjectTab
-            key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
             summaryPromise={summaryPromise}
             page={page}
             rowsPerPage={rowsPerPage}
