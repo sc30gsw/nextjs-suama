@@ -1,21 +1,18 @@
 import Link from 'next/link'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
+import {
+  dailyReportForMineSearchParamsCache,
+  tabSearchParamsCache,
+} from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
+import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { cn } from '~/utils/classes'
 import { dateUtils } from '~/utils/date-utils'
 
-type MineTabsNavigationProps = {
-  currentTab: string
-  startDate: Date | null
-  endDate: Date | null
-  rowsPerPage: number
-}
+export function MineTabsNavigation() {
+  const { tab: currentTab } = tabSearchParamsCache.all()
+  const { startDate, endDate } = dailyReportForMineSearchParamsCache.all()
+  const { rowsPerPage } = paginationSearchParamsCache.all()
 
-export function MineTabsNavigation({
-  currentTab,
-  startDate,
-  endDate,
-  rowsPerPage,
-}: MineTabsNavigationProps) {
   return (
     <div className="border-b">
       <nav className="flex gap-x-2" aria-label="Tabs">

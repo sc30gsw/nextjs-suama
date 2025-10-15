@@ -80,12 +80,7 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
-      <MineTabsNavigation
-        currentTab={tab}
-        startDate={startDate}
-        endDate={endDate}
-        rowsPerPage={rowsPerPage}
-      />
+      <MineTabsNavigation />
 
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、条件付きレンダリングを使用。
       修正されたら Activity に変更する。
@@ -95,27 +90,14 @@ export default async function MyDailyPage({
           key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
           fallback={<MineTabContentSkeleton />}
         >
-          <MineDateTab
-            reportsPromise={reportsPromise}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            startDate={startDate}
-            endDate={endDate}
-            userId={session.user.id}
-          />
+          <MineDateTab reportsPromise={reportsPromise} userId={session.user.id} />
         </Suspense>
       ) : (
         <Suspense
           key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
           fallback={<MineTabContentSkeleton />}
         >
-          <MineProjectTab
-            summaryPromise={summaryPromise}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            startDate={startDate}
-            endDate={endDate}
-          />
+          <MineProjectTab summaryPromise={summaryPromise} />
         </Suspense>
       )}
     </div>
