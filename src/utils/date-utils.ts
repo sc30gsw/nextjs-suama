@@ -31,8 +31,6 @@ export const dateUtils = {
   },
 
   getOneMonthAgoRangeByJST: () => {
-    const { end: todayEnd } = dateUtils.getTodayRangeByJST()
-
     const nowInJST = toZonedTime(new Date(), APP_TIMEZONE)
     const lastMonthJST = new Date(
       nowInJST.getFullYear(),
@@ -44,7 +42,7 @@ export const dateUtils = {
 
     return {
       start: dateUtils.convertJstDateToUtc(lastMonthDateStr, 'start'),
-      end: todayEnd,
+      end: dateUtils.getTodayRangeByJST(),
     }
   },
 } as const
