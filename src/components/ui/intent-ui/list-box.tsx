@@ -2,52 +2,43 @@
 
 import { IconCheck, IconHamburger } from '@intentui/icons'
 import type {
-  ListBoxItemProps as ListBoxItemPrimitiveProps,
+  ListBoxItemProps,
   ListBoxProps,
+  ListBoxSectionProps as ListBoxSectionPrimitiveProps,
 } from 'react-aria-components'
 import {
+  composeRenderProps,
   ListBoxItem as ListBoxItemPrimitive,
   ListBox as ListBoxPrimitive,
-  composeRenderProps,
 } from 'react-aria-components'
-
-import type { ComponentProps } from 'react'
 import { twMerge } from 'tailwind-merge'
-import {
-  DropdownItemDetails,
-  DropdownLabel,
-  DropdownSection,
-  dropdownItemStyles,
-} from '~/components/ui/intent-ui/dropdown'
-import { composeTailwindRenderProps } from '~/lib/primitive'
+import { cx } from '~/lib/primitive'
+import { DropdownDescription, dropdownItemStyles, DropdownLabel, DropdownSection } from './dropdown'
 
 const ListBox = <T extends object>({ className, ...props }: ListBoxProps<T>) => (
   <ListBoxPrimitive
-    {...props}
-    className={composeTailwindRenderProps(
+    className={cx(
+      "grid max-h-96 w-full min-w-56 scroll-py-1 grid-cols-[auto_1fr] flex-col gap-y-1 overflow-y-auto overscroll-contain rounded-xl border bg-bg p-1 shadow-lg outline-hidden [scrollbar-width:thin] [&::-webkit-scrollbar]:size-0.5 *:[[role='group']+[role=group]]:mt-4 *:[[role='group']+[role=separator]]:mt-1",
       className,
-      "grid max-h-96 w-full min-w-56 grid-cols-[auto_1fr] flex-col gap-y-1 overflow-auto overflow-y-auto rounded-xl border p-1 shadow-lg outline-hidden [scrollbar-width:thin] [&::-webkit-scrollbar]:size-0.5 *:[[role='group']+[role=group]]:mt-4 *:[[role='group']+[role=separator]]:mt-1",
     )}
+    data-slot="list-box"
+    {...props}
   />
 )
 
-interface ListBoxItemProps<T extends object> extends ListBoxItemPrimitiveProps<T> {
-  className?: string
-}
-
 const ListBoxItem = <T extends object>({ children, className, ...props }: ListBoxItemProps<T>) => {
-  const textValue = props.textValue || (typeof children === 'string' ? children : undefined)
-
+  const textValue = typeof children === 'string' ? children : undefined
   return (
     <ListBoxItemPrimitive
       textValue={textValue}
-      {...props}
       className={composeRenderProps(className, (className, renderProps) =>
         dropdownItemStyles({
           ...renderProps,
           className,
         }),
       )}
+      data-slot="list-box-item"
+      {...props}
     >
       {(renderProps) => {
         const { allowsDragging, isSelected, isFocused, isDragging } = renderProps
@@ -79,21 +70,26 @@ const ListBoxItem = <T extends object>({ children, className, ...props }: ListBo
   )
 }
 
-type ListBoxSectionProps = ComponentProps<typeof DropdownSection>
-const ListBoxSection = ({ className, ...props }: ListBoxSectionProps) => {
+interface ListBoxSectionProps<T> extends ListBoxSectionPrimitiveProps<T> {
+  title?: string
+}
+
+const ListBoxSection = <T extends object>({ className, ...props }: ListBoxSectionProps<T>) => {
   return (
     <DropdownSection
-      className={twMerge('[&_.lbi:last-child]:-mb-1.5 gap-y-1', className)}
+      className={twMerge('*:data-[slot=list-box-item]:last:-mb-1.5 gap-y-1', className)}
       {...props}
     />
   )
 }
 
-const ListBoxItemDetails = DropdownItemDetails
+const ListBoxLabel = DropdownLabel
+const ListBoxDescription = DropdownDescription
 
 ListBox.Section = ListBoxSection
-ListBox.ItemDetails = ListBoxItemDetails
+ListBox.Label = ListBoxLabel
+ListBox.Description = ListBoxDescription
 ListBox.Item = ListBoxItem
 
+export { ListBox, ListBoxDescription, ListBoxItem, ListBoxLabel, ListBoxSection }
 export type { ListBoxItemProps, ListBoxSectionProps }
-export { ListBox, ListBoxSection, ListBoxItem }

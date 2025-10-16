@@ -69,7 +69,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
         return (
           <div className="flex items-center gap-2">
             <DailyReportWorkContentPopover contents={report.workContents}>
-              <Button size="small">
+              <Button size="sm">
                 職務内容
                 <IconFileText />
               </Button>
@@ -78,7 +78,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
             {isCurrentUser && (
               <div className="flex gap-2">
                 <Link href={`/daily/edit/${report.id}`}>
-                  <Button intent="outline" size="small">
+                  <Button intent="outline" size="sm">
                     修正
                     <IconDocumentEdit />
                   </Button>

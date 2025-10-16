@@ -88,7 +88,7 @@ export function ReportEntryForm({
         </Checkbox>
       ) : (
         <Button
-          size="square-petite"
+          size="sq-sm"
           intent="danger"
           onPress={() => onRemove(entry.id)}
           className="col-span-1 mt-6 rounded-full"

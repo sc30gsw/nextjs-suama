@@ -84,7 +84,7 @@ export function CreateWeeklyReportForm({
           </div>
         )}
         <Button
-          size="square-petite"
+          size="sq-sm"
           onPress={handleAdd}
           className="mt-4 rounded-full"
           isDisabled={isPending}
@@ -107,7 +107,7 @@ export function CreateWeeklyReportForm({
               lastWeeklyReportMissions={lastWeeklyReportMissions}
               removeButton={
                 <Button
-                  size="square-petite"
+                  size="sq-sm"
                   intent="danger"
                   onPress={() => {
                     handleRemove(weeklyReport.getFieldset().id.value ?? '')
@@ -123,7 +123,7 @@ export function CreateWeeklyReportForm({
 
           {weeklyReports.length >= 1 && (
             <Button
-              size="square-petite"
+              size="sq-sm"
               onPress={handleAdd}
               className="mt-4 rounded-full"
               isDisabled={isPending}

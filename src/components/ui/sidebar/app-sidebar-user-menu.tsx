@@ -17,24 +17,27 @@ export function AppSidebarUserMenu() {
 
   return (
     <Menu>
-      <Menu.Trigger className="group" aria-label="Profile">
-        <Avatar
-          alt={session?.user.name}
-          src={session?.user?.image}
-          initials={session?.user.name.charAt(0)}
-        />
-        <div className="in-data-[sidebar-collapsible=dock]:hidden text-sm">
-          <SidebarLabel>{session?.user.name}</SidebarLabel>
-          <span className="-mt-0.5 block text-muted-fg">{session?.user.email}</span>
+      <Menu.Trigger className="flex w-full items-center justify-between" aria-label="Profile">
+        <div className="flex items-center gap-x-2">
+          <Avatar
+            className="size-8 *:size-8 group-data-[state=collapsed]:size-6 group-data-[state=collapsed]:*:size-6"
+            alt={session?.user.name}
+            src={session?.user?.image}
+            initials={session?.user.name.charAt(0)}
+          />
+          <div className="in-data-[collapsible=dock]:hidden text-sm">
+            <SidebarLabel>{session?.user.name}</SidebarLabel>
+            <span className="-mt-0.5 block text-muted-fg">{session?.user.email}</span>
+          </div>
         </div>
-        <IconChevronLgDown
-          data-slot="chevron"
-          className="absolute right-3 size-4 transition-transform group-pressed:rotate-180"
-        />
+        <IconChevronLgDown data-slot="chevron" />
       </Menu.Trigger>
       <Menu.Content
+        className={twMerge(
+          'in-data-[sidebar-collapsible=collapsed]:min-w-56 min-w-(--trigger-width)',
+          state === 'collapsed' && 'sm:min-w-56',
+        )}
         placement="bottom right"
-        className={twMerge(state === 'expanded' ? 'sm:min-w-(--trigger-width)' : 'sm:min-w-60')}
       >
         <Menu.Section>
           <Menu.Header separator={true}>
@@ -45,21 +48,21 @@ export function AppSidebarUserMenu() {
 
         {/* TODO: 各種アイコン・リンクの設定 */}
         <Menu.Item href="/daily">
-          <IconReport stroke={1} size={20} className="mr-1" />
-          日報作成
+          <IconReport stroke={1} size={20} />
+          <Menu.Label>日報作成</Menu.Label>
         </Menu.Item>
         <Menu.Item href="/daily/mine">
-          <IconCalendarUser stroke={1} size={20} className="mr-1" />
-          自分の日報
+          <IconCalendarUser stroke={1} size={20} />
+          <Menu.Label>自分の日報</Menu.Label>
         </Menu.Item>
         <Menu.Item href="/daily/today">
-          <IconCalendarEvent stroke={1} size={20} className="mr-1" />
-          本日の日報
+          <IconCalendarEvent stroke={1} size={20} />
+          <Menu.Label>本日の日報</Menu.Label>
         </Menu.Item>
         <Menu.Separator />
         <Menu.Item href={`/${session?.user.id}/settings`}>
           <IconCirclePerson />
-          ユーザー設定
+          <Menu.Label>ユーザー設定</Menu.Label>
         </Menu.Item>
         <Menu.Separator />
         <Menu.Item className="[&>[slot=label]+[data-slot=icon]]:right-4 [&>[slot=label]+[data-slot=icon]]:bottom-3">
@@ -77,7 +80,7 @@ export function AppSidebarUserMenu() {
         <Menu.Separator />
         <Menu.Item onAction={logout} isDisabled={isPending}>
           <IconLogout />
-          ログアウト
+          <Menu.Label>ログアウト</Menu.Label>
         </Menu.Item>
       </Menu.Content>
     </Menu>

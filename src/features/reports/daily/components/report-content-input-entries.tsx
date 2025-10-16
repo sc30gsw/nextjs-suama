@@ -129,7 +129,7 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
 
   return (
     <>
-      <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
+      <Button size="sq-sm" onPress={handleAdd} className="mt-4 rounded-full">
         <IconPlus />
       </Button>
       {reportEntry.entries.map((entry, index) => {
@@ -217,7 +217,7 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
               className="col-span-4"
             />
             <Button
-              size="square-petite"
+              size="sq-xs"
               intent="danger"
               onPress={() => handleRemove(entry.id)}
               className="col-span-1 mt-6 rounded-full"

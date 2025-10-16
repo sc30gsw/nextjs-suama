@@ -1,6 +1,7 @@
 'use client'
 
 import { useQueryStates } from 'nuqs'
+// highlight-next-line
 import { Select } from '~/components/ui/intent-ui/select'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
@@ -22,7 +23,6 @@ export function RowsPerPageSelect() {
       selectedKey={rowsPerPages.find((item) => item.rows === rowsPerPage)?.id ?? 1}
       onSelectionChange={(key) => {
         const selectedItem = rowsPerPages.find((item) => item.id === key)
-
         setPagination({ rowsPerPage: selectedItem?.rows ?? 10 })
       }}
       label="1ページあたりの表示件数"
@@ -30,13 +30,13 @@ export function RowsPerPageSelect() {
       className="max-w-52"
     >
       <Select.Trigger />
-      <Select.List items={rowsPerPages}>
+      <Select.Content items={rowsPerPages}>
         {(item) => (
-          <Select.Option id={item.id} textValue={item.rows.toString()}>
+          <Select.Item id={item.id} textValue={item.rows.toString()}>
             {item.rows}
-          </Select.Option>
+          </Select.Item>
         )}
-      </Select.List>
+      </Select.Content>
     </Select>
   )
 }
