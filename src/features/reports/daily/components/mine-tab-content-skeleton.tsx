@@ -1,5 +1,6 @@
 import { Card } from '~/components/ui/intent-ui/card'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
+import { DAILY_REPORT_MINE_TABS } from '~/constants'
 
 const SKELETON_ROW_COUNT = 5
 const PAGINATION_BUTTON_COUNT = 7
@@ -26,8 +27,12 @@ const SkeletonTableRow = ({ widths }: { widths: string[] }) => (
   </>
 )
 
-export const MineTabContentSkeleton = ({ tab }: Record<'tab', 'date' | 'project'>) => {
-  const widths = tab === 'date' ? DATE_TAB_WIDTHS : PROJECT_TAB_WIDTHS
+export const MineTabContentSkeleton = ({
+  tab,
+}: {
+  tab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
+}) => {
+  const widths = tab === DAILY_REPORT_MINE_TABS[0].id ? DATE_TAB_WIDTHS : PROJECT_TAB_WIDTHS
 
   return (
     <>

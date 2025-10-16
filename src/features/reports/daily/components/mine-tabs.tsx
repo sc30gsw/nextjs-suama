@@ -6,7 +6,11 @@ import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-export function MineTabs({ currentTab }: Record<'currentTab', 'date' | 'project'>) {
+export function MineTabs({
+  currentTab,
+}: {
+  currentTab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
+}) {
   const [, setQueryStates] = useQueryStates(
     {
       ...dailyReportForMineSearchParamsParsers,

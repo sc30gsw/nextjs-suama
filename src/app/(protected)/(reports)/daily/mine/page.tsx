@@ -5,8 +5,7 @@ import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
-
-import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { DAILY_REPORT_MINE_TABS, MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
 import { MineTabContentSkeleton } from '~/features/reports/daily/components/mine-tab-content-skeleton'
@@ -86,21 +85,21 @@ export default async function MyDailyPage({
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、条件付きレンダリングを使用。
       修正されたら Activity に変更する。
       https://github.com/vercel/next.js/issues/84489 */}
-      {tab === 'date' ? (
+      {tab === DAILY_REPORT_MINE_TABS[0].id ? (
         <Suspense
           key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
-          fallback={<MineTabContentSkeleton tab="date" />}
+          fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[0].id} />}
         >
-          <MineTabPanel tab="date" dataPromise={reportsPromise}>
+          <MineTabPanel tab={DAILY_REPORT_MINE_TABS[0].id} dataPromise={reportsPromise}>
             {(data) => <DailyReportsTable<'mine'> reports={data} />}
           </MineTabPanel>
         </Suspense>
       ) : (
         <Suspense
           key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
-          fallback={<MineTabContentSkeleton tab="project" />}
+          fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}
         >
-          <MineTabPanel tab="project" dataPromise={summaryPromise}>
+          <MineTabPanel tab={DAILY_REPORT_MINE_TABS[1].id} dataPromise={summaryPromise}>
             {(data) => <ProjectSummaryTable summary={data.summary} />}
           </MineTabPanel>
         </Suspense>

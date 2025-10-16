@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
+import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
 import { dailyReportForMineSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
@@ -13,13 +14,13 @@ import { paginationSearchParamsCache } from '~/types/search-params/pagination-se
 type DateTabData = InferResponseType<typeof client.api.dailies.mine.$get, 200>
 type ProjectTabData = InferResponseType<(typeof client.api.dailies.mine)['summary']['$get'], 200>
 
-type MineTabPanelProps<T extends 'date' | 'project'> = {
+type MineTabPanelProps<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']> = {
   tab: T
   dataPromise: Promise<T extends 'date' ? DateTabData : ProjectTabData>
   children: (data: T extends 'date' ? DateTabData : ProjectTabData) => ReactNode
 }
 
-export async function MineTabPanel<T extends 'date' | 'project'>({
+export async function MineTabPanel<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']>({
   tab,
   dataPromise,
   children,
@@ -42,7 +43,7 @@ export async function MineTabPanel<T extends 'date' | 'project'>({
     session.user.id,
   )
 
-  const total = tab === 'date' ? countData.dateTotal : countData.projectTotal
+  const total = tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dateTotal : countData.projectTotal
   const grandTotalHour = countData.grandTotalHour
 
   const pageCount = Math.ceil(total / rowsPerPage)
@@ -55,7 +56,7 @@ export async function MineTabPanel<T extends 'date' | 'project'>({
 
   const data = await dataPromise
 
-  const itemLabel = tab === 'date' ? '日報' : 'プロジェクト'
+  const itemLabel = tab === DAILY_REPORT_MINE_TABS[0].id ? '日報' : 'プロジェクト'
 
   return (
     <>
