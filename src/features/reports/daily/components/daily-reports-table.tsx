@@ -1,6 +1,6 @@
 'use client'
 
-import { IconDocumentEdit, IconFileText } from '@intentui/icons'
+import { IconDocumentEdit } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -68,12 +68,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
 
         return (
           <div className="flex items-center gap-2">
-            <DailyReportWorkContentPopover contents={report.workContents}>
-              <Button size="sm">
-                職務内容
-                <IconFileText />
-              </Button>
-            </DailyReportWorkContentPopover>
+            <DailyReportWorkContentPopover contents={report.workContents} />
 
             {isCurrentUser && (
               <div className="flex gap-2">

@@ -145,7 +145,7 @@ const PaginationItem = ({
           'aria-current': isCurrent ? 'page' : undefined,
           isDisabled: isCurrent,
           className: buttonStyles({
-            intent: isCurrent ? 'outline' : intent,
+            intent: isCurrent ? 'primary' : 'outline',
             size,
             className: twMerge(
               'h-9 min-w-10 cursor-default font-normal tabular-nums disabled:opacity-100',
