@@ -8,10 +8,10 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 
 import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
-import { MineDateTab } from '~/features/reports/daily/components/mine-date-tab'
-import { MineProjectTab } from '~/features/reports/daily/components/mine-project-tab'
+import { MineDateTabPanel } from '~/features/reports/daily/components/mine-date-tab-panel'
+import { MineProjectTabPanel } from '~/features/reports/daily/components/mine-project-tab-panel'
 import { MineTabContentSkeleton } from '~/features/reports/daily/components/mine-tab-content-skeleton'
-import { MineTabsNavigation } from '~/features/reports/daily/components/mine-tabs-navigation'
+import { MineTabs } from '~/features/reports/daily/components/mine-tabs'
 
 import {
   getProjectSummaryForMine,
@@ -80,7 +80,12 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
-      <MineTabsNavigation />
+      <MineTabs
+        currentTab={tab}
+        startDate={startDate}
+        endDate={endDate}
+        rowsPerPage={rowsPerPage}
+      />
 
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、条件付きレンダリングを使用。
       修正されたら Activity に変更する。
@@ -90,14 +95,14 @@ export default async function MyDailyPage({
           key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
           fallback={<MineTabContentSkeleton />}
         >
-          <MineDateTab reportsPromise={reportsPromise} userId={session.user.id} />
+          <MineDateTabPanel reportsPromise={reportsPromise} userId={session.user.id} />
         </Suspense>
       ) : (
         <Suspense
           key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
           fallback={<MineTabContentSkeleton />}
         >
-          <MineProjectTab summaryPromise={summaryPromise} />
+          <MineProjectTabPanel summaryPromise={summaryPromise} />
         </Suspense>
       )}
     </div>
