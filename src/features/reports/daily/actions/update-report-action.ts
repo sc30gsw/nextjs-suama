@@ -8,6 +8,7 @@ import { filter, isDefined, map, pipe } from 'remeda'
 import {
   GET_APPEAL_CATEGORIES_CACHE_KEY,
   GET_DAILY_REPORT_BY_ID_CACHE_KEY,
+  GET_DAILY_REPORTS_COUNT_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
@@ -186,6 +187,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(reportDate, DATE_FORMAT)}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_APPEAL_CATEGORIES_CACHE_KEY}-${reportId}`)

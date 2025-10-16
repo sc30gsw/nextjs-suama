@@ -7,11 +7,12 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 
 import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
-import { MineDateTabPanel } from '~/features/reports/daily/components/mine-date-tab-panel'
-import { MineProjectTabPanel } from '~/features/reports/daily/components/mine-project-tab-panel'
 import { MineTabContentSkeleton } from '~/features/reports/daily/components/mine-tab-content-skeleton'
+import { MineTabPanel } from '~/features/reports/daily/components/mine-tab-panel'
 import { MineTabs } from '~/features/reports/daily/components/mine-tabs'
+import { ProjectSummaryTable } from '~/features/reports/daily/components/project-summary-table'
 
 import {
   getProjectSummaryForMine,
@@ -80,12 +81,7 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
-      <MineTabs
-        currentTab={tab}
-        startDate={startDate}
-        endDate={endDate}
-        rowsPerPage={rowsPerPage}
-      />
+      <MineTabs currentTab={tab} />
 
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、条件付きレンダリングを使用。
       修正されたら Activity に変更する。
@@ -93,16 +89,20 @@ export default async function MyDailyPage({
       {tab === 'date' ? (
         <Suspense
           key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
-          fallback={<MineTabContentSkeleton />}
+          fallback={<MineTabContentSkeleton tab="date" />}
         >
-          <MineDateTabPanel reportsPromise={reportsPromise} userId={session.user.id} />
+          <MineTabPanel tab="date" dataPromise={reportsPromise}>
+            {(data) => <DailyReportsTable<'mine'> reports={data} />}
+          </MineTabPanel>
         </Suspense>
       ) : (
         <Suspense
           key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
-          fallback={<MineTabContentSkeleton />}
+          fallback={<MineTabContentSkeleton tab="project" />}
         >
-          <MineProjectTabPanel summaryPromise={summaryPromise} />
+          <MineTabPanel tab="project" dataPromise={summaryPromise}>
+            {(data) => <ProjectSummaryTable summary={data.summary} />}
+          </MineTabPanel>
         </Suspense>
       )}
     </div>

@@ -1,42 +1,46 @@
-import Link from 'next/link'
+'use client'
+
+import { useQueryStates } from 'nuqs'
+import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
-import { cn } from '~/utils/classes'
-import { dateUtils } from '~/utils/date-utils'
+import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
+import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-type MineTabsNavigationProps = {
-  currentTab: string
-  startDate: Date | null
-  endDate: Date | null
-  rowsPerPage: number
-}
+export function MineTabs({ currentTab }: Record<'currentTab', 'date' | 'project'>) {
+  const [, setQueryStates] = useQueryStates(
+    {
+      ...dailyReportForMineSearchParamsParsers,
+      ...paginationSearchParamsParsers,
+    },
+    {
+      history: 'push',
+      shallow: false,
+    },
+  )
 
-export function MineTabs({ currentTab, startDate, endDate, rowsPerPage }: MineTabsNavigationProps) {
   return (
-    <div className="border-b">
-      <nav className="flex gap-x-2" aria-label="Tabs">
-        {DAILY_REPORT_MINE_TABS.map((TAB) => (
-          <Link
-            key={TAB.id}
-            href={{
-              query: {
-                ...(startDate && { startDate: dateUtils.formatDateByJST(startDate) }),
-                ...(endDate && { endDate: dateUtils.formatDateByJST(endDate) }),
-                page: 1,
-                rowsPerPage,
-                tab: TAB.id,
-              },
-            }}
-            className={cn(
-              TAB.id === currentTab
-                ? 'border-primary text-primary'
-                : 'border-transparent text-muted-foreground hover:border-border hover:text-foreground',
-              'inline-flex items-center whitespace-nowrap border-b-2 px-4 py-2 font-medium text-sm transition-colors',
-            )}
+    <Tabs
+      selectedKey={currentTab}
+      onSelectionChange={(key) => {
+        if (key === 'date' || key === 'project') {
+          setQueryStates({
+            tab: key,
+            page: 1,
+          })
+        }
+      }}
+    >
+      <TabList>
+        {DAILY_REPORT_MINE_TABS.map((tab) => (
+          <Tab
+            key={tab.id}
+            id={tab.id}
+            className={'selected:text-primary [&_[data-slot=selected-indicator]]:bg-primary'}
           >
-            {TAB.name}
-          </Link>
+            {tab.name}
+          </Tab>
         ))}
-      </nav>
-    </div>
+      </TabList>
+    </Tabs>
   )
 }
