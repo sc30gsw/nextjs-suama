@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
-
 import { IconX } from '@intentui/icons'
+import React from 'react'
 import type {
   TagGroupProps as TagGroupPrimitiveProps,
   TagListProps,
@@ -10,10 +9,10 @@ import type {
 } from 'react-aria-components'
 import {
   Button,
+  composeRenderProps,
   TagGroup as TagGroupPrimitive,
   TagList as TagListPrimitive,
   Tag as TagPrimitive,
-  composeRenderProps,
 } from 'react-aria-components'
 import { twJoin, twMerge } from 'tailwind-merge'
 import { tv } from 'tailwind-variants'
@@ -184,5 +183,5 @@ const Tag = ({ className, intent, shape, ...props }: TagProps) => {
   )
 }
 
-export type { TagGroupProps, TagProps, TagListProps, RestrictedIntent }
-export { Tag, TagList, TagGroup }
+export { Tag, TagGroup, TagList }
+export type { RestrictedIntent, TagGroupProps, TagListProps, TagProps }

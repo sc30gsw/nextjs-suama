@@ -8,9 +8,9 @@ import type { ListData } from 'react-stately'
 import { twJoin, twMerge } from 'tailwind-merge'
 import { tv } from 'tailwind-variants'
 
-import type { FieldProps } from './field'
-import { Description, Input, Label } from './field'
-import { Tag, TagGroup, TagList } from './tag-group'
+import type { FieldProps } from '~/components/ui/intent-ui/field'
+import { Description, Input, Label } from '~/components/ui/intent-ui/field'
+import { Tag, TagGroup, TagList } from '~/components/ui/intent-ui/tag-group'
 
 const tagFieldsStyles = tv({
   base: 'relative flex flex-row flex-wrap items-center transition',

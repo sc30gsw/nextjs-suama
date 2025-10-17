@@ -10,8 +10,8 @@ import {
   Text,
 } from 'react-aria-components'
 import { twMerge } from 'tailwind-merge'
+import { Button, type ButtonProps } from '~/components/ui/intent-ui/button'
 import { cx } from '~/lib/primitive'
-import { Button, type ButtonProps } from './button'
 
 const Dialog = ({
   role = 'dialog',

@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './dialog'
+} from '~/components/ui/intent-ui/dialog'
 
 type Sides = 'top' | 'bottom' | 'left' | 'right'
 const generateCompoundVariants = (sides: Array<Sides>) => {

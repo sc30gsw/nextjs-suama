@@ -23,8 +23,14 @@ import {
   useLocale,
 } from 'react-aria-components'
 import { twMerge } from 'tailwind-merge'
-import { Button } from './button'
-import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger } from './select'
+import { Button } from '~/components/ui/intent-ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+} from '~/components/ui/intent-ui/select'
 
 interface CalendarProps<T extends DateValue>
   extends Omit<CalendarPrimitiveProps<T>, 'visibleDuration'> {

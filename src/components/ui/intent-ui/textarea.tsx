@@ -2,8 +2,8 @@
 
 import { TextArea, TextField, type TextFieldProps } from 'react-aria-components'
 import { twJoin } from 'tailwind-merge'
+import { Description, FieldError, type FieldProps, Label } from '~/components/ui/intent-ui/field'
 import { cx } from '~/lib/primitive'
-import { Description, FieldError, type FieldProps, Label } from './field'
 
 interface TextareaProps extends Omit<TextFieldProps, 'className'>, FieldProps {
   className?: string | ((v: TextFieldProps) => string)
@@ -42,4 +42,3 @@ const Textarea = ({
 
 export { Textarea }
 export type { TextareaProps }
-

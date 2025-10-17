@@ -21,7 +21,6 @@ import {
 } from 'react-aria-components'
 import { twMerge } from 'tailwind-merge'
 import type { VariantProps } from 'tailwind-variants'
-import { cx } from '~/lib/primitive'
 import {
   DropdownDescription,
   dropdownItemStyles,
@@ -29,8 +28,9 @@ import {
   DropdownLabel,
   dropdownSectionStyles,
   DropdownSeparator,
-} from './dropdown'
-import { PopoverContent, type PopoverContentProps } from './popover'
+} from '~/components/ui/intent-ui/dropdown'
+import { PopoverContent, type PopoverContentProps } from '~/components/ui/intent-ui/popover'
+import { cx } from '~/lib/primitive'
 
 const Menu = (props: MenuTriggerPrimitiveProps) => <MenuTriggerPrimitive {...props} />
 

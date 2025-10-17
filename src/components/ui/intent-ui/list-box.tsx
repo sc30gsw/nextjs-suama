@@ -12,8 +12,13 @@ import {
   ListBox as ListBoxPrimitive,
 } from 'react-aria-components'
 import { twMerge } from 'tailwind-merge'
+import {
+  DropdownDescription,
+  dropdownItemStyles,
+  DropdownLabel,
+  DropdownSection,
+} from '~/components/ui/intent-ui/dropdown'
 import { cx } from '~/lib/primitive'
-import { DropdownDescription, dropdownItemStyles, DropdownLabel, DropdownSection } from './dropdown'
 
 const ListBox = <T extends object>({ className, ...props }: ListBoxProps<T>) => (
   <ListBoxPrimitive

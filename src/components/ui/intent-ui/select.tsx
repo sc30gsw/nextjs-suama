@@ -7,17 +7,17 @@ import type {
 } from 'react-aria-components'
 import { Button, ListBox, Select as SelectPrimitive, SelectValue } from 'react-aria-components'
 import { twJoin } from 'tailwind-merge'
-import { cx } from '~/lib/primitive'
 import {
   DropdownDescription,
   DropdownItem,
   DropdownLabel,
   DropdownSection,
   DropdownSeparator,
-} from './dropdown'
-import type { FieldProps } from './field'
-import { Description, FieldError, Label } from './field'
-import { PopoverContent } from './popover'
+} from '~/components/ui/intent-ui/dropdown'
+import type { FieldProps } from '~/components/ui/intent-ui/field'
+import { Description, FieldError, Label } from '~/components/ui/intent-ui/field'
+import { PopoverContent } from '~/components/ui/intent-ui/popover'
+import { cx } from '~/lib/primitive'
 
 interface SelectProps<T extends object, M extends 'single' | 'multiple' = 'single'>
   extends SelectPrimitiveProps<T, M>,

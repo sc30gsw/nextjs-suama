@@ -23,13 +23,12 @@ import {
   Button as Trigger,
 } from 'react-aria-components'
 import { twJoin, twMerge } from 'tailwind-merge'
-
+import { Button } from '~/components/ui/intent-ui/button'
+import { Link } from '~/components/ui/intent-ui/link'
+import { SheetContent } from '~/components/ui/intent-ui/sheet'
+import { Tooltip, TooltipContent } from '~/components/ui/intent-ui/tooltip'
 import { useMediaQuery } from '~/hooks/use-media-query'
 import { cx } from '~/lib/primitive'
-import { Button } from './button'
-import { Link } from './link'
-import { SheetContent } from './sheet'
-import { Tooltip, TooltipContent } from './tooltip'
 
 const SIDEBAR_WIDTH = '17rem'
 const SIDEBAR_WIDTH_DOCK = '3.25rem'
