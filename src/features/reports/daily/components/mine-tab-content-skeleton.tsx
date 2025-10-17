@@ -35,7 +35,7 @@ export const MineTabContentSkeleton = ({
   const widths = tab === DAILY_REPORT_MINE_TABS[0].id ? DATE_TAB_WIDTHS : PROJECT_TAB_WIDTHS
 
   return (
-    <>
+    <div className="space-y-3">
       <div className="flex max-w-52 flex-col gap-2">
         <Skeleton className="h-4 w-40" />
         <Skeleton className="h-10 w-full" />
@@ -78,6 +78,6 @@ export const MineTabContentSkeleton = ({
           </div>
         </Card.Footer>
       </Card>
-    </>
+    </div>
   )
 }

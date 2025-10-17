@@ -49,26 +49,6 @@ export default async function MyDailyPage({
         ? MIN_ROWS_PER_PAGE
         : rowsPerPage
 
-  const reportsPromise = getReportsForMine(
-    {
-      skip,
-      limit,
-      startDate: startDate ?? undefined,
-      endDate: endDate ?? undefined,
-    },
-    session.user.id,
-  )
-
-  const summaryPromise = getProjectSummaryForMine(
-    {
-      startDate: startDate ?? undefined,
-      endDate: endDate ?? undefined,
-      limit,
-      skip,
-    },
-    session.user.id,
-  )
-
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
       <Heading>{session.user.name}の日報</Heading>
@@ -90,8 +70,18 @@ export default async function MyDailyPage({
           key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
         >
           <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[0].id} />}>
-            <MineTabContent tab={DAILY_REPORT_MINE_TABS[0].id} dataPromise={reportsPromise}>
-              {(data) => <DailyReportsTable<'mine'> reports={data} />}
+            <MineTabContent tab={DAILY_REPORT_MINE_TABS[0].id}>
+              {getReportsForMine(
+                {
+                  skip,
+                  limit,
+                  startDate: startDate ?? undefined,
+                  endDate: endDate ?? undefined,
+                },
+                session.user.id,
+              ).then((data) => (
+                <DailyReportsTable<'mine'> reports={data} />
+              ))}
             </MineTabContent>
           </Suspense>
         </TabPanel>
@@ -101,8 +91,18 @@ export default async function MyDailyPage({
           key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
         >
           <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}>
-            <MineTabContent tab={DAILY_REPORT_MINE_TABS[1].id} dataPromise={summaryPromise}>
-              {(data) => <ProjectSummaryTable summary={data.summary} />}
+            <MineTabContent tab={DAILY_REPORT_MINE_TABS[1].id}>
+              {getProjectSummaryForMine(
+                {
+                  startDate: startDate ?? undefined,
+                  endDate: endDate ?? undefined,
+                  limit,
+                  skip,
+                },
+                session.user.id,
+              ).then((data) => (
+                <ProjectSummaryTable summary={data.summary} />
+              ))}
             </MineTabContent>
           </Suspense>
         </TabPanel>

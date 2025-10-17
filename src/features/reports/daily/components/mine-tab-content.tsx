@@ -1,4 +1,3 @@
-import type { InferResponseType } from 'hono'
 import { redirect, unauthorized } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
@@ -8,23 +7,14 @@ import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
 import { dailyReportForMineSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
-import type { client } from '~/lib/rpc'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
-type DateTabData = InferResponseType<typeof client.api.dailies.mine.$get, 200>
-type ProjectTabData = InferResponseType<(typeof client.api.dailies.mine)['summary']['$get'], 200>
-
-type MineTabContentProps<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']> = {
-  tab: T
-  dataPromise: Promise<T extends 'date' ? DateTabData : ProjectTabData>
-  children: (data: T extends 'date' ? DateTabData : ProjectTabData) => ReactNode
+type MineTabContentProps = {
+  tab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
+  children: ReactNode
 }
 
-export async function MineTabContent<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']>({
-  tab,
-  dataPromise,
-  children,
-}: MineTabContentProps<T>) {
+export async function MineTabContent({ tab, children }: MineTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {
@@ -55,8 +45,6 @@ export async function MineTabContent<T extends (typeof DAILY_REPORT_MINE_TABS)[n
     )
   }
 
-  const data = await dataPromise
-
   const itemLabel = tab === DAILY_REPORT_MINE_TABS[0].id ? '日報' : 'プロジェクト'
 
   return (
@@ -71,7 +59,7 @@ export async function MineTabContent<T extends (typeof DAILY_REPORT_MINE_TABS)[n
       </div>
 
       <Card className="max-w-full border-t-0 pt-0">
-        <Card.Content>{children(data)}</Card.Content>
+        <Card.Content>{children}</Card.Content>
 
         <Card.Footer>
           <TablePagination pageCount={pageCount} page={page} />
