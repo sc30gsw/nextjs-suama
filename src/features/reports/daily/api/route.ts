@@ -45,28 +45,16 @@ const app = new Hono()
 
     try {
       // フィルタリングされた全件数を取得
-      const totalQuery = db
+      const totalResult = await db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
         .innerJoin(users, eq(dailyReports.userId, users.id))
         .where(and(...whereConditions))
 
-      const totalResult = await totalQuery
       const totalFilteredReports = totalResult[0].count
 
-      const reportIdsQuery = db
-        .select({ id: dailyReports.id })
-        .from(dailyReports)
-        .innerJoin(users, eq(dailyReports.userId, users.id))
-        .where(and(...whereConditions))
-        .orderBy(desc(dailyReports.createdAt))
-        .limit(limitNumber)
-        .offset(skipNumber)
-
-      const reportIds = await reportIdsQuery
-
       // レポートが見つからない場合は早期リターン
-      if (reportIds.length === 0) {
+      if (totalFilteredReports === 0) {
         return c.json(
           {
             users: [],
@@ -77,6 +65,15 @@ const app = new Hono()
           200,
         )
       }
+
+      const reportIds = await db
+        .select({ id: dailyReports.id })
+        .from(dailyReports)
+        .innerJoin(users, eq(dailyReports.userId, users.id))
+        .where(and(...whereConditions))
+        .orderBy(desc(dailyReports.createdAt))
+        .limit(limitNumber)
+        .offset(skipNumber)
 
       // 関連データを取得
       const reports = await db.query.dailyReports.findMany({
@@ -141,7 +138,7 @@ const app = new Hono()
   .get('/mine', sessionMiddleware, async (c) => {
     const { skip, limit, startDate, endDate } = c.req.query()
 
-    const userId = c.get('user').id
+    const user = c.get('user')
 
     const skipNumber = Number(skip) ?? 0
     const limitNumber = Number(limit) ?? 10
@@ -154,7 +151,7 @@ const app = new Hono()
 
     try {
       const where = and(
-        eq(dailyReports.userId, userId),
+        eq(dailyReports.userId, user.id),
         gte(dailyReports.reportDate, start),
         lte(dailyReports.reportDate, end),
       )
@@ -165,7 +162,6 @@ const app = new Hono()
         limit: limitNumber,
         offset: skipNumber,
         with: {
-          user: true,
           dailyReportMissions: {
             with: {
               mission: {
@@ -187,7 +183,7 @@ const app = new Hono()
             limit: limitNumber,
             startDate,
             endDate,
-            userId,
+            userId: user.id,
           },
           200,
         )
@@ -202,7 +198,7 @@ const app = new Hono()
         return {
           id: report.id,
           date: dateUtils.formatDateByJST(report.reportDate ?? new Date()),
-          username: report.user.name,
+          username: user.name,
           totalHour: totalHours,
           impression: report.impression ?? '',
           isRemote: report.remote,
@@ -225,7 +221,7 @@ const app = new Hono()
           limit: limitNumber,
           startDate,
           endDate,
-          userId,
+          userId: user.id,
         },
         200,
       )
@@ -353,32 +349,42 @@ const app = new Hono()
     const userId = c.get('user').id
 
     try {
-      const report = await db.query.dailyReports.findFirst({
+      const reportExists = await db.query.dailyReports.findFirst({
         where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
-        with: {
-          dailyReportMissions: {
-            with: {
-              mission: {
-                with: {
-                  project: true,
+        columns: { id: true },
+      })
+
+      if (!reportExists) {
+        return c.json({ error: 'Report not found or unauthorized' }, 404)
+      }
+
+      const [report, userTroubles] = await Promise.all([
+        db.query.dailyReports.findFirst({
+          where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
+          with: {
+            dailyReportMissions: {
+              with: {
+                mission: {
+                  with: {
+                    project: true,
+                  },
                 },
               },
             },
-          },
-          appeals: {
-            with: {
-              categoryOfAppeal: true,
+            appeals: {
+              with: {
+                categoryOfAppeal: true,
+              },
             },
           },
-        },
-      })
-
-      const userTroubles = await db.query.troubles.findMany({
-        where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
-        with: {
-          categoryOfTrouble: true,
-        },
-      })
+        }),
+        db.query.troubles.findMany({
+          where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
+          with: {
+            categoryOfTrouble: true,
+          },
+        }),
+      ])
 
       if (!report) {
         return c.json({ error: 'Report not found or unauthorized' }, 404)

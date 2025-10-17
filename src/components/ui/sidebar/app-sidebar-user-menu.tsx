@@ -20,7 +20,7 @@ export function AppSidebarUserMenu() {
       <Menu.Trigger className="flex w-full items-center justify-between" aria-label="Profile">
         <div className="flex items-center gap-x-2">
           <Avatar
-            className="size-8 *:size-8 group-data-[state=collapsed]:size-6 group-data-[state=collapsed]:*:size-6"
+            size="small"
             alt={session?.user.name}
             src={session?.user?.image}
             initials={session?.user.name.charAt(0)}
@@ -32,6 +32,7 @@ export function AppSidebarUserMenu() {
         </div>
         <IconChevronLgDown data-slot="chevron" />
       </Menu.Trigger>
+
       <Menu.Content
         className={twMerge(
           'in-data-[sidebar-collapsible=collapsed]:min-w-56 min-w-(--trigger-width)',
@@ -46,7 +47,6 @@ export function AppSidebarUserMenu() {
           </Menu.Header>
         </Menu.Section>
 
-        {/* TODO: 各種アイコン・リンクの設定 */}
         <Menu.Item href="/daily">
           <IconReport stroke={1} size={20} />
           <Menu.Label>日報作成</Menu.Label>
@@ -77,7 +77,9 @@ export function AppSidebarUserMenu() {
             />
           </span>
         </Menu.Item>
+
         <Menu.Separator />
+
         <Menu.Item onAction={logout} isDisabled={isPending}>
           <IconLogout />
           <Menu.Label>ログアウト</Menu.Label>

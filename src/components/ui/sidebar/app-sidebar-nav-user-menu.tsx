@@ -22,7 +22,7 @@ export function AppSidebarNavUserMenu() {
           initials={session?.user.name.charAt(0)}
         />
       </Menu.Trigger>
-      <Menu.Content popover={{ placement: 'bottom end' }} className="min-w-64">
+      <Menu.Content popover={{ placement: 'bottom end' }} className="sm:min-w-64">
         <Menu.Section>
           <Menu.Header separator={true}>
             <span className="block">Kurt Cobain</span>

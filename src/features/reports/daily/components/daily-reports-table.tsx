@@ -63,7 +63,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
       header: '操作',
       cell: ({ row }) => {
         const report = row.original
-        const isCurrentUser = userId === undefined || report.userId === userId
+        const isCurrentUser = !userId || report.userId === userId
 
         return (
           <div className="flex items-center gap-2">
