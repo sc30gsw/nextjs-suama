@@ -72,6 +72,7 @@ export function ProjectSummaryTable({ summary }: Record<'summary', ProjectSummar
           </Table.Row>
         ))}
       </Table.Header>
+
       <Table.Body>
         {table.getRowModel().rows.map((row) => (
           <Table.Row key={row.original.projectId}>

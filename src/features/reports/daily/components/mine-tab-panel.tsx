@@ -44,6 +44,7 @@ export async function MineTabPanel<T extends (typeof DAILY_REPORT_MINE_TABS)[num
   )
 
   const total = tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dateTotal : countData.projectTotal
+
   const grandTotalHour = countData.grandTotalHour
 
   const pageCount = Math.ceil(total / rowsPerPage)
