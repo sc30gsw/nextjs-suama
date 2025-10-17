@@ -4,8 +4,9 @@ import { type CalendarDate, parseDate } from '@internationalized/date'
 import { format } from 'date-fns'
 import { useQueryStates } from 'nuqs'
 import { DateRangePicker } from '~/components/ui/intent-ui/date-range-picker'
-import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
+
 import { DATE_FORMAT } from '~/utils/date-utils'
+import { dailyReportForMineSearchParamsParsers } from '../../mine/types/search-params/daily-report-for-mine-search-params'
 
 export function DailySearchDateRangePicker() {
   const [{ startDate, endDate }] = useQueryStates(dailyReportForMineSearchParamsParsers)

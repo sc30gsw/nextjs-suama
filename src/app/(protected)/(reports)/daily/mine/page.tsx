@@ -9,19 +9,16 @@ import { TabPanel } from '~/components/ui/intent-ui/tabs'
 import { DAILY_REPORT_MINE_TABS, MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
-import { MineTabContent } from '~/features/reports/daily/components/mine-tab-content'
-import { MineTabContentSkeleton } from '~/features/reports/daily/components/mine-tab-content-skeleton'
-import { MineTabs } from '~/features/reports/daily/components/mine-tabs'
-import { ProjectSummaryTable } from '~/features/reports/daily/components/project-summary-table'
+import { MineTabContent } from '~/features/reports/mine/components/mine-tab-content'
+import { MineTabContentSkeleton } from '~/features/reports/mine/components/mine-tab-content-skeleton'
+import { MineTabs } from '~/features/reports/mine/components/mine-tabs'
+import { ProjectSummaryTable } from '~/features/reports/mine/components/project-summary-table'
 
-import {
-  getProjectSummaryForMine,
-  getReportsForMine,
-} from '~/features/reports/daily/server/fetcher'
+import { getProjectSummaryForMine, getReportsForMine } from '~/features/reports/mine/server/fetcher'
 import {
   dailyReportForMineSearchParamsCache,
   tabSearchParamsCache,
-} from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
+} from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'

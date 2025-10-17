@@ -4,7 +4,7 @@ import { useQueryStates } from 'nuqs'
 import type { ReactNode } from 'react'
 import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
-import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
+import { dailyReportForMineSearchParamsParsers } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type MineTabsProps = {
