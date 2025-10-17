@@ -70,7 +70,7 @@ export default async function MyDailyPage({
           key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
         >
           <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[0].id} />}>
-            <MineTabContent tab={DAILY_REPORT_MINE_TABS[0].id}>
+            <MineTabContent>
               {getReportsForMine(
                 {
                   skip,
@@ -91,7 +91,7 @@ export default async function MyDailyPage({
           key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
         >
           <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}>
-            <MineTabContent tab={DAILY_REPORT_MINE_TABS[1].id}>
+            <MineTabContent>
               {getProjectSummaryForMine(
                 {
                   startDate: startDate ?? undefined,

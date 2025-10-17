@@ -9,19 +9,14 @@ import { dailyReportForMineSearchParamsCache } from '~/features/reports/daily/ty
 import { getServerSession } from '~/lib/get-server-session'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 
-type MineTabContentProps = {
-  tab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
-  children: ReactNode
-}
-
-export async function MineTabContent({ tab, children }: MineTabContentProps) {
+export async function MineTabContent({ children }: { children: ReactNode }) {
   const session = await getServerSession()
 
   if (!session) {
     unauthorized()
   }
 
-  const { startDate, endDate } = dailyReportForMineSearchParamsCache.all()
+  const { tab, startDate, endDate } = dailyReportForMineSearchParamsCache.all()
   const { page, rowsPerPage } = paginationSearchParamsCache.all()
 
   const countData = await getDailyReportsCount(
