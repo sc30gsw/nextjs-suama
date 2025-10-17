@@ -7,13 +7,20 @@ import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-export function MineTabs({
-  currentTab,
-  children,
-}: {
+type MineTabsProps = {
   currentTab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
   children: ReactNode
-}) {
+}
+
+const isDailyReportMineTabId = (
+  key: unknown,
+): key is (typeof DAILY_REPORT_MINE_TABS)[number]['id'] => {
+  return DAILY_REPORT_MINE_TABS.some((tab) => tab.id === key)
+}
+
+export const MineTabs = (props: MineTabsProps) => {
+  const { currentTab, children } = props
+
   const [, setQueryStates] = useQueryStates(
     {
       ...dailyReportForMineSearchParamsParsers,
@@ -29,7 +36,7 @@ export function MineTabs({
     <Tabs
       selectedKey={currentTab}
       onSelectionChange={(key) => {
-        if (key === 'date' || key === 'project') {
+        if (isDailyReportMineTabId(key)) {
           setQueryStates({
             tab: key,
             page: 1,

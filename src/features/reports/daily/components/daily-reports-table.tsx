@@ -11,7 +11,6 @@ import type { InferResponseType } from 'hono'
 import Link from 'next/link'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
-import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
@@ -30,7 +29,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
   userId,
 }: DailyReportsTableProps<T>) {
   const COLUMNS = [
-    columnHelper.accessor(DAILY_REPORT_MINE_TABS[0].id, {
+    columnHelper.accessor('date', {
       header: '日付',
       cell: (info) => info.getValue(),
     }),
