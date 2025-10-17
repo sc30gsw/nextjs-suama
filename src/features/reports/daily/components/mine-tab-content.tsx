@@ -14,17 +14,17 @@ import { paginationSearchParamsCache } from '~/types/search-params/pagination-se
 type DateTabData = InferResponseType<typeof client.api.dailies.mine.$get, 200>
 type ProjectTabData = InferResponseType<(typeof client.api.dailies.mine)['summary']['$get'], 200>
 
-type MineTabPanelProps<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']> = {
+type MineTabContentProps<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']> = {
   tab: T
   dataPromise: Promise<T extends 'date' ? DateTabData : ProjectTabData>
   children: (data: T extends 'date' ? DateTabData : ProjectTabData) => ReactNode
 }
 
-export async function MineTabPanel<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']>({
+export async function MineTabContent<T extends (typeof DAILY_REPORT_MINE_TABS)[number]['id']>({
   tab,
   dataPromise,
   children,
-}: MineTabPanelProps<T>) {
+}: MineTabContentProps<T>) {
   const session = await getServerSession()
 
   if (!session) {
@@ -60,7 +60,7 @@ export async function MineTabPanel<T extends (typeof DAILY_REPORT_MINE_TABS)[num
   const itemLabel = tab === DAILY_REPORT_MINE_TABS[0].id ? '日報' : 'プロジェクト'
 
   return (
-    <>
+    <div className="space-y-2">
       <RowsPerPageSelect />
 
       <div className="flex items-end justify-between">
@@ -70,13 +70,13 @@ export async function MineTabPanel<T extends (typeof DAILY_REPORT_MINE_TABS)[num
         <div className="font-bold text-lg">総合計時間: {grandTotalHour} 時間</div>
       </div>
 
-      <Card className="max-w-full border-t-0 pt-0 ">
+      <Card className="max-w-full border-t-0 pt-0">
         <Card.Content>{children(data)}</Card.Content>
 
         <Card.Footer>
           <TablePagination pageCount={pageCount} page={page} />
         </Card.Footer>
       </Card>
-    </>
+    </div>
   )
 }

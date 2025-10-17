@@ -1,6 +1,7 @@
 'use client'
 
 import { useQueryStates } from 'nuqs'
+import type { ReactNode } from 'react'
 import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { dailyReportForMineSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-for-mine-search-params'
@@ -8,8 +9,10 @@ import { paginationSearchParamsParsers } from '~/types/search-params/pagination-
 
 export function MineTabs({
   currentTab,
+  children,
 }: {
   currentTab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
+  children: ReactNode
 }) {
   const [, setQueryStates] = useQueryStates(
     {
@@ -45,6 +48,7 @@ export function MineTabs({
           </Tab>
         ))}
       </TabList>
+      {children}
     </Tabs>
   )
 }
