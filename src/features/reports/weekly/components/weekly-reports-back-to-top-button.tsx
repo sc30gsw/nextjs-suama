@@ -25,7 +25,7 @@ export function WeeklyReportsBackToTopButton() {
 
   return (
     <Button
-      size="square-petite"
+      size="sq-sm"
       onPress={scrollToTop}
       className={cn(
         'fixed right-6 bottom-6 z-50 rounded-full bg-primary p-3 text-white shadow-lg transition-opacity lg:right-80',

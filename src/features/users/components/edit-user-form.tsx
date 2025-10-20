@@ -183,7 +183,6 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               acceptedFileTypes={ACCEPTED_TYPES}
               onSelect={handleSelect}
               ref={fileInputRef}
-              withIcon={true}
               className="mt-2"
               isDisabled={isPending || pending}
             >
@@ -200,8 +199,8 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
                 className="size-15 cursor-pointer *:size-15 hover:opacity-80"
               />
               <Button
-                shape="circle"
-                size="square-petite-small"
+                isCircle
+                size="sq-xs"
                 intent="outline"
                 isDisabled={isPending || pending}
                 onPress={() => imageInput.change('')}
