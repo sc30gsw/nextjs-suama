@@ -1,6 +1,7 @@
 import { Card } from '~/components/ui/intent-ui/card'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
+import { cn } from '~/utils/classes'
 
 const SKELETON_ROW_COUNT = 5
 const PAGINATION_BUTTON_COUNT = 7
@@ -9,29 +10,33 @@ const ACTION_BUTTON_COUNT = 3
 const DATE_TAB_WIDTHS = ['w-20', 'w-28', 'w-16', 'w-40', 'w-20', 'w-16', 'actions']
 const PROJECT_TAB_WIDTHS = ['w-36', 'w-48', 'w-16', 'w-20', 'w-24']
 
-const SkeletonActions = () => (
-  <div className="flex gap-2">
-    {[...Array(ACTION_BUTTON_COUNT)].map((_, i) => (
-      <Skeleton key={i} className={i === 0 ? 'h-8 w-8' : 'h-8 w-16'} />
-    ))}
-  </div>
-)
+function SkeletonActions() {
+  return (
+    <div className="flex gap-2">
+      {[...Array(ACTION_BUTTON_COUNT)].map((_, i) => (
+        <Skeleton key={i} className={i === 0 ? 'h-8 w-8' : 'h-8 w-16'} />
+      ))}
+    </div>
+  )
+}
 
-const SkeletonTableRow = ({ widths }: { widths: string[] }) => (
-  <>
-    {widths.map((width, i) => (
-      <td key={i} className="px-4 py-4">
-        {width === 'actions' ? <SkeletonActions /> : <Skeleton className={`h-6 ${width}`} />}
-      </td>
-    ))}
-  </>
-)
+function SkeletonTableRow({ widths }: { widths: string[] }) {
+  return (
+    <>
+      {widths.map((width, i) => (
+        <td key={i} className="px-4 py-4">
+          {width === 'actions' ? <SkeletonActions /> : <Skeleton className={`h-6 ${width}`} />}
+        </td>
+      ))}
+    </>
+  )
+}
 
-export const MineTabContentSkeleton = ({
+export function MineTabContentSkeleton({
   tab,
 }: {
   tab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
-}) => {
+}) {
   const widths = tab === DAILY_REPORT_MINE_TABS[0].id ? DATE_TAB_WIDTHS : PROJECT_TAB_WIDTHS
 
   return (
@@ -54,7 +59,7 @@ export const MineTabContentSkeleton = ({
                 <tr className="border-b">
                   {widths.map((width, i) => (
                     <th key={i} className="px-4 py-3 text-left">
-                      <Skeleton className={`h-5 ${width === 'actions' ? 'w-auto' : width}`} />
+                      <Skeleton className={cn('h-5', width === 'actions' ? 'w-auto' : width)} />
                     </th>
                   ))}
                 </tr>
@@ -73,7 +78,7 @@ export const MineTabContentSkeleton = ({
         <Card.Footer>
           <div className="flex w-full items-center justify-center gap-1">
             {[...Array(PAGINATION_BUTTON_COUNT + 4)].map((_, i) => (
-              <Skeleton key={i} className="h-10 w-10" />
+              <Skeleton key={i} className="size-10" />
             ))}
           </div>
         </Card.Footer>
