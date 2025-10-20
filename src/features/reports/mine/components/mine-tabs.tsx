@@ -12,15 +12,7 @@ type MineTabsProps = {
   children: ReactNode
 }
 
-const isDailyReportMineTabId = (
-  key: unknown,
-): key is (typeof DAILY_REPORT_MINE_TABS)[number]['id'] => {
-  return DAILY_REPORT_MINE_TABS.some((tab) => tab.id === key)
-}
-
-export const MineTabs = (props: MineTabsProps) => {
-  const { currentTab, children } = props
-
+export const MineTabs = ({ currentTab, children }: MineTabsProps) => {
   const [, setQueryStates] = useQueryStates(
     {
       ...dailyReportForMineSearchParamsParsers,
@@ -36,12 +28,14 @@ export const MineTabs = (props: MineTabsProps) => {
     <Tabs
       selectedKey={currentTab}
       onSelectionChange={(key) => {
-        if (isDailyReportMineTabId(key)) {
-          setQueryStates({
-            tab: key,
-            page: 1,
-          })
+        if (key !== 'date' && key !== 'project') {
+          return
         }
+
+        setQueryStates({
+          tab: key,
+          page: 1,
+        })
       }}
     >
       <TabList>
