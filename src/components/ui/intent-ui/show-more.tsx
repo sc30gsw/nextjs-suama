@@ -1,12 +1,12 @@
 'use client'
 
-import type { ComponentProps } from 'react'
-import { Text, ToggleButton, composeRenderProps } from 'react-aria-components'
+import { composeRenderProps, Text, ToggleButton } from 'react-aria-components'
 import { tv } from 'tailwind-variants'
+
 import { buttonStyles } from '~/components/ui/intent-ui/button'
 
 const showMoreStyles = tv({
-  base: 'text-sm leading-6 before:border-muted after:border-muted',
+  base: 'text-sm leading-6 before:border-border after:border-border',
   variants: {
     orientation: {
       vertical: 'mx-1 h-auto self-stretch',
@@ -30,7 +30,7 @@ const showMoreStyles = tv({
   },
 })
 
-interface ShowMoreProps extends ComponentProps<typeof ToggleButton> {
+interface ShowMoreProps extends React.ComponentProps<typeof ToggleButton> {
   className?: string
   orientation?: 'horizontal' | 'vertical'
   as?: 'text' | 'button'
@@ -39,6 +39,7 @@ interface ShowMoreProps extends ComponentProps<typeof ToggleButton> {
 
 const ShowMore = ({
   as = 'button',
+  children,
   orientation = 'horizontal',
   className,
   ...props
@@ -49,14 +50,12 @@ const ShowMore = ({
         <ToggleButton
           {...props}
           className={buttonStyles({
-            shape: 'circle',
+            isCircle: true,
             intent: 'outline',
-            size: 'small',
+            size: 'sm',
           })}
         >
-          {composeRenderProps(props.children, (children) => (
-            <>{children}</>
-          ))}
+          {composeRenderProps(children, (children) => children)}
         </ToggleButton>
       ) : (
         <Text slot="description">{props.text}</Text>
@@ -65,5 +64,5 @@ const ShowMore = ({
   )
 }
 
-export type { ShowMoreProps }
 export { ShowMore }
+export type { ShowMoreProps }

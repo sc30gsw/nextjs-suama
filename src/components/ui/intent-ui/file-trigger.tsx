@@ -1,27 +1,24 @@
 'use client'
 
 import { IconCamera, IconFolder, IconPaperclip45 } from '@intentui/icons'
-import type { RefObject } from 'react'
 import {
   FileTrigger as FileTriggerPrimitive,
   type FileTriggerProps as FileTriggerPrimitiveProps,
 } from 'react-aria-components'
-
 import type { VariantProps } from 'tailwind-variants'
 import { Button, type buttonStyles } from '~/components/ui/intent-ui/button'
+import { Loader } from '~/components/ui/intent-ui/loader'
 
 interface FileTriggerProps extends FileTriggerPrimitiveProps, VariantProps<typeof buttonStyles> {
-  withIcon?: boolean
   isDisabled?: boolean
-  ref?: RefObject<HTMLInputElement>
+  ref?: React.RefObject<HTMLInputElement>
   className?: string
 }
 
 const FileTrigger = ({
   intent = 'outline',
-  size = 'medium',
-  shape = 'square',
-  withIcon = true,
+  size = 'md',
+  isCircle = false,
   ref,
   className,
   ...props
@@ -33,16 +30,19 @@ const FileTrigger = ({
         isDisabled={props.isDisabled}
         intent={intent}
         size={size}
-        shape={shape}
+        isCircle={isCircle}
       >
-        {withIcon &&
-          (props.defaultCamera ? (
+        {!props.isPending ? (
+          props.defaultCamera ? (
             <IconCamera />
           ) : props.acceptDirectory ? (
             <IconFolder />
           ) : (
             <IconPaperclip45 />
-          ))}
+          )
+        ) : (
+          <Loader />
+        )}
         {props.children ? (
           props.children
         ) : (
@@ -60,5 +60,5 @@ const FileTrigger = ({
   )
 }
 
-export type { FileTriggerProps }
 export { FileTrigger }
+export type { FileTriggerProps }
