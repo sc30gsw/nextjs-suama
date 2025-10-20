@@ -49,10 +49,14 @@ export function CreateDailyForm({
     form,
     fields,
     reportDate,
+    remoteInput,
+    impressionInput,
     dailyReports,
     totalHours,
     handleAdd,
     handleRemove,
+    handleChangeRemote,
+    handleChangeImpression,
     getError,
   } = useCreateDailyForm(inputCountSearchParamsParsers)
 
@@ -134,6 +138,8 @@ export function CreateDailyForm({
               isDisabled={isPending}
               size="lg"
               className="mt-2 cursor-pointer"
+              isSelected={remoteInput.value === 'on'}
+              onChange={handleChangeRemote}
             >
               <span className="ml-2">リモート勤務</span>
             </Checkbox>
@@ -142,6 +148,8 @@ export function CreateDailyForm({
               {...getInputProps(fields.impression, { type: 'text' })}
               label="所感"
               isDisabled={isPending}
+              value={impressionInput.value ?? ''}
+              onChange={handleChangeImpression}
             />
           </div>
           <Separator orientation="horizontal" />
