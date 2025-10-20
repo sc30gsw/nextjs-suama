@@ -8,8 +8,9 @@ import { getDailyReportsCount } from '~/features/reports/mine/server/fetcher'
 import { dailyReportForMineSearchParamsCache } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+import { dateUtils } from '~/utils/date-utils'
 
-export async function MineTabContent({ children }: { children: ReactNode }) {
+export async function MineTabContent({ children }: Record<'children', ReactNode>) {
   const session = await getServerSession()
 
   if (!session) {
@@ -35,12 +36,16 @@ export async function MineTabContent({ children }: { children: ReactNode }) {
   const pageCount = Math.ceil(total / rowsPerPage)
 
   if (page > pageCount && pageCount > 0) {
-    redirect(
-      `/daily/mine?tab=${tab}&page=${pageCount}&rowsPerPage=${rowsPerPage}&startDate=${startDate}&endDate=${endDate}`,
-    )
-  }
+    const searchParams = new URLSearchParams({
+      tab,
+      page: String(pageCount),
+      rowsPerPage: String(rowsPerPage),
+      startDate: dateUtils.formatDateParamForUrl(startDate),
+      endDate: dateUtils.formatDateParamForUrl(endDate),
+    }).toString()
 
-  const itemLabel = tab === DAILY_REPORT_MINE_TABS[0].id ? '日報' : 'プロジェクト'
+    redirect(`/daily/mine?${searchParams}`)
+  }
 
   return (
     <div className="space-y-2">
@@ -48,7 +53,7 @@ export async function MineTabContent({ children }: { children: ReactNode }) {
 
       <div className="flex items-end justify-between">
         <p className="text-sm">
-          全 {total} 件の{itemLabel}
+          全 {total} 件の{tab === DAILY_REPORT_MINE_TABS[0].id ? '日報' : 'プロジェクト'}
         </p>
         <div className="font-bold text-lg">総合計時間: {grandTotalHour} 時間</div>
       </div>
@@ -57,7 +62,7 @@ export async function MineTabContent({ children }: { children: ReactNode }) {
         <Card.Content>{children}</Card.Content>
 
         <Card.Footer>
-          <TablePagination pageCount={pageCount} page={page} />
+          <TablePagination pageCount={pageCount} />
         </Card.Footer>
       </Card>
     </div>

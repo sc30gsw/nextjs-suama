@@ -45,4 +45,12 @@ export const dateUtils = {
       end: dateUtils.getTodayRangeByJST().end,
     }
   },
+
+  formatDateParamForUrl: (date: Date | null) => {
+    if (date instanceof Date) {
+      return dateUtils.formatDateByJST(date)
+    }
+
+    return date ?? ''
+  },
 } as const
