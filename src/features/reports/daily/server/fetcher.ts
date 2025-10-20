@@ -1,5 +1,6 @@
 import 'server-only'
 
+import type { Session } from 'better-auth'
 import { format } from 'date-fns'
 import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
@@ -9,14 +10,13 @@ import {
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
 } from '~/constants/cache-keys'
 import type { dailyReports } from '~/db/schema'
-import type { auth } from '~/lib/auth'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 import { DATE_FORMAT } from '~/utils/date-utils'
 
 export async function getReportsForToday(
   params: { skip: number; limit: number; userNames?: string[] },
-  userId: typeof auth.$Infer.Session.user.id,
+  userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(new Date(), DATE_FORMAT)}`)
@@ -38,7 +38,7 @@ export async function getReportsForToday(
 
 export async function getReportById(
   reportId: InferSelectModel<typeof dailyReports>['id'],
-  userId: typeof auth.$Infer.Session.user.id,
+  userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)

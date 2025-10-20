@@ -1,5 +1,6 @@
 'use client'
 
+import type { Session } from 'better-auth'
 import { notFound } from 'next/navigation'
 import { useRef } from 'react'
 import type { VirtuosoHandle } from 'react-virtuoso'
@@ -7,11 +8,10 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsCards } from '~/features/reports/weekly/components/weekly-reports-cards'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
-import type { auth } from '~/lib/auth'
 import { WeeklyReportsNavigationButton } from './WeeklyReportsNavigationButton'
 
 type WeeklyReportsProps = {
-  userId: typeof auth.$Infer.Session.user.id
+  userId: Session['userId']
   year: number
   week: number
 }

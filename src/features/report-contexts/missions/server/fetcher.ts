@@ -1,13 +1,13 @@
+import type { Session } from 'better-auth'
 import type { InferResponseType } from 'hono'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
-import type { auth } from '~/lib/auth'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getMissions(
-  userId: typeof auth.$Infer.Session.user.id,
+  userId: Session['userId'],
   params?: { skip: number; limit: number; names: string[] },
 ) {
   'use cache'

@@ -1,5 +1,6 @@
 import 'server-only'
 
+import type { Session } from 'better-auth'
 import type { InferResponseType } from 'hono'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import {
@@ -7,13 +8,12 @@ import {
   GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
 } from '~/constants/cache-keys'
-import type { auth } from '~/lib/auth'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getReportsForMine(
   params: { skip: number; limit: number; startDate?: Date; endDate?: Date },
-  userId: typeof auth.$Infer.Session.user.id,
+  userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${userId}`)
@@ -35,7 +35,7 @@ export async function getReportsForMine(
 
 export async function getProjectSummaryForMine(
   params: { startDate?: Date; endDate?: Date; limit: number; skip: number },
-  userId: typeof auth.$Infer.Session.user.id,
+  userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${userId}`)
@@ -57,7 +57,7 @@ export async function getProjectSummaryForMine(
 
 export async function getDailyReportsCount(
   params: { scope: 'mine' | 'everyone'; startDate?: Date; endDate?: Date },
-  userId: typeof auth.$Infer.Session.user.id,
+  userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${userId}`)

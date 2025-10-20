@@ -1,10 +1,10 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+import type { Session } from 'better-auth'
 import { WeeklyReports } from '~/features/reports/weekly/components/weekly-reports'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
-import type { auth } from '~/lib/auth'
 
 type WeeklyReportsContainerProps = {
-  userId: typeof auth.$Infer.Session.user.id
+  userId: Session['userId']
   year: number
   week: number
 }
