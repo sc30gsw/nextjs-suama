@@ -29,4 +29,28 @@ export const dateUtils = {
       end: dateUtils.convertJstDateToUtc(dateString, 'end'),
     }
   },
+
+  getOneMonthAgoRangeByJST: () => {
+    const nowInJST = toZonedTime(new Date(), APP_TIMEZONE)
+    const lastMonthJST = new Date(
+      nowInJST.getFullYear(),
+      nowInJST.getMonth() - 1,
+      nowInJST.getDate(),
+    )
+
+    const lastMonthDateStr = dateUtils.formatDateByJST(lastMonthJST, DATE_FORMAT)
+
+    return {
+      start: dateUtils.convertJstDateToUtc(lastMonthDateStr, 'start'),
+      end: dateUtils.getTodayRangeByJST().end,
+    }
+  },
+
+  formatDateParamForUrl: (date: Date | null) => {
+    if (date instanceof Date) {
+      return dateUtils.formatDateByJST(date)
+    }
+
+    return date ?? ''
+  },
 } as const

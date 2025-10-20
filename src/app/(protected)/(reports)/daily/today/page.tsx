@@ -130,7 +130,7 @@ export default async function DailyOfTodayPage({
                 )
               }
 
-              return <TablePagination pageCount={pageCount} page={page} />
+              return <TablePagination pageCount={pageCount} />
             })}
           </Suspense>
         </Card.Footer>

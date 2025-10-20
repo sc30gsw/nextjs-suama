@@ -1,9 +1,23 @@
-import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
+import {
+  and,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  gte,
+  inArray,
+  like,
+  lte,
+  max,
+  min,
+  or,
+  sql,
+} from 'drizzle-orm'
 import { Hono } from 'hono'
-import { dailyReports, troubles, users } from '~/db/schema'
+import { dailyReportMissions, dailyReports, missions, projects, troubles, users } from '~/db/schema'
 import { db } from '~/index'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+import { dateUtils } from '~/utils/date-utils'
 
 const app = new Hono()
   .get('/today', sessionMiddleware, async (c) => {
@@ -31,28 +45,15 @@ const app = new Hono()
 
     try {
       // フィルタリングされた全件数を取得
-      const totalQuery = db
+      const totalCount = await db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
         .innerJoin(users, eq(dailyReports.userId, users.id))
         .where(and(...whereConditions))
 
-      const totalResult = await totalQuery
-      const totalFilteredReports = totalResult[0].count
+      const totalFilteredReports = totalCount[0].count
 
-      const reportIdsQuery = db
-        .select({ id: dailyReports.id })
-        .from(dailyReports)
-        .innerJoin(users, eq(dailyReports.userId, users.id))
-        .where(and(...whereConditions))
-        .orderBy(desc(dailyReports.createdAt))
-        .limit(limitNumber)
-        .offset(skipNumber)
-
-      const reportIds = await reportIdsQuery
-
-      // レポートが見つからない場合は早期リターン
-      if (reportIds.length === 0) {
+      if (totalFilteredReports === 0) {
         return c.json(
           {
             users: [],
@@ -64,7 +65,15 @@ const app = new Hono()
         )
       }
 
-      // 関連データを取得
+      const reportIds = await db
+        .select({ id: dailyReports.id })
+        .from(dailyReports)
+        .innerJoin(users, eq(dailyReports.userId, users.id))
+        .where(and(...whereConditions))
+        .orderBy(desc(dailyReports.createdAt))
+        .limit(limitNumber)
+        .offset(skipNumber)
+
       const reports = await db.query.dailyReports.findMany({
         where: inArray(
           dailyReports.id,
@@ -126,84 +135,31 @@ const app = new Hono()
   })
   .get('/mine', sessionMiddleware, async (c) => {
     const { skip, limit, startDate, endDate } = c.req.query()
-    const userId = c.get('user').id
+
+    const user = c.get('user')
 
     const skipNumber = Number(skip) ?? 0
     const limitNumber = Number(limit) ?? 10
 
-    // デフォルト値設定（前月〜今日）
-    // JST基準で今日の日付を取得
-    const { end: todayEnd } = dateUtils.getTodayRangeByJST()
-    const todayInJST = dateUtils.formatDateByJST(todayEnd, DATE_FORMAT)
-    const lastMonthInJST = dateUtils.formatDateByJST(
-      new Date(todayEnd.getFullYear(), todayEnd.getMonth() - 1, todayEnd.getDate()),
-      DATE_FORMAT,
-    )
-
-    const defaultStartDate = dateUtils.convertJstDateToUtc(lastMonthInJST, 'start')
-    const defaultEndDate = dateUtils.convertJstDateToUtc(todayInJST, 'end')
+    const { start: defaultStartDate, end: defaultEndDate } = dateUtils.getOneMonthAgoRangeByJST()
 
     // 日付範囲の条件を構築
     const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
     const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
 
     try {
-      // フィルタリングされた全件数を取得
-      const totalQuery = db
-        .select({ count: count(dailyReports.id) })
-        .from(dailyReports)
-        .where(
-          and(
-            eq(dailyReports.userId, userId),
-            gte(dailyReports.reportDate, start),
-            lte(dailyReports.reportDate, end),
-          ),
-        )
+      const where = and(
+        eq(dailyReports.userId, user.id),
+        gte(dailyReports.reportDate, start),
+        lte(dailyReports.reportDate, end),
+      )
 
-      const totalResult = await totalQuery
-      const totalFilteredReports = totalResult[0].count
-
-      const reportIdsQuery = db
-        .select({ id: dailyReports.id })
-        .from(dailyReports)
-        .where(
-          and(
-            eq(dailyReports.userId, userId),
-            gte(dailyReports.reportDate, start),
-            lte(dailyReports.reportDate, end),
-          ),
-        )
-        .orderBy(desc(dailyReports.reportDate))
-        .limit(limitNumber)
-        .offset(skipNumber)
-
-      const reportIds = await reportIdsQuery
-
-      // レポートが見つからない場合は早期リターン
-      if (reportIds.length === 0) {
-        return c.json(
-          {
-            users: [],
-            total: totalFilteredReports,
-            skip: skipNumber,
-            limit: limitNumber,
-            startDate,
-            endDate,
-            userId,
-          },
-          200,
-        )
-      }
-
-      // 関連データを取得
       const reports = await db.query.dailyReports.findMany({
-        where: inArray(
-          dailyReports.id,
-          reportIds.map((r) => r.id),
-        ),
+        where,
         orderBy: desc(dailyReports.reportDate),
+        limit: limitNumber,
+        offset: skipNumber,
         with: {
-          user: true,
           dailyReportMissions: {
             with: {
               mission: {
@@ -216,6 +172,21 @@ const app = new Hono()
         },
       })
 
+      // レポートが見つからない場合は早期リターン
+      if (reports.length === 0) {
+        return c.json(
+          {
+            users: [],
+            skip: skipNumber,
+            limit: limitNumber,
+            startDate,
+            endDate,
+            userId: user.id,
+          },
+          200,
+        )
+      }
+
       const reportsWithMissions = reports.map((report) => {
         const totalHours = report.dailyReportMissions.reduce(
           (sum, mission) => sum + (mission.hours ?? 0),
@@ -225,7 +196,7 @@ const app = new Hono()
         return {
           id: report.id,
           date: dateUtils.formatDateByJST(report.reportDate ?? new Date()),
-          username: report.user.name,
+          username: user.name,
           totalHour: totalHours,
           impression: report.impression ?? '',
           isRemote: report.remote,
@@ -244,12 +215,11 @@ const app = new Hono()
       return c.json(
         {
           users: reportsWithMissions,
-          total: totalFilteredReports,
           skip: skipNumber,
           limit: limitNumber,
           startDate,
           endDate,
-          userId,
+          userId: user.id,
         },
         200,
       )
@@ -259,12 +229,133 @@ const app = new Hono()
       return c.json({ error: 'Failed to fetch mine reports' }, 500)
     }
   })
+  .get('/mine/summary', sessionMiddleware, async (c) => {
+    const { startDate, endDate, limit, skip } = c.req.query()
+
+    const userId = c.get('user').id
+
+    const limitNumber = Number(limit) ?? 10
+    const skipNumber = Number(skip) ?? 0
+
+    const { start: defaultStartDate, end: defaultEndDate } = dateUtils.getOneMonthAgoRangeByJST()
+
+    const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
+    const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
+
+    try {
+      const where = and(
+        eq(dailyReports.userId, userId),
+        gte(dailyReports.reportDate, start),
+        lte(dailyReports.reportDate, end),
+      )
+
+      const totalTimeForEachProject = await db
+        .select({
+          projectId: projects.id,
+          projectName: projects.name,
+          totalHours: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
+          workDays: countDistinct(dailyReports.reportDate),
+          firstWorkDate: min(dailyReports.reportDate),
+          lastWorkDate: max(dailyReports.reportDate),
+        })
+        .from(dailyReports)
+        .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
+        .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
+        .innerJoin(projects, eq(missions.projectId, projects.id))
+        .where(where)
+        .groupBy(projects.id, projects.name)
+        .orderBy(desc(sql<number>`sum(${dailyReportMissions.hours})`))
+        .limit(limitNumber)
+        .offset(skipNumber)
+
+      const formattedProjectSummary = totalTimeForEachProject.map((item) => ({
+        ...item,
+        averageHoursPerDay: item.workDays > 0 ? item.totalHours / item.workDays : 0,
+      }))
+
+      return c.json({ summary: formattedProjectSummary }, 200)
+    } catch (error) {
+      console.error('Error fetching project summary:', error)
+
+      return c.json({ error: 'Failed to fetch project summary' }, 500)
+    }
+  })
+  .get('/count', sessionMiddleware, async (c) => {
+    const { kind, startDate, endDate } = c.req.query()
+
+    const userId = c.get('user').id
+
+    const { start: defaultStartDate, end: defaultEndDate } = dateUtils.getOneMonthAgoRangeByJST()
+
+    const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
+    const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
+
+    try {
+      const where =
+        kind === 'everyone'
+          ? and(gte(dailyReports.reportDate, start), lte(dailyReports.reportDate, end))
+          : and(
+              eq(dailyReports.userId, userId),
+              gte(dailyReports.reportDate, start),
+              lte(dailyReports.reportDate, end),
+            )
+
+      const dateCountQuery = db
+        .select({ count: count(dailyReports.id) })
+        .from(dailyReports)
+        .where(where)
+
+      const projectCountQuery = db
+        .select({ count: countDistinct(projects.id) })
+        .from(dailyReports)
+        .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
+        .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
+        .innerJoin(projects, eq(missions.projectId, projects.id))
+        .where(where)
+
+      const grandTotalHourQuery = db
+        .select({
+          total: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
+        })
+        .from(dailyReportMissions)
+        .leftJoin(dailyReports, eq(dailyReportMissions.dailyReportId, dailyReports.id))
+        .where(where)
+
+      const [dateCountResult, projectCountResult, grandTotalHourResult] = await Promise.all([
+        dateCountQuery,
+        projectCountQuery,
+        grandTotalHourQuery,
+      ])
+
+      return c.json(
+        {
+          dateTotal: dateCountResult[0].count,
+          projectTotal: projectCountResult[0].count,
+          grandTotalHour: grandTotalHourResult[0].total ?? 0,
+        },
+        200,
+      )
+    } catch (error) {
+      console.error('Error fetching count:', error)
+
+      return c.json({ error: 'Failed to fetch count' }, 500)
+    }
+  })
   .get('/:id', sessionMiddleware, async (c) => {
     const reportId = c.req.param('id')
     const userId = c.get('user').id
 
     try {
-      const report = await db.query.dailyReports.findFirst({
+      const existingReport = await db.query.dailyReports.findFirst({
+        where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
+        columns: { id: true },
+      })
+
+      if (!existingReport) {
+        return c.json({ error: 'Report not found or unauthorized' }, 404)
+      }
+
+      const reportQuery = db.query.dailyReports.findFirst({
         where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
         with: {
           dailyReportMissions: {
@@ -284,12 +375,14 @@ const app = new Hono()
         },
       })
 
-      const userTroubles = await db.query.troubles.findMany({
+      const userTroublesQuery = db.query.troubles.findMany({
         where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
         with: {
           categoryOfTrouble: true,
         },
       })
+
+      const [report, userTroubles] = await Promise.all([reportQuery, userTroublesQuery])
 
       if (!report) {
         return c.json({ error: 'Report not found or unauthorized' }, 404)

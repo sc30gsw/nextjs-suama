@@ -1,11 +1,10 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import type { InferSelectModel } from 'drizzle-orm'
-import type { users } from '~/db/schema'
+import type { Session } from 'better-auth'
 import { WeeklyReports } from '~/features/reports/weekly/components/weekly-reports'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 
 type WeeklyReportsContainerProps = {
-  userId: InferSelectModel<typeof users>['id']
+  userId: Session['userId']
   year: number
   week: number
 }
@@ -16,7 +15,7 @@ export async function WeeklyReportsContainer({ userId, year, week }: WeeklyRepor
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <WeeklyReports userId={userId} year={year} week={week} />
+      <WeeklyReports userId={userId} year={String(year)} week={String(week)} />
     </HydrationBoundary>
   )
 }

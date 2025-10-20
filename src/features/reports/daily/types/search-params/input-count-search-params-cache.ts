@@ -1,4 +1,4 @@
-import { createSearchParamsCache, parseAsBoolean, parseAsJson, parseAsString } from 'nuqs/server'
+import { createSearchParamsCache, parseAsJson } from 'nuqs/server'
 import { z } from 'zod/v4'
 
 export const reportEntrySchema = z.object({
@@ -52,8 +52,6 @@ export const inputCountSearchParamsParsers = {
       troubles: { count: 0, entries: [] },
     })
     .withOptions({ throttleMs: 1000 }),
-  remote: parseAsBoolean.withDefault(false).withOptions({ throttleMs: 1000 }),
-  impression: parseAsString.withDefault('').withOptions({ throttleMs: 1000 }),
 }
 
 export const inputCountSearchParamsCache = createSearchParamsCache(inputCountSearchParamsParsers)

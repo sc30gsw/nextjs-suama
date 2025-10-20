@@ -4,7 +4,12 @@ import { useQueryStates } from 'nuqs'
 import { Pagination } from '~/components/ui/intent-ui/pagination'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-export function TablePagination({ pageCount, page }: Record<'pageCount' | 'page', number>) {
+export function TablePagination({ pageCount }: Record<'pageCount', number>) {
+  const [{ page }] = useQueryStates(paginationSearchParamsParsers, {
+    history: 'push',
+    shallow: false,
+  })
+
   const pageIndex = page <= 1 ? 0 : page - 1
 
   const [{ rowsPerPage }, setPaginationParams] = useQueryStates(paginationSearchParamsParsers, {

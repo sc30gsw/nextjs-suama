@@ -1,4 +1,5 @@
-import { createParser, createSearchParamsCache } from 'nuqs/server'
+import { createParser, createSearchParamsCache, parseAsStringLiteral } from 'nuqs/server'
+import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { SEPARATOR } from '~/utils/date-utils'
 
 // ? nuqsのparseAsIsoDateは無効値の場合に「2001年」を返すため、作成
@@ -15,11 +16,20 @@ const parseAsOptionalIsoDate = createParser({
   serialize: (value) => value?.toISOString().split(SEPARATOR)[0] ?? '',
 })
 
+export const tabParser = parseAsStringLiteral(
+  DAILY_REPORT_MINE_TABS.map((tab) => tab.id),
+).withDefault(DAILY_REPORT_MINE_TABS[0].id)
+
 export const dailyReportForMineSearchParamsParsers = {
   startDate: parseAsOptionalIsoDate,
   endDate: parseAsOptionalIsoDate,
+  tab: tabParser,
 }
 
 export const dailyReportForMineSearchParamsCache = createSearchParamsCache(
   dailyReportForMineSearchParamsParsers,
 )
+
+export const tabSearchParamsCache = createSearchParamsCache({
+  tab: tabParser,
+})

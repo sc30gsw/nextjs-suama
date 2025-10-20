@@ -1,6 +1,6 @@
 'use client'
 
-import { IconDocumentEdit, IconFileText } from '@intentui/icons'
+import { IconDocumentEdit } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -9,13 +9,11 @@ import {
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
-import { useQueryStates } from 'nuqs'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
 import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
-import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type DailyReportUser = InferResponseType<typeof client.api.dailies.today.$get, 200>['users'][number]
 
@@ -23,7 +21,7 @@ const columnHelper = createColumnHelper<DailyReportUser>()
 
 type DailyReportsTableProps<T extends 'today' | 'mine'> = {
   reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
-  userId: DailyReportUser['id']
+  userId?: DailyReportUser['id']
 }
 
 export function DailyReportsTable<T extends 'today' | 'mine'>({
@@ -64,21 +62,16 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
       header: '操作',
       cell: ({ row }) => {
         const report = row.original
-        const isCurrentUser = report.userId === userId
+        const isCurrentUser = !userId || report.userId === userId
 
         return (
           <div className="flex items-center gap-2">
-            <DailyReportWorkContentPopover contents={report.workContents}>
-              <Button size="small">
-                職務内容
-                <IconFileText />
-              </Button>
-            </DailyReportWorkContentPopover>
+            <DailyReportWorkContentPopover contents={report.workContents} />
 
             {isCurrentUser && (
               <div className="flex gap-2">
                 <Link href={`/daily/edit/${report.id}`}>
-                  <Button intent="outline" size="small">
+                  <Button intent="outline" size="sm">
                     修正
                     <IconDocumentEdit />
                   </Button>
@@ -95,17 +88,10 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
 
   const initialData: DailyReportUser[] = reports.users
 
-  const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
-    history: 'push',
-    shallow: false,
-  })
-
   const table = useReactTable({
     data: initialData,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    pageCount: Math.ceil(reports.total / rowsPerPage),
   })
 
   return (
