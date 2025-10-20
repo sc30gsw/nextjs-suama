@@ -7,8 +7,25 @@ const SKELETON_ROW_COUNT = 5
 const PAGINATION_BUTTON_COUNT = 7
 const ACTION_BUTTON_COUNT = 3
 
-const DATE_TAB_WIDTHS = ['w-20', 'w-28', 'w-16', 'w-40', 'w-20', 'w-16', 'actions']
-const PROJECT_TAB_WIDTHS = ['w-36', 'w-48', 'w-16', 'w-20', 'w-24']
+const DATE_TAB_ID = DAILY_REPORT_MINE_TABS[0].id
+
+const DATE_TAB_WIDTHS = [
+  'w-20',
+  'w-28',
+  'w-16',
+  'w-40',
+  'w-20',
+  'w-16',
+  'actions',
+] as const satisfies readonly string[]
+
+const PROJECT_TAB_WIDTHS = [
+  'w-36',
+  'w-48',
+  'w-16',
+  'w-20',
+  'w-24',
+] as const satisfies readonly string[]
 
 function SkeletonActions() {
   return (
@@ -20,7 +37,9 @@ function SkeletonActions() {
   )
 }
 
-function SkeletonTableRow({ widths }: { widths: string[] }) {
+function SkeletonTableRow({
+  widths,
+}: Record<'widths', typeof DATE_TAB_WIDTHS | typeof PROJECT_TAB_WIDTHS>) {
   return (
     <>
       {widths.map((width, i) => (
@@ -34,10 +53,8 @@ function SkeletonTableRow({ widths }: { widths: string[] }) {
 
 export function MineTabContentSkeleton({
   tab,
-}: {
-  tab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
-}) {
-  const widths = tab === DAILY_REPORT_MINE_TABS[0].id ? DATE_TAB_WIDTHS : PROJECT_TAB_WIDTHS
+}: Record<'tab', (typeof DAILY_REPORT_MINE_TABS)[number]['id']>) {
+  const widths = tab === DATE_TAB_ID ? DATE_TAB_WIDTHS : PROJECT_TAB_WIDTHS
 
   return (
     <div className="space-y-3">
