@@ -316,7 +316,7 @@ const app = new Hono()
         .leftJoin(dailyReports, eq(dailyReportMissions.dailyReportId, dailyReports.id))
         .where(where)
 
-      const [dateCountResult, projectCountResult, grandTotalHourResult] = await Promise.all([
+      const [dateCount, projectCount, grandTotalHour] = await Promise.all([
         dateCountQuery,
         projectCountQuery,
         grandTotalHourQuery,
@@ -324,9 +324,9 @@ const app = new Hono()
 
       return c.json(
         {
-          dateTotal: dateCountResult[0].count,
-          projectTotal: projectCountResult[0].count,
-          grandTotalHour: grandTotalHourResult[0].total ?? 0,
+          dateTotal: dateCount[0].count,
+          projectTotal: projectCount[0].count,
+          grandTotalHour: grandTotalHour[0].total ?? 0,
         },
         200,
       )
