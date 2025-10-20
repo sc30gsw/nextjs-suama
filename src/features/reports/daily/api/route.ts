@@ -295,12 +295,12 @@ const app = new Hono()
               lte(dailyReports.reportDate, end),
             )
 
-      const dateCountQuery = db
+      const dateCountsQuery = db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
         .where(where)
 
-      const projectCountQuery = db
+      const projectCountsQuery = db
         .select({ count: countDistinct(projects.id) })
         .from(dailyReports)
         .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
@@ -308,7 +308,7 @@ const app = new Hono()
         .innerJoin(projects, eq(missions.projectId, projects.id))
         .where(where)
 
-      const grandTotalHourQuery = db
+      const grandTotalHoursQuery = db
         .select({
           total: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
         })
@@ -316,17 +316,17 @@ const app = new Hono()
         .leftJoin(dailyReports, eq(dailyReportMissions.dailyReportId, dailyReports.id))
         .where(where)
 
-      const [dateCount, projectCount, grandTotalHour] = await Promise.all([
-        dateCountQuery,
-        projectCountQuery,
-        grandTotalHourQuery,
+      const [dateCounts, projectCounts, grandTotalHours] = await Promise.all([
+        dateCountsQuery,
+        projectCountsQuery,
+        grandTotalHoursQuery,
       ])
 
       return c.json(
         {
-          dateTotal: dateCount[0].count,
-          projectTotal: projectCount[0].count,
-          grandTotalHour: grandTotalHour[0].total ?? 0,
+          dateTotal: dateCounts[0].count,
+          projectTotal: projectCounts[0].count,
+          grandTotalHour: grandTotalHours[0].total ?? 0,
         },
         200,
       )
