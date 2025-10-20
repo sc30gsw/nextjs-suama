@@ -31,20 +31,17 @@ const app = new Hono()
     // 本日の日付を取得（日本時間）
     const { start: todayStart, end: todayEnd } = dateUtils.getTodayRangeByJST()
 
-    // WHERE句の基本条件
     const baseConditions = [
       gte(dailyReports.reportDate, todayStart),
       lte(dailyReports.reportDate, todayEnd),
     ]
 
-    // ユーザー名フィルタリング条件を含めたWHERE句を構築
     const whereConditions =
       userNamesArray.length > 0
         ? [...baseConditions, or(...userNamesArray.map((name) => like(users.name, `%${name}%`)))]
         : baseConditions
 
     try {
-      // フィルタリングされた全件数を取得
       const totalCount = await db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
@@ -143,7 +140,6 @@ const app = new Hono()
 
     const { start: defaultStartDate, end: defaultEndDate } = dateUtils.getOneMonthAgoRangeByJST()
 
-    // 日付範囲の条件を構築
     const start = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : defaultStartDate
     const end = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : defaultEndDate
 
@@ -172,7 +168,6 @@ const app = new Hono()
         },
       })
 
-      // レポートが見つからない場合は早期リターン
       if (reports.length === 0) {
         return c.json(
           {
