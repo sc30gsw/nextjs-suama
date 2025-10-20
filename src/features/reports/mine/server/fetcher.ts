@@ -56,7 +56,7 @@ export async function getProjectSummaryForMine(
 }
 
 export async function getDailyReportsCount(
-  params: { scope: 'mine' | 'everyone'; startDate?: Date; endDate?: Date },
+  params: { kind: 'mine' | 'everyone'; startDate?: Date; endDate?: Date },
   userId: Session['userId'],
 ) {
   'use cache'

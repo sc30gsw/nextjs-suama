@@ -45,15 +45,14 @@ const app = new Hono()
 
     try {
       // フィルタリングされた全件数を取得
-      const totalResult = await db
+      const totalCount = await db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
         .innerJoin(users, eq(dailyReports.userId, users.id))
         .where(and(...whereConditions))
 
-      const totalFilteredReports = totalResult[0].count
+      const totalFilteredReports = totalCount[0].count
 
-      // レポートが見つからない場合は早期リターン
       if (totalFilteredReports === 0) {
         return c.json(
           {
@@ -75,7 +74,6 @@ const app = new Hono()
         .limit(limitNumber)
         .offset(skipNumber)
 
-      // 関連データを取得
       const reports = await db.query.dailyReports.findMany({
         where: inArray(
           dailyReports.id,
@@ -251,8 +249,7 @@ const app = new Hono()
         lte(dailyReports.reportDate, end),
       )
 
-      // プロジェクトごとの作業時間を集計
-      const summary = await db
+      const totalTimeForEachProject = await db
         .select({
           projectId: projects.id,
           projectName: projects.name,
@@ -271,12 +268,12 @@ const app = new Hono()
         .limit(limitNumber)
         .offset(skipNumber)
 
-      const formattedSummary = summary.map((item) => ({
+      const formattedProjectSummary = totalTimeForEachProject.map((item) => ({
         ...item,
         averageHoursPerDay: item.workDays > 0 ? item.totalHours / item.workDays : 0,
       }))
 
-      return c.json({ summary: formattedSummary }, 200)
+      return c.json({ summary: formattedProjectSummary }, 200)
     } catch (error) {
       console.error('Error fetching project summary:', error)
 
@@ -284,7 +281,7 @@ const app = new Hono()
     }
   })
   .get('/count', sessionMiddleware, async (c) => {
-    const { scope, startDate, endDate } = c.req.query()
+    const { kind, startDate, endDate } = c.req.query()
 
     const userId = c.get('user').id
 
@@ -295,7 +292,7 @@ const app = new Hono()
 
     try {
       const where =
-        scope === 'everyone'
+        kind === 'everyone'
           ? and(gte(dailyReports.reportDate, start), lte(dailyReports.reportDate, end))
           : and(
               eq(dailyReports.userId, userId),
@@ -349,12 +346,12 @@ const app = new Hono()
     const userId = c.get('user').id
 
     try {
-      const reportExists = await db.query.dailyReports.findFirst({
+      const existingReport = await db.query.dailyReports.findFirst({
         where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
         columns: { id: true },
       })
 
-      if (!reportExists) {
+      if (!existingReport) {
         return c.json({ error: 'Report not found or unauthorized' }, 404)
       }
 

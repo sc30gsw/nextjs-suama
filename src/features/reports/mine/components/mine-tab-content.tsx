@@ -21,7 +21,7 @@ export async function MineTabContent({ children }: { children: ReactNode }) {
 
   const countData = await getDailyReportsCount(
     {
-      scope: 'mine',
+      kind: 'mine',
       startDate: startDate ?? undefined,
       endDate: endDate ?? undefined,
     },
