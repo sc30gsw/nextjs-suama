@@ -15,7 +15,7 @@ export async function WeeklyReportsContainer({ userId, year, week }: WeeklyRepor
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <WeeklyReports userId={userId} year={year} week={week} />
+      <WeeklyReports userId={userId} year={String(year)} week={String(week)} />
     </HydrationBoundary>
   )
 }
