@@ -5,11 +5,9 @@ import { GridList } from '~/components/ui/intent-ui/grid-list'
 import { Popover } from '~/components/ui/intent-ui/popover'
 import type { WorkContentResponse } from '~/features/reports/daily/types/api-response'
 
-type DailyReportWorkContentPopoverProps = {
-  contents: WorkContentResponse[]
-}
-
-export function DailyReportWorkContentPopover({ contents }: DailyReportWorkContentPopoverProps) {
+export function DailyReportWorkContentPopover({
+  contents,
+}: Record<'contents', WorkContentResponse[]>) {
   return (
     <Popover>
       <Popover.Trigger aria-label="職務内容を表示" className={buttonStyles({ size: 'sm' })}>
