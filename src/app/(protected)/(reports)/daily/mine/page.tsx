@@ -49,6 +49,7 @@ export default async function MyDailyPage({
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
       <Heading>{session.user.name}の日報</Heading>
+
       <Form action="/daily/mine" className="flex gap-x-2">
         <input type="hidden" name="tab" value={tab} />
         <DailySearchDateRangePicker />
@@ -58,8 +59,7 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
-      {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、条件付きレンダリングを使用。
-      修正されたら Activity に変更する。
+      {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
       https://github.com/vercel/next.js/issues/84489 */}
       <MineTabs currentTab={tab}>
         <TabPanel

@@ -1,7 +1,6 @@
 'use client'
 
 import { useQueryStates } from 'nuqs'
-// highlight-next-line
 import { Select } from '~/components/ui/intent-ui/select'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
