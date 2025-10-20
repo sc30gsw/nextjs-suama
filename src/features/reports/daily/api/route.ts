@@ -355,33 +355,34 @@ const app = new Hono()
         return c.json({ error: 'Report not found or unauthorized' }, 404)
       }
 
-      const [report, userTroubles] = await Promise.all([
-        db.query.dailyReports.findFirst({
-          where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
-          with: {
-            dailyReportMissions: {
-              with: {
-                mission: {
-                  with: {
-                    project: true,
-                  },
+      const reportQuery = db.query.dailyReports.findFirst({
+        where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
+        with: {
+          dailyReportMissions: {
+            with: {
+              mission: {
+                with: {
+                  project: true,
                 },
               },
             },
-            appeals: {
-              with: {
-                categoryOfAppeal: true,
-              },
+          },
+          appeals: {
+            with: {
+              categoryOfAppeal: true,
             },
           },
-        }),
-        db.query.troubles.findMany({
-          where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
-          with: {
-            categoryOfTrouble: true,
-          },
-        }),
-      ])
+        },
+      })
+
+      const userTroublesQuery = db.query.troubles.findMany({
+        where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
+        with: {
+          categoryOfTrouble: true,
+        },
+      })
+
+      const [report, userTroubles] = await Promise.all([reportQuery, userTroublesQuery])
 
       if (!report) {
         return c.json({ error: 'Report not found or unauthorized' }, 404)
