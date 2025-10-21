@@ -56,7 +56,11 @@ export default async function WeeklyReportsPage({
       </div>
       <div className="flex flex-col gap-6 lg:flex-row">
         <Suspense fallback={<WeeklyReportsCardLoading />}>
-          <WeeklyReportsContainer userId={session.user.id} year={year} week={week} />
+          <WeeklyReportsContainer
+            userId={session.user.id}
+            year={year.toString()}
+            week={week.toString()}
+          />
         </Suspense>
       </div>
       <WeeklyReportsBackToTopButton />
