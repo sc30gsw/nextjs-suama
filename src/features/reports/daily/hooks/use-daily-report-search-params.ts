@@ -4,17 +4,17 @@ import type { DailyInputCountSearchParams } from '~/features/reports/daily/types
 export function useDailyReportSearchParams(
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
 ) {
-  const [{ reportEntry, appealsAndTroublesEntry }, setReportEntry] = useQueryStates(
-    initialDailyInputCountSearchParamsParsers,
-    {
+  const [{ reportEntry, appealsAndTroublesEntry, remote, impression }, setReportEntry] =
+    useQueryStates(initialDailyInputCountSearchParamsParsers, {
       history: 'push',
       shallow: false,
-    },
-  )
+    })
 
   return {
     reportEntry,
     appealsAndTroublesEntry,
+    remote,
+    impression,
     setReportEntry,
   } as const
 }
