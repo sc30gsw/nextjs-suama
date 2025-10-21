@@ -48,6 +48,7 @@ export default async function MyDailyPage({
   }).toString()
 
   const skip = page <= 1 ? 0 : (page - 1) * rowsPerPage
+
   const limit =
     rowsPerPage > MAX_ROWS_PER_PAGE
       ? MAX_ROWS_PER_PAGE
