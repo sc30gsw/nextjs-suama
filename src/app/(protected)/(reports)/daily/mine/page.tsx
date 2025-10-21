@@ -64,7 +64,7 @@ export default async function MyDailyPage({
       <MineTabs currentTab={tab}>
         <TabPanel
           id={DAILY_REPORT_MINE_TABS[0].id}
-          key={`date-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
+          key={`date-${JSON.stringify({ tab, startDate, endDate, page, rowsPerPage })}`}
         >
           <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[0].id} />}>
             <MineTabContent>
@@ -85,7 +85,7 @@ export default async function MyDailyPage({
 
         <TabPanel
           id={DAILY_REPORT_MINE_TABS[1].id}
-          key={`project-${page}-${rowsPerPage}-${startDate?.getTime()}-${endDate?.getTime()}`}
+          key={`project-${JSON.stringify({ tab, startDate, endDate, page, rowsPerPage })}`}
         >
           <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}>
             <MineTabContent>
