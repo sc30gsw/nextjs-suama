@@ -17,6 +17,7 @@ const DATE_TAB_WIDTHS = [
   'w-20',
   'w-16',
 ] as const satisfies readonly `w-${number}`[]
+
 const PROJECT_TAB_WIDTHS = [
   'w-36',
   'w-48',
