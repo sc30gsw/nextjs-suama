@@ -29,9 +29,10 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
     session.user.id,
   )
 
-  const total = tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dateTotal : countData.projectTotal
+  const total =
+    tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dailyReportsCount : countData.projectsCount
 
-  const grandTotalHour = countData.grandTotalHour
+  const grandTotalHour = countData.totalHours
 
   const pageCount = Math.ceil(total / rowsPerPage)
 
