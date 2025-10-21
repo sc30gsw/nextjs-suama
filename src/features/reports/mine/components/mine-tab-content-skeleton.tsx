@@ -16,40 +16,14 @@ const DATE_TAB_WIDTHS = [
   'w-40',
   'w-20',
   'w-16',
-  'actions',
-] as const satisfies readonly string[]
-
+] as const satisfies readonly `w-${number}`[]
 const PROJECT_TAB_WIDTHS = [
   'w-36',
   'w-48',
   'w-16',
   'w-20',
   'w-24',
-] as const satisfies readonly string[]
-
-function SkeletonActions() {
-  return (
-    <div className="flex gap-2">
-      {[...Array(ACTION_BUTTON_COUNT)].map((_, i) => (
-        <Skeleton key={i} className={i === 0 ? 'h-8 w-8' : 'h-8 w-16'} />
-      ))}
-    </div>
-  )
-}
-
-function SkeletonTableRow({
-  widths,
-}: Record<'widths', typeof DATE_TAB_WIDTHS | typeof PROJECT_TAB_WIDTHS>) {
-  return (
-    <>
-      {widths.map((width, i) => (
-        <td key={i} className="px-4 py-4">
-          {width === 'actions' ? <SkeletonActions /> : <Skeleton className={`h-6 ${width}`} />}
-        </td>
-      ))}
-    </>
-  )
-}
+] as const satisfies readonly `w-${number}`[]
 
 export function MineTabContentSkeleton({
   tab,
@@ -76,15 +50,36 @@ export function MineTabContentSkeleton({
                 <tr className="border-b">
                   {widths.map((width, i) => (
                     <th key={i} className="px-4 py-3 text-left">
-                      <Skeleton className={cn('h-5', width === 'actions' ? 'w-auto' : width)} />
+                      <Skeleton className={cn('h-5', width)} />
                     </th>
                   ))}
+
+                  {tab === DATE_TAB_ID && (
+                    <th className="px-4 py-3 text-left">
+                      <Skeleton className="h-5 w-auto" />
+                    </th>
+                  )}
                 </tr>
               </thead>
+
               <tbody>
-                {[...Array(SKELETON_ROW_COUNT)].map((_, i) => (
-                  <tr key={i} className="border-b last:border-b-0">
-                    <SkeletonTableRow widths={widths} />
+                {[...Array(SKELETON_ROW_COUNT)].map((_, rowIndex) => (
+                  <tr key={rowIndex} className="border-b last:border-b-0">
+                    {widths.map((width, colIndex) => (
+                      <td key={colIndex} className="px-4 py-4">
+                        <Skeleton className={`h-6 ${width}`} />
+                      </td>
+                    ))}
+
+                    {tab === DATE_TAB_ID && (
+                      <td className="px-4 py-4">
+                        <div className="flex gap-2">
+                          {[...Array(ACTION_BUTTON_COUNT)].map((_, i) => (
+                            <Skeleton key={i} className={i === 0 ? 'h-8 w-8' : 'h-8 w-16'} />
+                          ))}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
