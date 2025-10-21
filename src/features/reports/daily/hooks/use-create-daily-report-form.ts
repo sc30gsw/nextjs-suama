@@ -114,6 +114,7 @@ export function useCreateDailyForm(
   const remoteInput = useInputControl(fields.remote)
   const impressionInput = useInputControl(fields.impression)
 
+  // ?: reportDate は useInputControl を使用すると不具合が発生したため、、useControl を使用
   const reportDate = useControl({
     defaultValue: fields.reportDate.initialValue,
   })
