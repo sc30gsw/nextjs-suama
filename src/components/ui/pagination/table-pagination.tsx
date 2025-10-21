@@ -43,6 +43,7 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
       case 'START':
         paginationUtils.addPagesToArray(pages, FIRST_PAGE, START_SECTION_OFFSET)
         pages.push('...')
+
         break
 
       case 'END':
@@ -52,6 +53,7 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
           totalPages - END_SECTION_OFFSET,
           lastPageIndex - FIRST_PAGE,
         )
+
         break
 
       case 'MIDDLE':
@@ -62,6 +64,7 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
           currentPageIndex + PAGES_AROUND_CURRENT,
         )
         pages.push('...')
+
         break
     }
 
