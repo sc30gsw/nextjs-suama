@@ -3,16 +3,19 @@
 import { useQueryStates } from 'nuqs'
 import type { ReactNode } from 'react'
 import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
+
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { dailyReportForMineSearchParamsParsers } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
+
+const DEFAULT_PAGE_ON_TAB_CHANGE = 1
 
 type MineTabsProps = {
   currentTab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
   children: ReactNode
 }
 
-export const MineTabs = ({ currentTab, children }: MineTabsProps) => {
+export function MineTabs({ currentTab, children }: MineTabsProps) {
   const [, setQueryStates] = useQueryStates(
     {
       ...dailyReportForMineSearchParamsParsers,
@@ -34,7 +37,7 @@ export const MineTabs = ({ currentTab, children }: MineTabsProps) => {
 
         setQueryStates({
           tab: key,
-          page: 1,
+          page: DEFAULT_PAGE_ON_TAB_CHANGE,
         })
       }}
     >
