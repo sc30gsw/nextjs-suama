@@ -39,8 +39,8 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
   if (page > pageCount && pageCount > 0) {
     const searchParams = new URLSearchParams({
       tab,
-      page: String(pageCount),
-      rowsPerPage: String(rowsPerPage),
+      page: pageCount.toString(),
+      rowsPerPage: rowsPerPage.toString(),
       startDate: dateUtils.formatDateParamForUrl(startDate),
       endDate: dateUtils.formatDateParamForUrl(endDate),
     }).toString()
