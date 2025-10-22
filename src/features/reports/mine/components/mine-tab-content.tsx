@@ -5,9 +5,8 @@ import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-sele
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { getDailyReportsCount } from '~/features/reports/mine/server/fetcher'
-import { dailyReportForMineSearchParamsCache } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
+import { minePageSearchParamsCache } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
-import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { dateUtils } from '~/utils/date-utils'
 
 export async function MineTabContent({ children }: Record<'children', ReactNode>) {
@@ -17,7 +16,7 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
     unauthorized()
   }
 
-  const { tab, startDate, endDate } = dailyReportForMineSearchParamsCache.all()
+  const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParamsCache.all()
 
   const countData = await getDailyReportsCount(
     {
@@ -32,7 +31,6 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
     tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dailyReportsCount : countData.projectsCount
   const totalHour = countData.totalHours
 
-  const { page, rowsPerPage } = paginationSearchParamsCache.all()
   const pageCount = Math.ceil(total / rowsPerPage)
 
   if (page > pageCount && pageCount > 0) {
