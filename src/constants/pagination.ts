@@ -1,0 +1,10 @@
+export const FIRST_PAGE = 1
+export const FIRST_PAGE_INDEX = 0
+export const PAGE_INDEX_DIFF = 1
+export const PAGES_AROUND_CURRENT = 1
+export const FULL_DISPLAY_THRESHOLD = 7
+export const NEAR_START_THRESHOLD = 3
+export const NEAR_END_THRESHOLD = 4
+export const START_SECTION_OFFSET = 3
+export const END_SECTION_OFFSET = 5
+export const ELLIPSIS = '...'
