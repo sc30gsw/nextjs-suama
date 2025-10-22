@@ -1,6 +1,5 @@
 import { createParser, createSearchParamsCache, parseAsStringLiteral } from 'nuqs/server'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
-import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 import { SEPARATOR } from '~/utils/date-utils'
 
 // ? nuqsのparseAsIsoDateは無効値の場合に「2001年」を返すため、作成
@@ -33,9 +32,4 @@ export const dailyReportForMineSearchParamsCache = createSearchParamsCache(
 
 export const tabSearchParamsCache = createSearchParamsCache({
   tab: tabParser,
-})
-
-export const minePageSearchParamsCache = createSearchParamsCache({
-  ...dailyReportForMineSearchParamsParsers,
-  ...paginationSearchParamsParsers,
 })

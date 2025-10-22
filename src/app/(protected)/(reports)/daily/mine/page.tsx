@@ -13,11 +13,15 @@ import { MineTabContent } from '~/features/reports/mine/components/mine-tab-cont
 import { MineTabContentSkeleton } from '~/features/reports/mine/components/mine-tab-content-skeleton'
 import { MineTabs } from '~/features/reports/mine/components/mine-tabs'
 import { ProjectSummaryTable } from '~/features/reports/mine/components/project-summary-table'
-
 import { getProjectSummaryForMine, getReportsForMine } from '~/features/reports/mine/server/fetcher'
-import { minePageSearchParamsCache } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
+import {
+  dailyReportForMineSearchParamsCache,
+  tabSearchParamsCache,
+} from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
+import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+import { dateUtils } from '~/utils/date-utils'
 
 export default async function MyDailyPage({
   searchParams,
@@ -28,8 +32,19 @@ export default async function MyDailyPage({
     unauthorized()
   }
 
-  const minePageSearchParams = await minePageSearchParamsCache.parse(searchParams)
-  const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
+  const [{ tab }, { startDate, endDate }, { page, rowsPerPage }] = await Promise.all([
+    tabSearchParamsCache.parse(searchParams),
+    dailyReportForMineSearchParamsCache.parse(searchParams),
+    paginationSearchParamsCache.parse(searchParams),
+  ])
+
+  const keyParams = new URLSearchParams({
+    tab,
+    startDate: dateUtils.formatDateParamForUrl(startDate),
+    endDate: dateUtils.formatDateParamForUrl(endDate),
+    page: page.toString(),
+    rowsPerPage: rowsPerPage.toString(),
+  }).toString()
 
   const skip = page <= 1 ? 0 : (page - 1) * rowsPerPage
 
@@ -58,12 +73,8 @@ export default async function MyDailyPage({
       <MineTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT_MINE_TABS[0].id}>
           <Suspense
-            fallback={
-              <MineTabContentSkeleton
-                tab={DAILY_REPORT_MINE_TABS[0].id}
-                key={`date-${minePageSearchParams}`}
-              />
-            }
+            key={`date-${keyParams}`}
+            fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[0].id} />}
           >
             <MineTabContent>
               {getReportsForMine(
@@ -83,8 +94,8 @@ export default async function MyDailyPage({
 
         <TabPanel id={DAILY_REPORT_MINE_TABS[1].id}>
           <Suspense
+            key={`project-${keyParams}`}
             fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}
-            key={`project-${minePageSearchParams}`}
           >
             <MineTabContent>
               {getProjectSummaryForMine(
