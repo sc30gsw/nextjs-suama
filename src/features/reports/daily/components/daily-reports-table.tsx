@@ -21,7 +21,8 @@ const columnHelper = createColumnHelper<DailyReportUser>()
 
 type DailyReportsTableProps<T extends 'today' | 'mine'> = {
   reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
-} & (T extends 'today' ? { userId: DailyReportUser['id'] } : { userId?: never })
+  userId?: DailyReportUser['userId']
+}
 
 export function DailyReportsTable<T extends 'today' | 'mine'>({
   reports,
