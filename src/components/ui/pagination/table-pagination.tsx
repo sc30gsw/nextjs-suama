@@ -2,7 +2,7 @@
 
 import { useQueryStates } from 'nuqs'
 import { Pagination } from '~/components/ui/intent-ui/pagination'
-import { ELLIPSIS, FIRST_PAGE, FIRST_PAGE_INDEX, PAGE_INDEX_DIFF } from '~/constants/pagination'
+import { PAGINATION_CONFIG, PAGINATION_UI } from '~/constants/pagination'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 import { paginationUtils } from '~/utils/pagination-utils'
 
@@ -15,30 +15,32 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
     },
   )
 
-  const currentPageIndex = page <= FIRST_PAGE ? FIRST_PAGE_INDEX : page - PAGE_INDEX_DIFF
-  const lastPageIndex = pageCount - PAGE_INDEX_DIFF
+  const currentPageIndex =
+    page <= PAGINATION_CONFIG.FIRST_PAGE
+      ? PAGINATION_CONFIG.FIRST_PAGE_INDEX
+      : page - PAGINATION_CONFIG.PAGE_INDEX_DIFF
 
-  const isFirstPage = currentPageIndex === FIRST_PAGE_INDEX
+  const lastPageIndex = pageCount - PAGINATION_CONFIG.PAGE_INDEX_DIFF
+
+  const isFirstPage = currentPageIndex === PAGINATION_CONFIG.FIRST_PAGE_INDEX
   const isLastPage = currentPageIndex === lastPageIndex
 
   const pageNumbers = paginationUtils.createPageNumbers(currentPageIndex, pageCount)
-
-  const goToPage = (targetPage: number) => {
-    setPaginationParams({ page: targetPage, rowsPerPage })
-  }
 
   return (
     <Pagination>
       <Pagination.List>
         <Pagination.Item
           segment="first"
-          onAction={() => goToPage(FIRST_PAGE)}
+          onAction={() => setPaginationParams({ page: PAGINATION_CONFIG.FIRST_PAGE, rowsPerPage })}
           isDisabled={isFirstPage}
         />
 
         <Pagination.Item
           segment="previous"
-          onAction={() => goToPage(page - PAGE_INDEX_DIFF)}
+          onAction={() =>
+            setPaginationParams({ page: page - PAGINATION_CONFIG.PAGE_INDEX_DIFF, rowsPerPage })
+          }
           isDisabled={isFirstPage}
         />
 
@@ -55,17 +57,22 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
               return (
                 <Pagination.Item
                   key={item.id}
-                  onAction={() => goToPage(pageIndex + PAGE_INDEX_DIFF)}
+                  onAction={() =>
+                    setPaginationParams({
+                      page: pageIndex + PAGINATION_CONFIG.PAGE_INDEX_DIFF,
+                      rowsPerPage,
+                    })
+                  }
                   isCurrent={pageIndex === currentPageIndex}
                 >
-                  {pageIndex + PAGE_INDEX_DIFF}
+                  {pageIndex + PAGINATION_CONFIG.PAGE_INDEX_DIFF}
                 </Pagination.Item>
               )
             }
 
             return (
               <Pagination.Item key={item.id} isDisabled segment="ellipsis">
-                {ELLIPSIS}
+                {PAGINATION_UI.ELLIPSIS}
               </Pagination.Item>
             )
           }}
@@ -73,13 +80,15 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
 
         <Pagination.Item
           segment="next"
-          onAction={() => goToPage(page + PAGE_INDEX_DIFF)}
+          onAction={() =>
+            setPaginationParams({ page: page + PAGINATION_CONFIG.PAGE_INDEX_DIFF, rowsPerPage })
+          }
           isDisabled={isLastPage}
         />
 
         <Pagination.Item
           segment="last"
-          onAction={() => goToPage(pageCount)}
+          onAction={() => setPaginationParams({ page: pageCount, rowsPerPage })}
           isDisabled={isLastPage}
         />
       </Pagination.List>
