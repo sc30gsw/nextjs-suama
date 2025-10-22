@@ -6,6 +6,11 @@ import { cn } from '~/utils/classes'
 const SKELETON_ROW_COUNT = 5
 const PAGINATION_BUTTON_COUNT = 7
 const ACTION_BUTTON_COUNT = 3
+const PAGINATION_NAVIGATION_BUTTON_COUNT = 4
+
+const ICON_BUTTON_INDEX = 0
+const ICON_BUTTON_WIDTH = 'w-8'
+const TEXT_BUTTON_WIDTH = 'w-16'
 
 const DATE_TAB_ID = DAILY_REPORT_MINE_TABS[0].id
 
@@ -68,7 +73,7 @@ export function MineTabContentSkeleton({
                   <tr key={rowIndex} className="border-b last:border-b-0">
                     {widths.map((width, colIndex) => (
                       <td key={colIndex} className="px-4 py-4">
-                        <Skeleton className={`h-6 ${width}`} />
+                        <Skeleton className={cn('h-6', width)} />
                       </td>
                     ))}
 
@@ -76,7 +81,13 @@ export function MineTabContentSkeleton({
                       <td className="px-4 py-4">
                         <div className="flex gap-2">
                           {[...Array(ACTION_BUTTON_COUNT)].map((_, i) => (
-                            <Skeleton key={i} className={i === 0 ? 'h-8 w-8' : 'h-8 w-16'} />
+                            <Skeleton
+                              key={i}
+                              className={cn(
+                                'h-8',
+                                i === ICON_BUTTON_INDEX ? ICON_BUTTON_WIDTH : TEXT_BUTTON_WIDTH,
+                              )}
+                            />
                           ))}
                         </div>
                       </td>
@@ -90,9 +101,11 @@ export function MineTabContentSkeleton({
 
         <Card.Footer>
           <div className="flex w-full items-center justify-center gap-1">
-            {[...Array(PAGINATION_BUTTON_COUNT + 4)].map((_, i) => (
-              <Skeleton key={i} className="size-10" />
-            ))}
+            {[...Array(PAGINATION_BUTTON_COUNT + PAGINATION_NAVIGATION_BUTTON_COUNT)].map(
+              (_, i) => (
+                <Skeleton key={i} className="size-10" />
+              ),
+            )}
           </div>
         </Card.Footer>
       </Card>
