@@ -1,15 +1,20 @@
-export const PAGINATION_UI = {
-  ELLIPSIS: '...',
-} as const
-
-export const PAGINATION_CONFIG = {
-  FIRST_PAGE: 1,
-  FIRST_PAGE_INDEX: 0,
-  PAGE_INDEX_DIFF: 1,
-  MAX_VISIBLE_PAGE_NUMBERS: 7,
-  PAGES_AROUND_CURRENT: 1,
-  START_PATTERN_MAX_INDEX: 3,
-  END_PATTERN_MIN_OFFSET: 4,
-  START_SECTION_LAST_INDEX: 3,
-  END_SECTION_PAGE_COUNT: 5,
+export const PAGINATION = {
+  UI: {
+    ELLIPSIS: '...',
+  },
+  PAGE: {
+    FIRST: 1,
+    FIRST_INDEX: 0,
+    OFFSET: 1,
+  },
+  DISPLAY: {
+    MAX_PAGES: 7,
+    SIBLINGS: 1,
+  },
+  LAYOUT: {
+    START_MAX_INDEX: 3,
+    START_COUNT: 4,
+    END_MIN_OFFSET: 4,
+    END_COUNT: 5,
+  },
 } as const

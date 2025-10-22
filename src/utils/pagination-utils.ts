@@ -1,4 +1,4 @@
-import { PAGINATION_CONFIG, PAGINATION_UI } from '~/constants/pagination'
+import { PAGINATION } from '~/constants/pagination'
 
 const PAGE_PATTERN = {
   START: 'START',
@@ -7,7 +7,7 @@ const PAGE_PATTERN = {
 } as const
 
 function addPagesToArray(
-  pages: (number | typeof PAGINATION_UI.ELLIPSIS)[],
+  pages: (number | typeof PAGINATION.UI.ELLIPSIS)[],
   start: number,
   end: number,
 ) {
@@ -17,11 +17,11 @@ function addPagesToArray(
 }
 
 function getPagePattern(currentPageIndex: number, totalPages: number) {
-  if (currentPageIndex <= PAGINATION_CONFIG.START_PATTERN_MAX_INDEX) {
+  if (currentPageIndex <= PAGINATION.LAYOUT.START_MAX_INDEX) {
     return PAGE_PATTERN.START
   }
 
-  if (currentPageIndex >= totalPages - PAGINATION_CONFIG.END_PATTERN_MIN_OFFSET) {
+  if (currentPageIndex >= totalPages - PAGINATION.LAYOUT.END_MIN_OFFSET) {
     return PAGE_PATTERN.END
   }
 
@@ -30,41 +30,37 @@ function getPagePattern(currentPageIndex: number, totalPages: number) {
 
 export const paginationUtils = {
   createPageNumbers: (currentPageIndex: number, totalPages: number) => {
-    if (totalPages <= PAGINATION_CONFIG.MAX_VISIBLE_PAGE_NUMBERS) {
+    if (totalPages <= PAGINATION.DISPLAY.MAX_PAGES) {
       return Array.from({ length: totalPages }, (_, i) => i)
     }
 
-    const lastPageIndex = totalPages - PAGINATION_CONFIG.PAGE_INDEX_DIFF
+    const lastPageIndex = totalPages - PAGINATION.PAGE.OFFSET
 
-    const pages: (number | typeof PAGINATION_UI.ELLIPSIS)[] = []
+    const pages: (number | typeof PAGINATION.UI.ELLIPSIS)[] = []
 
     const pattern = getPagePattern(currentPageIndex, totalPages)
 
     switch (pattern) {
       case PAGE_PATTERN.START:
-        addPagesToArray(
-          pages,
-          PAGINATION_CONFIG.FIRST_PAGE_INDEX,
-          PAGINATION_CONFIG.START_SECTION_LAST_INDEX,
-        )
-        pages.push(PAGINATION_UI.ELLIPSIS, lastPageIndex)
+        addPagesToArray(pages, PAGINATION.PAGE.FIRST_INDEX, PAGINATION.LAYOUT.START_COUNT - 1)
+        pages.push(PAGINATION.UI.ELLIPSIS, lastPageIndex)
 
         break
 
       case PAGE_PATTERN.MIDDLE:
-        pages.push(PAGINATION_CONFIG.FIRST_PAGE_INDEX, PAGINATION_UI.ELLIPSIS)
+        pages.push(PAGINATION.PAGE.FIRST_INDEX, PAGINATION.UI.ELLIPSIS)
         addPagesToArray(
           pages,
-          currentPageIndex - PAGINATION_CONFIG.PAGES_AROUND_CURRENT,
-          currentPageIndex + PAGINATION_CONFIG.PAGES_AROUND_CURRENT,
+          currentPageIndex - PAGINATION.DISPLAY.SIBLINGS,
+          currentPageIndex + PAGINATION.DISPLAY.SIBLINGS,
         )
-        pages.push(PAGINATION_UI.ELLIPSIS, lastPageIndex)
+        pages.push(PAGINATION.UI.ELLIPSIS, lastPageIndex)
 
         break
 
       case PAGE_PATTERN.END:
-        pages.push(PAGINATION_CONFIG.FIRST_PAGE_INDEX, PAGINATION_UI.ELLIPSIS)
-        addPagesToArray(pages, totalPages - PAGINATION_CONFIG.END_SECTION_PAGE_COUNT, lastPageIndex)
+        pages.push(PAGINATION.PAGE.FIRST_INDEX, PAGINATION.UI.ELLIPSIS)
+        addPagesToArray(pages, totalPages - PAGINATION.LAYOUT.END_COUNT, lastPageIndex)
 
         break
     }
