@@ -13,15 +13,11 @@ import { MineTabContent } from '~/features/reports/mine/components/mine-tab-cont
 import { MineTabContentSkeleton } from '~/features/reports/mine/components/mine-tab-content-skeleton'
 import { MineTabs } from '~/features/reports/mine/components/mine-tabs'
 import { ProjectSummaryTable } from '~/features/reports/mine/components/project-summary-table'
+
 import { getProjectSummaryForMine, getReportsForMine } from '~/features/reports/mine/server/fetcher'
-import {
-  dailyReportForMineSearchParamsCache,
-  tabSearchParamsCache,
-} from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
+import { minePageSearchParamsCache } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
-import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
-import { dateUtils } from '~/utils/date-utils'
 
 export default async function MyDailyPage({
   searchParams,
@@ -32,19 +28,8 @@ export default async function MyDailyPage({
     unauthorized()
   }
 
-  const [{ tab }, { startDate, endDate }, { page, rowsPerPage }] = await Promise.all([
-    tabSearchParamsCache.parse(searchParams),
-    dailyReportForMineSearchParamsCache.parse(searchParams),
-    paginationSearchParamsCache.parse(searchParams),
-  ])
-
-  const keyParams = new URLSearchParams({
-    tab,
-    startDate: dateUtils.formatDateParamForUrl(startDate),
-    endDate: dateUtils.formatDateParamForUrl(endDate),
-    page: page.toString(),
-    rowsPerPage: rowsPerPage.toString(),
-  }).toString()
+  const minePageSearchParams = await minePageSearchParamsCache.parse(searchParams)
+  const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
 
   const skip = page <= 1 ? 0 : (page - 1) * rowsPerPage
 
@@ -71,8 +56,15 @@ export default async function MyDailyPage({
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
       https://github.com/vercel/next.js/issues/84489 */}
       <MineTabs currentTab={tab}>
-        <TabPanel id={DAILY_REPORT_MINE_TABS[0].id} key={`date-${keyParams}`}>
-          <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[0].id} />}>
+        <TabPanel id={DAILY_REPORT_MINE_TABS[0].id}>
+          <Suspense
+            fallback={
+              <MineTabContentSkeleton
+                tab={DAILY_REPORT_MINE_TABS[0].id}
+                key={`date-${minePageSearchParams}`}
+              />
+            }
+          >
             <MineTabContent>
               {getReportsForMine(
                 {
@@ -89,8 +81,11 @@ export default async function MyDailyPage({
           </Suspense>
         </TabPanel>
 
-        <TabPanel id={DAILY_REPORT_MINE_TABS[1].id} key={`project-${keyParams}`}>
-          <Suspense fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}>
+        <TabPanel id={DAILY_REPORT_MINE_TABS[1].id}>
+          <Suspense
+            fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}
+            key={`project-${minePageSearchParams}`}
+          >
             <MineTabContent>
               {getProjectSummaryForMine(
                 {

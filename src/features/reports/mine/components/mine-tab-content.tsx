@@ -32,7 +32,7 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
   const total =
     tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dailyReportsCount : countData.projectsCount
 
-  const grandTotalHour = countData.totalHours
+  const totalHour = countData.totalHours
 
   const pageCount = Math.ceil(total / rowsPerPage)
 
@@ -56,7 +56,7 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
         <p className="text-sm">
           全 {total} 件の{tab === DAILY_REPORT_MINE_TABS[0].id ? '日報' : 'プロジェクト'}
         </p>
-        <div className="font-bold text-lg">総合計時間: {grandTotalHour} 時間</div>
+        <div className="font-bold text-lg">総合計時間: {totalHour} 時間</div>
       </div>
 
       <Card className="max-w-full border-t-0 pt-0">
