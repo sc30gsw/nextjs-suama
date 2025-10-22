@@ -13,7 +13,6 @@ import { MineTabContent } from '~/features/reports/mine/components/mine-tab-cont
 import { MineTabContentSkeleton } from '~/features/reports/mine/components/mine-tab-content-skeleton'
 import { MineTabs } from '~/features/reports/mine/components/mine-tabs'
 import { ProjectSummaryTable } from '~/features/reports/mine/components/project-summary-table'
-
 import { getProjectSummaryForMine, getReportsForMine } from '~/features/reports/mine/server/fetcher'
 import {
   dailyReportForMineSearchParamsCache,

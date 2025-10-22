@@ -2,7 +2,7 @@
 
 import { useQueryStates } from 'nuqs'
 import { Pagination } from '~/components/ui/intent-ui/pagination'
-import { FIRST_PAGE, FIRST_PAGE_INDEX, PAGE_INDEX_DIFF } from '~/constants/pagination'
+import { ELLIPSIS, FIRST_PAGE, FIRST_PAGE_INDEX, PAGE_INDEX_DIFF } from '~/constants/pagination'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 import { paginationUtils } from '~/utils/pagination-utils'
 
@@ -65,7 +65,7 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
 
             return (
               <Pagination.Item key={item.id} isDisabled segment="ellipsis">
-                …
+                {ELLIPSIS}
               </Pagination.Item>
             )
           }}
