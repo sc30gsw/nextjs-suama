@@ -17,11 +17,11 @@ function addPagesToArray(
 }
 
 function getPagePattern(currentPageIndex: number, totalPages: number) {
-  if (currentPageIndex <= PAGINATION_CONFIG.NEAR_START_MAX_INDEX) {
+  if (currentPageIndex <= PAGINATION_CONFIG.START_PATTERN_MAX_INDEX) {
     return PAGE_PATTERN.START
   }
 
-  if (currentPageIndex >= totalPages - PAGINATION_CONFIG.NEAR_END_MIN_OFFSET) {
+  if (currentPageIndex >= totalPages - PAGINATION_CONFIG.END_PATTERN_MIN_OFFSET) {
     return PAGE_PATTERN.END
   }
 
@@ -45,7 +45,7 @@ export const paginationUtils = {
         addPagesToArray(
           pages,
           PAGINATION_CONFIG.FIRST_PAGE_INDEX,
-          PAGINATION_CONFIG.START_SECTION_END_OFFSET,
+          PAGINATION_CONFIG.START_SECTION_LAST_INDEX,
         )
         pages.push(PAGINATION_UI.ELLIPSIS, lastPageIndex)
 
@@ -64,11 +64,7 @@ export const paginationUtils = {
 
       case PAGE_PATTERN.END:
         pages.push(PAGINATION_CONFIG.FIRST_PAGE_INDEX, PAGINATION_UI.ELLIPSIS)
-        addPagesToArray(
-          pages,
-          totalPages - PAGINATION_CONFIG.END_SECTION_START_OFFSET,
-          lastPageIndex,
-        )
+        addPagesToArray(pages, totalPages - PAGINATION_CONFIG.END_SECTION_PAGE_COUNT, lastPageIndex)
 
         break
     }
