@@ -18,7 +18,6 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
   }
 
   const { tab, startDate, endDate } = dailyReportForMineSearchParamsCache.all()
-  const { page, rowsPerPage } = paginationSearchParamsCache.all()
 
   const countData = await getDailyReportsCount(
     {
@@ -28,6 +27,8 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
     },
     session.user.id,
   )
+
+  const { page, rowsPerPage } = paginationSearchParamsCache.all()
 
   const total =
     tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dailyReportsCount : countData.projectsCount
