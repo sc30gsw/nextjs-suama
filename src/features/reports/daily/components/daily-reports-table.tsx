@@ -63,6 +63,7 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
       cell: ({ row }) => {
         const report = row.original
 
+        // ?: mine ページの場合、論理演算子の判定だと、編集・削除ボタンも非表示になるため、三項演算子で判定する。
         const isCurrentUser = userId ? report.userId === userId : true
 
         return (
