@@ -1,7 +1,6 @@
 'use server'
 
 import type { SubmissionResult } from '@conform-to/react'
-import { format } from 'date-fns'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import {
@@ -18,7 +17,7 @@ import {
   type CommonDeleteIdSchema,
   commonDeleteIdSchema,
 } from '~/types/schemas/common-delete-id-schema'
-import { DATE_FORMAT } from '~/utils/date-utils'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
   const parseResult = commonDeleteIdSchema.safeParse({ id })
@@ -65,9 +64,8 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
 
     // キャッシュを再検証
     if (existingReport.reportDate) {
-      revalidateTag(
-        `${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(existingReport.reportDate, DATE_FORMAT)}`,
-      )
+      const reportDateJST = dateUtils.formatDateByJST(existingReport.reportDate, DATE_FORMAT)
+      revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${reportDateJST}`)
     }
 
     revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
