@@ -1,32 +1,28 @@
 'use client'
 
-import { type ComponentProps, type HTMLAttributes, type Ref, useEffect, useRef } from 'react'
-
 import { IconX } from '@intentui/icons'
-import type { HeadingProps } from 'react-aria-components'
+import { useEffect, useRef } from 'react'
+import type { HeadingProps, TextProps } from 'react-aria-components'
 import {
   Button as ButtonPrimitive,
   Dialog as DialogPrimitive,
   Heading,
   Text,
 } from 'react-aria-components'
-
-import { twJoin, twMerge } from 'tailwind-merge'
-import { Button, type ButtonProps } from '~/components/ui/intent-ui//button'
-import { useMediaQuery } from '~/hooks/use-media-query'
-import { composeTailwindRenderProps } from '~/lib/primitive'
-// import { composeTailwindRenderProps } from '~/lib/primitive'
+import { twMerge } from 'tailwind-merge'
+import { Button, type ButtonProps } from '~/components/ui/intent-ui/button'
+import { cx } from '~/lib/primitive'
 
 const Dialog = ({
   role = 'dialog',
   className,
   ...props
-}: ComponentProps<typeof DialogPrimitive>) => {
+}: React.ComponentProps<typeof DialogPrimitive>) => {
   return (
     <DialogPrimitive
       role={role}
       className={twMerge(
-        'peer/dialog group/dialog relative flex max-h-[inherit] flex-col overflow-hidden outline-hidden [scrollbar-width:thin] [&::-webkit-scrollbar]:size-0.5',
+        'peer/dialog group/dialog relative flex max-h-[inherit] flex-col overflow-hidden outline-hidden [--gutter:--spacing(6)] sm:[--gutter:--spacing(8)]',
         className,
       )}
       {...props}
@@ -34,11 +30,11 @@ const Dialog = ({
   )
 }
 
-const DialogTrigger = (props: ComponentProps<typeof ButtonPrimitive>) => (
+const DialogTrigger = (props: React.ComponentProps<typeof ButtonPrimitive>) => (
   <ButtonPrimitive {...props} />
 )
 
-type DialogHeaderProps = HTMLAttributes<HTMLDivElement> & {
+interface DialogHeaderProps extends Omit<React.ComponentProps<'div'>, 'title'> {
   title?: string
   description?: string
 }
@@ -70,7 +66,7 @@ const DialogHeader = ({ className, ...props }: DialogHeaderProps) => {
       data-slot="dialog-header"
       ref={headerRef}
       className={twMerge(
-        'relative flex flex-col gap-0.5 p-4 sm:gap-1 sm:p-6 [&[data-slot=dialog-header]:has(+[data-slot=dialog-footer])]:pb-0',
+        'relative space-y-1 p-(--gutter) pb-[calc(var(--gutter)---spacing(3))]',
         className,
       )}
     >
@@ -85,53 +81,47 @@ const DialogHeader = ({ className, ...props }: DialogHeaderProps) => {
   )
 }
 
-interface DialogTitleProps extends Omit<HeadingProps, 'level'> {
-  level?: 1 | 2 | 3 | 4
-  ref?: Ref<HTMLHeadingElement>
+interface DialogTitleProps extends HeadingProps {
+  ref?: React.Ref<HTMLHeadingElement>
 }
-const DialogTitle = ({ level = 2, className, ref, ...props }: DialogTitleProps) => (
+const DialogTitle = ({ className, ref, ...props }: DialogTitleProps) => (
   <Heading
     slot="title"
-    level={level}
     ref={ref}
-    className={twMerge(
-      twJoin(
-        'flex flex-1 items-center text-fg',
-        level === 1 && 'font-semibold text-lg sm:text-xl',
-        level === 2 && 'font-semibold text-lg sm:text-xl',
-        level === 3 && 'font-semibold text-base sm:text-lg',
-        level === 4 && 'font-semibold text-base',
-      ),
-      className,
-    )}
+    className={twMerge('text-balance font-semibold text-fg text-lg/6 sm:text-base/6', className)}
     {...props}
   />
 )
 
-type DialogDescriptionProps = ComponentProps<'div'>
+interface DialogDescriptionProps extends TextProps {
+  ref?: React.Ref<HTMLDivElement>
+}
 const DialogDescription = ({ className, ref, ...props }: DialogDescriptionProps) => (
   <Text
     slot="description"
-    className={twMerge('text-muted-fg text-sm', className)}
+    className={twMerge(
+      'text-pretty text-base/6 text-muted-fg group-disabled:opacity-50 sm:text-sm/6',
+      className,
+    )}
     ref={ref}
     {...props}
   />
 )
 
-type DialogBodyProps = ComponentProps<'div'>
+interface DialogBodyProps extends React.ComponentProps<'div'> {}
 const DialogBody = ({ className, ref, ...props }: DialogBodyProps) => (
   <div
     data-slot="dialog-body"
     ref={ref}
     className={twMerge(
-      'isolate flex max-h-[calc(var(--visual-viewport-height)-var(--visual-viewport-vertical-padding)-var(--dialog-header-height,0px)-var(--dialog-footer-height,0px))] flex-1 flex-col overflow-auto px-4 py-1 sm:px-6',
+      'flex max-h-[calc(var(--visual-viewport-height)-var(--visual-viewport-vertical-padding)-var(--dialog-header-height,0px)-var(--dialog-footer-height,0px))] flex-1 flex-col overflow-auto px-(--gutter) py-1',
       className,
     )}
     {...props}
   />
 )
 
-type DialogFooterProps = ComponentProps<'div'>
+interface DialogFooterProps extends React.ComponentProps<'div'> {}
 const DialogFooter = ({ className, ...props }: DialogFooterProps) => {
   const footerRef = useRef<HTMLDivElement>(null)
 
@@ -161,7 +151,7 @@ const DialogFooter = ({ className, ...props }: DialogFooterProps) => {
       ref={footerRef}
       data-slot="dialog-footer"
       className={twMerge(
-        'isolate mt-auto flex flex-col-reverse justify-between gap-3 p-4 pt-3 sm:flex-row sm:p-6 sm:pt-5',
+        'mt-auto flex flex-col-reverse justify-between gap-3 p-(--gutter) pt-[calc(var(--gutter)---spacing(3))] group-not-has-data-[slot=dialog-body]/dialog:pt-0 group-not-has-data-[slot=dialog-body]/popover:pt-0 sm:flex-row',
         className,
       )}
       {...props}
@@ -179,23 +169,13 @@ interface CloseButtonIndicatorProps extends Omit<ButtonProps, 'children'> {
 }
 
 const DialogCloseIcon = ({ className, ...props }: CloseButtonIndicatorProps) => {
-  const isMobile = useMediaQuery('(max-width: 600px)')
-  const buttonRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    if (isMobile && buttonRef.current) {
-      buttonRef.current.focus()
-    }
-  }, [isMobile])
   return props.isDismissable ? (
     <ButtonPrimitive
-      ref={buttonRef}
-      {...(isMobile ? { autoFocus: true } : {})}
       aria-label="Close"
       slot="close"
-      className={composeTailwindRenderProps(
-        className,
+      className={cx(
         'close absolute top-1 right-1 z-50 grid size-8 place-content-center rounded-xl hover:bg-secondary focus:bg-secondary focus:outline-hidden focus-visible:ring-1 focus-visible:ring-primary sm:top-2 sm:right-2 sm:size-7 sm:rounded-md',
+        className,
       )}
     >
       <IconX className="size-4" />
@@ -203,22 +183,22 @@ const DialogCloseIcon = ({ className, ...props }: CloseButtonIndicatorProps) => 
   ) : null
 }
 
-export type {
-  DialogHeaderProps,
-  DialogTitleProps,
-  DialogBodyProps,
-  DialogFooterProps,
-  DialogDescriptionProps,
-  CloseButtonIndicatorProps,
-}
 export {
   Dialog,
+  DialogBody,
   DialogClose,
-  DialogTrigger,
+  DialogCloseIcon,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogBody,
-  DialogFooter,
-  DialogCloseIcon,
+  DialogTrigger,
+}
+export type {
+  CloseButtonIndicatorProps,
+  DialogBodyProps,
+  DialogDescriptionProps,
+  DialogFooterProps,
+  DialogHeaderProps,
+  DialogTitleProps,
 }

@@ -1,71 +1,51 @@
 'use client'
-import { IconChevronLgDown } from '@intentui/icons'
-import type { ComponentProps, ReactNode } from 'react'
+import { IconChevronsY } from '@intentui/icons'
 import type {
   ListBoxProps,
   PopoverProps,
   SelectProps as SelectPrimitiveProps,
-  ValidationResult,
 } from 'react-aria-components'
+import { Button, ListBox, Select as SelectPrimitive, SelectValue } from 'react-aria-components'
+import { twJoin } from 'tailwind-merge'
 import {
-  Button,
-  Select as SelectPrimitive,
-  SelectValue,
-  composeRenderProps,
-} from 'react-aria-components'
-import { tv } from 'tailwind-variants'
-import {
+  DropdownDescription,
   DropdownItem,
-  DropdownItemDetails,
   DropdownLabel,
   DropdownSection,
   DropdownSeparator,
 } from '~/components/ui/intent-ui/dropdown'
+import type { FieldProps } from '~/components/ui/intent-ui/field'
 import { Description, FieldError, Label } from '~/components/ui/intent-ui/field'
-import { ListBox } from '~/components/ui/intent-ui/list-box'
-import { PopoverContent, type PopoverContentProps } from '~/components/ui/intent-ui/popover'
-import { composeTailwindRenderProps, focusStyles } from '~/lib/primitive'
+import { PopoverContent } from '~/components/ui/intent-ui/popover'
+import { cx } from '~/lib/primitive'
 
-const selectTriggerStyles = tv({
-  extend: focusStyles,
-  base: [
-    'btr flex h-10 w-full cursor-default items-center gap-4 gap-x-2 rounded-lg border border-input py-2 pr-2 pl-3 text-start shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] transition group-disabled:opacity-50 **:data-[slot=icon]:size-4 dark:shadow-none',
-    'group-data-open:border-ring/70 group-data-open:ring-4 group-data-open:ring-ring/20',
-    'text-fg group-invalid:border-danger group-invalid:ring-danger/20 forced-colors:group-invalid:border-[Mark]',
-  ],
-  variants: {
-    isDisabled: {
-      true: 'opacity-50 forced-colors:border-[GrayText] forced-colors:text-[GrayText]',
-    },
-  },
-})
-
-interface SelectProps<T extends object> extends SelectPrimitiveProps<T> {
-  label?: string
-  description?: string
-  errorMessage?: string | ((validation: ValidationResult) => string)
-  items?: Iterable<T>
-  className?: string
-  labelClassName?: string
+interface SelectProps<T extends object, M extends 'single' | 'multiple' = 'single'>
+  extends SelectPrimitiveProps<T, M>,
+    FieldProps {
+  items?: Iterable<T, M>
 }
 
-const Select = <T extends object>({
+const Select = <T extends object, M extends 'single' | 'multiple' = 'single'>({
   label,
+  children,
   description,
   errorMessage,
   className,
-  labelClassName,
   ...props
-}: SelectProps<T>) => {
+}: SelectProps<T, M>) => {
   return (
     <SelectPrimitive
+      data-slot="select"
       {...props}
-      className={composeTailwindRenderProps(className, 'group flex w-full flex-col gap-y-1.5')}
+      className={cx(
+        'group/select flex w-full flex-col gap-y-1 *:data-[slot=label]:font-medium',
+        className,
+      )}
     >
       {(values) => (
         <>
-          {label && <Label className={labelClassName}>{label}</Label>}
-          {typeof props.children === 'function' ? props.children(values) : props.children}
+          {label && <Label>{label}</Label>}
+          {typeof children === 'function' ? children(values) : children}
           {description && <Description>{description}</Description>}
           <FieldError>{errorMessage}</FieldError>
         </>
@@ -74,64 +54,80 @@ const Select = <T extends object>({
   )
 }
 
-interface SelectListProps<T extends object>
-  extends Omit<ListBoxProps<T>, 'layout' | 'orientation'>,
-    Pick<PopoverProps, 'placement'> {
+interface SelectContentProps<T extends object>
+  extends Omit<ListBoxProps<T>, 'layout' | 'orientation'> {
   items?: Iterable<T>
-  popoverClassName?: PopoverContentProps['className']
+  popover?: Omit<PopoverProps, 'children'>
 }
 
-const SelectList = <T extends object>({
-  children,
+const SelectContent = <T extends object>({
   items,
   className,
-  popoverClassName,
+  popover,
   ...props
-}: SelectListProps<T>) => {
+}: SelectContentProps<T>) => {
   return (
     <PopoverContent
-      showArrow={false}
-      respectScreen={false}
-      className={popoverClassName}
-      placement={props.placement}
+      className={cx(
+        'min-w-(--trigger-width) scroll-py-1 overflow-y-auto overscroll-contain',
+        popover?.className,
+      )}
+      {...popover}
     >
       <ListBox
         layout="stack"
         orientation="vertical"
-        className={composeTailwindRenderProps(className, 'max-h-[inherit] border-0 shadow-none')}
+        className={cx(
+          "grid max-h-96 w-full grid-cols-[auto_1fr] flex-col gap-y-1 p-1 outline-hidden *:[[role='group']+[role=group]]:mt-4 *:[[role='group']+[role=separator]]:mt-1",
+          className,
+        )}
         items={items}
         {...props}
-      >
-        {children}
-      </ListBox>
+      />
     </PopoverContent>
   )
 }
 
-interface SelectTriggerProps extends ComponentProps<typeof Button> {
-  prefix?: ReactNode
+interface SelectTriggerProps extends React.ComponentProps<typeof Button> {
+  prefix?: React.ReactNode
   className?: string
 }
 
-const SelectTrigger = ({ className, ...props }: SelectTriggerProps) => {
+const SelectTrigger = ({ children, className, ...props }: SelectTriggerProps) => {
   return (
     <Button
-      className={composeRenderProps(className, (className, renderProps) =>
-        selectTriggerStyles({
-          ...renderProps,
-          className,
-        }),
+      className={cx(
+        'inset-ring inset-ring-input flex w-full min-w-0 cursor-default items-center gap-x-2 rounded-lg px-3.5 py-2 text-start text-fg shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] outline-hidden transition duration-200 sm:py-1.5 sm:pr-2 sm:pl-3 sm:text-sm/6 sm:*:text-sm/6 dark:shadow-none',
+        'group-open/select:inset-ring-ring/70 group-open/select:ring-3 group-open/select:ring-ring/20',
+        className,
       )}
     >
-      {props.prefix && <span className="-mr-1">{props.prefix}</span>}
-      <SelectValue
-        data-slot="select-value"
-        className="*:data-[slot=icon]:-mx-0.5 *:data-[slot=avatar]:-mx-0.5 *:data-[slot=avatar]:*:-mx-0.5 grid flex-1 grid-cols-[auto_1fr] items-center text-base data-placeholder:text-muted-fg *:data-[slot=avatar]:*:mr-2 *:data-[slot=avatar]:mr-2 *:data-[slot=icon]:mr-2 sm:text-sm [&_[slot=description]]:hidden"
-      />
-      <IconChevronLgDown
-        aria-hidden={true}
-        className="size-4 shrink-0 text-muted-fg duration-300 group-disabled:opacity-50 group-data-open:rotate-180 group-data-open:text-fg forced-colors:text-[ButtonText] forced-colors:group-disabled:text-[GrayText]"
-      />
+      {(values) => (
+        <>
+          {props.prefix && <span className="text-muted-fg">{props.prefix}</span>}
+          {typeof children === 'function' ? children(values) : children}
+
+          {!children && (
+            <>
+              <SelectValue
+                data-slot="select-value"
+                className={twJoin([
+                  'has-data-[slot=avatar]:grid has-data-[slot=avatar]:grid-cols-[1fr_auto]',
+                  'has-data-[slot=icon]:grid has-data-[slot=icon]:grid-cols-[1fr_auto]',
+                  'truncate text-start data-placeholder:text-muted-fg sm:text-sm/6 [&_[slot=description]]:hidden',
+                  'has-data-[slot=avatar]:gap-x-2 has-data-[slot=icon]:gap-x-2',
+                  'items-center *:data-[slot=icon]:size-4.5 sm:*:data-[slot=icon]:size-4',
+                  '*:data-[slot=avatar]:*:size-5 *:data-[slot=avatar]:size-5 sm:*:data-[slot=avatar]:*:size-4.5 sm:*:data-[slot=avatar]:size-4.5',
+                ])}
+              />
+              <IconChevronsY
+                data-slot="chevron"
+                className="-mr-1 ml-auto shrink-0 text-muted-fg group-open/select:text-fg group-disabled/select:opacity-50 sm:mr-0"
+              />
+            </>
+          )}
+        </>
+      )}
     </Button>
   )
 }
@@ -139,16 +135,25 @@ const SelectTrigger = ({ className, ...props }: SelectTriggerProps) => {
 const SelectSection = DropdownSection
 const SelectSeparator = DropdownSeparator
 const SelectLabel = DropdownLabel
-const SelectOptionDetails = DropdownItemDetails
-const SelectOption = DropdownItem
+const SelectDescription = DropdownDescription
+const SelectItem = DropdownItem
 
-Select.OptionDetails = SelectOptionDetails
-Select.Option = SelectOption
+Select.Description = SelectDescription
+Select.Item = SelectItem
 Select.Label = SelectLabel
 Select.Separator = SelectSeparator
 Select.Section = SelectSection
 Select.Trigger = SelectTrigger
-Select.List = SelectList
+Select.Content = SelectContent
 
-export { Select }
+export {
+  Select,
+  SelectContent,
+  SelectDescription,
+  SelectItem,
+  SelectLabel,
+  SelectSection,
+  SelectSeparator,
+  SelectTrigger,
+}
 export type { SelectProps, SelectTriggerProps }

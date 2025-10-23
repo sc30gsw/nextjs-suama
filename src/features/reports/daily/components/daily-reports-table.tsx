@@ -1,6 +1,6 @@
 'use client'
 
-import { IconDocumentEdit, IconFileText } from '@intentui/icons'
+import { IconDocumentEdit } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -9,27 +9,32 @@ import {
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
-import { useQueryStates } from 'nuqs'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
 import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
-import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
-type DailyReportUser = InferResponseType<typeof client.api.dailies.today.$get, 200>['users'][number]
+type DailyUserReports = InferResponseType<
+  typeof client.api.dailies.today.$get,
+  200
+>['userReports'][number]
 
-const columnHelper = createColumnHelper<DailyReportUser>()
+type DailyMyReports = InferResponseType<
+  typeof client.api.dailies.mine.$get,
+  200
+>['myReports'][number]
 
-type DailyReportsTableProps<T extends 'today' | 'mine'> = {
-  reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
-  userId: DailyReportUser['id']
+type DailyReport = DailyUserReports | DailyMyReports
+
+const columnHelper = createColumnHelper<DailyReport>()
+
+type DailyReportsTableProps = {
+  reports: DailyReport[]
+  userId?: DailyUserReports['userId']
 }
 
-export function DailyReportsTable<T extends 'today' | 'mine'>({
-  reports,
-  userId,
-}: DailyReportsTableProps<T>) {
+export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
   const COLUMNS = [
     columnHelper.accessor('date', {
       header: '日付',
@@ -64,21 +69,18 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
       header: '操作',
       cell: ({ row }) => {
         const report = row.original
-        const isCurrentUser = report.userId === userId
+
+        // ?: mine ページの場合、論理演算子の判定だと、編集・削除ボタンも非表示になるため、三項演算子で判定する。
+        const isCurrentUser = userId ? report.userId === userId : true
 
         return (
           <div className="flex items-center gap-2">
-            <DailyReportWorkContentPopover contents={report.workContents}>
-              <Button size="small">
-                職務内容
-                <IconFileText />
-              </Button>
-            </DailyReportWorkContentPopover>
+            <DailyReportWorkContentPopover contents={report.workContents} />
 
             {isCurrentUser && (
               <div className="flex gap-2">
                 <Link href={`/daily/edit/${report.id}`}>
-                  <Button intent="outline" size="small">
+                  <Button intent="outline" size="sm">
                     修正
                     <IconDocumentEdit />
                   </Button>
@@ -93,19 +95,10 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
     }),
   ]
 
-  const initialData: DailyReportUser[] = reports.users
-
-  const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
-    history: 'push',
-    shallow: false,
-  })
-
   const table = useReactTable({
-    data: initialData,
+    data: reports,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
-    pageCount: Math.ceil(reports.total / rowsPerPage),
   })
 
   return (

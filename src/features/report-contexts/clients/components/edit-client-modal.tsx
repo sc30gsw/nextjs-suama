@@ -103,7 +103,7 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
 
   return (
     <Modal>
-      <Button size="small" onPress={toggle}>
+      <Button size="sm" onPress={toggle}>
         編集
         <IconDocumentEdit />
       </Button>

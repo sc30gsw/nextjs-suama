@@ -1,14 +1,13 @@
-import type { InferSelectModel } from 'drizzle-orm'
+import type { Session } from 'better-auth'
 import type { InferResponseType } from 'hono'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_CLIENTS_CACHE_KEY } from '~/constants/cache-keys'
-import type { users } from '~/db/schema'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
 export async function getClients(
-  userId: InferSelectModel<typeof users>['id'],
+  userId: Session['userId'],
   params?: { skip: number; limit: number; names: string[] },
 ) {
   'use cache'

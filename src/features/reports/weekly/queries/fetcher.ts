@@ -1,3 +1,4 @@
+import type { Session } from 'better-auth'
 import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
 import { WEEKLY_REPORTS_LIMIT } from '~/constants'
@@ -10,7 +11,7 @@ import { client } from '~/lib/rpc'
 type ResType = InferResponseType<typeof client.api.weeklies.$get, 200>
 
 export async function getWeeklyReports(
-  userId: InferSelectModel<typeof users>['id'],
+  userId: Session['userId'],
   params: Record<'year' | 'week', number>,
   offset: number,
 ) {
@@ -41,11 +42,8 @@ export const fetchWeeklyReportsInfiniteQuery = createInfiniteQueryFactory<
     params,
     userId,
   ],
-  (
-    offset: number,
-    params: Record<'year' | 'week', number>,
-    userId: InferSelectModel<typeof users>['id'],
-  ) => getWeeklyReports(userId, params, offset),
+  (offset: number, params: Record<'year' | 'week', number>, userId: Session['userId']) =>
+    getWeeklyReports(userId, params, offset),
   (lastPage, allPages) => {
     return lastPage.reports.length === WEEKLY_REPORTS_LIMIT
       ? allPages.length * WEEKLY_REPORTS_LIMIT

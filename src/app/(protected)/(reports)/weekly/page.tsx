@@ -37,7 +37,7 @@ export default async function WeeklyPage({ searchParams }: NextPageProps<undefin
           <div key={week.weekNumber}>
             <WeekRangeCalendar startDay={week.startDay} endDay={week.endDay} />
             <div className="flex items-center justify-end">
-              <Button size="extra-small" className="mt-2">
+              <Button size="xs" className="mt-2">
                 <Link
                   href={`/weekly/list/${format(week.startDay, DATE_FORMAT, { locale: ja })}-${format(week.endDay, DATE_FORMAT, { locale: ja })}`}
                   prefetch={false}

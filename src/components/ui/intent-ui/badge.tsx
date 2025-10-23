@@ -1,7 +1,7 @@
 'use client'
 
 import type { HTMLAttributes, ReactNode } from 'react'
-import { type VariantProps, tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 
 const badgeIntents = {
   primary: [
@@ -50,5 +50,5 @@ const Badge = ({ children, intent, shape, className, ...props }: BadgeProps) => 
   )
 }
 
+export { Badge, badgeIntents, badgeShapes, badgeStyles }
 export type { BadgeProps }
-export { Badge, badgeIntents, badgeStyles, badgeShapes }

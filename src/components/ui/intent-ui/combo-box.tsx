@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
-
 import { IconChevronLgDown, IconX } from '@intentui/icons'
+import React from 'react'
 import type {
   ComboBoxProps as ComboboxPrimitiveProps,
   InputProps,
@@ -68,7 +67,6 @@ const ComboBoxList = <T extends object>({
   return (
     <PopoverContent
       showArrow={false}
-      respectScreen={false}
       isNonModal={true}
       className={popoverClassName}
       placement={props.placement}
@@ -92,7 +90,7 @@ const ComboBoxInput = (props: InputProps) => {
     <FieldGroup className="relative pl-0">
       <Input {...props} placeholder={props?.placeholder} />
       <Button
-        size="square-petite"
+        square-petite="square-petite"
         intent="plain"
         className="h-7 w-8 rounded pressed:bg-transparent outline-offset-0 hover:bg-transparent active:bg-transparent **:data-[slot=icon]:pressed:text-fg **:data-[slot=icon]:text-muted-fg **:data-[slot=icon]:hover:text-fg"
       >
@@ -133,5 +131,5 @@ ComboBox.Option = ComboBoxOption
 ComboBox.Label = ComboBoxLabel
 ComboBox.Section = ComboBoxSection
 
-export type { ComboBoxProps, ComboBoxListProps }
 export { ComboBox }
+export type { ComboBoxListProps, ComboBoxProps }

@@ -1,22 +1,31 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
-import type { InferSelectModel } from 'drizzle-orm'
-import type { users } from '~/db/schema'
+import type { InferRequestType } from 'hono'
+import { unauthorized } from 'next/navigation'
 import { WeeklyReports } from '~/features/reports/weekly/components/weekly-reports'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
+import { getServerSession } from '~/lib/get-server-session'
+import type { client } from '~/lib/rpc'
 
-type WeeklyReportsContainerProps = {
-  userId: InferSelectModel<typeof users>['id']
-  year: number
-  week: number
-}
+export async function WeeklyReportsContainer({
+  year,
+  week,
+}: InferRequestType<(typeof client.api.weeklies)['last-week'][':year'][':week']['$get']>['param']) {
+  const session = await getServerSession()
 
-export async function WeeklyReportsContainer({ userId, year, week }: WeeklyReportsContainerProps) {
+  if (!session) {
+    unauthorized()
+  }
+
   const queryClient = new QueryClient()
-  await fetchWeeklyReportsInfiniteQuery({ year, week }, userId).prefetch(queryClient)
+
+  await fetchWeeklyReportsInfiniteQuery(
+    { year: Number(year), week: Number(week) },
+    session.user.id,
+  ).prefetch(queryClient)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <WeeklyReports userId={userId} year={year} week={week} />
+      <WeeklyReports userId={session.user.id} year={year} week={week} />
     </HydrationBoundary>
   )
 }

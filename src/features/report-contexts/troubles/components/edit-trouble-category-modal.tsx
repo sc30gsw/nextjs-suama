@@ -99,7 +99,7 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
 
   return (
     <Modal>
-      <Button size="small" onPress={toggle}>
+      <Button size="sm" onPress={toggle}>
         編集
         <IconDocumentEdit />
       </Button>

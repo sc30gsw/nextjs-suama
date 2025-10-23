@@ -101,7 +101,7 @@ export function EditDailyForm({
           />
 
           <Button
-            size="square-petite"
+            size="sq-sm"
             onPress={handleAdd}
             className="mt-4 rounded-full"
             isDisabled={isPending}
@@ -119,7 +119,7 @@ export function EditDailyForm({
               missions={missionsResponse.missions}
               removeButton={
                 <Button
-                  size="square-petite"
+                  size="sq-sm"
                   intent="danger"
                   onPress={() => {
                     handleRemove(dailyReport.getFieldset().id.value ?? '')

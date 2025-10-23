@@ -1,10 +1,9 @@
 'use client'
 
-import { type ReactNode, useState } from 'react'
-
 import { IconEye, IconEyeClosed } from '@intentui/icons'
-import { Button as ButtonPrimitive, TextField as TextFieldPrimitive } from 'react-aria-components'
+import { type ReactNode, useState } from 'react'
 import type { InputProps, TextFieldProps as TextFieldPrimitiveProps } from 'react-aria-components'
+import { Button as ButtonPrimitive, TextField as TextFieldPrimitive } from 'react-aria-components'
 import type { FieldProps } from '~/components/ui/intent-ui/field'
 import { Description, FieldError, FieldGroup, Input, Label } from '~/components/ui/intent-ui/field'
 import { Loader } from '~/components/ui/intent-ui/loader'
@@ -98,5 +97,5 @@ const TextField = ({
   )
 }
 
-export type { TextFieldProps }
 export { TextField }
+export type { TextFieldProps }

@@ -17,17 +17,17 @@ export function MonthSelector({ months }: Record<'months', Record<'name', number
       selectedKey={month}
       onSelectionChange={(key) => setMonth({ month: Number(key) })}
       defaultSelectedKey={months[0].name}
-      className="w-fit "
-      labelClassName="font-bold text-base"
+      className="w-fit [&>label]:font-bold [&>label]:text-base"
     >
       <Select.Trigger />
-      <Select.List items={months}>
+
+      <Select.Content items={months}>
         {(item) => (
-          <Select.Option id={item.name} textValue={item.name.toString()}>
+          <Select.Item id={item.name} textValue={item.name.toString()}>
             {item.name}月
-          </Select.Option>
+          </Select.Item>
         )}
-      </Select.List>
+      </Select.Content>
     </Select>
   )
 }
