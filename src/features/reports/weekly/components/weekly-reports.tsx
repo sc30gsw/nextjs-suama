@@ -12,11 +12,10 @@ import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queri
 import type { client } from '~/lib/rpc'
 import { WeeklyReportsNavigationButton } from './WeeklyReportsNavigationButton'
 
-type WeeklyReportsProps = {
-  userId: Session['userId']
-} & InferRequestType<(typeof client.api.weeklies)['last-week'][':year'][':week']['$get']>['param']
+type WeeklyReportsProps = Pick<Session, 'userId'> &
+  InferRequestType<(typeof client.api.weeklies)['last-week'][':year'][':week']['$get']>['param']
 
-export function WeeklyReports({ year, week, userId }: WeeklyReportsProps) {
+export function WeeklyReports({ userId, year, week }: WeeklyReportsProps) {
   const { use: useWeeklyReports } = fetchWeeklyReportsInfiniteQuery(
     { year: Number(year), week: Number(week) },
     userId,

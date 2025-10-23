@@ -3,58 +3,16 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { cn } from '~/utils/classes'
 
-const SKELETON_ROW_COUNT = 5
-const PAGINATION_BUTTON_COUNT = 7
+const ROW_COUNT = 5
+const PAGINATION_TOTAL_COUNT = 11
 const ACTION_BUTTON_COUNT = 3
 
 const DATE_TAB_ID = DAILY_REPORT_MINE_TABS[0].id
 
-const DATE_TAB_WIDTHS = [
-  'w-20',
-  'w-28',
-  'w-16',
-  'w-40',
-  'w-20',
-  'w-16',
-  'actions',
-] as const satisfies readonly string[]
-
-const PROJECT_TAB_WIDTHS = [
-  'w-36',
-  'w-48',
-  'w-16',
-  'w-20',
-  'w-24',
-] as const satisfies readonly string[]
-
-function SkeletonActions() {
-  return (
-    <div className="flex gap-2">
-      {[...Array(ACTION_BUTTON_COUNT)].map((_, i) => (
-        <Skeleton key={i} className={i === 0 ? 'h-8 w-8' : 'h-8 w-16'} />
-      ))}
-    </div>
-  )
-}
-
-function SkeletonTableRow({
-  widths,
-}: Record<'widths', typeof DATE_TAB_WIDTHS | typeof PROJECT_TAB_WIDTHS>) {
-  return (
-    <>
-      {widths.map((width, i) => (
-        <td key={i} className="px-4 py-4">
-          {width === 'actions' ? <SkeletonActions /> : <Skeleton className={`h-6 ${width}`} />}
-        </td>
-      ))}
-    </>
-  )
-}
-
 export function MineTabContentSkeleton({
   tab,
 }: Record<'tab', (typeof DAILY_REPORT_MINE_TABS)[number]['id']>) {
-  const widths = tab === DATE_TAB_ID ? DATE_TAB_WIDTHS : PROJECT_TAB_WIDTHS
+  const isDateTab = tab === DATE_TAB_ID
 
   return (
     <div className="space-y-3">
@@ -74,17 +32,56 @@ export function MineTabContentSkeleton({
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  {widths.map((width, i) => (
-                    <th key={i} className="px-4 py-3 text-left">
-                      <Skeleton className={cn('h-5', width === 'actions' ? 'w-auto' : width)} />
+                  <th className="px-4 py-3 text-left">
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-20' : 'w-36')} />
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-28' : 'w-48')} />
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <Skeleton className="h-5 w-16" />
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-40' : 'w-20')} />
+                  </th>
+                  <th className="px-4 py-3 text-left">
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-20' : 'w-24')} />
+                  </th>
+                  {isDateTab && (
+                    <th className="px-4 py-3 text-left">
+                      <Skeleton className="h-5 w-16" />
                     </th>
-                  ))}
+                  )}
                 </tr>
               </thead>
+
               <tbody>
-                {[...Array(SKELETON_ROW_COUNT)].map((_, i) => (
+                {Array.from({ length: ROW_COUNT }, (_, i) => (
                   <tr key={i} className="border-b last:border-b-0">
-                    <SkeletonTableRow widths={widths} />
+                    <td className="px-4 py-4">
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-20' : 'w-36')} />
+                    </td>
+                    <td className="px-4 py-4">
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-28' : 'w-48')} />
+                    </td>
+                    <td className="px-4 py-4">
+                      <Skeleton className="h-6 w-16" />
+                    </td>
+                    <td className="px-4 py-4">
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-40' : 'w-20')} />
+                    </td>
+                    <td className="px-4 py-4">
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-20' : 'w-24')} />
+                    </td>
+                    {isDateTab && (
+                      <td className="px-4 py-4">
+                        <div className="flex gap-2">
+                          {Array.from({ length: ACTION_BUTTON_COUNT }, (_, i) => (
+                            <Skeleton key={i} className={cn('h-8', i === 0 ? 'w-8' : 'w-16')} />
+                          ))}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -94,7 +91,7 @@ export function MineTabContentSkeleton({
 
         <Card.Footer>
           <div className="flex w-full items-center justify-center gap-1">
-            {[...Array(PAGINATION_BUTTON_COUNT + 4)].map((_, i) => (
+            {Array.from({ length: PAGINATION_TOTAL_COUNT }, (_, i) => (
               <Skeleton key={i} className="size-10" />
             ))}
           </div>

@@ -15,19 +15,26 @@ import { DailyReportDeleteButton } from '~/features/reports/daily/components/dai
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
 
-type DailyReportUser = InferResponseType<typeof client.api.dailies.today.$get, 200>['users'][number]
+type DailyUserReports = InferResponseType<
+  typeof client.api.dailies.today.$get,
+  200
+>['userReports'][number]
 
-const columnHelper = createColumnHelper<DailyReportUser>()
+type DailyMyReports = InferResponseType<
+  typeof client.api.dailies.mine.$get,
+  200
+>['myReports'][number]
 
-type DailyReportsTableProps<T extends 'today' | 'mine'> = {
-  reports: InferResponseType<(typeof client.api.dailies)[T]['$get'], 200>
-  userId?: DailyReportUser['id']
+type DailyReport = DailyUserReports | DailyMyReports
+
+const columnHelper = createColumnHelper<DailyReport>()
+
+type DailyReportsTableProps = {
+  reports: DailyReport[]
+  userId?: DailyUserReports['userId']
 }
 
-export function DailyReportsTable<T extends 'today' | 'mine'>({
-  reports,
-  userId,
-}: DailyReportsTableProps<T>) {
+export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
   const COLUMNS = [
     columnHelper.accessor('date', {
       header: '日付',
@@ -62,7 +69,9 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
       header: '操作',
       cell: ({ row }) => {
         const report = row.original
-        const isCurrentUser = !userId || report.userId === userId
+
+        // ?: mine ページの場合、論理演算子の判定だと、編集・削除ボタンも非表示になるため、三項演算子で判定する。
+        const isCurrentUser = userId ? report.userId === userId : true
 
         return (
           <div className="flex items-center gap-2">
@@ -86,10 +95,8 @@ export function DailyReportsTable<T extends 'today' | 'mine'>({
     }),
   ]
 
-  const initialData: DailyReportUser[] = reports.users
-
   const table = useReactTable({
-    data: initialData,
+    data: reports,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
   })
