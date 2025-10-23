@@ -8,9 +8,8 @@ import {
   type NumberFieldProps as NumberFieldPrimitiveProps,
   type ValidationResult,
 } from 'react-aria-components'
-import { tv } from 'tailwind-variants'
-
 import { twMerge } from 'tailwind-merge'
+import { tv } from 'tailwind-variants'
 import { Description, FieldError, FieldGroup, Input, Label } from '~/components/ui/intent-ui/field'
 import { useMediaQuery } from '~/hooks/use-media-query'
 import { composeTailwindRenderProps } from '~/lib/primitive'
@@ -127,5 +126,5 @@ const StepperButton = ({
   )
 }
 
-export type { NumberFieldProps }
 export { NumberField }
+export type { NumberFieldProps }

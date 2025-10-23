@@ -30,3 +30,21 @@ const focusStyles = tv({
 })
 
 export { composeTailwindRenderProps, focusRing, focusStyles }
+
+type Render<T> = string | ((v: T) => string) | undefined
+
+type CxArgs<T> = [...any[], Render<T>] | [[...any[], Render<T>]]
+
+export function cx<T = unknown>(...args: CxArgs<T>): string | ((v: T) => string) {
+  let resolvedArgs = args
+  if (args.length === 1 && Array.isArray(args[0])) {
+    resolvedArgs = args[0] as [...any[], Render<T>]
+  }
+
+  const className = resolvedArgs.pop() as Render<T>
+  const tailwinds = resolvedArgs as any[]
+
+  const fixed = twMerge(...tailwinds)
+
+  return composeRenderProps(className, (cn) => twMerge(fixed, cn))
+}

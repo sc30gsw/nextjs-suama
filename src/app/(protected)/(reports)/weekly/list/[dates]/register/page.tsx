@@ -111,7 +111,7 @@ export default async function WeeklyReportRegisterPage({
         key={JSON.stringify(isReference)}
         fallback={
           <>
-            <Button size="square-petite" className="mt-4 rounded-full">
+            <Button size="sq-sm" className="mt-4 rounded-full">
               <IconPlus />
             </Button>
             <div className="space-y-2">

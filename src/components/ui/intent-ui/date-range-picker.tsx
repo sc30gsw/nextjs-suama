@@ -1,14 +1,13 @@
 'use client'
 
+import type { DateDuration } from '@internationalized/date'
+import type { Placement } from '@react-types/overlays'
 import {
   DateRangePicker as DateRangePickerPrimitive,
   type DateRangePickerProps as DateRangePickerPrimitiveProps,
   type DateValue,
   type ValidationResult,
 } from 'react-aria-components'
-
-import type { DateDuration } from '@internationalized/date'
-import type { Placement } from '@react-types/overlays'
 import { DateInput } from '~/components/ui/intent-ui/date-field'
 import { DatePickerIcon, DatePickerOverlay } from '~/components/ui/intent-ui/date-picker'
 import { Description, FieldError, FieldGroup, Label } from '~/components/ui/intent-ui/field'
@@ -62,5 +61,5 @@ const DateRangePicker = <T extends DateValue>({
     </DateRangePickerPrimitive>
   )
 }
-export type { DateRangePickerProps }
 export { DateRangePicker }
+export type { DateRangePickerProps }

@@ -48,7 +48,7 @@ export function ReportAppealAndTroubleInputEntries<
 
   return (
     <>
-      <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
+      <Button size="sq-sm" onPress={handleAdd} className="mt-4 rounded-full">
         <IconPlus />
       </Button>
 
@@ -118,7 +118,7 @@ export function ReportAppealAndTroubleInputEntries<
       ))}
 
       {entries.length >= 1 && (
-        <Button size="square-petite" onPress={handleAdd} className="mt-4 rounded-full">
+        <Button size="sm" onPress={handleAdd} className="mt-4 rounded-full">
           <IconPlus />
         </Button>
       )}

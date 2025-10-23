@@ -1,5 +1,5 @@
-import { IconCirclePerson, IconLogout, IconMoon, IconSettings, IconSun } from '@intentui/icons'
-import { IconCalendarEvent, IconReport } from '@tabler/icons-react'
+import { IconCirclePerson, IconLogout, IconMoon, IconSun } from '@intentui/icons'
+import { IconCalendarEvent, IconCalendarUser, IconReport } from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
@@ -22,7 +22,7 @@ export function AppSidebarNavUserMenu() {
           initials={session?.user.name.charAt(0)}
         />
       </Menu.Trigger>
-      <Menu.Content placement="bottom" showArrow={true} className="sm:min-w-64">
+      <Menu.Content popover={{ placement: 'bottom end' }} className="sm:min-w-64">
         <Menu.Section>
           <Menu.Header separator={true}>
             <span className="block">Kurt Cobain</span>
@@ -30,21 +30,21 @@ export function AppSidebarNavUserMenu() {
           </Menu.Header>
         </Menu.Section>
         <Menu.Item href="/daily">
-          <IconReport stroke={1} size={20} className="mr-1" />
-          日報作成
+          <IconReport stroke={1} size={20} />
+          <Menu.Label>日報作成</Menu.Label>
         </Menu.Item>
-        <Menu.Item href="#settings">
-          <IconSettings />
-          自分の日報
+        <Menu.Item href="/daily/mine">
+          <IconCalendarUser stroke={1} size={20} />
+          <Menu.Label>自分の日報</Menu.Label>
         </Menu.Item>
         <Menu.Item href="/daily/today">
-          <IconCalendarEvent stroke={1} size={20} className="mr-1" />
-          本日の日報
+          <IconCalendarEvent stroke={1} size={20} />
+          <Menu.Label>本日の日報</Menu.Label>
         </Menu.Item>
         <Menu.Separator />
         <Menu.Item href={`/${session?.user.id}/settings`}>
           <IconCirclePerson />
-          ユーザー設定
+          <Menu.Label>ユーザー設定</Menu.Label>
         </Menu.Item>
         <Menu.Separator />
         <Menu.Item className="[&>[slot=label]+[data-slot=icon]]:right-4 [&>[slot=label]+[data-slot=icon]]:bottom-3">
@@ -62,7 +62,7 @@ export function AppSidebarNavUserMenu() {
         <Menu.Separator />
         <Menu.Item onAction={logout} isDisabled={isPending}>
           <IconLogout />
-          ログアウト
+          <Menu.Label>ログアウト</Menu.Label>
         </Menu.Item>
       </Menu.Content>
     </Menu>

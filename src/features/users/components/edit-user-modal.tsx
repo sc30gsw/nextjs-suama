@@ -120,7 +120,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
 
   return (
     <Modal>
-      <Button size="small" onPress={toggle}>
+      <Button size="sm" onPress={toggle}>
         編集
         <IconDocumentEdit />
       </Button>
@@ -160,7 +160,6 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                   acceptedFileTypes={ACCEPTED_TYPES}
                   onSelect={handleSelect}
                   ref={fileInputRef}
-                  withIcon={true}
                   className="mt-2"
                   isDisabled={isPending}
                 >
@@ -179,8 +178,8 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                     className="size-15 cursor-pointer *:size-15 hover:opacity-80"
                   />
                   <Button
-                    shape="circle"
-                    size="square-petite-small"
+                    isCircle
+                    size="sq-xs"
                     intent="outline"
                     isDisabled={isPending}
                     onPress={() => imageInput.change('')}
