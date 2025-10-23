@@ -16,10 +16,8 @@ export default async function Home({ searchParams }: NextPageProps<undefined, Se
     unauthorized()
   }
 
-  const { reportEntry, appealsAndTroublesEntry } =
-    await inputCountSearchParamsCache.parse(searchParams)
+  const { appealsAndTroublesEntry } = await inputCountSearchParamsCache.parse(searchParams)
 
-  const _count = reportEntry.count
   const troubleCount = appealsAndTroublesEntry.troubles.count
   const appealCount = appealsAndTroublesEntry.appeals.count
 
