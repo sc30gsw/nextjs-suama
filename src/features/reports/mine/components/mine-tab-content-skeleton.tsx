@@ -3,7 +3,7 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { DAILY_REPORT_MINE_TABS } from '~/constants'
 import { cn } from '~/utils/classes'
 
-const SKELETON_ROW_COUNT = 5
+const ROW_COUNT = 5
 const PAGINATION_TOTAL_COUNT = 11
 const ACTION_BUTTON_COUNT = 3
 
@@ -56,7 +56,7 @@ export function MineTabContentSkeleton({
               </thead>
 
               <tbody>
-                {Array.from({ length: SKELETON_ROW_COUNT }, (_, i) => (
+                {Array.from({ length: ROW_COUNT }, (_, i) => (
                   <tr key={i} className="border-b last:border-b-0">
                     <td className="px-4 py-4">
                       <Skeleton className={cn('h-6', isDateTab ? 'w-20' : 'w-36')} />
