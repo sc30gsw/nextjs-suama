@@ -16,7 +16,9 @@ function addPagesToArray(
   }
 }
 
-function getPagePattern(currentPageIndex: number, totalPages: number) {
+function getPagePattern(
+  ...[currentPageIndex, totalPages]: Parameters<typeof paginationUtils.createPageNumbers>
+) {
   if (currentPageIndex <= PAGINATION.DIVIDING_PATTERN.POINT) {
     return PAGE_PATTERN.START
   }
