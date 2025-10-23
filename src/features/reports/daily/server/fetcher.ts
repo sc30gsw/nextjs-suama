@@ -1,7 +1,6 @@
 import 'server-only'
 
 import type { Session } from 'better-auth'
-import { format } from 'date-fns'
 import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
 import { unstable_cacheTag as cacheTag } from 'next/cache'
@@ -12,14 +11,15 @@ import {
 import type { dailyReports } from '~/db/schema'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
-import { DATE_FORMAT } from '~/utils/date-utils'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 export async function getReportsForToday(
   params: { skip: number; limit: number; userNames?: string[] },
   userId: Session['userId'],
 ) {
   'use cache'
-  cacheTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${format(new Date(), DATE_FORMAT)}`)
+  const todayJST = dateUtils.formatDateByJST(new Date(), DATE_FORMAT)
+  cacheTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${todayJST}`)
 
   const url = client.api.dailies.today.$url()
   type ResType = InferResponseType<typeof client.api.dailies.today.$get, 200>
