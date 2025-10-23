@@ -52,8 +52,8 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
-      {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。  
-      https://github.com/vercel/next.js/issues/84489 */}
+      {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
+        https://github.com/vercel/next.js/issues/84489 */}
       <MineTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT_MINE_TABS[0].id}>
           <Suspense
@@ -70,7 +70,7 @@ export default async function MyDailyPage({
                 },
                 session.user.id,
               ).then((data) => (
-                <DailyReportsTable<'mine'> reports={data} />
+                <DailyReportsTable reports={data.myReports} />
               ))}
             </MineTabContent>
           </Suspense>

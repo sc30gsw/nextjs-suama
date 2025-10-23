@@ -100,7 +100,7 @@ export default async function DailyOfTodayPage({
             }
           >
             {reportsPromise.then((res) => (
-              <DailyReportsTable<'today'> reports={res} userId={session.user.id} />
+              <DailyReportsTable reports={res.userReports} userId={session.user.id} />
             ))}
           </Suspense>
         </Card.Content>

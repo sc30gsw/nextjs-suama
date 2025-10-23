@@ -58,7 +58,7 @@ const app = new Hono()
       if (dailyReportsCount === 0) {
         return c.json(
           {
-            users: [],
+            userReports: [],
             total: dailyReportsCount,
             skip: skipNumber,
             limit: limitNumber,
@@ -122,7 +122,7 @@ const app = new Hono()
 
       return c.json(
         {
-          users: formattedReports,
+          userReports: formattedReports,
           total: dailyReportsCount,
           skip: skipNumber,
           limit: limitNumber,
@@ -174,7 +174,7 @@ const app = new Hono()
       if (dailyReportsWithRelations.length === 0) {
         return c.json(
           {
-            users: [],
+            myReports: [],
             skip: skipNumber,
             limit: limitNumber,
             startDate,
@@ -212,7 +212,7 @@ const app = new Hono()
 
       return c.json(
         {
-          users: formattedReports,
+          myReports: formattedReports,
           skip: skipNumber,
           limit: limitNumber,
           startDate,
