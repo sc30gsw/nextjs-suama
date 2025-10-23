@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useEffect, useState } from 'react'
 import { RouterProvider } from 'react-aria-components'
+import { SidebarProvider } from '~/components/ui/intent-ui/sidebar'
 import { ThemeProvider } from '~/components/ui/intent-ui/theme-provider'
 import { NuqsProvider } from '~/components/ui/providers/nuqs-provider'
 import { QueryProvider } from '~/components/ui/providers/query-provider'
@@ -32,7 +33,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <NuqsProvider>
         <QueryProvider>
           <ThemeProvider enableSystem={true} attribute="class">
-            {children}
+            <SidebarProvider>{children}</SidebarProvider>
           </ThemeProvider>
         </QueryProvider>
       </NuqsProvider>

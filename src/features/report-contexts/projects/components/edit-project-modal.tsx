@@ -125,7 +125,7 @@ export function EditProjectModal({
 
   return (
     <Modal>
-      <Button size="small" onPress={toggle}>
+      <Button size="sm" onPress={toggle}>
         編集
         <IconDocumentEdit />
       </Button>

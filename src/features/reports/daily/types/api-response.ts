@@ -14,4 +14,4 @@ export type TroubleCategoriesResponse = InferResponseType<
 export type WorkContentResponse = InferResponseType<
   typeof client.api.dailies.today.$get,
   200
->['users'][number]['workContents'][number]
+>['userReports'][number]['workContents'][number]

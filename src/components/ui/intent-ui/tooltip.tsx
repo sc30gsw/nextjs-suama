@@ -1,59 +1,61 @@
 'use client'
 
-import type { ComponentProps, ReactNode } from 'react'
 import type { TooltipProps as TooltipPrimitiveProps } from 'react-aria-components'
 import {
   Button,
+  composeRenderProps,
   OverlayArrow,
   Tooltip as TooltipPrimitive,
   TooltipTrigger as TooltipTriggerPrimitive,
-  composeRenderProps,
 } from 'react-aria-components'
+import { twJoin } from 'tailwind-merge'
 import type { VariantProps } from 'tailwind-variants'
 import { tv } from 'tailwind-variants'
 
 const tooltipStyles = tv({
   base: [
-    'group rounded-lg border px-2.5 py-1.5 text-sm will-change-transform dark:shadow-none [&_strong]:font-medium',
+    'group origin-(--trigger-anchor-point) rounded-lg border px-2.5 py-1.5 text-sm/6 will-change-transform dark:shadow-none *:[strong]:font-medium',
   ],
   variants: {
-    intent: {
-      default: 'bg-overlay text-overlay-fg [&_.arx]:fill-overlay [&_.arx]:stroke-border',
-      inverse:
-        'border-transparent bg-fg text-bg [&_.arx]:fill-fg [&_.arx]:stroke-transparent dark:[&_.arx]:fill-white [&_.text-muted-fg]:text-bg/70 dark:[&_.text-muted-fg]:text-fg/70',
+    inverse: {
+      true: [
+        'border-transparent bg-fg text-bg [.text-muted-fg]:text-secondary',
+        '*:[.text-muted-fg]:text-secondary',
+      ],
+      false: 'bg-overlay text-overlay-fg',
     },
     isEntering: {
       true: [
         'fade-in animate-in',
-        'data-[placement=left]:slide-in-from-right-1 data-[placement=right]:slide-in-from-left-1 data-[placement=top]:slide-in-from-bottom-1 data-[placement=bottom]:slide-in-from-top-1',
+        'placement-left:slide-in-from-right-1 placement-right:slide-in-from-left-1 placement-top:slide-in-from-bottom-1 placement-bottom:slide-in-from-top-1',
       ],
     },
     isExiting: {
       true: [
         'fade-in direction-reverse animate-in',
-        'data-[placement=left]:slide-out-to-right-1 data-[placement=right]:slide-out-to-left-1 data-[placement=top]:slide-out-to-bottom-1 data-[placement=bottom]:slide-out-to-top-1',
+        'placement-left:slide-out-to-right-1 placement-right:slide-out-to-left-1 placement-top:slide-out-to-bottom-1 placement-bottom:slide-out-to-top-1',
       ],
     },
   },
   defaultVariants: {
-    intent: 'default',
+    inverse: false,
   },
 })
 
-type TooltipProps = ComponentProps<typeof TooltipTriggerPrimitive>
+type TooltipProps = React.ComponentProps<typeof TooltipTriggerPrimitive>
 const Tooltip = (props: TooltipProps) => <TooltipTriggerPrimitive {...props} />
 
 interface TooltipContentProps
   extends Omit<TooltipPrimitiveProps, 'children'>,
     VariantProps<typeof tooltipStyles> {
   showArrow?: boolean
-  children: ReactNode
+  children?: React.ReactNode
 }
 
 const TooltipContent = ({
   offset = 10,
   showArrow = true,
-  intent = 'default',
+  inverse,
   children,
   ...props
 }: TooltipContentProps) => {
@@ -64,18 +66,22 @@ const TooltipContent = ({
       className={composeRenderProps(props.className, (className, renderProps) =>
         tooltipStyles({
           ...renderProps,
-          intent,
+          inverse,
           className,
         }),
       )}
     >
       {showArrow && (
-        <OverlayArrow>
+        <OverlayArrow className="group">
           <svg
             width={12}
             height={12}
             viewBox="0 0 12 12"
-            className="arx group-data-[placement=left]:-rotate-90 group-data-[placement=bottom]:rotate-180 group-data-[placement=right]:rotate-90 forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]"
+            // inverse
+            className={twJoin(
+              'group-placement-left:-rotate-90 block group-placement-bottom:rotate-180 group-placement-right:rotate-90 forced-colors:fill-[Canvas] forced-colors:stroke-[ButtonBorder]',
+              inverse ? 'fill-fg stroke-transparent' : 'fill-overlay stroke-border',
+            )}
           >
             <path d="M0 0 L6 6 L12 0" />
           </svg>
@@ -86,10 +92,9 @@ const TooltipContent = ({
   )
 }
 
-const TooltipTrigger = Button
-
-Tooltip.Trigger = TooltipTrigger
+Tooltip.Trigger = Button
 Tooltip.Content = TooltipContent
+const TooltipTrigger = Tooltip.Trigger
 
-export type { TooltipProps, TooltipContentProps }
-export { Tooltip }
+export { Tooltip, TooltipContent, TooltipTrigger }
+export type { TooltipContentProps, TooltipProps }

@@ -98,7 +98,7 @@ export function CreateDailyForm({
             disabled={isPending}
           />
           <Button
-            size="square-petite"
+            size="sq-sm"
             onPress={handleAdd}
             className="mt-4 rounded-full"
             isDisabled={isPending}
@@ -117,7 +117,7 @@ export function CreateDailyForm({
               initialDailyInputCountSearchParamsParsers={inputCountSearchParamsParsers}
               removeButton={
                 <Button
-                  size="square-petite"
+                  size="sq-sm"
                   intent="danger"
                   onPress={() => {
                     handleRemove(dailyReport.getFieldset().id.value ?? '')

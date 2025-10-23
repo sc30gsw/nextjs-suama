@@ -100,7 +100,7 @@ export default async function DailyOfTodayPage({
             }
           >
             {reportsPromise.then((res) => (
-              <DailyReportsTable<'today'> reports={res} userId={session.user.id} />
+              <DailyReportsTable reports={res.userReports} userId={session.user.id} />
             ))}
           </Suspense>
         </Card.Content>
@@ -130,7 +130,7 @@ export default async function DailyOfTodayPage({
                 )
               }
 
-              return <TablePagination pageCount={pageCount} page={page} />
+              return <TablePagination pageCount={pageCount} />
             })}
           </Suspense>
         </Card.Footer>
