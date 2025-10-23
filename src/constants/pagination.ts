@@ -11,10 +11,12 @@ export const PAGINATION = {
     MAX_PAGES: 7,
     SIBLINGS: 1,
   },
-  LAYOUT: {
+  PATTERN: {
     START_MAX_INDEX: 3,
-    START_COUNT: 4,
     END_MIN_OFFSET: 4,
+  },
+  BOUNDARY: {
+    START_COUNT: 4,
     END_COUNT: 5,
   },
 } as const
