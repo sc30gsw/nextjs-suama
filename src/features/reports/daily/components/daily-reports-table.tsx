@@ -95,10 +95,8 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
     }),
   ]
 
-  const initialData: DailyReport[] = reports
-
   const table = useReactTable({
-    data: initialData,
+    data: reports,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
   })
