@@ -6,11 +6,10 @@ import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queri
 import { getServerSession } from '~/lib/get-server-session'
 import type { client } from '~/lib/rpc'
 
-type WeeklyReportsContainerProps = InferRequestType<
-  (typeof client.api.weeklies)['last-week'][':year'][':week']['$get']
->['param']
-
-export async function WeeklyReportsContainer({ year, week }: WeeklyReportsContainerProps) {
+export async function WeeklyReportsContainer({
+  year,
+  week,
+}: InferRequestType<(typeof client.api.weeklies)['last-week'][':year'][':week']['$get']>['param']) {
   const session = await getServerSession()
 
   if (!session) {
