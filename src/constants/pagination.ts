@@ -1,22 +1,38 @@
-export const PAGINATION = {
-  UI: {
-    ELLIPSIS: '...',
-  },
-  PAGE: {
-    FIRST: 1,
-    FIRST_INDEX: 0,
-    OFFSET: 1,
-  },
-  DISPLAY: {
-    MAX_PAGES: 7,
-    SIBLINGS: 1,
-  },
-  PATTERN: {
-    START_MAX_INDEX: 3,
-    END_MIN_OFFSET: 4,
-  },
-  BOUNDARY: {
-    START_COUNT: 4,
-    END_COUNT: 5,
-  },
+type PaginationConfig = {
+  UI: typeof UI
+  PAGE: typeof PAGE
+  DISPLAY: typeof DISPLAY
+  DIVIDING_PATTERN: typeof DIVIDING_PATTERN
+  BOUNDARY: typeof BOUNDARY
+}
+
+const UI = {
+  ELLIPSIS: '...',
 } as const
+
+const PAGE = {
+  FIRST: 1,
+  FIRST_INDEX: 0,
+  OFFSET: 1,
+} as const
+
+const DISPLAY = {
+  MAX_PAGES: 7,
+  SIBLING_COUNT: 1,
+} as const
+
+const DIVIDING_PATTERN = {
+  POINT: 3,
+} as const
+
+const BOUNDARY = {
+  COUNT: 4,
+} as const
+
+export const PAGINATION = {
+  UI,
+  PAGE,
+  DISPLAY,
+  DIVIDING_PATTERN,
+  BOUNDARY,
+} as const satisfies PaginationConfig
