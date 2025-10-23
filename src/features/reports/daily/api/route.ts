@@ -47,19 +47,19 @@ const app = new Hono()
         : dateRangeConditions
 
     try {
-      const getTotalDailyReportsCount = await db
+      const totalDailyReportsCount = await db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
         .innerJoin(users, eq(dailyReports.userId, users.id))
         .where(and(...whereConditions))
 
-      const totalDailyReportsCount = getTotalDailyReportsCount[0].count
+      const dailyReportsCount = totalDailyReportsCount[0].count
 
-      if (totalDailyReportsCount === 0) {
+      if (dailyReportsCount === 0) {
         return c.json(
           {
             users: [],
-            total: totalDailyReportsCount,
+            total: dailyReportsCount,
             skip: skipNumber,
             limit: limitNumber,
           },
@@ -123,7 +123,7 @@ const app = new Hono()
       return c.json(
         {
           users: formattedReports,
-          total: totalDailyReportsCount,
+          total: dailyReportsCount,
           skip: skipNumber,
           limit: limitNumber,
         },
@@ -301,12 +301,12 @@ const app = new Hono()
               lte(dailyReports.reportDate, endDateUtc),
             )
 
-      const getDailyReportsCountQuery = db
+      const dailyReportsCountQuery = db
         .select({ count: count(dailyReports.id) })
         .from(dailyReports)
         .where(baseConditions)
 
-      const getProjectsCountQuery = db
+      const projectsCountQuery = db
         .select({ count: countDistinct(projects.id) })
         .from(dailyReports)
         .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
@@ -314,7 +314,7 @@ const app = new Hono()
         .innerJoin(projects, eq(missions.projectId, projects.id))
         .where(baseConditions)
 
-      const getTotalHoursQuery = db
+      const totalHoursQuery = db
         .select({
           total: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
         })
@@ -323,9 +323,9 @@ const app = new Hono()
         .where(baseConditions)
 
       const [dailyReportsCount, projectsCount, totalHours] = await Promise.all([
-        getDailyReportsCountQuery,
-        getProjectsCountQuery,
-        getTotalHoursQuery,
+        dailyReportsCountQuery,
+        projectsCountQuery,
+        totalHoursQuery,
       ])
 
       return c.json(
@@ -347,16 +347,7 @@ const app = new Hono()
     const userId = c.get('user').id
 
     try {
-      const existingReport = await db.query.dailyReports.findFirst({
-        where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
-        columns: { id: true },
-      })
-
-      if (!existingReport) {
-        return c.json({ error: 'Report not found or unauthorized' }, 404)
-      }
-
-      const getDailyReportDetailQuery = db.query.dailyReports.findFirst({
+      const dailyReportDetailQuery = db.query.dailyReports.findFirst({
         where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
         with: {
           dailyReportMissions: {
@@ -376,7 +367,7 @@ const app = new Hono()
         },
       })
 
-      const getUnresolvedTroublesQuery = db.query.troubles.findMany({
+      const unresolvedTroublesQuery = db.query.troubles.findMany({
         where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
         with: {
           categoryOfTrouble: true,
@@ -384,8 +375,8 @@ const app = new Hono()
       })
 
       const [dailyReportDetail, unresolvedTroubles] = await Promise.all([
-        getDailyReportDetailQuery,
-        getUnresolvedTroublesQuery,
+        dailyReportDetailQuery,
+        unresolvedTroublesQuery,
       ])
 
       if (!dailyReportDetail) {
