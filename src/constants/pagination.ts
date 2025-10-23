@@ -8,26 +8,26 @@ type PaginationConfig = {
 
 const UI = {
   ELLIPSIS: '...',
-} as const
+} as const satisfies Record<string, string>
 
 const PAGE = {
   FIRST: 1,
   FIRST_INDEX: 0,
   OFFSET: 1,
-} as const
+} as const satisfies Record<string, number>
 
 const DISPLAY = {
   MAX_PAGES: 7,
   SIBLING_COUNT: 1,
-} as const
+} as const satisfies Record<string, number>
 
 const DIVIDING_PATTERN = {
   POINT: 3,
-} as const
+} as const satisfies Record<string, number>
 
 const BOUNDARY = {
   COUNT: 4,
-} as const
+} as const satisfies Record<string, number>
 
 export const PAGINATION = {
   UI,
