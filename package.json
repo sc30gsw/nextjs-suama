@@ -7,9 +7,9 @@
     "build": "next build",
     "build:clean": "rm -rf .next && next build",
     "start": "next start",
-    "lint": "biome lint -- apply ./src",
+    "lint": "biome lint --write ./src",
     "format": "biome format ./src --write",
-    "check:biome": "biome check --apply ./src"
+    "check:biome": "biome check --write ./src"
   },
   "dependencies": {
     "@conform-to/react": "^1.5.0",
