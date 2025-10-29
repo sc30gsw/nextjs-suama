@@ -10,7 +10,6 @@
 - routingの機能および、Suspenseを活用し、適切なチャンク化を行うこと
 - slotsの概念やComposition Patternを活用し、Client Module Graphを小さくし、Clientに送信されるJSバンドルを小さくすること（RSC内に移せる記述は移し、Server Module Graphを大きくする方針とする）
 - 本プロジェクトでは[React Compiler](https://ja.react.dev/learn/react-compiler)を使用しているため、原則、`useMemo`や`useCallback`などのメモ化のhooksは不要とします
-- PR前に実装者は`bun run build`または`bun run build:clean`を実行し、ビルドが通ることを確認すること
 - 開発でDBに変更が必要な場合は、Tursoの「ブランチング」機能を活用し、環境を切り替えること
 - "Single source of truth"の原則を徹底すること
   - 定数・型定義など真実の源となるものがある場合、それらを使用し、新たに自前で実装しないこと
