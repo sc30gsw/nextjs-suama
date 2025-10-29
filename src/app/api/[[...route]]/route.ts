@@ -32,7 +32,7 @@ route.doc('/doc', {
     version: '1.0.0',
     title: 'SUAMA that is Work Hours Management & Reporting System API',
     description:
-      '業務時間管理・報告システムのREST API仕様です。日報・週報の管理、プロジェクト・ミッション・トラブルの記録などの機能を提供します。',
+      '業務時間管理・報告システムのREST API仕様です。日報・週報の管理、プロジェクト・ミッション管理などの機能を提供します。',
   },
   servers: [
     {
