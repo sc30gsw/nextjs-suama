@@ -24,7 +24,7 @@ export const editProjectInputSchema = z.object({
     },
   ),
   clientId: z.string({ error: 'クライアントを選択してください' }),
-  isArchive: z.enum(['on', 'off']).optional().default('off'),
+  isArchived: z.enum(['on', 'off']).optional().default('off'),
 })
 
 export type EditProjectInputSchema = z.infer<typeof editProjectInputSchema>

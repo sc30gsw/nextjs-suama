@@ -80,6 +80,10 @@ export const ProjectSchema = z
       example: 'web,app,development',
       description: 'Like検索用キーワード',
     }),
+    isArchived: z.boolean().openapi({
+      example: false,
+      description: 'アーカイブ済みかどうか',
+    }),
     clientId: z.string().openapi({
       example: 'client_123',
       description: 'クライアントID',
