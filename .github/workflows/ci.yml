@@ -37,8 +37,6 @@ jobs:
       - name: Run build
         run: bun run build:clean
         env:
-          # Skip environment validation in CI
-          SKIP_ENV_VALIDATION: true
           NODE_ENV: production
 
 
