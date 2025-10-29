@@ -18,6 +18,7 @@ export async function getAppealCategoriesHandler(
     if (error instanceof AppealServiceError) {
       console.error('AppealService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,

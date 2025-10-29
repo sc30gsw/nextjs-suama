@@ -1,4 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
+import type { Session } from 'better-auth'
 import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
 import { pipe, sortBy } from 'remeda'
@@ -207,7 +208,7 @@ export class WeeklyReportService {
     params: ReturnType<
       Parameters<RouteHandler<typeof getCurrentUserWeeklyReportRoute>>[0]['req']['valid']
     >,
-    userId: string,
+    userId: Session['userId'],
   ) {
     const { year, week } = params
 
@@ -233,7 +234,7 @@ export class WeeklyReportService {
 
   async getLastWeekReport(
     params: ReturnType<Parameters<RouteHandler<typeof getLastWeekReportRoute>>[0]['req']['valid']>,
-    userId: string,
+    userId: Session['userId'],
   ) {
     const { year, week } = params
 

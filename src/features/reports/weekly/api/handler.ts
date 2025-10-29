@@ -28,6 +28,7 @@ export const getWeeklyReportsHandler: RouteHandler<
     if (error instanceof WeeklyReportServiceError) {
       console.error('WeeklyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
@@ -51,6 +52,7 @@ export const getWeeklyReportByIdHandler: RouteHandler<
     if (error instanceof WeeklyReportServiceError) {
       console.error('WeeklyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
@@ -74,6 +76,7 @@ export const getCurrentUserWeeklyReportHandler: RouteHandler<
     if (error instanceof WeeklyReportServiceError) {
       console.error('WeeklyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
@@ -97,6 +100,7 @@ export const getLastWeekReportHandler: RouteHandler<
     if (error instanceof WeeklyReportServiceError) {
       console.error('WeeklyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,

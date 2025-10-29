@@ -20,6 +20,7 @@ export async function getUsersHandler(c: Parameters<RouteHandler<typeof getUsers
     if (error instanceof UserServiceError) {
       console.error('UserService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,

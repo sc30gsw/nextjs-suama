@@ -23,6 +23,7 @@ export async function getProjectsHandler(c: Parameters<RouteHandler<typeof getPr
     if (error instanceof ProjectServiceError) {
       console.error('ProjectService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,

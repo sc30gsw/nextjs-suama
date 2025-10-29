@@ -1,4 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
+import type { Session, User } from 'better-auth'
 import {
   and,
   count,
@@ -146,8 +147,8 @@ export class DailyReportService {
 
   async getMineReports(
     params: ReturnType<Parameters<RouteHandler<typeof getMineReportsRoute>>[0]['req']['valid']>,
-    userId: string,
-    userName: string,
+    userId: Session['userId'],
+    userName: User['name'],
   ) {
     const { skip, limit, startDate, endDate } = params
 
@@ -235,7 +236,7 @@ export class DailyReportService {
 
   async getMineSummary(
     params: ReturnType<Parameters<RouteHandler<typeof getMineSummaryRoute>>[0]['req']['valid']>,
-    userId: string,
+    userId: Session['userId'],
   ) {
     const { startDate, endDate, limit, skip } = params
 
@@ -290,7 +291,7 @@ export class DailyReportService {
 
   async getCount(
     params: ReturnType<Parameters<RouteHandler<typeof getCountRoute>>[0]['req']['valid']>,
-    userId: string,
+    userId: Session['userId'],
   ) {
     const { kind, startDate, endDate } = params
 
@@ -353,7 +354,7 @@ export class DailyReportService {
 
   async getReportDetail(
     params: ReturnType<Parameters<RouteHandler<typeof getReportDetailRoute>>[0]['req']['valid']>,
-    userId: string,
+    userId: Session['userId'],
   ) {
     const reportId = params.id
 

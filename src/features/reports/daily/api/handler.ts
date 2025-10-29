@@ -26,6 +26,7 @@ export const getTodayReportsHandler: RouteHandler<
     if (error instanceof DailyReportServiceError) {
       console.error('DailyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
@@ -50,6 +51,7 @@ export const getMineReportsHandler: RouteHandler<
     if (error instanceof DailyReportServiceError) {
       console.error('DailyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
@@ -74,6 +76,7 @@ export const getMineSummaryHandler: RouteHandler<
     if (error instanceof DailyReportServiceError) {
       console.error('DailyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
@@ -97,6 +100,7 @@ export const getCountHandler: RouteHandler<typeof getCountRoute, AdditionalVaria
     if (error instanceof DailyReportServiceError) {
       console.error('DailyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
@@ -125,6 +129,7 @@ export const getReportDetailHandler: RouteHandler<
     if (error instanceof DailyReportServiceError) {
       console.error('DailyReportService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,

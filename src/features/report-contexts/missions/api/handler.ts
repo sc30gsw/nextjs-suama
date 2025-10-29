@@ -23,6 +23,7 @@ export async function getMissionsHandler(c: Parameters<RouteHandler<typeof getMi
     if (error instanceof MissionServiceError) {
       console.error('MissionService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,

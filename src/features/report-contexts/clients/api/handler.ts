@@ -20,6 +20,7 @@ export async function getClientsHandler(c: Parameters<RouteHandler<typeof getCli
     if (error instanceof ClientServiceError) {
       console.error('ClientService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,

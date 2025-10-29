@@ -21,6 +21,7 @@ export async function getTroubleCategoriesHandler(
     if (error instanceof TroubleServiceError) {
       console.error('TroubleService error:', error.message)
     }
+
     return c.json(
       {
         error: ERROR_STATUS.SOMETHING_WENT_WRONG,
