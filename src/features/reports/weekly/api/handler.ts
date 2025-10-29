@@ -3,6 +3,7 @@ import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
 import { pipe, sortBy } from 'remeda'
 import { WEEKLY_REPORTS_LIMIT } from '~/constants'
+import { TOAST_MESSAGES } from '~/constants/error-message'
 import {
   type dailyReportMissions,
   dailyReports,
@@ -186,6 +187,10 @@ export const getWeeklyReportByIdHandler: RouteHandler<
     },
   })
 
+  if (!weeklyReport) {
+    return c.json({ error: TOAST_MESSAGES.WEEKLY_REPORT.NOT_FOUND }, 404)
+  }
+
   return c.json({ weeklyReport }, 200)
 }
 
@@ -206,6 +211,10 @@ export const getCurrentUserWeeklyReportHandler: RouteHandler<
     },
   })
 
+  if (!weeklyReport) {
+    return c.json({ error: TOAST_MESSAGES.WEEKLY_REPORT.NOT_FOUND }, 404)
+  }
+
   return c.json({ weeklyReport }, 200)
 }
 
@@ -224,11 +233,19 @@ export const getLastWeekReportHandler: RouteHandler<
     with: {
       weeklyReportMissions: {
         with: {
-          mission: true,
+          mission: {
+            with: {
+              project: true,
+            },
+          },
         },
       },
     },
   })
+
+  if (!weeklyReport) {
+    return c.json({ error: TOAST_MESSAGES.WEEKLY_REPORT.NOT_FOUND }, 404)
+  }
 
   return c.json({ weeklyReport }, 200)
 }
