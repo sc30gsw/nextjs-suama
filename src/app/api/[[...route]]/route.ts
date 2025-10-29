@@ -1,6 +1,7 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { Scalar } from '@scalar/hono-api-reference'
 import { handle } from 'hono/vercel'
+import { env } from '~/env'
 import { appealApi } from '~/features/report-contexts/appeals/api/route'
 import { clientApi } from '~/features/report-contexts/clients/api/route'
 import { missionApi } from '~/features/report-contexts/missions/api/route'
@@ -28,13 +29,13 @@ route.doc('/doc', {
   openapi: '3.0.0',
   info: {
     version: '1.0.0',
-    title: 'Work Hours Management & Reporting System API',
+    title: 'SUAMA that is Work Hours Management & Reporting System API',
     description:
       '業務時間管理・報告システムのREST API仕様です。日報・週報の管理、プロジェクト・ミッション・トラブルの記録などの機能を提供します。',
   },
   servers: [
     {
-      url: 'http://localhost:3000',
+      url: env.NEXT_PUBLIC_APP_URL,
       description: 'Development server',
     },
   ],
