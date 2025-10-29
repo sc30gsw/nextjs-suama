@@ -47,18 +47,16 @@ export const getWeeklyReportsHandler: RouteHandler<
   typeof getWeeklyReportsRoute,
   AdditionalVariables
 > = async (c) => {
-  // 前週に立てた予定→1つまえの予定
-  // 職務内容→今週入力した日報から取得
-  // 21週目の場合、前週→21週の予定・職務内容は21週目の日報・次週は22週目
+  //! 前週に立てた予定→1つまえの予定
+  //! 職務内容→今週入力した日報から取得
+  //! 21週目の場合、前週→21週の予定・職務内容は21週目の日報・次週は22週目
   const { year, week, offset } = c.req.valid('query')
 
-  // 週の開始日を取得（ISO準拠：月曜始まり）
   const weekStartDate = startOfWeek(setWeek(setYear(new Date(), Number(year)), Number(week)), {
     weekStartsOn: 1,
   })
   const weekEndDate = addDays(weekStartDate, 6)
 
-  // JST基準でUTC変換（DBクエリ用）
   const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
   const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
 

@@ -18,7 +18,7 @@ export function WeeklyReportsBackToTopButton() {
     return () => removeEventListener('scroll', handleScroll)
   }, [toggle])
 
-  // react-scrollだとカクつくため
+  //? react-scrollだとカクつくため
   const scrollToTop = () => {
     scrollTo({ top: 0, behavior: 'smooth' })
   }

@@ -85,7 +85,6 @@ export const UnresolvedTroubleSchema = z.object({
   }),
 })
 
-// レスポンススキーマ
 export const TroublesResponseSchema = z.object({
   troubleCategories: z.array(TroubleCategorySchema).openapi({
     description: 'トラブルカテゴリーのリスト',

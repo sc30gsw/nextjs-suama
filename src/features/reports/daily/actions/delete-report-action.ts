@@ -38,7 +38,6 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
     } as const satisfies SubmissionResult
   }
 
-  // 既存の日報を確認
   const existingReport = await db.query.dailyReports.findFirst({
     where: eq(dailyReports.id, parseResult.data.id),
   })
@@ -50,7 +49,6 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
     } as const satisfies SubmissionResult
   }
 
-  // 自分の日報か確認
   if (existingReport.userId !== session.user.id) {
     return {
       status: 'error',
@@ -59,10 +57,8 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
   }
 
   try {
-    // 日報を削除（関連するdailyReportMissionsは外部キー制約のcascadeで自動削除される）
     await db.delete(dailyReports).where(eq(dailyReports.id, parseResult.data.id))
 
-    // キャッシュを再検証
     if (existingReport.reportDate) {
       const reportDateJST = dateUtils.formatDateByJST(existingReport.reportDate, DATE_FORMAT)
       revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${reportDateJST}`)
