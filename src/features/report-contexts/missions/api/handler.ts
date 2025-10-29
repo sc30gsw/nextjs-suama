@@ -1,10 +1,10 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
+import type { getMissionsRoute } from '~/features/report-contexts/missions/api/route'
 import {
   MissionService,
   MissionServiceError,
-} from '~/features/report-contexts/missions/api/mission-service'
-import type { getMissionsRoute } from '~/features/report-contexts/missions/api/route'
+} from '~/features/report-contexts/missions/api/service'
 
 const missionService = new MissionService()
 

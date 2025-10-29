@@ -1,10 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
-import {
-  AppealService,
-  AppealServiceError,
-} from '~/features/report-contexts/appeals/api/appeal-service'
 import type { getAppealCategoriesRoute } from '~/features/report-contexts/appeals/api/route'
+import { AppealService, AppealServiceError } from '~/features/report-contexts/appeals/api/service'
 
 const appealService = new AppealService()
 

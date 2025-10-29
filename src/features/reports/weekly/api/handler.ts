@@ -10,7 +10,7 @@ import type {
 import {
   WeeklyReportService,
   WeeklyReportServiceError,
-} from '~/features/reports/weekly/api/weekly-service'
+} from '~/features/reports/weekly/api/service'
 
 const weeklyReportService = new WeeklyReportService()
 

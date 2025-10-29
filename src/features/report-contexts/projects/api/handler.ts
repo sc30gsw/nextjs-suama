@@ -1,10 +1,10 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
+import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
 import {
   ProjectService,
   ProjectServiceError,
-} from '~/features/report-contexts/projects/api/project-service'
-import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
+} from '~/features/report-contexts/projects/api/service'
 
 const projectService = new ProjectService()
 

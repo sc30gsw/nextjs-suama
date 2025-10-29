@@ -17,7 +17,7 @@ import {
   SummaryResponseSchema,
   TodayQuerySchema,
   TodayResponseSchema,
-} from '~/features/reports/daily/types/schemas/daily-api-schema'
+} from '~/features/reports/daily/types/schemas/daily-report-api-schema'
 import type { AdditionalVariables } from '~/features/reports/types'
 import { sessionMiddleware } from '~/lib/session-middleware'
 

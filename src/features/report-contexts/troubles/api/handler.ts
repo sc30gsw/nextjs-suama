@@ -4,7 +4,7 @@ import type { getTroubleCategoriesRoute } from '~/features/report-contexts/troub
 import {
   TroubleService,
   TroubleServiceError,
-} from '~/features/report-contexts/troubles/api/trouble-service'
+} from '~/features/report-contexts/troubles/api/service'
 
 const troubleService = new TroubleService()
 

@@ -13,7 +13,7 @@ import {
   WeeklyReportByIdResponseSchema,
   WeeklyReportsQuerySchema,
   WeeklyReportsResponseSchema,
-} from '~/features/reports/weekly/types/schemas/weekly-api-schema'
+} from '~/features/reports/weekly/types/schemas/weekly-report-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
 export const getWeeklyReportsRoute = createRoute({

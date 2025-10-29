@@ -1,10 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
-import {
-  ClientService,
-  ClientServiceError,
-} from '~/features/report-contexts/clients/api/client-service'
 import type { getClientsRoute } from '~/features/report-contexts/clients/api/route'
+import { ClientService, ClientServiceError } from '~/features/report-contexts/clients/api/service'
 
 const clientService = new ClientService()
 

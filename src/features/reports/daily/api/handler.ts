@@ -1,9 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
-import {
-  DailyReportService,
-  DailyReportServiceError,
-} from '~/features/reports/daily/api/daily-service'
 import type {
   getCountRoute,
   getMineReportsRoute,
@@ -11,6 +7,7 @@ import type {
   getReportDetailRoute,
   getTodayReportsRoute,
 } from '~/features/reports/daily/api/route'
+import { DailyReportService, DailyReportServiceError } from '~/features/reports/daily/api/service'
 import type { AdditionalVariables } from '~/features/reports/types'
 
 const dailyReportService = new DailyReportService()

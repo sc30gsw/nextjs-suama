@@ -1,7 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
 import type { getUsersRoute } from '~/features/users/api/route'
-import { UserService, UserServiceError } from '~/features/users/api/user-service'
+import { UserService, UserServiceError } from '~/features/users/api/service'
 
 const userService = new UserService()
 
