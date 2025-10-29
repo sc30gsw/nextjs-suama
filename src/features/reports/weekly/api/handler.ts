@@ -9,6 +9,7 @@ import {
   type missions,
   type projects,
   troubles,
+  type users,
   type weeklyReportMissions,
   weeklyReports,
 } from '~/db/schema'
@@ -20,6 +21,12 @@ import type {
 } from '~/features/reports/weekly/api/route'
 import { db } from '~/index'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+
+type Env = {
+  Variables: {
+    user: typeof users.$inferSelect
+  }
+}
 
 function groupingReportMission<
   T extends typeof weeklyReportMissions.$inferSelect | typeof dailyReportMissions.$inferSelect,
@@ -41,7 +48,9 @@ function groupingReportMission<
   )
 }
 
-export const getWeeklyReportsHandler: RouteHandler<typeof getWeeklyReportsRoute> = async (c) => {
+export const getWeeklyReportsHandler: RouteHandler<typeof getWeeklyReportsRoute, Env> = async (
+  c,
+) => {
   // 前週に立てた予定→1つまえの予定
   // 職務内容→今週入力した日報から取得
   // 21週目の場合、前週→21週の予定・職務内容は21週目の日報・次週は22週目
@@ -168,9 +177,10 @@ export const getWeeklyReportsHandler: RouteHandler<typeof getWeeklyReportsRoute>
   return c.json({ reports, startDate, endDate }, 200)
 }
 
-export const getWeeklyReportByIdHandler: RouteHandler<typeof getWeeklyReportByIdRoute> = async (
-  c,
-) => {
+export const getWeeklyReportByIdHandler: RouteHandler<
+  typeof getWeeklyReportByIdRoute,
+  Env
+> = async (c) => {
   const { weeklyReportId } = c.req.valid('param')
 
   const weeklyReport = await db.query.weeklyReports.findFirst({
@@ -184,7 +194,8 @@ export const getWeeklyReportByIdHandler: RouteHandler<typeof getWeeklyReportById
 }
 
 export const getCurrentUserWeeklyReportHandler: RouteHandler<
-  typeof getCurrentUserWeeklyReportRoute
+  typeof getCurrentUserWeeklyReportRoute,
+  Env
 > = async (c) => {
   const { year, week } = c.req.valid('param')
 
@@ -202,7 +213,7 @@ export const getCurrentUserWeeklyReportHandler: RouteHandler<
   return c.json({ weeklyReport }, 200)
 }
 
-export const getLastWeekReportHandler: RouteHandler<typeof getLastWeekReportRoute> = async (c) => {
+export const getLastWeekReportHandler: RouteHandler<typeof getLastWeekReportRoute, Env> = async (c) => {
   const { year, week } = c.req.valid('param')
 
   const weeklyReport = await db.query.weeklyReports.findFirst({

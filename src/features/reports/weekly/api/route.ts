@@ -1,4 +1,11 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import type { AdditionalVariables } from '~/features/reports/types'
+import {
+  getCurrentUserWeeklyReportHandler,
+  getLastWeekReportHandler,
+  getWeeklyReportByIdHandler,
+  getWeeklyReportsHandler,
+} from '~/features/reports/weekly/api/handler'
 import {
   CurrentUserWeeklyReportResponseSchema,
   ErrorResponseSchema,
@@ -8,12 +15,6 @@ import {
   WeeklyReportsResponseSchema,
 } from '~/features/reports/weekly/types/schemas/weekly-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import {
-  getCurrentUserWeeklyReportHandler,
-  getLastWeekReportHandler,
-  getWeeklyReportByIdHandler,
-  getWeeklyReportsHandler,
-} from './handler'
 
 export const getWeeklyReportsRoute = createRoute({
   method: 'get',
@@ -185,7 +186,7 @@ export const getLastWeekReportRoute = createRoute({
     'ログイン中のユーザーの前週（指定週-1）の週報を取得します。ミッション情報を含みます。',
 })
 
-const app = new OpenAPIHono()
+const app = new OpenAPIHono<AdditionalVariables>()
 app.use('/*', sessionMiddleware)
 app.openapi(getWeeklyReportsRoute, getWeeklyReportsHandler)
 app.openapi(getWeeklyReportByIdRoute, getWeeklyReportByIdHandler)

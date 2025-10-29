@@ -1,5 +1,12 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
+  getCountHandler,
+  getMineReportsHandler,
+  getMineSummaryHandler,
+  getReportDetailHandler,
+  getTodayReportsHandler,
+} from '~/features/reports/daily/api/handler'
+import {
   CountQuerySchema,
   CountResponseSchema,
   ErrorResponseSchema,
@@ -11,14 +18,8 @@ import {
   TodayQuerySchema,
   TodayResponseSchema,
 } from '~/features/reports/daily/types/schemas/daily-api-schema'
+import type { AdditionalVariables } from '~/features/reports/types'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import {
-  getCountHandler,
-  getMineReportsHandler,
-  getMineSummaryHandler,
-  getReportDetailHandler,
-  getTodayReportsHandler,
-} from './handler'
 
 export const getTodayReportsRoute = createRoute({
   method: 'get',
@@ -179,7 +180,7 @@ export const getReportDetailRoute = createRoute({
   description: '指定されたIDの日報の詳細情報を取得します。',
 })
 
-const app = new OpenAPIHono()
+const app = new OpenAPIHono<AdditionalVariables>()
 app.use('/*', sessionMiddleware)
 app.openapi(getTodayReportsRoute, getTodayReportsHandler)
 app.openapi(getMineReportsRoute, getMineReportsHandler)

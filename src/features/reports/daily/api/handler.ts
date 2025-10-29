@@ -22,13 +22,17 @@ import type {
   getReportDetailRoute,
   getTodayReportsRoute,
 } from '~/features/reports/daily/api/route'
+import type { AdditionalVariables } from '~/features/reports/types'
 import { db } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
 
 const DEFAULT_SKIP = 0
 const DEFAULT_LIMIT = 10
 
-export const getTodayReportsHandler: RouteHandler<typeof getTodayReportsRoute> = async (c) => {
+export const getTodayReportsHandler: RouteHandler<
+  typeof getTodayReportsRoute,
+  AdditionalVariables
+> = async (c) => {
   const { skip, limit, userNames } = c.req.valid('query')
 
   const skipNumber = Number(skip) || DEFAULT_SKIP
@@ -38,7 +42,10 @@ export const getTodayReportsHandler: RouteHandler<typeof getTodayReportsRoute> =
 
   const { start, end } = dateUtils.getTodayRangeByJST()
 
-  const dateRangeConditions = [gte(dailyReports.reportDate, start), lte(dailyReports.reportDate, end)]
+  const dateRangeConditions = [
+    gte(dailyReports.reportDate, start),
+    lte(dailyReports.reportDate, end),
+  ]
 
   const whereConditions =
     selectedUserNames.length > 0
@@ -138,7 +145,10 @@ export const getTodayReportsHandler: RouteHandler<typeof getTodayReportsRoute> =
   }
 }
 
-export const getMineReportsHandler: RouteHandler<typeof getMineReportsRoute> = async (c) => {
+export const getMineReportsHandler: RouteHandler<
+  typeof getMineReportsRoute,
+  AdditionalVariables
+> = async (c) => {
   const { skip, limit, startDate, endDate } = c.req.valid('query')
 
   const user = c.get('user')
@@ -231,7 +241,10 @@ export const getMineReportsHandler: RouteHandler<typeof getMineReportsRoute> = a
   }
 }
 
-export const getMineSummaryHandler: RouteHandler<typeof getMineSummaryRoute> = async (c) => {
+export const getMineSummaryHandler: RouteHandler<
+  typeof getMineSummaryRoute,
+  AdditionalVariables
+> = async (c) => {
   const { startDate, endDate, limit, skip } = c.req.valid('query')
 
   const userId = c.get('user').id
@@ -285,7 +298,9 @@ export const getMineSummaryHandler: RouteHandler<typeof getMineSummaryRoute> = a
   }
 }
 
-export const getCountHandler: RouteHandler<typeof getCountRoute> = async (c) => {
+export const getCountHandler: RouteHandler<typeof getCountRoute, AdditionalVariables> = async (
+  c,
+) => {
   const { kind, startDate, endDate } = c.req.valid('query')
 
   const userId = c.get('user').id
@@ -347,7 +362,10 @@ export const getCountHandler: RouteHandler<typeof getCountRoute> = async (c) => 
   }
 }
 
-export const getReportDetailHandler: RouteHandler<typeof getReportDetailRoute> = async (c) => {
+export const getReportDetailHandler: RouteHandler<
+  typeof getReportDetailRoute,
+  AdditionalVariables
+> = async (c) => {
   const reportId = c.req.valid('param').id
   const userId = c.get('user').id
 
