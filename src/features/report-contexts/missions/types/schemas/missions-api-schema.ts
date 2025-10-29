@@ -53,7 +53,7 @@ export const MissionSchema = z
       example: 'Frontend Development',
       description: 'ミッション名',
     }),
-    likeKeywords: z.string().nullable().openapi({
+    likeKeywords: z.string().openapi({
       example: 'frontend,react,ui',
       description: 'Like検索用キーワード',
     }),

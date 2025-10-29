@@ -46,7 +46,7 @@ export const ClientSchema = z
       example: 'ABC Corporation',
       description: 'クライアント名',
     }),
-    likeKeywords: z.string().nullable().openapi({
+    likeKeywords: z.string().openapi({
       example: 'abc,corp,corporation',
       description: 'Like検索用キーワード',
     }),

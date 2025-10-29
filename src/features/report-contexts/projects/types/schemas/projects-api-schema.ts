@@ -52,7 +52,7 @@ export const ClientRefSchema = z.object({
     example: 'ABC Corporation',
     description: 'クライアント名',
   }),
-  likeKeywords: z.string().nullable().openapi({
+  likeKeywords: z.string().openapi({
     example: 'abc,corp',
     description: 'Like検索用キーワード',
   }),
@@ -76,7 +76,7 @@ export const ProjectSchema = z
       example: 'Web Application Development',
       description: 'プロジェクト名',
     }),
-    likeKeywords: z.string().nullable().openapi({
+    likeKeywords: z.string().openapi({
       example: 'web,app,development',
       description: 'Like検索用キーワード',
     }),
