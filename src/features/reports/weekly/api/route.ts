@@ -1,215 +1,195 @@
-import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
-import { and, eq, gte, lte } from 'drizzle-orm'
-import { Hono } from 'hono'
-import { pipe, sortBy } from 'remeda'
-import { WEEKLY_REPORTS_LIMIT } from '~/constants'
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
-  type dailyReportMissions,
-  dailyReports,
-  type missions,
-  type projects,
-  troubles,
-  type weeklyReportMissions,
-  weeklyReports,
-} from '~/db/schema'
-import { db } from '~/index'
+  CurrentUserWeeklyReportResponseSchema,
+  ErrorResponseSchema,
+  LastWeekReportResponseSchema,
+  WeeklyReportByIdResponseSchema,
+  WeeklyReportsQuerySchema,
+  WeeklyReportsResponseSchema,
+} from '~/features/reports/weekly/types/schemas/weekly-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+import {
+  getCurrentUserWeeklyReportHandler,
+  getLastWeekReportHandler,
+  getWeeklyReportByIdHandler,
+  getWeeklyReportsHandler,
+} from './handler'
 
-function groupingReportMission<
-  T extends typeof weeklyReportMissions.$inferSelect | typeof dailyReportMissions.$inferSelect,
->(
-  reportMissions: Array<
-    T &
-      Record<
-        'mission',
-        typeof missions.$inferSelect & {
-          project: typeof projects.$inferSelect
-        }
-      >
-  >,
-) {
-  return pipe(
-    reportMissions,
-    sortBy([(m) => m.mission.name, 'asc']),
-    sortBy([(m) => m.mission.project.name, 'asc']),
-  )
-}
-
-const app = new Hono()
-  .get('/', sessionMiddleware, async (c) => {
-    // 前週に立てた予定→1つまえの予定
-    // 職務内容→今週入力した日報から取得
-    // 21週目の場合、前週→21週の予定・職務内容は21週目の日報・次週は22週目
-    const { year, week, offset } = c.req.query()
-
-    // 週の開始日を取得（ISO準拠：月曜始まり）
-    const weekStartDate = startOfWeek(setWeek(setYear(new Date(), Number(year)), Number(week)), {
-      weekStartsOn: 1,
-    })
-    const weekEndDate = addDays(weekStartDate, 6)
-
-    // JST基準でUTC変換（DBクエリ用）
-    const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
-    const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
-
-    const users = await db.query.users.findMany({
-      limit: WEEKLY_REPORTS_LIMIT,
-      offset: Number(offset),
-    })
-
-    const reports = await Promise.all(
-      users.map(async (user) => {
-        const [lastWeekReports, dailyReportList, nextWeekReports, troubleList] = await Promise.all([
-          db.query.weeklyReports.findMany({
-            where: and(
-              eq(weeklyReports.userId, user.id),
-              eq(weeklyReports.year, Number(year)),
-              eq(weeklyReports.week, Number(week)),
-            ),
-            with: {
-              weeklyReportMissions: {
-                with: {
-                  mission: {
-                    with: {
-                      project: true,
-                    },
-                  },
-                },
-              },
-            },
-          }),
-          db.query.dailyReports.findMany({
-            where: and(
-              eq(dailyReports.userId, user.id),
-              gte(dailyReports.reportDate, startDate),
-              lte(dailyReports.reportDate, endDate),
-            ),
-            with: {
-              dailyReportMissions: {
-                with: {
-                  mission: {
-                    with: {
-                      project: true,
-                    },
-                  },
-                },
-              },
-              appeals: {
-                with: {
-                  categoryOfAppeal: {
-                    columns: {
-                      name: true,
-                    },
-                  },
-                },
-              },
-            },
-          }),
-          db.query.weeklyReports.findMany({
-            where: and(
-              eq(weeklyReports.userId, user.id),
-              eq(weeklyReports.year, Number(year)),
-              eq(weeklyReports.week, Number(week) + 1),
-            ),
-            with: {
-              weeklyReportMissions: {
-                with: {
-                  mission: {
-                    with: {
-                      project: true,
-                    },
-                  },
-                },
-              },
-            },
-          }),
-          db.query.troubles.findMany({
-            where: and(eq(troubles.userId, user.id), eq(troubles.resolved, false)),
-            with: {
-              categoryOfTrouble: {
-                columns: {
-                  name: true,
-                },
-              },
-            },
-          }),
-        ])
-
-        return {
-          user,
-          lastWeekReports: lastWeekReports.map((report) => ({
-            ...report,
-            weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
-              report.weeklyReportMissions,
-            ),
-          })),
-          dailyReports: dailyReportList.map((report) => ({
-            ...report,
-            dailyReportMissions: groupingReportMission<typeof dailyReportMissions.$inferSelect>(
-              report.dailyReportMissions,
-            ),
-          })),
-          nextWeekReports: nextWeekReports.map((report) => ({
-            ...report,
-            weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
-              report.weeklyReportMissions,
-            ),
-          })),
-          troubles: troubleList,
-        }
-      }),
-    )
-
-    return c.json({ reports, startDate, endDate }, 200)
-  })
-  .get('/:weeklyReportId', sessionMiddleware, async (c) => {
-    const { weeklyReportId } = c.req.param()
-
-    const weeklyReport = await db.query.weeklyReports.findFirst({
-      where: eq(weeklyReports.id, weeklyReportId),
-      with: {
-        weeklyReportMissions: true,
-      },
-    })
-
-    return c.json({ weeklyReport }, 200)
-  })
-  .get('/current-user/:year/:week', sessionMiddleware, async (c) => {
-    const { year, week } = c.req.param()
-
-    const weeklyReport = await db.query.weeklyReports.findFirst({
-      where: and(
-        eq(weeklyReports.userId, c.get('user').id),
-        eq(weeklyReports.year, Number(year)),
-        eq(weeklyReports.week, Number(week)),
-      ),
-      with: {
-        weeklyReportMissions: true,
-      },
-    })
-
-    return c.json({ weeklyReport }, 200)
-  })
-  .get('/last-week/:year/:week', sessionMiddleware, async (c) => {
-    const { year, week } = c.req.param()
-
-    const weeklyReport = await db.query.weeklyReports.findFirst({
-      where: and(
-        eq(weeklyReports.userId, c.get('user').id),
-        eq(weeklyReports.year, Number(year)),
-        eq(weeklyReports.week, Number(week) - 1),
-      ),
-      with: {
-        weeklyReportMissions: {
-          with: {
-            mission: true,
-          },
+export const getWeeklyReportsRoute = createRoute({
+  method: 'get',
+  path: '/',
+  request: {
+    query: WeeklyReportsQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: WeeklyReportsResponseSchema,
         },
       },
-    })
+      description: '週報一覧を正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Weekly Reports'],
+  summary: '週報一覧取得',
+  description:
+    '指定された年・週の全ユーザーの週報を取得します。前週の予定、今週の日報、次週の予定、未解決のトラブルを含みます。',
+})
 
-    return c.json({ weeklyReport }, 200)
-  })
+export const getWeeklyReportByIdRoute = createRoute({
+  method: 'get',
+  path: '/{weeklyReportId}',
+  request: {
+    params: z.object({
+      weeklyReportId: z.string().openapi({
+        param: { name: 'weeklyReportId', in: 'path' },
+        description: '週報ID',
+        example: 'weekly_123',
+      }),
+    }),
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: WeeklyReportByIdResponseSchema,
+        },
+      },
+      description: '週報詳細を正常に取得',
+    },
+    404: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '週報が見つからない',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Weekly Reports'],
+  summary: '週報詳細取得',
+  description: '指定されたIDの週報の詳細情報を取得します。',
+})
 
-export default app
+export const getCurrentUserWeeklyReportRoute = createRoute({
+  method: 'get',
+  path: '/current-user/{year}/{week}',
+  request: {
+    params: z.object({
+      year: z.string().openapi({
+        param: { name: 'year', in: 'path' },
+        description: '年',
+        example: '2024',
+      }),
+      week: z.string().openapi({
+        param: { name: 'week', in: 'path' },
+        description: '週番号',
+        example: '21',
+      }),
+    }),
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: CurrentUserWeeklyReportResponseSchema,
+        },
+      },
+      description: '現在のユーザーの週報を正常に取得',
+    },
+    404: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '週報が見つからない',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Weekly Reports'],
+  summary: '現在のユーザーの週報取得',
+  description: 'ログイン中のユーザーの指定された年・週の週報を取得します。',
+})
+
+export const getLastWeekReportRoute = createRoute({
+  method: 'get',
+  path: '/last-week/{year}/{week}',
+  request: {
+    params: z.object({
+      year: z.string().openapi({
+        param: { name: 'year', in: 'path' },
+        description: '年',
+        example: '2024',
+      }),
+      week: z.string().openapi({
+        param: { name: 'week', in: 'path' },
+        description: '週番号',
+        example: '21',
+      }),
+    }),
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: LastWeekReportResponseSchema,
+        },
+      },
+      description: '前週の週報を正常に取得',
+    },
+    404: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '週報が見つからない',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Weekly Reports'],
+  summary: '前週の週報取得',
+  description:
+    'ログイン中のユーザーの前週（指定週-1）の週報を取得します。ミッション情報を含みます。',
+})
+
+const app = new OpenAPIHono()
+app.use('/*', sessionMiddleware)
+app.openapi(getWeeklyReportsRoute, getWeeklyReportsHandler)
+app.openapi(getWeeklyReportByIdRoute, getWeeklyReportByIdHandler)
+app.openapi(getCurrentUserWeeklyReportRoute, getCurrentUserWeeklyReportHandler)
+app.openapi(getLastWeekReportRoute, getLastWeekReportHandler)
+
+export const weeklyApi = app

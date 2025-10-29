@@ -1,64 +1,43 @@
-import { count, like, or } from 'drizzle-orm'
-import { Hono } from 'hono'
-import { MAX_LIMIT } from '~/constants'
-import { ERROR_STATUS } from '~/constants/error-message'
-import { projects } from '~/db/schema'
-import { db } from '~/index'
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { getProjectsHandler } from '~/features/report-contexts/projects/api/handler'
+import {
+  ErrorResponseSchema,
+  ProjectsQuerySchema,
+  ProjectsResponseSchema,
+} from '~/features/report-contexts/projects/types/schemas/projects-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-const app = new Hono().get('/', sessionMiddleware, async (c) => {
-  const { skip, limit, names } = c.req.query()
-
-  const skipNumber = Number(skip) || 0
-  const limitNumber = Number(limit) || MAX_LIMIT
-
-  const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-
-  try {
-    const whereClause =
-      namesArray.length > 0
-        ? or(
-            ...namesArray.flatMap((word) => [
-              like(projects.name, `%${word}%`),
-              like(projects.likeKeywords, `%${word}%`),
-            ]),
-          )
-        : undefined
-
-    const projectList = await db.query.projects.findMany({
-      where: whereClause,
-      offset: skipNumber,
-      limit: limitNumber,
-      orderBy: (projects, { asc }) => [asc(projects.createdAt)],
-      with: {
-        client: true,
-        missions: {
-          columns: {
-            id: true,
-          },
+export const getProjectsRoute = createRoute({
+  method: 'get',
+  path: '/',
+  request: {
+    query: ProjectsQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: ProjectsResponseSchema,
         },
       },
-    })
-
-    const total = await db.select({ count: count() }).from(projects).where(whereClause)
-
-    return c.json(
-      {
-        projects: projectList,
-        total: total[0].count,
-        skip: skipNumber,
-        limit: limitNumber,
+      description: 'プロジェクト一覧を正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
       },
-      200,
-    )
-  } catch (_) {
-    return c.json(
-      {
-        error: ERROR_STATUS.SOMETHING_WENT_WRONG,
-      },
-      500,
-    )
-  }
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Projects'],
+  summary: 'プロジェクト一覧取得',
+  description:
+    'システムに登録されているプロジェクトの一覧を取得します。関連クライアントとミッションのIDも含まれます。',
 })
 
-export default app
+const app = new OpenAPIHono()
+app.use('/*', sessionMiddleware)
+
+export const projectApi = app.openapi(getProjectsRoute, getProjectsHandler)

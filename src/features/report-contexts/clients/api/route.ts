@@ -1,56 +1,43 @@
-import { count, like, or } from 'drizzle-orm'
-import { Hono } from 'hono'
-import { MAX_LIMIT } from '~/constants'
-import { ERROR_STATUS } from '~/constants/error-message'
-import { clients } from '~/db/schema'
-import { db } from '~/index'
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { getClientsHandler } from '~/features/report-contexts/clients/api/handler'
+import {
+  ClientsQuerySchema,
+  ClientsResponseSchema,
+  ErrorResponseSchema,
+} from '~/features/report-contexts/clients/types/schemas/clients-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-const app = new Hono().get('/', sessionMiddleware, async (c) => {
-  const { skip, limit, names } = c.req.query()
-
-  const skipNumber = Number(skip) || 0
-  const limitNumber = Number(limit) || MAX_LIMIT
-
-  const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-
-  try {
-    const whereClause =
-      namesArray.length > 0
-        ? or(
-            ...namesArray.flatMap((word) => [
-              like(clients.name, `%${word}%`),
-              like(clients.likeKeywords, `%${word}%`),
-            ]),
-          )
-        : undefined
-
-    const clientList = await db.query.clients.findMany({
-      where: whereClause,
-      offset: skipNumber,
-      limit: limitNumber,
-      orderBy: (clients, { asc }) => [asc(clients.createdAt)],
-    })
-
-    const total = await db.select({ count: count() }).from(clients).where(whereClause)
-
-    return c.json(
-      {
-        clients: clientList,
-        total: total[0].count,
-        skip: skipNumber,
-        limit: limitNumber,
+export const getClientsRoute = createRoute({
+  method: 'get',
+  path: '/',
+  request: {
+    query: ClientsQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: ClientsResponseSchema,
+        },
       },
-      200,
-    )
-  } catch (_) {
-    return c.json(
-      {
-        error: ERROR_STATUS.SOMETHING_WENT_WRONG,
+      description: 'クライアント一覧を正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
       },
-      500,
-    )
-  }
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Clients'],
+  summary: 'クライアント一覧取得',
+  description:
+    'システムに登録されているクライアントの一覧を取得します。ページネーションと名前フィルタリングに対応しています。',
 })
 
-export default app
+const app = new OpenAPIHono()
+app.use('/*', sessionMiddleware)
+
+export const clientApi = app.openapi(getClientsRoute, getClientsHandler)

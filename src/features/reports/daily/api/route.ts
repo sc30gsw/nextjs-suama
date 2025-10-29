@@ -1,422 +1,190 @@
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
-  and,
-  count,
-  countDistinct,
-  desc,
-  eq,
-  gte,
-  inArray,
-  like,
-  lte,
-  max,
-  min,
-  or,
-  sql,
-} from 'drizzle-orm'
-import { Hono } from 'hono'
-import { dailyReportMissions, dailyReports, missions, projects, troubles, users } from '~/db/schema'
-import { db } from '~/index'
+  CountQuerySchema,
+  CountResponseSchema,
+  ErrorResponseSchema,
+  MineQuerySchema,
+  MineResponseSchema,
+  ReportDetailResponseSchema,
+  SummaryQuerySchema,
+  SummaryResponseSchema,
+  TodayQuerySchema,
+  TodayResponseSchema,
+} from '~/features/reports/daily/types/schemas/daily-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { dateUtils } from '~/utils/date-utils'
+import {
+  getCountHandler,
+  getMineReportsHandler,
+  getMineSummaryHandler,
+  getReportDetailHandler,
+  getTodayReportsHandler,
+} from './handler'
 
-const DEFAULT_SKIP = 0
-const DEFAULT_LIMIT = 10
-
-const app = new Hono()
-  .get('/today', sessionMiddleware, async (c) => {
-    const { skip, limit, userNames } = c.req.query()
-
-    const skipNumber = Number(skip) || DEFAULT_SKIP
-    const limitNumber = Number(limit) || DEFAULT_LIMIT
-
-    const selectedUserNames = userNames ? userNames.split(',').map((name) => name.trim()) : []
-
-    const { start, end } = dateUtils.getTodayRangeByJST()
-
-    const dateRangeConditions = [
-      gte(dailyReports.reportDate, start),
-      lte(dailyReports.reportDate, end),
-    ]
-
-    const whereConditions =
-      selectedUserNames.length > 0
-        ? [
-            ...dateRangeConditions,
-            or(...selectedUserNames.map((name) => like(users.name, `%${name}%`))),
-          ]
-        : dateRangeConditions
-
-    try {
-      const totalDailyReportsCount = await db
-        .select({ count: count(dailyReports.id) })
-        .from(dailyReports)
-        .innerJoin(users, eq(dailyReports.userId, users.id))
-        .where(and(...whereConditions))
-
-      const dailyReportsCount = totalDailyReportsCount[0].count
-
-      if (dailyReportsCount === 0) {
-        return c.json(
-          {
-            userReports: [],
-            total: dailyReportsCount,
-            skip: skipNumber,
-            limit: limitNumber,
-          },
-          200,
-        )
-      }
-
-      const paginatedReportIds = await db
-        .select({ id: dailyReports.id })
-        .from(dailyReports)
-        .innerJoin(users, eq(dailyReports.userId, users.id))
-        .where(and(...whereConditions))
-        .orderBy(desc(dailyReports.createdAt))
-        .limit(limitNumber)
-        .offset(skipNumber)
-
-      const dailyReportsWithRelations = await db.query.dailyReports.findMany({
-        where: inArray(
-          dailyReports.id,
-          paginatedReportIds.map(({ id }) => id),
-        ),
-        with: {
-          user: true,
-          dailyReportMissions: {
-            with: {
-              mission: {
-                with: {
-                  project: true,
-                },
-              },
-            },
-          },
+export const getTodayReportsRoute = createRoute({
+  method: 'get',
+  path: '/today',
+  request: {
+    query: TodayQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: TodayResponseSchema,
         },
-      })
-
-      const formattedReports = dailyReportsWithRelations.map((report) => {
-        const totalHours = report.dailyReportMissions.reduce(
-          (sum, mission) => sum + (mission.hours ?? 0),
-          0,
-        )
-
-        return {
-          id: report.id,
-          date: dateUtils.formatDateByJST(report.reportDate ?? new Date()),
-          username: report.user.name,
-          totalHour: totalHours,
-          impression: report.impression ?? '',
-          isRemote: report.remote,
-          isTurnedIn: report.release,
-          userId: report.userId,
-          workContents: report.dailyReportMissions.map((mission) => ({
-            id: mission.id,
-            project: mission.mission.project.name,
-            mission: mission.mission.name,
-            workTime: mission.hours ?? 0,
-            workContent: mission.workContent,
-          })),
-        }
-      })
-
-      return c.json(
-        {
-          userReports: formattedReports,
-          total: dailyReportsCount,
-          skip: skipNumber,
-          limit: limitNumber,
+      },
+      description: '今日の日報一覧を正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
         },
-        200,
-      )
-    } catch (error) {
-      console.error('Error fetching today reports:', error)
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Daily Reports'],
+  summary: '今日の日報一覧取得',
+  description: '今日の日報を取得します。ユーザー名でフィルタリング可能です。',
+})
 
-      return c.json({ error: 'Failed to fetch today reports' }, 500)
-    }
-  })
-  .get('/mine', sessionMiddleware, async (c) => {
-    const { skip, limit, startDate, endDate } = c.req.query()
-
-    const user = c.get('user')
-
-    const skipNumber = Number(skip) || DEFAULT_SKIP
-    const limitNumber = Number(limit) || DEFAULT_LIMIT
-
-    const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
-
-    const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
-    const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
-
-    try {
-      const dailyReportsWithRelations = await db.query.dailyReports.findMany({
-        where: and(
-          eq(dailyReports.userId, user.id),
-          gte(dailyReports.reportDate, startDateUtc),
-          lte(dailyReports.reportDate, endDateUtc),
-        ),
-        orderBy: desc(dailyReports.reportDate),
-        limit: limitNumber,
-        offset: skipNumber,
-        with: {
-          dailyReportMissions: {
-            with: {
-              mission: {
-                with: {
-                  project: true,
-                },
-              },
-            },
-          },
+export const getMineReportsRoute = createRoute({
+  method: 'get',
+  path: '/mine',
+  request: {
+    query: MineQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: MineResponseSchema,
         },
-      })
-
-      if (dailyReportsWithRelations.length === 0) {
-        return c.json(
-          {
-            myReports: [],
-            skip: skipNumber,
-            limit: limitNumber,
-            startDate,
-            endDate,
-            userId: user.id,
-          },
-          200,
-        )
-      }
-
-      const formattedReports = dailyReportsWithRelations.map((report) => {
-        const totalHours = report.dailyReportMissions.reduce(
-          (sum, mission) => sum + (mission.hours ?? 0),
-          0,
-        )
-
-        return {
-          id: report.id,
-          date: dateUtils.formatDateByJST(report.reportDate ?? new Date()),
-          username: user.name,
-          totalHour: totalHours,
-          impression: report.impression ?? '',
-          isRemote: report.remote,
-          isTurnedIn: report.release,
-          userId: report.userId,
-          workContents: report.dailyReportMissions.map((mission) => ({
-            id: mission.id,
-            project: mission.mission.project.name,
-            mission: mission.mission.name,
-            workTime: mission.hours ?? 0,
-            workContent: mission.workContent,
-          })),
-        }
-      })
-
-      return c.json(
-        {
-          myReports: formattedReports,
-          skip: skipNumber,
-          limit: limitNumber,
-          startDate,
-          endDate,
-          userId: user.id,
+      },
+      description: '自分の日報一覧を正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
         },
-        200,
-      )
-    } catch (error) {
-      console.error('Error fetching mine reports:', error)
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Daily Reports'],
+  summary: '自分の日報一覧取得',
+  description: '自分の日報を日付範囲で取得します。',
+})
 
-      return c.json({ error: 'Failed to fetch mine reports' }, 500)
-    }
-  })
-  .get('/mine/summary', sessionMiddleware, async (c) => {
-    const { startDate, endDate, limit, skip } = c.req.query()
-
-    const userId = c.get('user').id
-
-    const skipNumber = Number(skip) || DEFAULT_SKIP
-    const limitNumber = Number(limit) || DEFAULT_LIMIT
-
-    const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
-
-    const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
-    const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
-
-    try {
-      const projectSummaries = await db
-        .select({
-          projectId: projects.id,
-          projectName: projects.name,
-          totalHours: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
-          workDays: countDistinct(dailyReports.reportDate),
-          firstWorkDate: min(dailyReports.reportDate),
-          lastWorkDate: max(dailyReports.reportDate),
-        })
-        .from(dailyReports)
-        .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
-        .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
-        .innerJoin(projects, eq(missions.projectId, projects.id))
-        .where(
-          and(
-            eq(dailyReports.userId, userId),
-            gte(dailyReports.reportDate, startDateUtc),
-            lte(dailyReports.reportDate, endDateUtc),
-          ),
-        )
-        .groupBy(projects.id, projects.name)
-        .orderBy(desc(sql<number>`sum(${dailyReportMissions.hours})`))
-        .limit(limitNumber)
-        .offset(skipNumber)
-
-      const formattedProjectSummaries = projectSummaries.map((item) => ({
-        ...item,
-        averageHoursPerDay: item.workDays > 0 ? item.totalHours / item.workDays : 0,
-      }))
-
-      return c.json({ summary: formattedProjectSummaries }, 200)
-    } catch (error) {
-      console.error('Error fetching project summary:', error)
-
-      return c.json({ error: 'Failed to fetch project summary' }, 500)
-    }
-  })
-  .get('/count', sessionMiddleware, async (c) => {
-    const { kind, startDate, endDate } = c.req.query()
-
-    const userId = c.get('user').id
-
-    const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
-
-    const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
-    const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
-
-    try {
-      const baseConditions =
-        kind === 'everyone'
-          ? and(
-              gte(dailyReports.reportDate, startDateUtc),
-              lte(dailyReports.reportDate, endDateUtc),
-            )
-          : and(
-              eq(dailyReports.userId, userId),
-              gte(dailyReports.reportDate, startDateUtc),
-              lte(dailyReports.reportDate, endDateUtc),
-            )
-
-      const dailyReportsCountQuery = db
-        .select({ count: count(dailyReports.id) })
-        .from(dailyReports)
-        .where(baseConditions)
-
-      const projectsCountQuery = db
-        .select({ count: countDistinct(projects.id) })
-        .from(dailyReports)
-        .innerJoin(dailyReportMissions, eq(dailyReports.id, dailyReportMissions.dailyReportId))
-        .innerJoin(missions, eq(dailyReportMissions.missionId, missions.id))
-        .innerJoin(projects, eq(missions.projectId, projects.id))
-        .where(baseConditions)
-
-      const totalHoursQuery = db
-        .select({
-          total: sql<number>`sum(${dailyReportMissions.hours})`.mapWith(Number),
-        })
-        .from(dailyReportMissions)
-        .leftJoin(dailyReports, eq(dailyReportMissions.dailyReportId, dailyReports.id))
-        .where(baseConditions)
-
-      const [dailyReportsCount, projectsCount, totalHours] = await Promise.all([
-        dailyReportsCountQuery,
-        projectsCountQuery,
-        totalHoursQuery,
-      ])
-
-      return c.json(
-        {
-          dailyReportsCount: dailyReportsCount[0].count,
-          projectsCount: projectsCount[0].count,
-          totalHours: totalHours[0].total ?? 0,
+export const getMineSummaryRoute = createRoute({
+  method: 'get',
+  path: '/mine/summary',
+  request: {
+    query: SummaryQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: SummaryResponseSchema,
         },
-        200,
-      )
-    } catch (error) {
-      console.error('Error fetching count:', error)
-
-      return c.json({ error: 'Failed to fetch count' }, 500)
-    }
-  })
-  .get('/:id', sessionMiddleware, async (c) => {
-    const reportId = c.req.param('id')
-    const userId = c.get('user').id
-
-    try {
-      const dailyReportDetailQuery = db.query.dailyReports.findFirst({
-        where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
-        with: {
-          dailyReportMissions: {
-            with: {
-              mission: {
-                with: {
-                  project: true,
-                },
-              },
-            },
-          },
-          appeals: {
-            with: {
-              categoryOfAppeal: true,
-            },
-          },
+      },
+      description: 'プロジェクトサマリーを正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
         },
-      })
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Daily Reports'],
+  summary: 'プロジェクトサマリー取得',
+  description: '自分のプロジェクトごとの作業統計サマリーを取得します。',
+})
 
-      const unresolvedTroublesQuery = db.query.troubles.findMany({
-        where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
-        with: {
-          categoryOfTrouble: true,
+export const getCountRoute = createRoute({
+  method: 'get',
+  path: '/count',
+  request: {
+    query: CountQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: CountResponseSchema,
         },
-      })
+      },
+      description: '集計データを正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Daily Reports'],
+  summary: '日報集計データ取得',
+  description: '日報数、プロジェクト数、合計時間の集計データを取得します。',
+})
 
-      const [dailyReportDetail, unresolvedTroubles] = await Promise.all([
-        dailyReportDetailQuery,
-        unresolvedTroublesQuery,
-      ])
+export const getReportDetailRoute = createRoute({
+  method: 'get',
+  path: '/{id}',
+  request: {
+    params: z.object({
+      id: z.string().openapi({
+        param: { name: 'id', in: 'path' },
+        description: '日報ID',
+        example: 'report_123',
+      }),
+    }),
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: ReportDetailResponseSchema,
+        },
+      },
+      description: '日報詳細を正常に取得',
+    },
+    404: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '日報が見つからない、または権限なし',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Daily Reports'],
+  summary: '日報詳細取得',
+  description: '指定されたIDの日報の詳細情報を取得します。',
+})
 
-      if (!dailyReportDetail) {
-        return c.json({ error: 'Report not found or unauthorized' }, 404)
-      }
+const app = new OpenAPIHono()
+app.use('/*', sessionMiddleware)
+app.openapi(getTodayReportsRoute, getTodayReportsHandler)
+app.openapi(getMineReportsRoute, getMineReportsHandler)
+app.openapi(getMineSummaryRoute, getMineSummaryHandler)
+app.openapi(getCountRoute, getCountHandler)
+app.openapi(getReportDetailRoute, getReportDetailHandler)
 
-      const formattedReport = {
-        id: dailyReportDetail.id,
-        reportDate: dailyReportDetail.reportDate
-          ? dateUtils.formatDateByJST(dailyReportDetail.reportDate ?? new Date())
-          : '',
-        remote: dailyReportDetail.remote,
-        impression: dailyReportDetail.impression ?? '',
-        reportEntries: dailyReportDetail.dailyReportMissions.map((dailyReportMission) => ({
-          id: dailyReportMission.id,
-          project: dailyReportMission.mission.project.name,
-          mission: dailyReportMission.mission.name,
-          projectId: dailyReportMission.mission.project.id,
-          missionId: dailyReportMission.mission.id,
-          content: dailyReportMission.workContent,
-          hours: dailyReportMission.hours ?? 0,
-        })),
-        appealEntries: dailyReportDetail.appeals.map((appeal) => ({
-          id: appeal.id,
-          categoryId: appeal.categoryOfAppealId,
-          content: appeal.appeal,
-        })),
-        troubleEntries: unresolvedTroubles.map((trouble) => ({
-          id: trouble.id,
-          categoryId: trouble.categoryOfTroubleId,
-          content: trouble.trouble,
-        })),
-      }
-
-      return c.json(formattedReport, 200)
-    } catch (error) {
-      console.error('Error fetching individual report:', error)
-
-      return c.json({ error: 'Failed to fetch individual report' }, 500)
-    }
-  })
-
-export default app
+export const dailyApi = app

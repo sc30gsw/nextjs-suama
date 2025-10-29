@@ -46,63 +46,63 @@ export const createDailyReportFormSchema = z
     troubleEntries: z.array(troubleEntrySchema).default([]),
   })
   .superRefine((data, ctx) => {
-      // アピールエントリーのバリデーション
-      data.appealEntries.forEach((entry, index) => {
-        if (entry.content && entry.content.length > 0) {
-          if (!entry.categoryId) {
-            ctx.addIssue({
-              code: 'custom',
-              error: 'カテゴリーを選択してください',
-              path: ['appealEntries', index, 'categoryId'],
-            })
-          }
-
-          if (entry.content.length === 0) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容を入力してください',
-              path: ['appealEntries', index, 'content'],
-            })
-          }
-
-          if (entry.content.length > 256) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容は256文字以下で入力してください',
-              path: ['appealEntries', index, 'content'],
-            })
-          }
+    // アピールエントリーのバリデーション
+    data.appealEntries.forEach((entry, index) => {
+      if (entry.content && entry.content.length > 0) {
+        if (!entry.categoryId) {
+          ctx.addIssue({
+            code: 'custom',
+            error: 'カテゴリーを選択してください',
+            path: ['appealEntries', index, 'categoryId'],
+          })
         }
-      })
 
-      // トラブルエントリーのバリデーション
-      data.troubleEntries.forEach((entry, index) => {
-        if (entry.content && entry.content.length > 0) {
-          if (!entry.categoryId) {
-            ctx.addIssue({
-              code: 'custom',
-              error: 'カテゴリーを選択してください',
-              path: ['troubleEntries', index, 'categoryId'],
-            })
-          }
-
-          if (entry.content.length === 0) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容を入力してください',
-              path: ['troubleEntries', index, 'content'],
-            })
-          }
-
-          if (entry.content.length > 256) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容は256文字以下で入力してください',
-              path: ['troubleEntries', index, 'content'],
-            })
-          }
+        if (entry.content.length === 0) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容を入力してください',
+            path: ['appealEntries', index, 'content'],
+          })
         }
-      })
+
+        if (entry.content.length > 256) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容は256文字以下で入力してください',
+            path: ['appealEntries', index, 'content'],
+          })
+        }
+      }
+    })
+
+    // トラブルエントリーのバリデーション
+    data.troubleEntries.forEach((entry, index) => {
+      if (entry.content && entry.content.length > 0) {
+        if (!entry.categoryId) {
+          ctx.addIssue({
+            code: 'custom',
+            error: 'カテゴリーを選択してください',
+            path: ['troubleEntries', index, 'categoryId'],
+          })
+        }
+
+        if (entry.content.length === 0) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容を入力してください',
+            path: ['troubleEntries', index, 'content'],
+          })
+        }
+
+        if (entry.content.length > 256) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容は256文字以下で入力してください',
+            path: ['troubleEntries', index, 'content'],
+          })
+        }
+      }
+    })
   })
 
 export type CreateDailyReportFormSchema = z.infer<typeof createDailyReportFormSchema>

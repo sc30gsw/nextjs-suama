@@ -1,63 +1,43 @@
-import { count, like, or } from 'drizzle-orm'
-import { Hono } from 'hono'
-import { MAX_LIMIT } from '~/constants'
-import { ERROR_STATUS } from '~/constants/error-message'
-import { missions } from '~/db/schema'
-import { db } from '~/index'
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { getMissionsHandler } from '~/features/report-contexts/missions/api/handler'
+import {
+  ErrorResponseSchema,
+  MissionsQuerySchema,
+  MissionsResponseSchema,
+} from '~/features/report-contexts/missions/types/schemas/missions-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-const app = new Hono().get('/', sessionMiddleware, async (c) => {
-  const { skip, limit, names } = c.req.query()
-
-  const skipNumber = Number(skip) || 0
-  const limitNumber = Number(limit) || MAX_LIMIT
-
-  const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-
-  try {
-    const whereClause =
-      namesArray.length > 0
-        ? or(
-            ...namesArray.flatMap((word) => [
-              like(missions.name, `%${word}%`),
-              like(missions.likeKeywords, `%${word}%`),
-            ]),
-          )
-        : undefined
-
-    const missionList = await db.query.missions.findMany({
-      where: whereClause,
-      offset: skipNumber,
-      limit: limitNumber,
-      orderBy: (missions, { asc }) => [asc(missions.createdAt)],
-      with: {
-        project: {
-          columns: {
-            name: true,
-          },
+export const getMissionsRoute = createRoute({
+  method: 'get',
+  path: '/',
+  request: {
+    query: MissionsQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: MissionsResponseSchema,
         },
       },
-    })
-
-    const total = await db.select({ count: count() }).from(missions).where(whereClause)
-
-    return c.json(
-      {
-        missions: missionList,
-        total: total[0].count,
-        skip: skipNumber,
-        limit: limitNumber,
+      description: 'ミッション一覧を正常に取得',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
       },
-      200,
-    )
-  } catch (_) {
-    return c.json(
-      {
-        error: ERROR_STATUS.SOMETHING_WENT_WRONG,
-      },
-      500,
-    )
-  }
+      description: 'サーバーエラー',
+    },
+  },
+  tags: ['Missions'],
+  summary: 'ミッション一覧取得',
+  description:
+    'システムに登録されているミッションの一覧を取得します。関連プロジェクト名も含まれます。',
 })
 
-export default app
+const app = new OpenAPIHono()
+app.use('/*', sessionMiddleware)
+
+export const missionApi = app.openapi(getMissionsRoute, getMissionsHandler)
