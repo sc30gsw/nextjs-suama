@@ -1,3 +1,4 @@
+import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { Scalar } from '@scalar/hono-api-reference'
 import { handle } from 'hono/vercel'
@@ -52,6 +53,7 @@ route.doc('/doc', {
 })
 
 route.get('/scalar', Scalar({ url: '/api/doc' }))
+route.get('/swagger', swaggerUI({ url: '/api/doc' }))
 
 export type AppType = typeof route
 
