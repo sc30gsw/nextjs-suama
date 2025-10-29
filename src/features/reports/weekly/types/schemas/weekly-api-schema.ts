@@ -159,17 +159,17 @@ export const WeeklyReportsResponseSchema = z.object({
 })
 
 export const WeeklyReportByIdResponseSchema = z.object({
-  weeklyReport: SimpleWeeklyReportSchema.openapi({ description: '週報詳細データ' }),
+  weeklyReport: SimpleWeeklyReportSchema.nullable().openapi({ description: '週報詳細データ' }),
 })
 
 export const CurrentUserWeeklyReportResponseSchema = z.object({
-  weeklyReport: SimpleWeeklyReportSchema.openapi({
+  weeklyReport: SimpleWeeklyReportSchema.nullable().openapi({
     description: '現在のユーザーの週報データ',
   }),
 })
 
 export const LastWeekReportResponseSchema = z.object({
-  weeklyReport: WeeklyReportSchema.openapi({ description: '前週の週報データ' }),
+  weeklyReport: WeeklyReportSchema.nullable().openapi({ description: '前週の週報データ' }),
 })
 
 export const ErrorResponseSchema = z.object({
