@@ -39,3 +39,10 @@ jobs:
         env:
           # Add any environment variables needed for build
           NODE_ENV: production
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          TURSO_DATABASE_URL: libsql://your-database-url.turso.io
+          TURSO_AUTH_TOKEN:  your-auth-token
+          BETTER_AUTH_SECRET: your-better-auth-secret
+          BETTER_AUTH_BASE_URL: http://localhost:3000
+
+
