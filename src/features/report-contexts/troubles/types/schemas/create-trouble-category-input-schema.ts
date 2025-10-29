@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 
 export const createTroubleCategoryInputSchema = z.object({
   name: z.string({ error: 'カテゴリー名を入力してください' }).max(128, {

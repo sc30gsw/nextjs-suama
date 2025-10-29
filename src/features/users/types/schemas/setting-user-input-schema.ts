@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 import { IMAGE_REGEX } from '~/constants/validation'
 
 export const settingUserInputSchema = z.object({

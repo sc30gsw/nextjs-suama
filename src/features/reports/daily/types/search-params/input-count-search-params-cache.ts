@@ -1,5 +1,5 @@
 import { createSearchParamsCache, parseAsBoolean, parseAsJson, parseAsString } from 'nuqs/server'
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 
 export const reportEntrySchema = z.object({
   id: z.string(),

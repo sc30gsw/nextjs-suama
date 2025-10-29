@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 
 // 個別のレポートエントリー（ミッション情報）
 export const dailyReportEntrySchema = z.object({
