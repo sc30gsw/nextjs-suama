@@ -36,6 +36,14 @@ export const getTodayReportsRoute = createRoute({
       },
       description: '今日の日報一覧を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -45,6 +53,7 @@ export const getTodayReportsRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: '今日の日報一覧取得',
   description: '今日の日報を取得します。ユーザー名でフィルタリング可能です。',
@@ -65,6 +74,14 @@ export const getMineReportsRoute = createRoute({
       },
       description: '自分の日報一覧を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -74,6 +91,7 @@ export const getMineReportsRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: '自分の日報一覧取得',
   description: '自分の日報を日付範囲で取得します。',
@@ -94,6 +112,14 @@ export const getMineSummaryRoute = createRoute({
       },
       description: 'プロジェクトサマリーを正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -103,6 +129,7 @@ export const getMineSummaryRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: 'プロジェクトサマリー取得',
   description: '自分のプロジェクトごとの作業統計サマリーを取得します。',
@@ -123,6 +150,14 @@ export const getCountRoute = createRoute({
       },
       description: '集計データを正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -132,6 +167,7 @@ export const getCountRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: '日報集計データ取得',
   description: '日報数、プロジェクト数、合計時間の集計データを取得します。',
@@ -158,6 +194,14 @@ export const getReportDetailRoute = createRoute({
       },
       description: '日報詳細を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     404: {
       content: {
         'application/json': {
@@ -175,6 +219,7 @@ export const getReportDetailRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: '日報詳細取得',
   description: '指定されたIDの日報の詳細情報を取得します。',

@@ -22,6 +22,14 @@ export const getUsersRoute = createRoute({
       },
       description: 'ユーザー一覧を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -31,10 +39,11 @@ export const getUsersRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Users'],
   summary: 'ユーザー一覧取得',
   description:
-    'システムに登録されているユーザーの一覧を取得します。ページネーションと名前フィルタリングに対応しています。',
+    'システムに登録されているユーザーの一覧を取得します。ページネーションと名前フィルタリングに対応しています。認証にはAuthorizationヘッダーにユーザーIDを設定してください。',
 })
 
 const app = new OpenAPIHono()

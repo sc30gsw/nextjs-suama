@@ -22,6 +22,14 @@ export const getMissionsRoute = createRoute({
       },
       description: 'ミッション一覧を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -31,6 +39,7 @@ export const getMissionsRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Missions'],
   summary: 'ミッション一覧取得',
   description:

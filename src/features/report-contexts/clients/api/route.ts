@@ -22,6 +22,14 @@ export const getClientsRoute = createRoute({
       },
       description: 'クライアント一覧を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -31,6 +39,7 @@ export const getClientsRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Clients'],
   summary: 'クライアント一覧取得',
   description:

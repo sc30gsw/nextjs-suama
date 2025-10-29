@@ -31,6 +31,14 @@ export const getWeeklyReportsRoute = createRoute({
       },
       description: '週報一覧を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     500: {
       content: {
         'application/json': {
@@ -40,6 +48,7 @@ export const getWeeklyReportsRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Weekly Reports'],
   summary: '週報一覧取得',
   description:
@@ -67,6 +76,14 @@ export const getWeeklyReportByIdRoute = createRoute({
       },
       description: '週報詳細を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     404: {
       content: {
         'application/json': {
@@ -84,6 +101,7 @@ export const getWeeklyReportByIdRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Weekly Reports'],
   summary: '週報詳細取得',
   description: '指定されたIDの週報の詳細情報を取得します。',
@@ -115,6 +133,14 @@ export const getCurrentUserWeeklyReportRoute = createRoute({
       },
       description: '現在のユーザーの週報を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     404: {
       content: {
         'application/json': {
@@ -132,6 +158,7 @@ export const getCurrentUserWeeklyReportRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Weekly Reports'],
   summary: '現在のユーザーの週報取得',
   description: 'ログイン中のユーザーの指定された年・週の週報を取得します。',
@@ -163,6 +190,14 @@ export const getLastWeekReportRoute = createRoute({
       },
       description: '前週の週報を正常に取得',
     },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
     404: {
       content: {
         'application/json': {
@@ -180,6 +215,7 @@ export const getLastWeekReportRoute = createRoute({
       description: 'サーバーエラー',
     },
   },
+  security: [{ UserIdAuth: [] }],
   tags: ['Weekly Reports'],
   summary: '前週の週報取得',
   description:

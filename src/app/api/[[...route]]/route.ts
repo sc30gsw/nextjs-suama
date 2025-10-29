@@ -16,6 +16,13 @@ export const runtime = 'edge'
 
 const app = new OpenAPIHono().basePath('/api')
 
+app.openAPIRegistry.registerComponent('securitySchemes', 'UserIdAuth', {
+  type: 'apiKey',
+  in: 'header',
+  name: 'Authorization',
+  description: 'User ID for authentication',
+})
+
 const route = app
   .route('/dailies', dailyApi)
   .route('/weeklies', weeklyApi)
