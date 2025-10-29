@@ -143,9 +143,7 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
                 placeholder="検索単語を入力（例: apple,banana,orange）"
                 isRequired={true}
                 isDisabled={isPending}
-                defaultValue={
-                  lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords ?? undefined
-                }
+                defaultValue={lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords}
                 errorMessage={''}
               />
               <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
