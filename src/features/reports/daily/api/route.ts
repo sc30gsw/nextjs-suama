@@ -182,10 +182,10 @@ export const getReportDetailRoute = createRoute({
 
 const app = new OpenAPIHono<AdditionalVariables>()
 app.use('/*', sessionMiddleware)
-app.openapi(getTodayReportsRoute, getTodayReportsHandler)
-app.openapi(getMineReportsRoute, getMineReportsHandler)
-app.openapi(getMineSummaryRoute, getMineSummaryHandler)
-app.openapi(getCountRoute, getCountHandler)
-app.openapi(getReportDetailRoute, getReportDetailHandler)
 
 export const dailyApi = app
+  .openapi(getTodayReportsRoute, getTodayReportsHandler)
+  .openapi(getMineReportsRoute, getMineReportsHandler)
+  .openapi(getMineSummaryRoute, getMineSummaryHandler)
+  .openapi(getCountRoute, getCountHandler)
+  .openapi(getReportDetailRoute, getReportDetailHandler)

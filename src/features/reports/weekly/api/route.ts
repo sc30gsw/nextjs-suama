@@ -188,9 +188,9 @@ export const getLastWeekReportRoute = createRoute({
 
 const app = new OpenAPIHono<AdditionalVariables>()
 app.use('/*', sessionMiddleware)
-app.openapi(getWeeklyReportsRoute, getWeeklyReportsHandler)
-app.openapi(getWeeklyReportByIdRoute, getWeeklyReportByIdHandler)
-app.openapi(getCurrentUserWeeklyReportRoute, getCurrentUserWeeklyReportHandler)
-app.openapi(getLastWeekReportRoute, getLastWeekReportHandler)
 
 export const weeklyApi = app
+  .openapi(getWeeklyReportsRoute, getWeeklyReportsHandler)
+  .openapi(getWeeklyReportByIdRoute, getWeeklyReportByIdHandler)
+  .openapi(getCurrentUserWeeklyReportRoute, getCurrentUserWeeklyReportHandler)
+  .openapi(getLastWeekReportRoute, getLastWeekReportHandler)
