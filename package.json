@@ -7,17 +7,20 @@
     "build": "next build",
     "build:clean": "rm -rf .next && next build",
     "start": "next start",
-    "lint": "biome lint -- apply ./src",
+    "lint": "biome lint --write ./src",
     "format": "biome format ./src --write",
-    "check:biome": "biome check --apply ./src"
+    "check:biome": "biome check --write ./src"
   },
   "dependencies": {
     "@conform-to/react": "^1.5.0",
     "@conform-to/zod": "^1.5.0",
+    "@hono/swagger-ui": "^0.5.2",
+    "@hono/zod-openapi": "^1.1.4",
     "@intentui/icons": "^1.11.0",
     "@internationalized/date": "^3.10.0",
     "@libsql/client": "^0.15.4",
     "@react-aria/i18n": "^3.12.13",
+    "@scalar/hono-api-reference": "^0.9.22",
     "@t3-oss/env-nextjs": "^0.13.4",
     "@tabler/icons-react": "^3.31.0",
     "@tanstack/react-query": "^5.75.7",

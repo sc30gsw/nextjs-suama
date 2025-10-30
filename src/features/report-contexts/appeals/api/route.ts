@@ -1,72 +1,52 @@
-import { count, eq, type InferSelectModel, like, or } from 'drizzle-orm'
-import { Hono } from 'hono'
-import { MAX_LIMIT } from '~/constants'
-import { ERROR_STATUS } from '~/constants/error-message'
-import { appeals, categoryOfAppeals } from '~/db/schema'
-import { db } from '~/index'
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { getAppealCategoriesHandler } from '~/features/report-contexts/appeals/api/handler'
+import {
+  AppealsQuerySchema,
+  AppealsResponseSchema,
+  ErrorResponseSchema,
+} from '~/features/report-contexts/appeals/types/schemas/appeals-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-const app = new Hono().get('/categories', sessionMiddleware, async (c) => {
-  // アピールカテゴリーと、withData=trueかつreportIdがある場合には既存のアピールも取得するAPI
-  const { skip, limit, names, withData, reportId } = c.req.query()
-
-  const skipNumber = Number(skip) || 0
-  const limitNumber = Number(limit) || MAX_LIMIT
-
-  const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-
-  try {
-    const whereClause =
-      namesArray.length > 0
-        ? or(...namesArray.flatMap((word) => [like(categoryOfAppeals.name, `%${word}%`)]))
-        : undefined
-
-    const categories = await db.query.categoryOfAppeals.findMany({
-      where: whereClause,
-      offset: skipNumber,
-      limit: limitNumber,
-      orderBy: (categoriesOfAppeals, { asc }) => [asc(categoriesOfAppeals.createdAt)],
-    })
-
-    const total = await db.select({ count: count() }).from(categoryOfAppeals).where(whereClause)
-
-    let existingAppeals: Pick<
-      InferSelectModel<typeof appeals>,
-      'id' | 'categoryOfAppealId' | 'appeal'
-    >[] = []
-
-    if (withData === 'true' && reportId) {
-      const appealsData = await db.query.appeals.findMany({
-        columns: {
-          id: true,
-          categoryOfAppealId: true,
-          appeal: true,
+export const getAppealCategoriesRoute = createRoute({
+  method: 'get',
+  path: '/categories',
+  request: {
+    query: AppealsQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: AppealsResponseSchema,
         },
-        where: eq(appeals.dailyReportId, reportId),
-        orderBy: (appeals, { desc }) => [desc(appeals.createdAt)],
-      })
-
-      existingAppeals = appealsData
-    }
-
-    return c.json(
-      {
-        appealCategories: categories,
-        total: total[0].count,
-        skip: skipNumber,
-        limit: limitNumber,
-        existingAppeals,
       },
-      200,
-    )
-  } catch (_) {
-    return c.json(
-      {
-        error: ERROR_STATUS.SOMETHING_WENT_WRONG,
+      description: 'アピールカテゴリー一覧を正常に取得',
+    },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
       },
-      500,
-    )
-  }
+      description: '認証が必要です',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  security: [{ UserIdAuth: [] }],
+  tags: ['Appeals'],
+  summary: 'アピールカテゴリー一覧取得',
+  description:
+    'アピールカテゴリーの一覧を取得します。withData=trueかつreportId指定時は、既存のアピールデータも含まれます。',
 })
 
-export default app
+const app = new OpenAPIHono()
+app.use('/*', sessionMiddleware)
+
+export const appealApi = app.openapi(getAppealCategoriesRoute, getAppealCategoriesHandler)

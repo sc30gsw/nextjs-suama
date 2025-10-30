@@ -10,7 +10,6 @@ type DateType = 'start' | 'end'
 
 export const dateUtils = {
   convertJstDateToUtc: (dateStr: DateInput, type: DateType) => {
-    // ISO文字列が来た場合はyyyy-MM-dd部分だけ抽出
     const cleanDateString = dateStr.includes(SEPARATOR) ? dateStr.split(SEPARATOR)[0] : dateStr
     const dateTime = type === 'start' ? DATE_TIME.START : DATE_TIME.END
 

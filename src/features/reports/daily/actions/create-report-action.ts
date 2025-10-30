@@ -52,7 +52,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
 
   try {
     await db.transaction(async (tx) => {
-      // 日報の基本情報を作成
       const [newDailyReport] = await tx
         .insert(dailyReports)
         .values({
@@ -64,7 +63,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
         })
         .returning({ id: dailyReports.id })
 
-      // ミッション情報を作成
       const reportEntries = submission.value.reportEntries
       if (reportEntries.length > 0) {
         const submittedMissionIds = pipe(
@@ -73,7 +71,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
           filter(isDefined),
         )
 
-        // [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
+        //? [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
         const uniqueMissionIds = [...new Set(submittedMissionIds)]
 
         if (uniqueMissionIds.length > 0) {
@@ -83,7 +81,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
           })
 
           if (existingMissions.length !== uniqueMissionIds.length) {
-            // 1つでも存在しないmissionIdがあればエラーをスローしてロールバック
             throw new Error(ERROR_STATUS.INVALID_MISSION_RELATION)
           }
         }
@@ -98,7 +95,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
         )
       }
 
-      // アピール情報を作成
       const validAppealEntries = submission.value.appealEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
@@ -114,12 +110,10 @@ export async function createReportAction(_: unknown, formData: FormData) {
         )
       }
 
-      // トラブル情報を作成
       const validTroubleEntries = submission.value.troubleEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
-      // upsertで既存はresolved更新、新規は追加
       if (validTroubleEntries.length > 0) {
         for (const entry of validTroubleEntries) {
           await tx

@@ -45,7 +45,7 @@ export async function updateProjectAction(_: unknown, formData: FormData) {
         name: submission.value.name,
         likeKeywords: sanitizeKeywords(submission.value.likeKeywords),
         clientId: submission.value.clientId,
-        isArchived: submission.value.isArchive === 'on',
+        isArchived: submission.value.isArchived === 'on',
       })
       .where(eq(projects.id, submission.value.id))
 

@@ -37,18 +37,20 @@ export function UpdateWeeklyReportForm({
 
   const initialWeeklyInputCountSearchParamsParsers = {
     weeklyReportEntry: parseAsJson(weeklyReportStateSchema.parse).withDefault({
-      count: weeklyReport.weeklyReportMissions.length,
-      entries: weeklyReport.weeklyReportMissions.map((entry) => ({
-        id: entry.id,
-        project: pipe(
-          projectsResponse.projects,
-          find((project) => project.missions.some((mission) => mission.id === entry.missionId)),
-          (project) => project?.id ?? '',
-        ),
-        mission: entry.missionId,
-        content: entry.workContent,
-        hours: entry.hours,
-      })),
+      count: weeklyReport ? weeklyReport.weeklyReportMissions.length : 0,
+      entries: weeklyReport
+        ? weeklyReport.weeklyReportMissions.map((entry) => ({
+            id: entry.id,
+            project: pipe(
+              projectsResponse.projects,
+              find((project) => project.missions.some((mission) => mission.id === entry.missionId)),
+              (project) => project?.id ?? '',
+            ),
+            mission: entry.missionId,
+            content: entry.workContent,
+            hours: entry.hours,
+          }))
+        : [],
     }),
   }
 
@@ -62,7 +64,7 @@ export function UpdateWeeklyReportForm({
     handleAdd,
     handleRemove,
     getError,
-  } = useUpdateWeeklyReportForm(initialWeeklyInputCountSearchParamsParsers, dates, weeklyReport.id)
+  } = useUpdateWeeklyReportForm(initialWeeklyInputCountSearchParamsParsers, dates, weeklyReport?.id)
 
   return (
     <>

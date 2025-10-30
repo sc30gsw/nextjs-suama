@@ -40,7 +40,7 @@ export async function getProjectSummaryForMine(
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${userId}`)
 
-  const url = client.api.dailies.mine['summary'].$url()
+  const url = client.api.dailies.mine.summary.$url()
   type ResType = InferResponseType<(typeof client.api.dailies.mine)['summary']['$get'], 200>
 
   const res = await upfetch<ResType>(url, {

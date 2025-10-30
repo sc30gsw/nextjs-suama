@@ -13,7 +13,6 @@ export const createMissionInputSchema = z.object({
 
       const trimmed = value.trim()
 
-      // カンマ区切りのみを許容する
       const isValid = LIKE_KEYWORDS_REGEX.test(trimmed)
 
       return isValid

@@ -100,19 +100,16 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
       return
     }
 
-    // 拡張子制限
     if (!ACCEPTED_TYPES.includes(file.type as 'image/jpeg' | 'image/png' | 'image/webp')) {
       setImageError('画像はJPEG, PNG, WEBP形式のみ対応しています。')
       return
     }
 
-    // サイズ制限
     if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
       setImageError('画像サイズは5MB以下にしてください。')
       return
     }
 
-    // Base64変換
     const base64 = await fileToBase64(file)
     imageInput.change(base64)
     setImageError('')

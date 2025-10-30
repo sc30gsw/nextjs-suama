@@ -61,7 +61,6 @@ export async function updateReportAction(_: unknown, formData: FormData) {
 
   try {
     await db.transaction(async (tx) => {
-      // 日報の基本情報を更新
       await tx
         .update(dailyReports)
         .set({
@@ -81,7 +80,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
           filter(isDefined),
         )
 
-        // [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
+        //? [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
         const uniqueMissionIds = [...new Set(submittedMissionIds)]
 
         if (uniqueMissionIds.length > 0) {
@@ -91,12 +90,10 @@ export async function updateReportAction(_: unknown, formData: FormData) {
           })
 
           if (existingMissions.length !== uniqueMissionIds.length) {
-            // 1つでも存在しないmissionIdがあればエラーをスローしてロールバック
             throw new Error(ERROR_STATUS.INVALID_MISSION_RELATION)
           }
         }
 
-        // 既存の関連を一旦削除し、新しい情報で再作成
         // ?:現在のスキーマでは dailyReportMissions テーブルに (dailyReportId, missionId) の UNIQUE 制約がない。
         // ?:そのため、どのレコードをUPDATEすれば良いかを特定できず、onConflictDoUpdate を使ったUpsertができない。※UNIQUE 制約がある場合、午前と午後で同じミッションだけど内容を分けて書きたい場合、エラーになる。
         // ?:代わりに、トランザクション内で一度関連レコードを全て削除し、送信された内容で再作成することでデータの整合性を保つ。。
@@ -111,16 +108,13 @@ export async function updateReportAction(_: unknown, formData: FormData) {
           })),
         )
       } else {
-        // 送信された業務内容が0件の場合、関連を全て削除
         await tx.delete(dailyReportMissions).where(eq(dailyReportMissions.dailyReportId, reportId))
       }
 
-      // アピール情報の処理
       const validAppealEntries = submission.value.appealEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
-      // upsertで既存は更新、新規は追加
       if (validAppealEntries.length > 0) {
         for (const entry of validAppealEntries) {
           await tx
@@ -142,7 +136,6 @@ export async function updateReportAction(_: unknown, formData: FormData) {
         }
       }
 
-      // 送信されなかったAppealsを削除
       if (validAppealEntries.length > 0) {
         const submittedAppealIds = validAppealEntries.map((e) => e.id)
 
@@ -152,16 +145,13 @@ export async function updateReportAction(_: unknown, formData: FormData) {
             and(eq(appeals.dailyReportId, reportId), not(inArray(appeals.id, submittedAppealIds))),
           )
       } else {
-        // 全て削除
         await tx.delete(appeals).where(eq(appeals.dailyReportId, reportId))
       }
 
-      // トラブル情報の処理
       const validTroubleEntries = submission.value.troubleEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
-      // upsertで既存はresolved更新、新規は追加
       if (validTroubleEntries.length > 0) {
         for (const entry of validTroubleEntries) {
           await tx

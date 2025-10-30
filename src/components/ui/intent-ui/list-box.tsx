@@ -14,9 +14,9 @@ import {
 import { twMerge } from 'tailwind-merge'
 import {
   DropdownDescription,
-  dropdownItemStyles,
   DropdownLabel,
   DropdownSection,
+  dropdownItemStyles,
 } from '~/components/ui/intent-ui/dropdown'
 import { cx } from '~/lib/primitive'
 

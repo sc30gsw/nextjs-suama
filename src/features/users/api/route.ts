@@ -1,51 +1,52 @@
-import { count, like, or } from 'drizzle-orm'
-import { Hono } from 'hono'
-import { MAX_LIMIT } from '~/constants'
-import { ERROR_STATUS } from '~/constants/error-message'
-import { users } from '~/db/schema'
-import { db } from '~/index'
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { getUsersHandler } from '~/features/users/api/handler'
+import {
+  ErrorResponseSchema,
+  UsersQuerySchema,
+  UsersResponseSchema,
+} from '~/features/users/types/schemas/users-api-schema'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
-const app = new Hono().get('/', sessionMiddleware, async (c) => {
-  const { skip, limit, userNames } = c.req.query()
-
-  const skipNumber = Number(skip) || 0
-  const limitNumber = Number(limit) || MAX_LIMIT
-
-  const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : []
-
-  try {
-    const whereClause =
-      userNamesArray.length > 0
-        ? or(...userNamesArray.flatMap((word) => [like(users.name, `%${word}%`)]))
-        : undefined
-
-    const userList = await db.query.users.findMany({
-      where: whereClause,
-      offset: skipNumber,
-      limit: limitNumber,
-      orderBy: (users, { asc }) => [asc(users.createdAt)],
-    })
-
-    const total = await db.select({ count: count() }).from(users).where(whereClause)
-
-    return c.json(
-      {
-        users: userList,
-        total: total[0].count,
-        skip: skipNumber,
-        limit: limitNumber,
+export const getUsersRoute = createRoute({
+  method: 'get',
+  path: '/',
+  request: {
+    query: UsersQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: UsersResponseSchema,
+        },
       },
-      200,
-    )
-  } catch (_) {
-    return c.json(
-      {
-        error: ERROR_STATUS.SOMETHING_WENT_WRONG,
+      description: 'ユーザー一覧を正常に取得',
+    },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
       },
-      500,
-    )
-  }
+      description: '認証が必要です',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  security: [{ UserIdAuth: [] }],
+  tags: ['Users'],
+  summary: 'ユーザー一覧取得',
+  description:
+    'システムに登録されているユーザーの一覧を取得します。ページネーションと名前フィルタリングに対応しています。認証にはAuthorizationヘッダーにユーザーIDを設定してください。',
 })
 
-export default app
+const app = new OpenAPIHono()
+app.use('/*', sessionMiddleware)
+
+export const userApi = app.openapi(getUsersRoute, getUsersHandler)

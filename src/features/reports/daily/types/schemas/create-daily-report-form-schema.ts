@@ -1,6 +1,5 @@
 import { z } from 'zod/v4'
 
-// 個別のレポートエントリー（ミッション情報）
 export const dailyReportEntrySchema = z.object({
   id: z.uuid(),
   project: z.string({ error: 'プロジェクトを選択してください' }),
@@ -14,14 +13,12 @@ export const dailyReportEntrySchema = z.object({
     }),
 })
 
-// アピールエントリー
 export const appealEntrySchema = z.object({
   id: z.uuid(),
   categoryId: z.string().optional(),
   content: z.string().optional(),
 })
 
-// トラブルエントリー
 export const troubleEntrySchema = z.object({
   id: z.uuid(),
   categoryId: z.string().optional(),
@@ -32,7 +29,6 @@ export const troubleEntrySchema = z.object({
     .default(false),
 })
 
-// メインのフォームスキーマ
 export const createDailyReportFormSchema = z
   .object({
     reportDate: z.string({ error: '日付を選択してください' }),
@@ -46,63 +42,61 @@ export const createDailyReportFormSchema = z
     troubleEntries: z.array(troubleEntrySchema).default([]),
   })
   .superRefine((data, ctx) => {
-      // アピールエントリーのバリデーション
-      data.appealEntries.forEach((entry, index) => {
-        if (entry.content && entry.content.length > 0) {
-          if (!entry.categoryId) {
-            ctx.addIssue({
-              code: 'custom',
-              error: 'カテゴリーを選択してください',
-              path: ['appealEntries', index, 'categoryId'],
-            })
-          }
-
-          if (entry.content.length === 0) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容を入力してください',
-              path: ['appealEntries', index, 'content'],
-            })
-          }
-
-          if (entry.content.length > 256) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容は256文字以下で入力してください',
-              path: ['appealEntries', index, 'content'],
-            })
-          }
+    data.appealEntries.forEach((entry, index) => {
+      if (entry.content && entry.content.length > 0) {
+        if (!entry.categoryId) {
+          ctx.addIssue({
+            code: 'custom',
+            error: 'カテゴリーを選択してください',
+            path: ['appealEntries', index, 'categoryId'],
+          })
         }
-      })
 
-      // トラブルエントリーのバリデーション
-      data.troubleEntries.forEach((entry, index) => {
-        if (entry.content && entry.content.length > 0) {
-          if (!entry.categoryId) {
-            ctx.addIssue({
-              code: 'custom',
-              error: 'カテゴリーを選択してください',
-              path: ['troubleEntries', index, 'categoryId'],
-            })
-          }
-
-          if (entry.content.length === 0) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容を入力してください',
-              path: ['troubleEntries', index, 'content'],
-            })
-          }
-
-          if (entry.content.length > 256) {
-            ctx.addIssue({
-              code: 'custom',
-              error: '内容は256文字以下で入力してください',
-              path: ['troubleEntries', index, 'content'],
-            })
-          }
+        if (entry.content.length === 0) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容を入力してください',
+            path: ['appealEntries', index, 'content'],
+          })
         }
-      })
+
+        if (entry.content.length > 256) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容は256文字以下で入力してください',
+            path: ['appealEntries', index, 'content'],
+          })
+        }
+      }
+    })
+
+    data.troubleEntries.forEach((entry, index) => {
+      if (entry.content && entry.content.length > 0) {
+        if (!entry.categoryId) {
+          ctx.addIssue({
+            code: 'custom',
+            error: 'カテゴリーを選択してください',
+            path: ['troubleEntries', index, 'categoryId'],
+          })
+        }
+
+        if (entry.content.length === 0) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容を入力してください',
+            path: ['troubleEntries', index, 'content'],
+          })
+        }
+
+        if (entry.content.length > 256) {
+          ctx.addIssue({
+            code: 'custom',
+            error: '内容は256文字以下で入力してください',
+            path: ['troubleEntries', index, 'content'],
+          })
+        }
+      }
+    })
   })
 
 export type CreateDailyReportFormSchema = z.infer<typeof createDailyReportFormSchema>

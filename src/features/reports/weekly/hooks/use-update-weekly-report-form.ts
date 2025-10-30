@@ -19,9 +19,8 @@ import { withCallbacks } from '~/utils/with-callbacks'
 export function useUpdateWeeklyReportForm(
   initialWeeklyInputCountSearchParamsParsers: UpdateWeeklyInputCountSearchParams,
   dates: string,
-  weeklyReportId: Exclude<
-    Awaited<ReturnType<typeof getWeeklyReportMissionsById>>['weeklyReport'],
-    undefined
+  weeklyReportId?: NonNullable<
+    Awaited<ReturnType<typeof getWeeklyReportMissionsById>>['weeklyReport']
   >['id'],
 ) {
   const { weeklyReportEntry, setWeeklyReportEntry } = useWeeklyReportSearchParams(
