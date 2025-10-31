@@ -67,7 +67,13 @@ export function ThemeSwitch({
   }
 
   return (
-    <button type="button" ref={containerRef} onClick={(e) => e.stopPropagation()}>
+    <button
+      type="button"
+      ref={containerRef}
+      // ? Intent UIのMenuがonPointerUpないしonPointerDownでイベントを検知し、Menuが閉じるためイベント伝播を防止
+      // ? onClickはpointerUp/Downを内包するが、onClickだとMenuが閉じてしまうため、onPointerUpを使用
+      onPointerUp={(e) => e.stopPropagation()}
+    >
       <Switch
         className={className}
         isSelected={isDark}
