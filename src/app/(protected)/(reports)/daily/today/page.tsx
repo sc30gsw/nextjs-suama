@@ -8,7 +8,7 @@ import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-sele
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
 import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
-import { getReportsForToday } from '~/features/reports/daily/server/fetcher'
+import { getDailyReports } from '~/features/reports/daily/server/fetcher'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { userSearchParamsCache } from '~/features/users/types/search-params/user-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
@@ -29,7 +29,7 @@ export default async function DailyOfTodayPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const reportsPromise = getReportsForToday(
+  const reportsPromise = getDailyReports(
     {
       skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
       limit:
@@ -38,7 +38,8 @@ export default async function DailyOfTodayPage({
           : rowsPerPage < MIN_ROWS_PER_PAGE
             ? MIN_ROWS_PER_PAGE
             : rowsPerPage,
-      userNames,
+      userNames: userNames?.join(','),
+      today: 'true',
     },
     session.user.id,
   )
@@ -100,7 +101,7 @@ export default async function DailyOfTodayPage({
             }
           >
             {reportsPromise.then((res) => (
-              <DailyReportsTable reports={res.userReports} userId={session.user.id} />
+              <DailyReportsTable reports={res.dailyReports} userId={session.user.id} />
             ))}
           </Suspense>
         </Card.Content>

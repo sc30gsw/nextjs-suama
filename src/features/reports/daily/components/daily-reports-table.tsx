@@ -15,23 +15,16 @@ import { DailyReportDeleteButton } from '~/features/reports/daily/components/dai
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
 
-type DailyUserReports = InferResponseType<
-  typeof client.api.dailies.today.$get,
+type DailyReport = InferResponseType<
+  typeof client.api.dailies.$get,
   200
->['userReports'][number]
-
-type DailyMyReports = InferResponseType<
-  typeof client.api.dailies.mine.$get,
-  200
->['myReports'][number]
-
-type DailyReport = DailyUserReports | DailyMyReports
+>['dailyReports'][number]
 
 const columnHelper = createColumnHelper<DailyReport>()
 
 type DailyReportsTableProps = {
   reports: DailyReport[]
-  userId?: DailyUserReports['userId']
+  userId?: DailyReport['userId']
 }
 
 export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {

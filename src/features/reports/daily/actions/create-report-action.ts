@@ -5,9 +5,9 @@ import { and, eq, inArray } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { filter, isDefined, map, pipe } from 'remeda'
 import {
+  GET_DAILY_PROJECT_SUMMARY_CACHE_KEY,
+  GET_DAILY_REPORTS_CACHE_KEY,
   GET_DAILY_REPORTS_COUNT_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
   GET_TROUBLE_CATEGORIES_CACHE_KEY,
 } from '~/constants/cache-keys'
@@ -137,9 +137,12 @@ export async function createReportAction(_: unknown, formData: FormData) {
 
     const reportDateJST = dateUtils.formatDateByJST(reportDate, DATE_FORMAT)
     revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${reportDateJST}`)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-all`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-all`)
     revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-all`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
 
     return {

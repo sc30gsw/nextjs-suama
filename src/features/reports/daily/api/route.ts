@@ -1,40 +1,38 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
-  getCountHandler,
-  getMineReportsHandler,
-  getMineSummaryHandler,
-  getReportDetailHandler,
-  getTodayReportsHandler,
-} from '~/features/reports/daily/api/handler'
-import {
-  CountQuerySchema,
-  CountResponseSchema,
+  DailyReportCountQuerySchema,
+  DailyReportCountResponseSchema,
+  DailyReportDetailQuerySchema,
+  DailyReportDetailResponseSchema,
+  DailyReportsQuerySchema,
+  DailyReportsResponseSchema,
+  DailyReportSummaryQuerySchema,
+  DailyReportSummaryResponseSchema,
   ErrorResponseSchema,
-  MineQuerySchema,
-  MineResponseSchema,
-  ReportDetailResponseSchema,
-  SummaryQuerySchema,
-  SummaryResponseSchema,
-  TodayQuerySchema,
-  TodayResponseSchema,
 } from '~/features/reports/daily/types/schemas/daily-report-api-schema'
 import type { AdditionalVariables } from '~/features/reports/types'
 import { sessionMiddleware } from '~/lib/session-middleware'
+import { getCountHandler } from './handlers/count-handler'
+import {
+  getDailyReportDetailHandler,
+  getDailyReportSummaryHandler,
+} from './handlers/detail-handler'
+import { getDailyReportsListHandler } from './handlers/list-handler'
 
-export const getTodayReportsRoute = createRoute({
+export const getDailyReportsListRoute = createRoute({
   method: 'get',
-  path: '/today',
+  path: '/',
   request: {
-    query: TodayQuerySchema,
+    query: DailyReportsQuerySchema,
   },
   responses: {
     200: {
       content: {
         'application/json': {
-          schema: TodayResponseSchema,
+          schema: DailyReportsResponseSchema,
         },
       },
-      description: '今日の日報一覧を正常に取得',
+      description: '日報一覧を正常に取得',
     },
     401: {
       content: {
@@ -55,97 +53,22 @@ export const getTodayReportsRoute = createRoute({
   },
   security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
-  summary: '今日の日報一覧取得',
-  description: '今日の日報を取得します。ユーザー名でフィルタリング可能です。',
-})
-
-export const getMineReportsRoute = createRoute({
-  method: 'get',
-  path: '/mine',
-  request: {
-    query: MineQuerySchema,
-  },
-  responses: {
-    200: {
-      content: {
-        'application/json': {
-          schema: MineResponseSchema,
-        },
-      },
-      description: '自分の日報一覧を正常に取得',
-    },
-    401: {
-      content: {
-        'application/json': {
-          schema: ErrorResponseSchema,
-        },
-      },
-      description: '認証が必要です',
-    },
-    500: {
-      content: {
-        'application/json': {
-          schema: ErrorResponseSchema,
-        },
-      },
-      description: 'サーバーエラー',
-    },
-  },
-  security: [{ UserIdAuth: [] }],
-  tags: ['Daily Reports'],
-  summary: '自分の日報一覧取得',
-  description: '自分の日報を日付範囲で取得します。',
-})
-
-export const getMineSummaryRoute = createRoute({
-  method: 'get',
-  path: '/mine/summary',
-  request: {
-    query: SummaryQuerySchema,
-  },
-  responses: {
-    200: {
-      content: {
-        'application/json': {
-          schema: SummaryResponseSchema,
-        },
-      },
-      description: 'プロジェクトサマリーを正常に取得',
-    },
-    401: {
-      content: {
-        'application/json': {
-          schema: ErrorResponseSchema,
-        },
-      },
-      description: '認証が必要です',
-    },
-    500: {
-      content: {
-        'application/json': {
-          schema: ErrorResponseSchema,
-        },
-      },
-      description: 'サーバーエラー',
-    },
-  },
-  security: [{ UserIdAuth: [] }],
-  tags: ['Daily Reports'],
-  summary: 'プロジェクトサマリー取得',
-  description: '自分のプロジェクトごとの作業統計サマリーを取得します。',
+  summary: '日報一覧取得',
+  description:
+    '日報を日付範囲で取得します。today=trueの場合は今日の日報、userIdを指定した場合は特定のユーザーの日報、userNamesを指定した場合は特定のユーザー名の日報、何も指定しない場合は全員の日報を返します。',
 })
 
 export const getCountRoute = createRoute({
   method: 'get',
   path: '/count',
   request: {
-    query: CountQuerySchema,
+    query: DailyReportCountQuerySchema,
   },
   responses: {
     200: {
       content: {
         'application/json': {
-          schema: CountResponseSchema,
+          schema: DailyReportCountResponseSchema,
         },
       },
       description: '集計データを正常に取得',
@@ -170,10 +93,50 @@ export const getCountRoute = createRoute({
   security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: '日報集計データ取得',
-  description: '日報数、プロジェクト数、合計時間の集計データを取得します。',
+  description:
+    '日報数、プロジェクト数、合計時間の集計データを取得します。userIdまたはuserNamesを指定しない場合は全員の集計、指定した場合は特定のユーザーの集計を返します。',
 })
 
-export const getReportDetailRoute = createRoute({
+export const getDailyReportSummaryRoute = createRoute({
+  method: 'get',
+  path: '/summary',
+  request: {
+    query: DailyReportSummaryQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: DailyReportSummaryResponseSchema,
+        },
+      },
+      description: 'プロジェクトサマリーを正常に取得',
+    },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  security: [{ UserIdAuth: [] }],
+  tags: ['Daily Reports'],
+  summary: '日報プロジェクトサマリー取得',
+  description:
+    '日報のプロジェクトごとの作業統計サマリーを取得します。userIdを指定しない場合は全員のサマリー、指定した場合は特定のユーザーのサマリーを返します。',
+})
+
+export const getDailyReportDetailRoute = createRoute({
   method: 'get',
   path: '/{id}',
   request: {
@@ -184,12 +147,13 @@ export const getReportDetailRoute = createRoute({
         example: 'report_123',
       }),
     }),
+    query: DailyReportDetailQuerySchema,
   },
   responses: {
     200: {
       content: {
         'application/json': {
-          schema: ReportDetailResponseSchema,
+          schema: DailyReportDetailResponseSchema,
         },
       },
       description: '日報詳細を正常に取得',
@@ -222,15 +186,15 @@ export const getReportDetailRoute = createRoute({
   security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: '日報詳細取得',
-  description: '指定されたIDの日報の詳細情報を取得します。',
+  description:
+    '指定されたIDの日報の詳細情報を取得します。userIdを指定しない場合は認証済みユーザーの日報、指定した場合は特定のユーザーの日報を返します。',
 })
 
 const app = new OpenAPIHono<AdditionalVariables>()
 app.use('/*', sessionMiddleware)
 
 export const dailyApi = app
-  .openapi(getTodayReportsRoute, getTodayReportsHandler)
-  .openapi(getMineReportsRoute, getMineReportsHandler)
-  .openapi(getMineSummaryRoute, getMineSummaryHandler)
+  .openapi(getDailyReportsListRoute, getDailyReportsListHandler)
   .openapi(getCountRoute, getCountHandler)
-  .openapi(getReportDetailRoute, getReportDetailHandler)
+  .openapi(getDailyReportSummaryRoute, getDailyReportSummaryHandler)
+  .openapi(getDailyReportDetailRoute, getDailyReportDetailHandler)

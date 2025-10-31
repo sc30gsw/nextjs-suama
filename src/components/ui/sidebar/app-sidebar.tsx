@@ -14,6 +14,7 @@ import {
   IconBuildings,
   IconBulb,
   IconCalendarEvent,
+  IconCalendarStats,
   IconCalendarUser,
   IconHelpTriangle,
   IconList,
@@ -66,8 +67,10 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                 <IconCalendarUser stroke={1} size={20} />
                 <SidebarLabel>自分の日報</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="#" tooltip="みんなの日報">
-                <IconCircleQuestionmark />
+
+              {/* TODO: ユーザーの role が admin のみ表示されるように修正する。データ移行のタスクと連携して修正 */}
+              <SidebarItem href="/daily/every" tooltip="みんなの日報">
+                <IconCalendarStats stroke={1} size={20} />
                 <SidebarLabel>みんなの日報</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>

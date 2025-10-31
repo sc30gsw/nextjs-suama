@@ -15,11 +15,12 @@ import { DailyTabs } from '~/features/reports/daily/components/daily-tabs'
 import { ProjectSummaryTable } from '~/features/reports/daily/components/project-summary-table'
 import { getDailyReports, getProjectSummary } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
+import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
-export default async function MyDailyPage({
+export default async function EveryDailyReportPage({
   searchParams,
 }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
@@ -28,8 +29,8 @@ export default async function MyDailyPage({
     unauthorized()
   }
 
-  const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
-  const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
+  const dailyPageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
+  const { page, rowsPerPage, tab, startDate, endDate, userNames } = dailyPageSearchParams
 
   const skip = page <= 1 ? 0 : (page - 1) * rowsPerPage
 
@@ -42,12 +43,13 @@ export default async function MyDailyPage({
 
   const startDateStr = startDate ? dateUtils.formatDateByJST(startDate, DATE_FORMAT) : undefined
   const endDateStr = endDate ? dateUtils.formatDateByJST(endDate, DATE_FORMAT) : undefined
+  const userNamesStr = userNames && userNames.length > 0 ? userNames.join(',') : undefined
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
-      <Heading>{session.user.name}の日報</Heading>
+      <Heading>みんなの日報</Heading>
 
-      <Form action="/daily/mine" className="flex gap-x-2">
+      <Form action="/daily/every" className="flex gap-x-2">
         <input type="hidden" name="tab" value={tab} />
         <DailySearchDateRangePicker />
         <Button type="submit">
@@ -56,15 +58,17 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
+      <UserSearchTagField />
+
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
         https://github.com/vercel/next.js/issues/84489 */}
       <DailyTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT.TABS[0].id}>
           <Suspense
-            key={`date-${JSON.stringify(minePageSearchParams)}`}
+            key={`date-${JSON.stringify(dailyPageSearchParams)}`}
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[0].id} />}
           >
-            <DailyTabContent kind={DAILY_REPORT.KIND.MINE} basePath="/daily/mine">
+            <DailyTabContent kind={DAILY_REPORT.KIND.EVERYONE} basePath="/daily/every">
               <DailyReportsTable
                 reports={
                   (
@@ -74,7 +78,7 @@ export default async function MyDailyPage({
                         limit,
                         startDate: startDateStr,
                         endDate: endDateStr,
-                        userId: session.user.id,
+                        userNames: userNamesStr,
                       },
                       session.user.id,
                     )
@@ -87,20 +91,20 @@ export default async function MyDailyPage({
 
         <TabPanel id={DAILY_REPORT.TABS[1].id}>
           <Suspense
-            key={`project-${JSON.stringify(minePageSearchParams)}`}
+            key={`project-${JSON.stringify(dailyPageSearchParams)}`}
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[1].id} />}
           >
-            <DailyTabContent kind={DAILY_REPORT.KIND.MINE} basePath="/daily/mine">
+            <DailyTabContent kind={DAILY_REPORT.KIND.EVERYONE} basePath="/daily/every">
               <ProjectSummaryTable
                 summary={
                   (
                     await getProjectSummary(
                       {
+                        skip,
+                        limit,
                         startDate: startDateStr,
                         endDate: endDateStr,
-                        limit,
-                        skip,
-                        userId: session.user.id,
+                        userNames: userNamesStr,
                       },
                       session.user.id,
                     )

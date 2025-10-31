@@ -5,8 +5,8 @@ import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import {
   GET_DAILY_REPORTS_COUNT_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
+  GET_DAILY_REPORTS_CACHE_KEY,
+  GET_DAILY_PROJECT_SUMMARY_CACHE_KEY,
   GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
@@ -64,9 +64,13 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
       revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${reportDateJST}`)
     }
 
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-all`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-all`)
     revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-all`)
+
 
     return {
       status: 'success',

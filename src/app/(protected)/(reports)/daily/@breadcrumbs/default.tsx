@@ -13,7 +13,7 @@ const ITEMS = [
     path: '/daily/mine',
     name: '自分の日報',
   },
-  { path: '/daily/everyone', name: 'みんなの日報' },
+  { path: '/daily/every', name: 'みんなの日報' },
 ] as const satisfies readonly Record<'path' | 'name', string>[]
 
 export default function DailyBreadcrumbsDefaultPage() {
