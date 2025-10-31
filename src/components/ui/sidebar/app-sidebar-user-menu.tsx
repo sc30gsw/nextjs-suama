@@ -1,22 +1,25 @@
 import { IconChevronLgDown, IconCirclePerson, IconLogout, IconMoon, IconSun } from '@intentui/icons'
 import { IconCalendarEvent, IconCalendarUser, IconReport } from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
+import { useToggle } from 'react-use'
 import { twMerge } from 'tailwind-merge'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
 import { SidebarLabel, useSidebar } from '~/components/ui/intent-ui/sidebar'
-import { Switch } from '~/components/ui/intent-ui/switch'
+import { ThemeSwitch } from '~/components/ui/theme-switch'
 import { useSignOut } from '~/hooks/use-sign-out'
 import { authClient } from '~/lib/auth-client'
+import { cn } from '~/utils/classes'
 
 export function AppSidebarUserMenu() {
-  const { theme, setTheme } = useTheme()
   const { state } = useSidebar()
   const { data: session } = authClient.useSession()
   const { logout, isPending } = useSignOut()
+  const { theme } = useTheme()
+  const [isOpen, toggle] = useToggle(false)
 
   return (
-    <Menu>
+    <Menu isOpen={isOpen} onOpenChange={toggle}>
       <Menu.Trigger className="flex w-full items-center justify-between" aria-label="Profile">
         <div className="flex items-center gap-x-2">
           <Avatar
@@ -30,7 +33,7 @@ export function AppSidebarUserMenu() {
             <span className="-mt-0.5 block text-muted-fg">{session?.user.email}</span>
           </div>
         </div>
-        <IconChevronLgDown data-slot="chevron" />
+        <IconChevronLgDown className={cn('ml-2 transition-transform', isOpen && 'rotate-180')} />
       </Menu.Trigger>
 
       <Menu.Content
@@ -69,12 +72,7 @@ export function AppSidebarUserMenu() {
           {theme === 'dark' ? <IconMoon /> : <IconSun />}
           <Menu.Label>テーマ</Menu.Label>
           <span data-slot="icon">
-            <Switch
-              className="ml-auto"
-              isSelected={theme === 'dark'}
-              onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label="Toggle theme"
-            />
+            <ThemeSwitch className="ml-auto" />
           </span>
         </Menu.Item>
 
