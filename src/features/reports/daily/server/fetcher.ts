@@ -20,7 +20,7 @@ import type {
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
-export async function getReportById(
+export async function getDailyReportById(
   reportId: InferSelectModel<typeof dailyReports>['id'],
   userId: Session['userId'],
   queryUserId?: string,
