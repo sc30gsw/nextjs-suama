@@ -3,10 +3,11 @@
 import { useQueryStates } from 'nuqs'
 import type { ReactNode } from 'react'
 import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
-
 import { DAILY_REPORT } from '~/constants'
 import { dailyReportSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
+
+const INITIAL_PAGE = 1
 
 type DailyTabsProps = {
   currentTab: (typeof DAILY_REPORT.TABS)[number]['id']
@@ -35,7 +36,7 @@ export function DailyTabs({ currentTab, children }: DailyTabsProps) {
 
         setQueryStates({
           tab: key,
-          page: 1,
+          page: INITIAL_PAGE,
         })
       }}
     >
