@@ -1,5 +1,4 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import type { Session } from 'better-auth'
 import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
 import { dailyReports, users } from '~/db/schema'
 import type { getDailyReportsListRoute } from '~/features/reports/daily/api/route'
@@ -21,7 +20,6 @@ export class DailyReportListService {
     params: ReturnType<
       Parameters<RouteHandler<typeof getDailyReportsListRoute>>[0]['req']['valid']
     >,
-    authenticatedUserId: Session['userId'],
   ) {
     const { userId: queryUserId, userNames, skip, limit, startDate, endDate, today } = params
 
@@ -54,7 +52,6 @@ export class DailyReportListService {
         whereConditions.push(eq(dailyReports.userId, queryUserId))
       }
 
-      // userNames でフィルタリング（部分一致）
       if (userNames) {
         const userNamesArray = userNames.split(',').map((name) => name.trim())
         const targetUsers = await db.query.users.findMany({

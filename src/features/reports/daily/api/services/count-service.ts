@@ -1,5 +1,4 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import type { Session } from 'better-auth'
 import { and, count, countDistinct, eq, gte, inArray, like, lte, or, sql } from 'drizzle-orm'
 import { dailyReportMissions, dailyReports, missions, projects, users } from '~/db/schema'
 import type { getCountRoute } from '~/features/reports/daily/api/route'
@@ -7,13 +6,9 @@ import { db } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
 import { DailyReportServiceError } from './list-service'
 
-const DEFAULT_SKIP = 0
-const DEFAULT_LIMIT = 10
-
 export class DailyReportCountService {
   async getCount(
     params: ReturnType<Parameters<RouteHandler<typeof getCountRoute>>[0]['req']['valid']>,
-    authenticatedUserId: Session['userId'],
   ) {
     const { userId: queryUserId, userNames, startDate, endDate } = params
 
@@ -32,7 +27,6 @@ export class DailyReportCountService {
         whereConditions.push(eq(dailyReports.userId, queryUserId))
       }
 
-      // userNames でフィルタリング（部分一致）
       if (userNames) {
         const userNamesArray = userNames.split(',').map((name) => name.trim())
         const targetUsers = await db.query.users.findMany({

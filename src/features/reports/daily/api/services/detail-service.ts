@@ -1,11 +1,21 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import type { Session } from 'better-auth'
-import { and, countDistinct, desc, eq, gte, inArray, like, lte, max, min, or, sql } from 'drizzle-orm'
+import {
+  and,
+  countDistinct,
+  desc,
+  eq,
+  gte,
+  inArray,
+  like,
+  lte,
+  max,
+  min,
+  or,
+  sql,
+} from 'drizzle-orm'
 import { dailyReportMissions, dailyReports, missions, projects, troubles, users } from '~/db/schema'
-import type {
-  getDailyReportSummaryRoute,
-  getDailyReportDetailRoute,
-} from '~/features/reports/daily/api/route'
+import type { getDailyReportSummaryRoute } from '~/features/reports/daily/api/route'
 import { db } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
 import { DailyReportServiceError } from './list-service'
@@ -15,8 +25,9 @@ const DEFAULT_LIMIT = 10
 
 export class DailyReportDetailService {
   async getDailyReportSummary(
-    params: ReturnType<Parameters<RouteHandler<typeof getDailyReportSummaryRoute>>[0]['req']['valid']>,
-    authenticatedUserId: Session['userId'],
+    params: ReturnType<
+      Parameters<RouteHandler<typeof getDailyReportSummaryRoute>>[0]['req']['valid']
+    >,
   ) {
     const { userId: queryUserId, userNames, startDate, endDate, limit, skip } = params
 
@@ -38,7 +49,6 @@ export class DailyReportDetailService {
         whereConditions.push(eq(dailyReports.userId, queryUserId))
       }
 
-      // userNames でフィルタリング（部分一致）
       if (userNames) {
         const userNamesArray = userNames.split(',').map((name) => name.trim())
         const targetUsers = await db.query.users.findMany({

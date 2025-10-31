@@ -64,7 +64,7 @@ export default async function MyDailyPage({
             key={`date-${JSON.stringify(minePageSearchParams)}`}
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[0].id} />}
           >
-            <DailyTabContent kind={DAILY_REPORT.KIND.MINE} basePath="/daily/mine">
+            <DailyTabContent kind={DAILY_REPORT.KIND.MINE}>
               <DailyReportsTable
                 reports={
                   (
@@ -90,7 +90,7 @@ export default async function MyDailyPage({
             key={`project-${JSON.stringify(minePageSearchParams)}`}
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[1].id} />}
           >
-            <DailyTabContent kind={DAILY_REPORT.KIND.MINE} basePath="/daily/mine">
+            <DailyTabContent kind={DAILY_REPORT.KIND.MINE}>
               <ProjectSummaryTable
                 summary={
                   (

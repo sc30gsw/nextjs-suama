@@ -1,11 +1,11 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
+import type {
+  getDailyReportDetailRoute,
+  getDailyReportSummaryRoute,
+} from '~/features/reports/daily/api/route'
 import { DailyReportDetailService } from '~/features/reports/daily/api/services/detail-service'
 import { DailyReportServiceError } from '~/features/reports/daily/api/services/list-service'
-import type {
-  getDailyReportSummaryRoute,
-  getDailyReportDetailRoute,
-} from '~/features/reports/daily/api/route'
 import type { AdditionalVariables } from '~/features/reports/types'
 
 const dailyReportDetailService = new DailyReportDetailService()
@@ -15,10 +15,9 @@ export const getDailyReportSummaryHandler: RouteHandler<
   AdditionalVariables
 > = async (c) => {
   const params = c.req.valid('query')
-  const authenticatedUserId = c.get('user').id
 
   try {
-    const result = await dailyReportDetailService.getDailyReportSummary(params, authenticatedUserId)
+    const result = await dailyReportDetailService.getDailyReportSummary(params)
 
     return c.json(result, 200)
   } catch (error) {

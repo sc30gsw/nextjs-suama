@@ -68,7 +68,7 @@ export default async function EveryDailyReportPage({
             key={`date-${JSON.stringify(dailyPageSearchParams)}`}
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[0].id} />}
           >
-            <DailyTabContent kind={DAILY_REPORT.KIND.EVERYONE} basePath="/daily/every">
+            <DailyTabContent kind={DAILY_REPORT.KIND.EVERYONE}>
               <DailyReportsTable
                 reports={
                   (
@@ -94,7 +94,7 @@ export default async function EveryDailyReportPage({
             key={`project-${JSON.stringify(dailyPageSearchParams)}`}
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[1].id} />}
           >
-            <DailyTabContent kind={DAILY_REPORT.KIND.EVERYONE} basePath="/daily/every">
+            <DailyTabContent kind={DAILY_REPORT.KIND.EVERYONE}>
               <ProjectSummaryTable
                 summary={
                   (

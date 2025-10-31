@@ -12,10 +12,9 @@ import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 type DailyTabContentProps = {
   children: ReactNode
   kind: (typeof DAILY_REPORT.KIND)[keyof typeof DAILY_REPORT.KIND]
-  basePath: string
 }
 
-export async function DailyTabContent({ children, kind, basePath }: DailyTabContentProps) {
+export async function DailyTabContent({ children, kind }: DailyTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {
@@ -56,7 +55,9 @@ export async function DailyTabContent({ children, kind, basePath }: DailyTabCont
       endDate: dateUtils.formatDateParamForUrl(endDate),
     }).toString()
 
-    redirect(`${basePath}?${searchParams}`)
+    const redirectKindPath = kind === DAILY_REPORT.KIND.MINE ? 'mine' : 'every'
+
+    redirect(`/daily/${redirectKindPath}/?${searchParams}`)
   }
 
   return (

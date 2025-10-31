@@ -1,8 +1,8 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { ERROR_STATUS } from '~/constants/error-message'
+import type { getCountRoute } from '~/features/reports/daily/api/route'
 import { DailyReportCountService } from '~/features/reports/daily/api/services/count-service'
 import { DailyReportServiceError } from '~/features/reports/daily/api/services/list-service'
-import type { getCountRoute } from '~/features/reports/daily/api/route'
 import type { AdditionalVariables } from '~/features/reports/types'
 
 const dailyReportCountService = new DailyReportCountService()
@@ -13,7 +13,7 @@ export const getCountHandler: RouteHandler<typeof getCountRoute, AdditionalVaria
   const params = c.req.valid('query')
 
   try {
-    const result = await dailyReportCountService.getCount(params, c.get('user').id)
+    const result = await dailyReportCountService.getCount(params)
 
     return c.json(result, 200)
   } catch (error) {
