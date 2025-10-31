@@ -1,6 +1,7 @@
 import { Card } from '~/components/ui/intent-ui/card'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { DAILY_REPORT } from '~/constants'
+import { cn } from '~/utils/classes'
 
 const ROW_COUNT = 5
 const PAGINATION_TOTAL_COUNT = 11
@@ -32,19 +33,19 @@ export function DailyTabContentSkeleton({
               <thead>
                 <tr className="border-b">
                   <th className="px-4 py-3 text-left">
-                    <Skeleton className={`h-5 ${isDateTab ? 'w-20' : 'w-36'}`} />
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-20' : 'w-36')} />
                   </th>
                   <th className="px-4 py-3 text-left">
-                    <Skeleton className={`h-5 ${isDateTab ? 'w-28' : 'w-48'}`} />
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-28' : 'w-48')} />
                   </th>
                   <th className="px-4 py-3 text-left">
                     <Skeleton className="h-5 w-16" />
                   </th>
                   <th className="px-4 py-3 text-left">
-                    <Skeleton className={`h-5 ${isDateTab ? 'w-40' : 'w-20'}`} />
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-40' : 'w-20')} />
                   </th>
                   <th className="px-4 py-3 text-left">
-                    <Skeleton className={`h-5 ${isDateTab ? 'w-20' : 'w-24'}`} />
+                    <Skeleton className={cn('h-5', isDateTab ? 'w-20' : 'w-24')} />
                   </th>
                   {isDateTab && (
                     <th className="px-4 py-3 text-left">
@@ -58,25 +59,25 @@ export function DailyTabContentSkeleton({
                 {Array.from({ length: ROW_COUNT }, (_, i) => (
                   <tr key={i} className="border-b last:border-b-0">
                     <td className="px-4 py-4">
-                      <Skeleton className={`h-6 ${isDateTab ? 'w-20' : 'w-36'}`} />
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-20' : 'w-36')} />
                     </td>
                     <td className="px-4 py-4">
-                      <Skeleton className={`h-6 ${isDateTab ? 'w-28' : 'w-48'}`} />
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-28' : 'w-48')} />
                     </td>
                     <td className="px-4 py-4">
                       <Skeleton className="h-6 w-16" />
                     </td>
                     <td className="px-4 py-4">
-                      <Skeleton className={`h-6 ${isDateTab ? 'w-40' : 'w-20'}`} />
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-40' : 'w-20')} />
                     </td>
                     <td className="px-4 py-4">
-                      <Skeleton className={`h-6 ${isDateTab ? 'w-20' : 'w-24'}`} />
+                      <Skeleton className={cn('h-6', isDateTab ? 'w-20' : 'w-24')} />
                     </td>
                     {isDateTab && (
                       <td className="px-4 py-4">
                         <div className="flex gap-2">
                           {Array.from({ length: ACTION_BUTTON_COUNT }, (_, i) => (
-                            <Skeleton key={i} className={`h-8 ${i === 0 ? 'w-8' : 'w-16'}`} />
+                            <Skeleton key={i} className={cn('h-8', i === 0 ? 'w-8' : 'w-16')} />
                           ))}
                         </div>
                       </td>
