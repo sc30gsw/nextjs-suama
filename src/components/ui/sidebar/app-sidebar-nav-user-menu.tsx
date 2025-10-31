@@ -51,10 +51,7 @@ export function AppSidebarNavUserMenu() {
           <Menu.Label>ユーザー設定</Menu.Label>
         </Menu.Item>
         <Menu.Separator />
-        <Menu.Item
-          className="[&>[slot=label]+[data-slot=icon]]:right-4 [&>[slot=label]+[data-slot=icon]]:bottom-3"
-          closeOnSelect={false}
-        >
+        <Menu.Item className="[&>[slot=label]+[data-slot=icon]]:right-4 [&>[slot=label]+[data-slot=icon]]:bottom-3">
           {theme === 'dark' ? <IconMoon /> : <IconSun />}
           <Menu.Label>テーマ</Menu.Label>
           <span data-slot="icon">
