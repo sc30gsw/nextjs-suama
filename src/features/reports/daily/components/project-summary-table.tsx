@@ -6,11 +6,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import type { InferResponseType } from 'hono'
 import { Table } from '~/components/ui/intent-ui/table'
+import type { client } from '~/lib/rpc'
 import { dateUtils } from '~/utils/date-utils'
-import type { getProjectSummary } from '~/features/reports/daily/server/fetcher'
 
-type ProjectSummary = Awaited<ReturnType<typeof getProjectSummary>>['summary'][number]
+type ProjectSummary = InferResponseType<
+  (typeof client.api.dailies.summary)['$get'],
+  200
+>['summary'][number]
 
 const columnHelper = createColumnHelper<ProjectSummary>()
 
@@ -19,7 +23,7 @@ const COLUMNS = [
     header: 'プロジェクト名',
   }),
   columnHelper.accessor(
-    (row: ProjectSummary) => {
+    (row) => {
       if (!row.firstWorkDate || !row.lastWorkDate) {
         return '-'
       }

@@ -22,7 +22,8 @@ export async function DailyTabContent({ children, kind, basePath }: DailyTabCont
     unauthorized()
   }
 
-  const { page, rowsPerPage, tab, startDate, endDate, userNames } = dailyReportPageSearchParamsCache.all()
+  const { page, rowsPerPage, tab, startDate, endDate, userNames } =
+    dailyReportPageSearchParamsCache.all()
 
   const userIdForCount = kind === DAILY_REPORT.KIND.MINE ? session.user.id : undefined
 
