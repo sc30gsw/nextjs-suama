@@ -5,15 +5,15 @@ import { twMerge } from 'tailwind-merge'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
 import { SidebarLabel, useSidebar } from '~/components/ui/intent-ui/sidebar'
-import { Switch } from '~/components/ui/intent-ui/switch'
+import { ThemeSwitch } from '~/components/ui/theme-switch'
 import { useSignOut } from '~/hooks/use-sign-out'
 import { authClient } from '~/lib/auth-client'
 
 export function AppSidebarUserMenu() {
-  const { theme, setTheme } = useTheme()
   const { state } = useSidebar()
   const { data: session } = authClient.useSession()
   const { logout, isPending } = useSignOut()
+  const { theme } = useTheme()
 
   return (
     <Menu>
@@ -69,12 +69,7 @@ export function AppSidebarUserMenu() {
           {theme === 'dark' ? <IconMoon /> : <IconSun />}
           <Menu.Label>テーマ</Menu.Label>
           <span data-slot="icon">
-            <Switch
-              className="ml-auto"
-              isSelected={theme === 'dark'}
-              onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label="Toggle theme"
-            />
+            <ThemeSwitch className="ml-auto" />
           </span>
         </Menu.Item>
 

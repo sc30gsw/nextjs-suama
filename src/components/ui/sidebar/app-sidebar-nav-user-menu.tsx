@@ -3,14 +3,14 @@ import { IconCalendarEvent, IconCalendarUser, IconReport } from '@tabler/icons-r
 import { useTheme } from 'next-themes'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
-import { Switch } from '~/components/ui/intent-ui/switch'
+import { ThemeSwitch } from '~/components/ui/theme-switch'
 import { useSignOut } from '~/hooks/use-sign-out'
 import { authClient } from '~/lib/auth-client'
 
 export function AppSidebarNavUserMenu() {
-  const { theme, setTheme } = useTheme()
   const { data: session } = authClient.useSession()
   const { logout, isPending } = useSignOut()
+  const { theme } = useTheme()
 
   return (
     // TODO: 各種リンク・アイコンの設定
@@ -25,8 +25,8 @@ export function AppSidebarNavUserMenu() {
       <Menu.Content popover={{ placement: 'bottom end' }} className="sm:min-w-64">
         <Menu.Section>
           <Menu.Header separator={true}>
-            <span className="block">Kurt Cobain</span>
-            <span className="font-normal text-muted-fg">@cobain</span>
+            <span className="block">{session?.user.name}</span>
+            <span className="font-normal text-muted-fg">{session?.user.email}</span>
           </Menu.Header>
         </Menu.Section>
         <Menu.Item href="/daily">
@@ -51,12 +51,7 @@ export function AppSidebarNavUserMenu() {
           {theme === 'dark' ? <IconMoon /> : <IconSun />}
           <Menu.Label>テーマ</Menu.Label>
           <span data-slot="icon">
-            <Switch
-              className="ml-auto"
-              isSelected={theme === 'dark'}
-              onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label="Toggle theme"
-            />
+            <ThemeSwitch className="ml-auto" />
           </span>
         </Menu.Item>
         <Menu.Separator />
