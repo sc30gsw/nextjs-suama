@@ -1,32 +1,36 @@
-import { IconCirclePerson, IconLogout, IconMoon, IconSun } from '@intentui/icons'
+import { IconChevronLgDown, IconCirclePerson, IconLogout, IconMoon, IconSun } from '@intentui/icons'
 import { IconCalendarEvent, IconCalendarUser, IconReport } from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
+import { useToggle } from 'react-use'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
-import { Switch } from '~/components/ui/intent-ui/switch'
+import { ThemeSwitch } from '~/components/ui/theme-switch'
 import { useSignOut } from '~/hooks/use-sign-out'
 import { authClient } from '~/lib/auth-client'
+import { cn } from '~/utils/classes'
 
 export function AppSidebarNavUserMenu() {
-  const { theme, setTheme } = useTheme()
   const { data: session } = authClient.useSession()
   const { logout, isPending } = useSignOut()
+  const { theme } = useTheme()
+  const [isOpen, toggle] = useToggle(false)
 
   return (
     // TODO: 各種リンク・アイコンの設定
-    <Menu>
+    <Menu isOpen={isOpen} onOpenChange={toggle}>
       <Menu.Trigger className="ml-auto cursor-pointer md:hidden" aria-label="Open Menu">
         <Avatar
           alt={session?.user.name}
           src={session?.user?.image}
           initials={session?.user.name.charAt(0)}
         />
+        <IconChevronLgDown className={cn('ml-2 transition-transform', isOpen && 'rotate-180')} />
       </Menu.Trigger>
       <Menu.Content popover={{ placement: 'bottom end' }} className="sm:min-w-64">
         <Menu.Section>
           <Menu.Header separator={true}>
-            <span className="block">Kurt Cobain</span>
-            <span className="font-normal text-muted-fg">@cobain</span>
+            <span className="block">{session?.user.name}</span>
+            <span className="font-normal text-muted-fg">{session?.user.email}</span>
           </Menu.Header>
         </Menu.Section>
         <Menu.Item href="/daily">
@@ -51,12 +55,7 @@ export function AppSidebarNavUserMenu() {
           {theme === 'dark' ? <IconMoon /> : <IconSun />}
           <Menu.Label>テーマ</Menu.Label>
           <span data-slot="icon">
-            <Switch
-              className="ml-auto"
-              isSelected={theme === 'dark'}
-              onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              aria-label="Toggle theme"
-            />
+            <ThemeSwitch className="ml-auto" />
           </span>
         </Menu.Item>
         <Menu.Separator />
