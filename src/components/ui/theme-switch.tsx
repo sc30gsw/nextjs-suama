@@ -1,3 +1,7 @@
+// ? Offered by Magic UI
+// ? https://magicui.design/docs/components/animated-theme-toggler
+// ? https://v0.app/chat/open-in-v0-WbcZ9oKky84
+
 import { useTheme } from 'next-themes'
 import { useRef } from 'react'
 import { flushSync } from 'react-dom'
