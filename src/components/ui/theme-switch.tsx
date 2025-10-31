@@ -1,5 +1,3 @@
-'use client'
-
 import { useTheme } from 'next-themes'
 import { useRef } from 'react'
 import { flushSync } from 'react-dom'
@@ -27,6 +25,7 @@ export function ThemeSwitch({
 
     if (!document.startViewTransition) {
       setTheme(newTheme)
+
       return
     }
 
