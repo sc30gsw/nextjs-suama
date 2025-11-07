@@ -1,5 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { count, eq, like, or } from 'drizzle-orm'
+import type { Session } from 'better-auth'
+import { and, count, eq, like, or } from 'drizzle-orm'
 import { MAX_LIMIT } from '~/constants'
 import { categoryOfTroubles, troubles } from '~/db/schema'
 import type { getTroubleCategoriesRoute } from '~/features/report-contexts/troubles/api/route'
@@ -17,6 +18,7 @@ export class TroubleService {
     params: ReturnType<
       Parameters<RouteHandler<typeof getTroubleCategoriesRoute>>[0]['req']['valid']
     >,
+    authenticatedUserId: Session['userId'],
   ) {
     const { skip, limit, names, withData } = params
 
@@ -54,7 +56,7 @@ export class TroubleService {
             trouble: true,
             resolved: true,
           },
-          where: eq(troubles.resolved, false),
+          where: and(eq(troubles.resolved, false), eq(troubles.userId, authenticatedUserId)),
           orderBy: (troublesTable, { desc }) => [desc(troublesTable.createdAt)],
         })
       }

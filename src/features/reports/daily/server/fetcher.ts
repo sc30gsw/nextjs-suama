@@ -82,7 +82,7 @@ export async function getDailyReports(
 
 export async function getDailyReportsCount(
   params: { startDate?: string; endDate?: string; userId?: string; userNames?: string },
-  authenticatedUserId: Session['userId'],
+  authenticatedUserId?: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${JSON.stringify(params)}`)

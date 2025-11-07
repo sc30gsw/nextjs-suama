@@ -5,6 +5,7 @@ import {
   TroublesQuerySchema,
   TroublesResponseSchema,
 } from '~/features/report-contexts/troubles/types/schemas/troubles-api-schema'
+import type { AdditionalVariables } from '~/features/reports/types'
 import { sessionMiddleware } from '~/lib/session-middleware'
 
 export const getTroubleCategoriesRoute = createRoute({
@@ -46,7 +47,7 @@ export const getTroubleCategoriesRoute = createRoute({
     'トラブルカテゴリーの一覧を取得します。withData=trueの場合、未解決のトラブルデータも含まれます。',
 })
 
-const app = new OpenAPIHono()
+const app = new OpenAPIHono<AdditionalVariables>()
 app.use('/*', sessionMiddleware)
 
 export const troubleApi = app.openapi(getTroubleCategoriesRoute, getTroubleCategoriesHandler)

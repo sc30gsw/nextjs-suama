@@ -1,3 +1,4 @@
+import type { Session } from 'better-auth'
 import { redirect, unauthorized } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
@@ -11,10 +12,10 @@ import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 type DailyTabContentProps = {
   children: ReactNode
-  kind: (typeof DAILY_REPORT.KIND)[keyof typeof DAILY_REPORT.KIND]
+  userId?: Session['userId']
 }
 
-export async function DailyTabContent({ children, kind }: DailyTabContentProps) {
+export async function DailyTabContent({ children, userId }: DailyTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {
@@ -24,8 +25,6 @@ export async function DailyTabContent({ children, kind }: DailyTabContentProps) 
   const { page, rowsPerPage, tab, startDate, endDate, userNames } =
     dailyReportPageSearchParamsCache.all()
 
-  const userIdForCount = kind === DAILY_REPORT.KIND.MINE ? session.user.id : undefined
-
   const startDateStr = startDate ? dateUtils.formatDateByJST(startDate, DATE_FORMAT) : undefined
   const endDateStr = endDate ? dateUtils.formatDateByJST(endDate, DATE_FORMAT) : undefined
   const userNamesStr = userNames && userNames.length > 0 ? userNames.join(',') : undefined
@@ -34,7 +33,7 @@ export async function DailyTabContent({ children, kind }: DailyTabContentProps) 
     {
       startDate: startDateStr,
       endDate: endDateStr,
-      userId: userIdForCount,
+      userId: userId,
       userNames: userNamesStr,
     },
     session.user.id,
@@ -55,7 +54,7 @@ export async function DailyTabContent({ children, kind }: DailyTabContentProps) 
       endDate: dateUtils.formatDateParamForUrl(endDate),
     }).toString()
 
-    const redirectKindPath = kind === DAILY_REPORT.KIND.MINE ? 'mine' : 'every'
+    const redirectKindPath = userId ? 'mine' : 'every'
 
     redirect(`/daily/${redirectKindPath}/?${searchParams}`)
   }

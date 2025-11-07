@@ -61,9 +61,12 @@ export class DailyReportListService {
           },
         })
         const targetUserIds = targetUsers.map((user) => user.id)
-        if (targetUserIds.length > 0) {
-          whereConditions.push(inArray(dailyReports.userId, targetUserIds))
-        }
+
+        whereConditions.push(
+          targetUserIds.length > 0
+            ? inArray(dailyReports.userId, targetUserIds)
+            : eq(dailyReports.userId, ''),
+        )
       }
 
       const dailyReportsWithRelations = await db.query.dailyReports.findMany({
