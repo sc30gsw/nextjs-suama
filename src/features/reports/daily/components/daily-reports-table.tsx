@@ -21,7 +21,7 @@ const columnHelper = createColumnHelper<DailyReport>()
 
 type DailyReportsTableProps = {
   reports: DailyReport[]
-  userId?: DailyReport['userId']
+  userId: DailyReport['userId']
 }
 
 export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
@@ -60,7 +60,7 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
       cell: ({ row }) => {
         const report = row.original
 
-        const isCurrentUser = userId && report.userId === userId
+        const isCurrentUser = report.userId === userId
 
         return (
           <div className="flex items-center gap-2">
