@@ -51,7 +51,7 @@ export async function getDailyReports(
     endDate?: Date
     userId?: string
     userNames?: string[]
-    today?: string
+    today?: boolean
   },
   userId: Session['userId'],
 ) {

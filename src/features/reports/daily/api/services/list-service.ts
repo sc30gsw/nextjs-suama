@@ -27,7 +27,7 @@ export class DailyReportListService {
     let start: Date
     let end: Date
 
-    if (today === 'true') {
+    if (today) {
       const todayRange = dateUtils.getTodayRangeByJST()
       start = todayRange.start
       end = todayRange.end
