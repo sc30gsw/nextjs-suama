@@ -13,17 +13,11 @@ export const WEEKLY_REPORTS_LIMIT = 30
 
 export const RELOAD_DELAY = 1000
 
-const KIND = {
-  MINE: 'mine',
-  EVERYONE: 'everyone',
-} as const satisfies Record<string, string>
-
 const TABS = [
   { id: 'date', name: '日付' },
   { id: 'project', name: 'プロジェクト' },
 ] as const satisfies readonly Record<string, string>[]
 
 export const DAILY_REPORT = {
-  KIND,
   TABS,
-} as const satisfies Record<'KIND' | 'TABS', typeof KIND | typeof TABS>
+} as const satisfies Record<'TABS', typeof TABS>
