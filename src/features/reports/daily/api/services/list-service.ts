@@ -1,12 +1,10 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
+import { DEFAULT_LIMIT, DEFAULT_SKIP } from '~/constants'
 import { dailyReports, users } from '~/db/schema'
 import type { getDailyReportsListRoute } from '~/features/reports/daily/api/route'
 import { db } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
-
-const DEFAULT_SKIP = 0
-const DEFAULT_LIMIT = 10
 
 export class DailyReportServiceError extends Error {
   constructor(message: string) {
