@@ -65,23 +65,18 @@ export default async function MyDailyPage({
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[0].id} />}
           >
             <DailyTabContent userId={session.user.id}>
-              <DailyReportsTable
-                reports={
-                  (
-                    await getDailyReports(
-                      {
-                        skip,
-                        limit,
-                        startDate: startDateStr,
-                        endDate: endDateStr,
-                        userId: session.user.id,
-                      },
-                      session.user.id,
-                    )
-                  ).dailyReports
-                }
-                userId={session.user.id}
-              />
+              {getDailyReports(
+                {
+                  skip,
+                  limit,
+                  startDate: startDateStr,
+                  endDate: endDateStr,
+                  userId: session.user.id,
+                },
+                session.user.id,
+              ).then((data) => (
+                <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
+              ))}
             </DailyTabContent>
           </Suspense>
         </TabPanel>
@@ -92,22 +87,18 @@ export default async function MyDailyPage({
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[1].id} />}
           >
             <DailyTabContent userId={session.user.id}>
-              <ProjectSummaryTable
-                summary={
-                  (
-                    await getProjectSummary(
-                      {
-                        startDate: startDateStr,
-                        endDate: endDateStr,
-                        limit,
-                        skip,
-                        userId: session.user.id,
-                      },
-                      session.user.id,
-                    )
-                  ).summary
-                }
-              />
+              {getProjectSummary(
+                {
+                  startDate: startDateStr,
+                  endDate: endDateStr,
+                  limit,
+                  skip,
+                  userId: session.user.id,
+                },
+                session.user.id,
+              ).then((data) => (
+                <ProjectSummaryTable summary={data.summary} />
+              ))}
             </DailyTabContent>
           </Suspense>
         </TabPanel>

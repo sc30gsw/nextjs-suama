@@ -69,23 +69,18 @@ export default async function EveryDailyReportPage({
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[0].id} />}
           >
             <DailyTabContent>
-              <DailyReportsTable
-                reports={
-                  (
-                    await getDailyReports(
-                      {
-                        skip,
-                        limit,
-                        startDate: startDateStr,
-                        endDate: endDateStr,
-                        userNames: userNamesStr,
-                      },
-                      session.user.id,
-                    )
-                  ).dailyReports
-                }
-                userId={session.user.id}
-              />
+              {getDailyReports(
+                {
+                  skip,
+                  limit,
+                  startDate: startDateStr,
+                  endDate: endDateStr,
+                  userNames: userNamesStr,
+                },
+                session.user.id,
+              ).then((data) => (
+                <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
+              ))}
             </DailyTabContent>
           </Suspense>
         </TabPanel>
@@ -96,22 +91,18 @@ export default async function EveryDailyReportPage({
             fallback={<DailyTabContentSkeleton tab={DAILY_REPORT.TABS[1].id} />}
           >
             <DailyTabContent>
-              <ProjectSummaryTable
-                summary={
-                  (
-                    await getProjectSummary(
-                      {
-                        skip,
-                        limit,
-                        startDate: startDateStr,
-                        endDate: endDateStr,
-                        userNames: userNamesStr,
-                      },
-                      session.user.id,
-                    )
-                  ).summary
-                }
-              />
+              {getProjectSummary(
+                {
+                  skip,
+                  limit,
+                  startDate: startDateStr,
+                  endDate: endDateStr,
+                  userNames: userNamesStr,
+                },
+                session.user.id,
+              ).then((data) => (
+                <ProjectSummaryTable summary={data.summary} />
+              ))}
             </DailyTabContent>
           </Suspense>
         </TabPanel>
