@@ -13,11 +13,9 @@ import {
 import type { AdditionalVariables } from '~/features/reports/types'
 import { sessionMiddleware } from '~/lib/session-middleware'
 import { getCountHandler } from './handlers/count-handler'
-import {
-  getDailyReportDetailHandler,
-  getDailyReportSummaryHandler,
-} from './handlers/detail-handler'
+import { getDailyReportDetailHandler } from './handlers/detail-handler'
 import { getDailyReportsListHandler } from './handlers/list-handler'
+import { getDailyReportSummaryHandler } from './handlers/summary-handler'
 
 export const getDailyReportsListRoute = createRoute({
   method: 'get',
