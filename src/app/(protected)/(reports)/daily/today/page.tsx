@@ -38,7 +38,7 @@ export default async function DailyOfTodayPage({
           : rowsPerPage < MIN_ROWS_PER_PAGE
             ? MIN_ROWS_PER_PAGE
             : rowsPerPage,
-      userNames: userNames?.join(','),
+      userNames,
       today: 'true',
     },
     session.user.id,

@@ -47,33 +47,26 @@ export async function getDailyReports(
   params: {
     skip: number
     limit: number
-    startDate?: string
-    endDate?: string
+    startDate?: Date
+    endDate?: Date
     userId?: string
-    userNames?: string
+    userNames?: string[]
     today?: string
   },
-  authenticatedUserId: Session['userId'],
+  userId: Session['userId'],
 ) {
   'use cache'
-  cacheTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${JSON.stringify(params)}`)
+  cacheTag(GET_DAILY_REPORTS_CACHE_KEY)
 
-  const url = client.api.dailies.$url({
-    query: {
-      skip: String(params.skip),
-      limit: String(params.limit),
-      startDate: params.startDate,
-      endDate: params.endDate,
-      userId: params.userId,
-      userNames: params.userNames,
-      today: params.today,
-    },
-  })
+  const url = client.api.dailies.$url()
   type ResType = InferResponseType<typeof client.api.dailies.$get, 200>
 
   const res = await upfetch<ResType>(url, {
     headers: {
-      Authorization: authenticatedUserId,
+      Authorization: userId,
+    },
+    params: {
+      ...params,
     },
   })
 
@@ -81,25 +74,21 @@ export async function getDailyReports(
 }
 
 export async function getDailyReportsCount(
-  params: { startDate?: string; endDate?: string; userId?: string; userNames?: string },
-  authenticatedUserId?: Session['userId'],
+  params: { startDate?: Date; endDate?: Date; userId?: string; userNames?: string[] },
+  userId?: Session['userId'],
 ) {
   'use cache'
-  cacheTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${JSON.stringify(params)}`)
+  cacheTag(GET_DAILY_REPORTS_COUNT_CACHE_KEY)
 
-  const url = client.api.dailies.count.$url({
-    query: {
-      startDate: params.startDate,
-      endDate: params.endDate,
-      userId: params.userId,
-      userNames: params.userNames,
-    },
-  })
+  const url = client.api.dailies.count.$url()
   type ResType = InferResponseType<typeof client.api.dailies.count.$get, 200>
 
   const res = await upfetch<ResType>(url, {
     headers: {
-      Authorization: authenticatedUserId,
+      Authorization: userId,
+    },
+    params: {
+      ...params,
     },
   })
 
@@ -110,31 +99,25 @@ export async function getProjectSummary(
   params: {
     skip: number
     limit: number
-    startDate?: string
-    endDate?: string
+    startDate?: Date
+    endDate?: Date
     userId?: string
-    userNames?: string
+    userNames?: string[]
   },
-  authenticatedUserId: Session['userId'],
+  userId: Session['userId'],
 ) {
   'use cache'
-  cacheTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${JSON.stringify(params)}`)
+  cacheTag(GET_DAILY_PROJECT_SUMMARY_CACHE_KEY)
 
-  const url = client.api.dailies.summary.$url({
-    query: {
-      skip: String(params.skip),
-      limit: String(params.limit),
-      startDate: params.startDate,
-      endDate: params.endDate,
-      userId: params.userId,
-      userNames: params.userNames,
-    },
-  })
+  const url = client.api.dailies.summary.$url()
   type ResType = z.infer<typeof DailyReportSummaryResponseSchema>
 
   const res = await upfetch<ResType>(url, {
     headers: {
-      Authorization: authenticatedUserId,
+      Authorization: userId,
+    },
+    params: {
+      ...params,
     },
   })
 

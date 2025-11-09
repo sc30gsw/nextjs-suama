@@ -8,7 +8,7 @@ import { DAILY_REPORT } from '~/constants'
 import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+import { dateUtils } from '~/utils/date-utils'
 
 type DailyTabContentProps = {
   children: ReactNode
@@ -25,16 +25,12 @@ export async function DailyTabContent({ children, userId }: DailyTabContentProps
   const { page, rowsPerPage, tab, startDate, endDate, userNames } =
     dailyReportPageSearchParamsCache.all()
 
-  const startDateStr = startDate ? dateUtils.formatDateByJST(startDate, DATE_FORMAT) : undefined
-  const endDateStr = endDate ? dateUtils.formatDateByJST(endDate, DATE_FORMAT) : undefined
-  const userNamesStr = userNames && userNames.length > 0 ? userNames.join(',') : undefined
-
   const countData = await getDailyReportsCount(
     {
-      startDate: startDateStr,
-      endDate: endDateStr,
+      startDate: startDate ?? undefined,
+      endDate: endDate ?? undefined,
       userId: userId,
-      userNames: userNamesStr,
+      userNames,
     },
     session.user.id,
   )

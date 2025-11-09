@@ -18,7 +18,6 @@ import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 export default async function EveryDailyReportPage({
   searchParams,
@@ -40,10 +39,6 @@ export default async function EveryDailyReportPage({
       : rowsPerPage < MIN_ROWS_PER_PAGE
         ? MIN_ROWS_PER_PAGE
         : rowsPerPage
-
-  const startDateStr = startDate ? dateUtils.formatDateByJST(startDate, DATE_FORMAT) : undefined
-  const endDateStr = endDate ? dateUtils.formatDateByJST(endDate, DATE_FORMAT) : undefined
-  const userNamesStr = userNames && userNames.length > 0 ? userNames.join(',') : undefined
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
@@ -73,9 +68,9 @@ export default async function EveryDailyReportPage({
                 {
                   skip,
                   limit,
-                  startDate: startDateStr,
-                  endDate: endDateStr,
-                  userNames: userNamesStr,
+                  startDate: startDate ?? undefined,
+                  endDate: endDate ?? undefined,
+                  userNames,
                 },
                 session.user.id,
               ).then((data) => (
@@ -95,9 +90,9 @@ export default async function EveryDailyReportPage({
                 {
                   skip,
                   limit,
-                  startDate: startDateStr,
-                  endDate: endDateStr,
-                  userNames: userNamesStr,
+                  startDate: startDate ?? undefined,
+                  endDate: endDate ?? undefined,
+                  userNames,
                 },
                 session.user.id,
               ).then((data) => (

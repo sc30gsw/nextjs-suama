@@ -17,7 +17,6 @@ import { getDailyReports, getProjectSummary } from '~/features/reports/daily/ser
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 export default async function MyDailyPage({
   searchParams,
@@ -39,9 +38,6 @@ export default async function MyDailyPage({
       : rowsPerPage < MIN_ROWS_PER_PAGE
         ? MIN_ROWS_PER_PAGE
         : rowsPerPage
-
-  const startDateStr = startDate ? dateUtils.formatDateByJST(startDate, DATE_FORMAT) : undefined
-  const endDateStr = endDate ? dateUtils.formatDateByJST(endDate, DATE_FORMAT) : undefined
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
@@ -69,8 +65,8 @@ export default async function MyDailyPage({
                 {
                   skip,
                   limit,
-                  startDate: startDateStr,
-                  endDate: endDateStr,
+                  startDate: startDate ?? undefined,
+                  endDate: endDate ?? undefined,
                   userId: session.user.id,
                 },
                 session.user.id,
@@ -89,8 +85,8 @@ export default async function MyDailyPage({
             <DailyTabContent userId={session.user.id}>
               {getProjectSummary(
                 {
-                  startDate: startDateStr,
-                  endDate: endDateStr,
+                  startDate: startDate ?? undefined,
+                  endDate: endDate ?? undefined,
                   limit,
                   skip,
                   userId: session.user.id,
