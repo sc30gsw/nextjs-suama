@@ -37,7 +37,6 @@ export async function DailyTabContent({ children, userId }: DailyTabContentProps
 
   const total =
     tab === DAILY_REPORT.TABS[0].id ? countData.dailyReportsCount : countData.projectsCount
-  const totalHour = countData.totalHours
 
   const pageCount = Math.ceil(total / rowsPerPage)
 
@@ -48,6 +47,7 @@ export async function DailyTabContent({ children, userId }: DailyTabContentProps
       rowsPerPage: rowsPerPage.toString(),
       startDate: dateUtils.formatDateParamForUrl(startDate),
       endDate: dateUtils.formatDateParamForUrl(endDate),
+      userNames: userNames.join(','),
     }).toString()
 
     const redirectKindPath = userId ? 'mine' : 'every'
@@ -63,7 +63,7 @@ export async function DailyTabContent({ children, userId }: DailyTabContentProps
         <p className="text-sm">
           全 {total} 件の{tab === DAILY_REPORT.TABS[0].id ? '日報' : 'プロジェクト'}
         </p>
-        <div className="font-bold text-lg">総合計時間: {totalHour} 時間</div>
+        <div className="font-bold text-lg">総合計時間: {countData.totalHours} 時間</div>
       </div>
 
       <Card className="max-w-full border-t-0 pt-0">

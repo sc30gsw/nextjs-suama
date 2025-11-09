@@ -60,7 +60,6 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
       cell: ({ row }) => {
         const report = row.original
 
-        // 現在のログインユーザーの日報のみ編集・削除ボタンを表示
         const isCurrentUser = userId && report.userId === userId
 
         return (

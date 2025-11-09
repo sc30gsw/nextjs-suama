@@ -18,7 +18,7 @@ export class TroubleService {
     params: ReturnType<
       Parameters<RouteHandler<typeof getTroubleCategoriesRoute>>[0]['req']['valid']
     >,
-    authenticatedUserId: Session['userId'],
+    userId: Session['userId'],
   ) {
     const { skip, limit, names, withData } = params
 
@@ -56,7 +56,7 @@ export class TroubleService {
             trouble: true,
             resolved: true,
           },
-          where: and(eq(troubles.resolved, false), eq(troubles.userId, authenticatedUserId)),
+          where: and(eq(troubles.resolved, false), eq(troubles.userId, userId)),
           orderBy: (troublesTable, { desc }) => [desc(troublesTable.createdAt)],
         })
       }

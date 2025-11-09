@@ -53,7 +53,7 @@ export const getDailyReportsListRoute = createRoute({
   tags: ['Daily Reports'],
   summary: '日報一覧取得',
   description:
-    '日報を日付範囲で取得します。today=trueの場合は今日の日報、userIdを指定した場合は特定のユーザーの日報、userNamesを指定した場合は特定のユーザー名の日報、何も指定しない場合は全員の日報を返します。',
+    '日報を日付範囲で取得します。today=trueの場合は今日の日報、userIdを指定した場合は特定のユーザーの日報、userNamesを指定した場合はユーザー名でフィルタリング、何も指定しない場合は全員の日報を返します。',
 })
 
 export const getCountRoute = createRoute({

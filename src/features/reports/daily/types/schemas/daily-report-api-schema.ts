@@ -34,7 +34,7 @@ export const DailyReportsQuerySchema = z.object({
     .openapi({
       param: { name: 'today', in: 'query' },
       example: true,
-      description: '今日の日報を取得するかどうか',
+      description: '今日の日報かどうか',
     }),
   userId: z
     .string()

@@ -95,15 +95,13 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
       reportDate: initialData.reportDate,
       remote: initialData.remote,
       impression: initialData.impression,
-      reportEntries: initialData.reportEntries.map(
-        (entry: Awaited<ReturnType<typeof getDailyReportById>>['reportEntries'][number]) => ({
-          id: entry.id,
-          project: entry.projectId,
-          mission: entry.missionId,
-          hours: entry.hours.toString(),
-          content: entry.content,
-        }),
-      ),
+      reportEntries: initialData.reportEntries.map((entry) => ({
+        id: entry.id,
+        project: entry.projectId,
+        mission: entry.missionId,
+        hours: entry.hours.toString(),
+        content: entry.content,
+      })),
       appealEntries: initialData.appealEntries,
       troubleEntries: initialData.troubleEntries,
     },

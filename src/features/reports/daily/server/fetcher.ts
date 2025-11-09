@@ -4,7 +4,6 @@ import type { Session } from 'better-auth'
 import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
-import type { z } from 'zod/v4'
 
 import {
   GET_DAILY_PROJECT_SUMMARY_CACHE_KEY,
@@ -13,10 +12,6 @@ import {
   GET_DAILY_REPORTS_COUNT_CACHE_KEY,
 } from '~/constants/cache-keys'
 import type { dailyReports } from '~/db/schema'
-import type {
-  DailyReportDetailResponseSchema,
-  DailyReportSummaryResponseSchema,
-} from '~/features/reports/daily/types/schemas/daily-report-api-schema'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
@@ -32,7 +27,7 @@ export async function getDailyReportById(
     param: { id: reportId },
     query: { userId: queryUserId },
   })
-  type ResType = z.infer<typeof DailyReportDetailResponseSchema>
+  type ResType = InferResponseType<(typeof client.api.dailies)[':id']['$get'], 200>
 
   const res = await upfetch<ResType>(url, {
     headers: {
@@ -110,7 +105,7 @@ export async function getProjectSummary(
   cacheTag(GET_DAILY_PROJECT_SUMMARY_CACHE_KEY)
 
   const url = client.api.dailies.summary.$url()
-  type ResType = z.infer<typeof DailyReportSummaryResponseSchema>
+  type ResType = InferResponseType<(typeof client.api.dailies)['summary']['$get'], 200>
 
   const res = await upfetch<ResType>(url, {
     headers: {

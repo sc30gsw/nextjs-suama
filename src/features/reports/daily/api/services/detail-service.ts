@@ -6,15 +6,12 @@ import { dateUtils } from '~/utils/date-utils'
 import { DailyReportServiceError } from './list-service'
 
 export class DailyReportDetailService {
-  async getDailyReportDetail(
-    params: { id: string; userId?: string },
-    authenticatedUserId: Session['userId'],
-  ) {
+  async getDailyReportDetail(params: { id: string; userId?: string }, userId: Session['userId']) {
     const reportId = params.id
     const queryUserId = params.userId
 
     try {
-      const targetUserId = queryUserId || authenticatedUserId
+      const targetUserId = queryUserId ?? userId
 
       const dailyReportDetailQuery = db.query.dailyReports.findFirst({
         where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, targetUserId)),

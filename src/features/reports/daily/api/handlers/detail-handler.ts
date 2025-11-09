@@ -13,12 +13,12 @@ export const getDailyReportDetailHandler: RouteHandler<
 > = async (c) => {
   const { id } = c.req.valid('param')
   const { userId: queryUserId } = c.req.valid('query')
-  const authenticatedUserId = c.get('user').id
+  const userId = c.get('user').id
 
   try {
     const result = await dailyReportDetailService.getDailyReportDetail(
       { id, userId: queryUserId },
-      authenticatedUserId,
+      userId,
     )
 
     if (!result) {
