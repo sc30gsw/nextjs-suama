@@ -17,16 +17,14 @@ export class DailyReportCountService {
     const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
     const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
 
+    const whereConditions = [
+      gte(dailyReports.reportDate, startDateUtc),
+      lte(dailyReports.reportDate, endDateUtc),
+    ]
+
+    queryUserId && whereConditions.push(eq(dailyReports.userId, queryUserId))
+
     try {
-      const whereConditions = [
-        gte(dailyReports.reportDate, startDateUtc),
-        lte(dailyReports.reportDate, endDateUtc),
-      ]
-
-      if (queryUserId) {
-        whereConditions.push(eq(dailyReports.userId, queryUserId))
-      }
-
       if (userNames) {
         const userNamesArray = userNames.split(',').map((name) => name.trim())
         const targetUsers = await db.query.users.findMany({
