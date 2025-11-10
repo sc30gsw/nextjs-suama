@@ -12,7 +12,7 @@ import type { client } from '~/lib/rpc'
 import { dateUtils } from '~/utils/date-utils'
 
 type ProjectSummary = InferResponseType<
-  (typeof client.api.dailies.summary)['$get'],
+  typeof client.api.dailies.summary.$get,
   200
 >['summary'][number]
 
