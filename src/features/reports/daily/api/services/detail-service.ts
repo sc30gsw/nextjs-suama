@@ -1,4 +1,3 @@
-import type { Session } from 'better-auth'
 import { and, eq } from 'drizzle-orm'
 import { dailyReports, troubles } from '~/db/schema'
 import { db } from '~/index'
@@ -6,15 +5,13 @@ import { dateUtils } from '~/utils/date-utils'
 import { DailyReportServiceError } from './list-service'
 
 export class DailyReportDetailService {
-  async getDailyReportDetail(params: { id: string; userId?: string }, userId: Session['userId']) {
-    const reportId = params.id
-    const queryUserId = params.userId
-
+  async getDailyReportDetail(
+    reportId: (typeof dailyReports)['$inferSelect']['id'],
+    userId: (typeof dailyReports)['$inferSelect']['userId'],
+  ) {
     try {
-      const targetUserId = queryUserId ?? userId
-
       const dailyReportDetailQuery = db.query.dailyReports.findFirst({
-        where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, targetUserId)),
+        where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
         with: {
           dailyReportMissions: {
             with: {
@@ -34,7 +31,7 @@ export class DailyReportDetailService {
       })
 
       const unresolvedTroublesQuery = db.query.troubles.findMany({
-        where: and(eq(troubles.userId, targetUserId), eq(troubles.resolved, false)),
+        where: and(eq(troubles.userId, userId), eq(troubles.resolved, false)),
         with: {
           categoryOfTrouble: true,
         },

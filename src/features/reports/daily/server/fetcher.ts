@@ -18,14 +18,12 @@ import { client } from '~/lib/rpc'
 export async function getDailyReportById(
   reportId: InferSelectModel<typeof dailyReports>['id'],
   userId: Session['userId'],
-  queryUserId?: string,
 ) {
   'use cache'
   cacheTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
 
   const url = client.api.dailies[':id'].$url({
     param: { id: reportId },
-    query: { userId: queryUserId },
   })
   type ResType = InferResponseType<(typeof client.api.dailies)[':id']['$get'], 200>
 

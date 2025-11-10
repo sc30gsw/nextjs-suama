@@ -2,7 +2,6 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
   DailyReportCountQuerySchema,
   DailyReportCountResponseSchema,
-  DailyReportDetailQuerySchema,
   DailyReportDetailResponseSchema,
   DailyReportsQuerySchema,
   DailyReportsResponseSchema,
@@ -145,7 +144,6 @@ export const getDailyReportDetailRoute = createRoute({
         example: 'report_123',
       }),
     }),
-    query: DailyReportDetailQuerySchema,
   },
   responses: {
     200: {
@@ -184,8 +182,7 @@ export const getDailyReportDetailRoute = createRoute({
   security: [{ UserIdAuth: [] }],
   tags: ['Daily Reports'],
   summary: '日報詳細取得',
-  description:
-    '指定されたIDの日報の詳細情報を取得します。userIdを指定しない場合は認証済みユーザーの日報、指定した場合は特定のユーザーの日報を返します。',
+  description: '指定されたIDの、認証済みユーザーの日報の詳細情報を取得します。',
 })
 
 const app = new OpenAPIHono<AdditionalVariables>()

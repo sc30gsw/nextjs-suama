@@ -12,14 +12,10 @@ export const getDailyReportDetailHandler: RouteHandler<
   AdditionalVariables
 > = async (c) => {
   const { id } = c.req.valid('param')
-  const { userId: queryUserId } = c.req.valid('query')
   const userId = c.get('user').id
 
   try {
-    const result = await dailyReportDetailService.getDailyReportDetail(
-      { id, userId: queryUserId },
-      userId,
-    )
+    const result = await dailyReportDetailService.getDailyReportDetail(id, userId)
 
     if (!result) {
       return c.json({ error: 'Report not found or unauthorized' }, 404)

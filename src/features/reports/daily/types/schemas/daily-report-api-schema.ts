@@ -118,17 +118,6 @@ export const TroubleEntrySchema = z.object({
   content: z.string().openapi({ description: 'トラブル内容' }),
 })
 
-export const DailyReportDetailQuerySchema = z.object({
-  userId: z
-    .string()
-    .optional()
-    .openapi({
-      param: { name: 'userId', in: 'query' },
-      example: 'user_123',
-      description: 'ユーザーID（指定しない場合は認証済みユーザーの日報）',
-    }),
-})
-
 export const DailyReportDetailResponseSchema = z.object({
   id: z.string().openapi({ description: '日報ID' }),
   reportDate: z.string().openapi({ description: '報告日' }),
