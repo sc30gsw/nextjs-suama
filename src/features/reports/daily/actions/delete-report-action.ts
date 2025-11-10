@@ -58,6 +58,7 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
   try {
     await db.delete(dailyReports).where(eq(dailyReports.id, parseResult.data.id))
 
+    // TODO:本日の日報・自分の日報・みんなの日報の cache key の管理はまだ改善の余地あり
     revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-every`)
     revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
