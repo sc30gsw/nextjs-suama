@@ -46,32 +46,40 @@ export class DailyReportDetailService {
         return null
       }
 
+      const reportDate = dailyReportDetail.reportDate
+        ? dateUtils.formatDateByJST(dailyReportDetail.reportDate)
+        : ''
+
+      const reportEntries = dailyReportDetail.dailyReportMissions.map((dailyReportMission) => ({
+        id: dailyReportMission.id,
+        project: dailyReportMission.mission.project.name,
+        mission: dailyReportMission.mission.name,
+        projectId: dailyReportMission.mission.project.id,
+        missionId: dailyReportMission.mission.id,
+        content: dailyReportMission.workContent,
+        hours: dailyReportMission.hours ?? 0,
+      }))
+
+      const appealEntries = dailyReportDetail.appeals.map((appeal) => ({
+        id: appeal.id,
+        categoryId: appeal.categoryOfAppealId,
+        content: appeal.appeal,
+      }))
+
+      const troubleEntries = unresolvedTroubles.map((trouble) => ({
+        id: trouble.id,
+        categoryId: trouble.categoryOfTroubleId,
+        content: trouble.trouble,
+      }))
+
       return {
         id: dailyReportDetail.id,
-        reportDate: dailyReportDetail.reportDate
-          ? dateUtils.formatDateByJST(dailyReportDetail.reportDate ?? new Date())
-          : '',
+        reportDate,
         remote: dailyReportDetail.remote,
         impression: dailyReportDetail.impression ?? '',
-        reportEntries: dailyReportDetail.dailyReportMissions.map((dailyReportMission) => ({
-          id: dailyReportMission.id,
-          project: dailyReportMission.mission.project.name,
-          mission: dailyReportMission.mission.name,
-          projectId: dailyReportMission.mission.project.id,
-          missionId: dailyReportMission.mission.id,
-          content: dailyReportMission.workContent,
-          hours: dailyReportMission.hours ?? 0,
-        })),
-        appealEntries: dailyReportDetail.appeals.map((appeal) => ({
-          id: appeal.id,
-          categoryId: appeal.categoryOfAppealId,
-          content: appeal.appeal,
-        })),
-        troubleEntries: unresolvedTroubles.map((trouble) => ({
-          id: trouble.id,
-          categoryId: trouble.categoryOfTroubleId,
-          content: trouble.trouble,
-        })),
+        reportEntries,
+        appealEntries,
+        troubleEntries,
       }
     } catch (error) {
       throw new DailyReportServiceError(
