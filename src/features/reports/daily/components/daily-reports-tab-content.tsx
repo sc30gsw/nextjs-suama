@@ -10,12 +10,12 @@ import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types
 import { getServerSession } from '~/lib/get-server-session'
 import { dateUtils } from '~/utils/date-utils'
 
-type DailyTabContentProps = {
+type DailyReportsTabContentProps = {
   children: ReactNode
   userId?: Session['userId']
 }
 
-export async function DailyTabContent({ children, userId }: DailyTabContentProps) {
+export async function DailyReportsTabContent({ children, userId }: DailyReportsTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {

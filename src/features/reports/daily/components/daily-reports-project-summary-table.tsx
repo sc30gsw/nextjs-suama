@@ -50,7 +50,7 @@ const COLUMNS = [
   }),
 ]
 
-export function ProjectSummaryTable({ summary }: Record<'summary', ProjectSummary[]>) {
+export function DailyReportsProjectSummaryTable({ summary }: Record<'summary', ProjectSummary[]>) {
   const table = useReactTable({
     data: summary,
     columns: COLUMNS,

@@ -9,12 +9,12 @@ import { paginationSearchParamsParsers } from '~/types/search-params/pagination-
 
 const INITIAL_PAGE = 1
 
-type DailyTabsProps = {
+type DailyReportsTabsProps = {
   currentTab: (typeof DAILY_REPORT_TABS)[number]['id']
   children: ReactNode
 }
 
-export function DailyTabs({ currentTab, children }: DailyTabsProps) {
+export function DailyReportsTabs({ currentTab, children }: DailyReportsTabsProps) {
   const [, setQueryStates] = useQueryStates(
     {
       ...dailyReportSearchParamsParsers,

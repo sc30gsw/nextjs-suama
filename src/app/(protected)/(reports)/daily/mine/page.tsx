@@ -7,12 +7,12 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { TabPanel } from '~/components/ui/intent-ui/tabs'
 import { DAILY_REPORT_TABS_MAP, MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { DailyReportsProjectSummaryTable } from '~/features/reports/daily/components/daily-reports-project-summary-table'
+import { DailyReportsSearchDateRangePicker } from '~/features/reports/daily/components/daily-reports-search-date-range-picker'
+import { DailyReportsTabContent } from '~/features/reports/daily/components/daily-reports-tab-content'
+import { DailyReportsTabContentSkeleton } from '~/features/reports/daily/components/daily-reports-tab-content-skeleton'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
-import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
-import { DailyTabContent } from '~/features/reports/daily/components/daily-tab-content'
-import { DailyTabContentSkeleton } from '~/features/reports/daily/components/daily-tab-content-skeleton'
-import { DailyTabs } from '~/features/reports/daily/components/daily-tabs'
-import { ProjectSummaryTable } from '~/features/reports/daily/components/project-summary-table'
+import { DailyReportsTabs } from '~/features/reports/daily/components/daily-reports-tabs'
 import { getDailyReports, getProjectSummary } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
@@ -45,7 +45,7 @@ export default async function MyDailyPage({
 
       <Form action="/daily/mine" className="flex gap-x-2">
         <input type="hidden" name="tab" value={tab} />
-        <DailySearchDateRangePicker />
+        <DailyReportsSearchDateRangePicker />
         <Button type="submit">
           検索
           <IconSearch />
@@ -54,13 +54,13 @@ export default async function MyDailyPage({
 
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
         https://github.com/vercel/next.js/issues/84489 */}
-      <DailyTabs currentTab={tab}>
+      <DailyReportsTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
           <Suspense
             key={`date-${JSON.stringify(minePageSearchParams)}`}
-            fallback={<DailyTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
+            fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
           >
-            <DailyTabContent userId={session.user.id}>
+            <DailyReportsTabContent userId={session.user.id}>
               {getDailyReports(
                 {
                   skip,
@@ -73,16 +73,16 @@ export default async function MyDailyPage({
               ).then((data) => (
                 <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
               ))}
-            </DailyTabContent>
+            </DailyReportsTabContent>
           </Suspense>
         </TabPanel>
 
         <TabPanel id={DAILY_REPORT_TABS_MAP.PROJECT.id}>
           <Suspense
             key={`project-${JSON.stringify(minePageSearchParams)}`}
-            fallback={<DailyTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
+            fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
           >
-            <DailyTabContent userId={session.user.id}>
+            <DailyReportsTabContent userId={session.user.id}>
               {getProjectSummary(
                 {
                   startDate: startDate ?? undefined,
@@ -93,12 +93,12 @@ export default async function MyDailyPage({
                 },
                 session.user.id,
               ).then((data) => (
-                <ProjectSummaryTable summary={data.summary} />
+                <DailyReportsProjectSummaryTable summary={data.summary} />
               ))}
-            </DailyTabContent>
+            </DailyReportsTabContent>
           </Suspense>
         </TabPanel>
-      </DailyTabs>
+      </DailyReportsTabs>
     </div>
   )
 }

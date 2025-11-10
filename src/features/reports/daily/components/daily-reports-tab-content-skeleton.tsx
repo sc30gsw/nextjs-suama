@@ -9,7 +9,7 @@ const ACTION_BUTTON_COUNT = 3
 
 const DATE_TAB_ID = DAILY_REPORT_TABS_MAP.DATE.id
 
-export function DailyTabContentSkeleton({
+export function DailyReportsTabContentSkeleton({
   tab,
 }: Record<'tab', (typeof DAILY_REPORT_TABS)[number]['id']>) {
   const isDateTab = tab === DATE_TAB_ID
