@@ -6,7 +6,7 @@ import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { TabPanel } from '~/components/ui/intent-ui/tabs'
-import { DAILY_REPORT_TABS, MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { DAILY_REPORT_TABS_MAP, MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
 import { DailyTabContent } from '~/features/reports/daily/components/daily-tab-content'
@@ -58,10 +58,10 @@ export default async function EveryDailyReportPage({
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
         https://github.com/vercel/next.js/issues/84489 */}
       <DailyTabs currentTab={tab}>
-        <TabPanel id={DAILY_REPORT_TABS[0].id}>
+        <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
           <Suspense
             key={`date-${JSON.stringify(dailyPageSearchParams)}`}
-            fallback={<DailyTabContentSkeleton tab={DAILY_REPORT_TABS[0].id} />}
+            fallback={<DailyTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
           >
             <DailyTabContent>
               {getDailyReports(
@@ -80,10 +80,10 @@ export default async function EveryDailyReportPage({
           </Suspense>
         </TabPanel>
 
-        <TabPanel id={DAILY_REPORT_TABS[1].id}>
+        <TabPanel id={DAILY_REPORT_TABS_MAP.PROJECT.id}>
           <Suspense
             key={`project-${JSON.stringify(dailyPageSearchParams)}`}
-            fallback={<DailyTabContentSkeleton tab={DAILY_REPORT_TABS[1].id} />}
+            fallback={<DailyTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
           >
             <DailyTabContent>
               {getProjectSummary(
