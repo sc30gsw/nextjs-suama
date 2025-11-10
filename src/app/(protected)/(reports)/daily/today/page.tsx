@@ -14,6 +14,7 @@ import { userSearchParamsCache } from '~/features/users/types/search-params/user
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+import { dateUtils } from '~/utils/date-utils'
 
 export default async function DailyOfTodayPage({
   searchParams,
@@ -39,7 +40,8 @@ export default async function DailyOfTodayPage({
             ? MIN_ROWS_PER_PAGE
             : rowsPerPage,
       userNames,
-      today: true,
+      startDate: dateUtils.getTodayRangeByJST().start,
+      endDate: dateUtils.getTodayRangeByJST().end,
     },
     session.user.id,
   )

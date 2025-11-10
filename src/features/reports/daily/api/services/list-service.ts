@@ -19,14 +19,12 @@ export class DailyReportListService {
       Parameters<RouteHandler<typeof getDailyReportsListRoute>>[0]['req']['valid']
     >,
   ) {
-    const { userId, userNames, skip, limit, startDate, endDate, today } = params
+    const { userId, userNames, skip, limit, startDate, endDate } = params
 
     const skipNumber = Number(skip) || DEFAULT_SKIP
     const limitNumber = Number(limit) || DEFAULT_LIMIT
 
-    const { start, end } = today
-      ? dateUtils.getTodayRangeByJST()
-      : dateUtils.getOneMonthAgoRangeByJST()
+    const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
 
     const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
     const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end

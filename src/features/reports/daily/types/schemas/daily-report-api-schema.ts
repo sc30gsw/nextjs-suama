@@ -28,14 +28,6 @@ export const TodayReportSchema = z.object({
 })
 
 export const DailyReportsQuerySchema = z.object({
-  today: z.coerce
-    .boolean()
-    .optional()
-    .openapi({
-      param: { name: 'today', in: 'query' },
-      example: true,
-      description: '今日の日報かどうか',
-    }),
   userId: z
     .string()
     .optional()
