@@ -108,7 +108,7 @@ export const getDailyReportSummaryRoute = createRoute({
           schema: DailyReportSummaryResponseSchema,
         },
       },
-      description: 'プロジェクトサマリーを正常に取得',
+      description: '日報詳細を正常に取得',
     },
     401: {
       content: {
