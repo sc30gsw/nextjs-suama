@@ -11,7 +11,7 @@ import {
   GET_DAILY_REPORTS_CACHE_KEY,
   GET_DAILY_REPORTS_COUNT_CACHE_KEY,
 } from '~/constants/cache-keys'
-import type { dailyReports } from '~/db/schema'
+import type { dailyReports, users } from '~/db/schema'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
 
@@ -42,7 +42,7 @@ export async function getDailyReports(
     limit: number
     startDate?: Date
     endDate?: Date
-    userId?: string
+    userId?: InferSelectModel<typeof users>['id']
     userNames?: string[]
   },
   userId: Session['userId'],
