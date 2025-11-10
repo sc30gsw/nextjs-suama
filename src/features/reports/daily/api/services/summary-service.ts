@@ -26,7 +26,7 @@ export class DailyReportSummaryService {
       Parameters<RouteHandler<typeof getDailyReportSummaryRoute>>[0]['req']['valid']
     >,
   ) {
-    const { userId: queryUserId, userNames, startDate, endDate, limit, skip } = params
+    const { userId, userNames, startDate, endDate, limit, skip } = params
 
     const skipNumber = Number(skip) || DEFAULT_SKIP
     const limitNumber = Number(limit) || DEFAULT_LIMIT
@@ -41,7 +41,7 @@ export class DailyReportSummaryService {
       lte(dailyReports.reportDate, endDateUtc),
     ]
 
-    queryUserId && whereConditions.push(eq(dailyReports.userId, queryUserId))
+    userId && whereConditions.push(eq(dailyReports.userId, userId))
 
     try {
       if (userNames) {

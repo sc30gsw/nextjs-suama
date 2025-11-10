@@ -19,7 +19,7 @@ export class DailyReportListService {
       Parameters<RouteHandler<typeof getDailyReportsListRoute>>[0]['req']['valid']
     >,
   ) {
-    const { userId: queryUserId, userNames, skip, limit, startDate, endDate, today } = params
+    const { userId, userNames, skip, limit, startDate, endDate, today } = params
 
     const skipNumber = Number(skip) || DEFAULT_SKIP
     const limitNumber = Number(limit) || DEFAULT_LIMIT
@@ -36,7 +36,7 @@ export class DailyReportListService {
       lte(dailyReports.reportDate, endDateUtc),
     ]
 
-    queryUserId && whereConditions.push(eq(dailyReports.userId, queryUserId))
+    userId && whereConditions.push(eq(dailyReports.userId, userId))
 
     try {
       if (userNames) {
@@ -83,7 +83,7 @@ export class DailyReportListService {
           limit: limitNumber,
           startDate,
           endDate,
-          userId: queryUserId,
+          userId,
           total: 0,
         }
       }
@@ -124,7 +124,7 @@ export class DailyReportListService {
         limit: limitNumber,
         startDate,
         endDate,
-        userId: queryUserId,
+        userId,
         total: totalCount[0].count,
       }
     } catch (error) {

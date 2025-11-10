@@ -10,7 +10,7 @@ export class DailyReportCountService {
   async getCount(
     params: ReturnType<Parameters<RouteHandler<typeof getCountRoute>>[0]['req']['valid']>,
   ) {
-    const { userId: queryUserId, userNames, startDate, endDate } = params
+    const { userId, userNames, startDate, endDate } = params
 
     const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
 
@@ -22,7 +22,7 @@ export class DailyReportCountService {
       lte(dailyReports.reportDate, endDateUtc),
     ]
 
-    queryUserId && whereConditions.push(eq(dailyReports.userId, queryUserId))
+    userId && whereConditions.push(eq(dailyReports.userId, userId))
 
     try {
       if (userNames) {
