@@ -34,7 +34,9 @@ export class DailyReportListService {
       lte(dailyReports.reportDate, endDateUtc),
     ]
 
-    userId && whereConditions.push(eq(dailyReports.userId, userId))
+    if (userId) {
+      whereConditions.push(eq(dailyReports.userId, userId))
+    }
 
     try {
       if (userNames) {
@@ -48,11 +50,19 @@ export class DailyReportListService {
 
         const targetUserIds = targetUsers.map((user) => user.id)
 
-        whereConditions.push(
-          targetUserIds.length > 0
-            ? inArray(dailyReports.userId, targetUserIds)
-            : eq(dailyReports.userId, ''),
-        )
+        if (targetUserIds.length === 0) {
+          return {
+            dailyReports: [],
+            skip: skipNumber,
+            limit: limitNumber,
+            startDate,
+            endDate,
+            userId,
+            total: 0,
+          }
+        }
+
+        whereConditions.push(inArray(dailyReports.userId, targetUserIds))
       }
 
       const dailyReportsWithRelations = await db.query.dailyReports.findMany({

@@ -22,7 +22,9 @@ export class DailyReportCountService {
       lte(dailyReports.reportDate, endDateUtc),
     ]
 
-    userId && whereConditions.push(eq(dailyReports.userId, userId))
+    if (userId) {
+      whereConditions.push(eq(dailyReports.userId, userId))
+    }
 
     try {
       if (userNames) {
@@ -36,11 +38,15 @@ export class DailyReportCountService {
 
         const targetUserIds = targetUsers.map((user) => user.id)
 
-        whereConditions.push(
-          targetUserIds.length > 0
-            ? inArray(dailyReports.userId, targetUserIds)
-            : eq(dailyReports.userId, ''),
-        )
+        if (targetUserIds.length === 0) {
+          return {
+            dailyReportsCount: 0,
+            projectsCount: 0,
+            totalHours: 0,
+          }
+        }
+
+        whereConditions.push(inArray(dailyReports.userId, targetUserIds))
       }
 
       const dailyReportsCountQuery = db
