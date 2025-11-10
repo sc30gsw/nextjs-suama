@@ -2,6 +2,9 @@ export const MAX_ROWS_PER_PAGE = 100
 export const MIN_ROWS_PER_PAGE = 10
 export const MAX_LIMIT = 500
 
+export const DEFAULT_SKIP = 0
+export const DEFAULT_LIMIT = 10
+
 export const LIKE_KEYWORDS_REGEX = /^([\wぁ-んァ-ヶー一-龠]+)(\s*,\s*[\wぁ-んァ-ヶー一-龠]+)*$/
 
 // ? FileTriggerコンポーネントのacceptedFileTypes Propsがreadonlyを受け付けないため readonly string[]とせず、string[]で定義
@@ -12,14 +15,3 @@ export const MAX_IMAGE_SIZE_MB = 5
 export const WEEKLY_REPORTS_LIMIT = 30
 
 export const RELOAD_DELAY = 1000
-
-export const DEFAULT_SKIP = 0
-export const DEFAULT_LIMIT = 10
-
-export const DAILY_REPORT_TABS_MAP = {
-  DATE: { id: 'date', name: '日付' },
-  PROJECT: { id: 'project', name: 'プロジェクト' },
-} as const satisfies Record<string, Record<string, string>>
-
-export const DAILY_REPORT_TABS: readonly (typeof DAILY_REPORT_TABS_MAP)[keyof typeof DAILY_REPORT_TABS_MAP][] =
-  Object.values(DAILY_REPORT_TABS_MAP)

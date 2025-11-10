@@ -1,6 +1,6 @@
 import { Card } from '~/components/ui/intent-ui/card'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
-import { type DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants'
+import { type DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { cn } from '~/utils/classes'
 
 const ROW_COUNT = 5

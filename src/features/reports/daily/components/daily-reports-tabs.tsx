@@ -3,7 +3,7 @@
 import { useQueryStates } from 'nuqs'
 import type { ReactNode } from 'react'
 import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
-import { DAILY_REPORT_TABS } from '~/constants'
+import { DAILY_REPORT_TABS } from '~/constants/tabs'
 import { dailyReportSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 

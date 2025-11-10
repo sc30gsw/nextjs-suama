@@ -1,5 +1,5 @@
 import { createParser, createSearchParamsCache, parseAsStringLiteral } from 'nuqs/server'
-import { DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants'
+import { DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 import { SEPARATOR } from '~/utils/date-utils'
