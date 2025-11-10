@@ -16,7 +16,7 @@ import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { dateUtils } from '~/utils/date-utils'
 
-export default async function DailyOfTodayPage({
+export default async function DailyForTodayPage({
   searchParams,
 }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
