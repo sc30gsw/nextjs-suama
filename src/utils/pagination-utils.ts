@@ -77,4 +77,26 @@ export const paginationUtils = {
 
     return pages
   },
+
+  calculateSkip: (page: number, rowsPerPage: number) => {
+    if (page <= PAGINATION.PAGE.FIRST) {
+      return PAGINATION.PAGE.FIRST_INDEX
+    }
+
+    return (page - PAGINATION.PAGE.FIRST) * rowsPerPage
+  },
+
+  maxRowsLimit: (rowsPerPage: number) => {
+    const { MIN_ROWS_PER_PAGE, MAX_ROWS_PER_PAGE } = PAGINATION.PARAMS
+
+    if (rowsPerPage > MAX_ROWS_PER_PAGE) {
+      return MAX_ROWS_PER_PAGE
+    }
+
+    if (rowsPerPage < MIN_ROWS_PER_PAGE) {
+      return MIN_ROWS_PER_PAGE
+    }
+
+    return rowsPerPage
+  },
 } as const

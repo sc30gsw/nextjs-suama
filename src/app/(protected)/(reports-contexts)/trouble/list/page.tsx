@@ -5,7 +5,6 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
-import { PAGINATION } from '~/constants/pagination'
 import { NameSearchTagField } from '~/features/report-contexts/components/name-search-tag-field'
 import { ReportContextMenu } from '~/features/report-contexts/components/report-context-menu'
 import { ReportContextTablePagination } from '~/features/report-contexts/components/report-context-table-pagination'
@@ -16,6 +15,7 @@ import { nameSearchParamsCache } from '~/features/report-contexts/types/search-p
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+import { paginationUtils } from '~/utils/pagination-utils'
 
 export default async function TroubleListPage({
   searchParams,
@@ -32,8 +32,8 @@ export default async function TroubleListPage({
   ])
 
   const troubleCategoriesPromise = getTroubleCategories(session.user.id, {
-    skip: PAGINATION.UTILS.calculateSkip(page, rowsPerPage),
-    limit: PAGINATION.UTILS.clampRowsPerPage(rowsPerPage),
+    skip: paginationUtils.calculateSkip(page, rowsPerPage),
+    limit: paginationUtils.maxRowsLimit(rowsPerPage),
     names,
   })
 

@@ -6,7 +6,6 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { PAGINATION } from '~/constants/pagination'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { getDailyReports } from '~/features/reports/daily/server/fetcher'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
@@ -15,6 +14,7 @@ import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { dateUtils } from '~/utils/date-utils'
+import { paginationUtils } from '~/utils/pagination-utils'
 
 export default async function DailyForTodayPage({
   searchParams,
@@ -32,8 +32,8 @@ export default async function DailyForTodayPage({
 
   const reportsPromise = getDailyReports(
     {
-      skip: PAGINATION.UTILS.calculateSkip(page, rowsPerPage),
-      limit: PAGINATION.UTILS.clampRowsPerPage(rowsPerPage),
+      skip: paginationUtils.calculateSkip(page, rowsPerPage),
+      limit: paginationUtils.maxRowsLimit(rowsPerPage),
       userNames,
       startDate: dateUtils.getTodayRangeByJST().start,
       endDate: dateUtils.getTodayRangeByJST().end,

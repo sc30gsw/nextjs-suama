@@ -6,7 +6,6 @@ import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { TabPanel } from '~/components/ui/intent-ui/tabs'
-import { PAGINATION } from '~/constants/pagination'
 import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { DailyReportsProjectSummaryTable } from '~/features/reports/daily/components/daily-reports-project-summary-table'
 import { DailyReportsSearchDateRangePicker } from '~/features/reports/daily/components/daily-reports-search-date-range-picker'
@@ -18,6 +17,7 @@ import { getDailyReports, getProjectSummary } from '~/features/reports/daily/ser
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
+import { paginationUtils } from '~/utils/pagination-utils'
 
 export default async function MyDailyPage({
   searchParams,
@@ -31,8 +31,8 @@ export default async function MyDailyPage({
   const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
   const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
 
-  const skip = PAGINATION.UTILS.calculateSkip(page, rowsPerPage)
-  const limit = PAGINATION.UTILS.clampRowsPerPage(rowsPerPage)
+  const skip = paginationUtils.calculateSkip(page, rowsPerPage)
+  const limit = paginationUtils.maxRowsLimit(rowsPerPage)
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">

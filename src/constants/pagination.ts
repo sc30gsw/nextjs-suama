@@ -5,7 +5,6 @@ type PaginationConfig = {
   DIVIDING_PATTERN: typeof DIVIDING_PATTERN
   BOUNDARY: typeof BOUNDARY
   PARAMS: typeof PARAMS
-  UTILS: typeof UTILS
 }
 
 const UI = {
@@ -39,30 +38,6 @@ const PARAMS = {
   DEFAULT_LIMIT: 10,
 } as const satisfies Record<string, number>
 
-const UTILS = {
-  calculateSkip: (page: number, rowsPerPage: number) => {
-    if (page <= PAGE.FIRST) {
-      return PAGE.FIRST_INDEX
-    }
-
-    return (page - PAGE.FIRST) * rowsPerPage
-  },
-
-  clampRowsPerPage: (rowsPerPage: number) => {
-    const { MIN_ROWS_PER_PAGE, MAX_ROWS_PER_PAGE } = PARAMS
-
-    if (rowsPerPage > MAX_ROWS_PER_PAGE) {
-      return MAX_ROWS_PER_PAGE
-    }
-
-    if (rowsPerPage < MIN_ROWS_PER_PAGE) {
-      return MIN_ROWS_PER_PAGE
-    }
-
-    return rowsPerPage
-  },
-} as const satisfies Record<string, (page: number, rowsPerPage: number) => number>
-
 export const PAGINATION = {
   UI,
   PAGE,
@@ -70,5 +45,4 @@ export const PAGINATION = {
   DIVIDING_PATTERN,
   BOUNDARY,
   PARAMS,
-  UTILS,
 } as const satisfies PaginationConfig
