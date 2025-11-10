@@ -1,6 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
-import { DEFAULT_LIMIT, DEFAULT_SKIP } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { dailyReports, users } from '~/db/schema'
 import type { getDailyReportsListRoute } from '~/features/reports/daily/api/route'
 import { db } from '~/index'
@@ -21,8 +21,8 @@ export class DailyReportListService {
   ) {
     const { userId, userNames, skip, limit, startDate, endDate } = params
 
-    const skipNumber = Number(skip) || DEFAULT_SKIP
-    const limitNumber = Number(limit) || DEFAULT_LIMIT
+    const skipNumber = Number(skip) || PAGINATION.PARAMS.DEFAULT_SKIP
+    const limitNumber = Number(limit) || PAGINATION.PARAMS.DEFAULT_LIMIT
 
     const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
 

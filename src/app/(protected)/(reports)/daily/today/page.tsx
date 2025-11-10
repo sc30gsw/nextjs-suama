@@ -6,7 +6,7 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { getDailyReports } from '~/features/reports/daily/server/fetcher'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
@@ -32,13 +32,8 @@ export default async function DailyForTodayPage({
 
   const reportsPromise = getDailyReports(
     {
-      skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-      limit:
-        rowsPerPage > MAX_ROWS_PER_PAGE
-          ? MAX_ROWS_PER_PAGE
-          : rowsPerPage < MIN_ROWS_PER_PAGE
-            ? MIN_ROWS_PER_PAGE
-            : rowsPerPage,
+      skip: PAGINATION.UTILS.calculateSkip(page, rowsPerPage),
+      limit: PAGINATION.UTILS.clampRowsPerPage(rowsPerPage),
       userNames,
       startDate: dateUtils.getTodayRangeByJST().start,
       endDate: dateUtils.getTodayRangeByJST().end,

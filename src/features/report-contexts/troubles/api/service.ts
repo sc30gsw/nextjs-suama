@@ -1,7 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import type { Session } from 'better-auth'
 import { and, count, eq, like, or } from 'drizzle-orm'
-import { MAX_LIMIT } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { categoryOfTroubles, troubles } from '~/db/schema'
 import type { getTroubleCategoriesRoute } from '~/features/report-contexts/troubles/api/route'
 import { db } from '~/index'
@@ -22,8 +22,8 @@ export class TroubleService {
   ) {
     const { skip, limit, names, withData } = params
 
-    const skipNumber = Number(skip) || 0
-    const limitNumber = Number(limit) || MAX_LIMIT
+    const skipNumber = Number(skip) || PAGINATION.PARAMS.DEFAULT_SKIP
+    const limitNumber = Number(limit) || PAGINATION.PARAMS.MAX_LIMIT
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
     try {

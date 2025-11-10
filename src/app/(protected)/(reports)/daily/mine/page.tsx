@@ -6,7 +6,7 @@ import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { TabPanel } from '~/components/ui/intent-ui/tabs'
-import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { DailyReportsProjectSummaryTable } from '~/features/reports/daily/components/daily-reports-project-summary-table'
 import { DailyReportsSearchDateRangePicker } from '~/features/reports/daily/components/daily-reports-search-date-range-picker'
@@ -31,14 +31,8 @@ export default async function MyDailyPage({
   const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
   const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
 
-  const skip = page <= 1 ? 0 : (page - 1) * rowsPerPage
-
-  const limit =
-    rowsPerPage > MAX_ROWS_PER_PAGE
-      ? MAX_ROWS_PER_PAGE
-      : rowsPerPage < MIN_ROWS_PER_PAGE
-        ? MIN_ROWS_PER_PAGE
-        : rowsPerPage
+  const skip = PAGINATION.UTILS.calculateSkip(page, rowsPerPage)
+  const limit = PAGINATION.UTILS.clampRowsPerPage(rowsPerPage)
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">

@@ -6,7 +6,7 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { UsersTable } from '~/features/users/components/users-table'
 import { getUsers } from '~/features/users/server/fetcher'
@@ -28,13 +28,8 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
   ])
 
   const usersPromise = getUsers(session.user.id, {
-    skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-    limit:
-      rowsPerPage > MAX_ROWS_PER_PAGE
-        ? MAX_ROWS_PER_PAGE
-        : rowsPerPage < MIN_ROWS_PER_PAGE
-          ? MIN_ROWS_PER_PAGE
-          : rowsPerPage,
+    skip: PAGINATION.UTILS.calculateSkip(page, rowsPerPage),
+    limit: PAGINATION.UTILS.clampRowsPerPage(rowsPerPage),
     userNames,
   })
 

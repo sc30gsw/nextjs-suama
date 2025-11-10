@@ -5,7 +5,7 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
-import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { NameSearchTagField } from '~/features/report-contexts/components/name-search-tag-field'
 import { ReportContextMenu } from '~/features/report-contexts/components/report-context-menu'
 import { ReportContextTablePagination } from '~/features/report-contexts/components/report-context-table-pagination'
@@ -33,13 +33,8 @@ export default async function MissionListPage({
   ])
 
   const missionsPromise = getMissions(session.user.id, {
-    skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-    limit:
-      rowsPerPage > MAX_ROWS_PER_PAGE
-        ? MAX_ROWS_PER_PAGE
-        : rowsPerPage < MIN_ROWS_PER_PAGE
-          ? MIN_ROWS_PER_PAGE
-          : rowsPerPage,
+    skip: PAGINATION.UTILS.calculateSkip(page, rowsPerPage),
+    limit: PAGINATION.UTILS.clampRowsPerPage(rowsPerPage),
     names,
   })
 

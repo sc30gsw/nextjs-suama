@@ -1,6 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { count, like, or } from 'drizzle-orm'
-import { MAX_LIMIT } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { projects } from '~/db/schema'
 import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
 import { db } from '~/index'
@@ -18,8 +18,8 @@ export class ProjectService {
   ) {
     const { skip, limit, names } = params
 
-    const skipNumber = Number(skip) || 0
-    const limitNumber = Number(limit) || MAX_LIMIT
+    const skipNumber = Number(skip) || PAGINATION.PARAMS.DEFAULT_SKIP
+    const limitNumber = Number(limit) || PAGINATION.PARAMS.MAX_LIMIT
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
     try {

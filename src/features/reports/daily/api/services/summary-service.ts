@@ -13,7 +13,7 @@ import {
   or,
   sql,
 } from 'drizzle-orm'
-import { DEFAULT_LIMIT, DEFAULT_SKIP } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { dailyReportMissions, dailyReports, missions, projects, users } from '~/db/schema'
 import type { getDailyReportSummaryRoute } from '~/features/reports/daily/api/route'
 import { db } from '~/index'
@@ -28,8 +28,8 @@ export class DailyReportSummaryService {
   ) {
     const { userId, userNames, startDate, endDate, limit, skip } = params
 
-    const skipNumber = Number(skip) || DEFAULT_SKIP
-    const limitNumber = Number(limit) || DEFAULT_LIMIT
+    const skipNumber = Number(skip) || PAGINATION.PARAMS.DEFAULT_SKIP
+    const limitNumber = Number(limit) || PAGINATION.PARAMS.DEFAULT_LIMIT
 
     const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
 
