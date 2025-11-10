@@ -30,6 +30,17 @@ function getPagePattern(
   return PAGE_PATTERN.MIDDLE
 }
 
+type PaginationUtils = Readonly<{
+  createPageNumbers: (
+    currentPageIndex: number,
+    totalPages: number,
+  ) => (number | typeof PAGINATION.UI.ELLIPSIS)[]
+
+  getOffeset: (page: number, rowsPerPage: number) => number
+
+  getMaxRowsLimit: (rowsPerPage: number) => number
+}>
+
 export const paginationUtils = {
   createPageNumbers: (currentPageIndex: number, totalPages: number) => {
     if (totalPages <= PAGINATION.DISPLAY.MAX_PAGES) {
@@ -78,7 +89,7 @@ export const paginationUtils = {
     return pages
   },
 
-  calculateSkip: (page: number, rowsPerPage: number) => {
+  getOffeset: (page: number, rowsPerPage: number) => {
     if (page <= PAGINATION.PAGE.FIRST) {
       return PAGINATION.PAGE.FIRST_INDEX
     }
@@ -86,7 +97,7 @@ export const paginationUtils = {
     return (page - PAGINATION.PAGE.FIRST) * rowsPerPage
   },
 
-  maxRowsLimit: (rowsPerPage: number) => {
+  getMaxRowsLimit: (rowsPerPage: number) => {
     const { MIN_ROWS_PER_PAGE, MAX_ROWS_PER_PAGE } = PAGINATION.PARAMS
 
     if (rowsPerPage > MAX_ROWS_PER_PAGE) {
@@ -99,4 +110,4 @@ export const paginationUtils = {
 
     return rowsPerPage
   },
-} as const
+} as const satisfies PaginationUtils

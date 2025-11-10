@@ -32,8 +32,8 @@ export default async function TroubleListPage({
   ])
 
   const troubleCategoriesPromise = getTroubleCategories(session.user.id, {
-    skip: paginationUtils.calculateSkip(page, rowsPerPage),
-    limit: paginationUtils.maxRowsLimit(rowsPerPage),
+    skip: paginationUtils.getOffeset(page, rowsPerPage),
+    limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
   })
 

@@ -32,8 +32,8 @@ export default async function AppealListPage({
   ])
 
   const appealCategoriesPromise = getAppealCategories(session.user.id, {
-    skip: paginationUtils.calculateSkip(page, rowsPerPage),
-    limit: paginationUtils.maxRowsLimit(rowsPerPage),
+    skip: paginationUtils.getOffeset(page, rowsPerPage),
+    limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
   })
 

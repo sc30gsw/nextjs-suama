@@ -32,8 +32,8 @@ export default async function EveryDailyReportPage({
   const dailyPageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
   const { page, rowsPerPage, tab, startDate, endDate, userNames } = dailyPageSearchParams
 
-  const skip = paginationUtils.calculateSkip(page, rowsPerPage)
-  const limit = paginationUtils.maxRowsLimit(rowsPerPage)
+  const skip = paginationUtils.getOffeset(page, rowsPerPage)
+  const limit = paginationUtils.getMaxRowsLimit(rowsPerPage)
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">

@@ -31,8 +31,8 @@ export default async function MyDailyPage({
   const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
   const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
 
-  const skip = paginationUtils.calculateSkip(page, rowsPerPage)
-  const limit = paginationUtils.maxRowsLimit(rowsPerPage)
+  const skip = paginationUtils.getOffeset(page, rowsPerPage)
+  const limit = paginationUtils.getMaxRowsLimit(rowsPerPage)
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
