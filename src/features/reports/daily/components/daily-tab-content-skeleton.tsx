@@ -1,17 +1,17 @@
 import { Card } from '~/components/ui/intent-ui/card'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
-import { DAILY_REPORT } from '~/constants'
+import { DAILY_REPORT_TABS } from '~/constants'
 import { cn } from '~/utils/classes'
 
 const ROW_COUNT = 5
 const PAGINATION_TOTAL_COUNT = 11
 const ACTION_BUTTON_COUNT = 3
 
-const DATE_TAB_ID = DAILY_REPORT.TABS[0].id
+const DATE_TAB_ID = DAILY_REPORT_TABS[0].id
 
 export function DailyTabContentSkeleton({
   tab,
-}: Record<'tab', (typeof DAILY_REPORT.TABS)[number]['id']>) {
+}: Record<'tab', (typeof DAILY_REPORT_TABS)[number]['id']>) {
   const isDateTab = tab === DATE_TAB_ID
 
   return (

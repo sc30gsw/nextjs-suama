@@ -3,14 +3,14 @@
 import { useQueryStates } from 'nuqs'
 import type { ReactNode } from 'react'
 import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
-import { DAILY_REPORT } from '~/constants'
+import { DAILY_REPORT_TABS } from '~/constants'
 import { dailyReportSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 const INITIAL_PAGE = 1
 
 type DailyTabsProps = {
-  currentTab: (typeof DAILY_REPORT.TABS)[number]['id']
+  currentTab: (typeof DAILY_REPORT_TABS)[number]['id']
   children: ReactNode
 }
 
@@ -41,7 +41,7 @@ export function DailyTabs({ currentTab, children }: DailyTabsProps) {
       }}
     >
       <TabList>
-        {DAILY_REPORT.TABS.map((tab) => (
+        {DAILY_REPORT_TABS.map((tab) => (
           <Tab
             key={tab.id}
             id={tab.id}

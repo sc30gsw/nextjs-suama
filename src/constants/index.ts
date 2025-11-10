@@ -16,11 +16,7 @@ export const RELOAD_DELAY = 1000
 export const DEFAULT_SKIP = 0
 export const DEFAULT_LIMIT = 10
 
-const TABS = [
+export const DAILY_REPORT_TABS = [
   { id: 'date', name: '日付' },
   { id: 'project', name: 'プロジェクト' },
 ] as const satisfies readonly Record<string, string>[]
-
-export const DAILY_REPORT = {
-  TABS,
-} as const satisfies Record<'TABS', typeof TABS>
