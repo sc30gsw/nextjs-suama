@@ -28,7 +28,7 @@ export class DailyReportCountService {
       if (userNames) {
         const userNamesArray = userNames.split(',').map((name) => name.trim())
         const targetUsers = await db.query.users.findMany({
-          where: or(...userNamesArray.flatMap((word) => [like(users.name, `%${word}%`)])),
+          where: or(...userNamesArray.map((word) => like(users.name, `%${word}%`))),
           columns: {
             id: true,
           },
