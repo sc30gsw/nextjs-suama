@@ -51,7 +51,8 @@ export async function getDailyReports(
   userId: Session['userId'],
 ) {
   'use cache'
-  cacheTag(GET_DAILY_REPORTS_CACHE_KEY)
+  const targetUserId = params.userId || 'every'
+  cacheTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${targetUserId}`)
 
   const url = client.api.dailies.$url()
   type ResType = InferResponseType<typeof client.api.dailies.$get, 200>
@@ -73,7 +74,8 @@ export async function getDailyReportsCount(
   userId?: Session['userId'],
 ) {
   'use cache'
-  cacheTag(GET_DAILY_REPORTS_COUNT_CACHE_KEY)
+  const targetUserId = params.userId || 'every'
+  cacheTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${targetUserId}`)
 
   const url = client.api.dailies.count.$url()
   type ResType = InferResponseType<typeof client.api.dailies.count.$get, 200>
@@ -102,7 +104,8 @@ export async function getProjectSummary(
   userId: Session['userId'],
 ) {
   'use cache'
-  cacheTag(GET_DAILY_PROJECT_SUMMARY_CACHE_KEY)
+  const targetUserId = params.userId || 'every'
+  cacheTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${targetUserId}`)
 
   const url = client.api.dailies.summary.$url()
   type ResType = InferResponseType<(typeof client.api.dailies)['summary']['$get'], 200>

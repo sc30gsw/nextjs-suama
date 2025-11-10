@@ -6,11 +6,10 @@ import { revalidateTag } from 'next/cache'
 import { filter, isDefined, map, pipe } from 'remeda'
 import {
   GET_APPEAL_CATEGORIES_CACHE_KEY,
-  GET_DAILY_REPORT_BY_ID_CACHE_KEY,
-  GET_DAILY_REPORTS_COUNT_CACHE_KEY,
-  GET_DAILY_REPORTS_CACHE_KEY,
   GET_DAILY_PROJECT_SUMMARY_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
+  GET_DAILY_REPORT_BY_ID_CACHE_KEY,
+  GET_DAILY_REPORTS_CACHE_KEY,
+  GET_DAILY_REPORTS_COUNT_CACHE_KEY,
   GET_TROUBLE_CATEGORIES_CACHE_KEY,
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
@@ -18,7 +17,7 @@ import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '
 import { updateDailyReportFormSchema } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+import { dateUtils } from '~/utils/date-utils'
 
 export async function updateReportAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -173,14 +172,12 @@ export async function updateReportAction(_: unknown, formData: FormData) {
       }
     })
 
-    const reportDateJST = dateUtils.formatDateByJST(reportDate, DATE_FORMAT)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${reportDateJST}`)
     revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-all`)
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-every`)
     revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-all`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-every`)
     revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-all`)
+    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-every`)
     revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
     revalidateTag(`${GET_APPEAL_CATEGORIES_CACHE_KEY}-${reportId}`)
