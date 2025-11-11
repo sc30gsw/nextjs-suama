@@ -6,7 +6,7 @@ import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { TabPanel } from '~/components/ui/intent-ui/tabs'
-import { DAILY_REPORT } from '~/constants/kind'
+import { DAILY_REPORT_BASE_PATH, DAILY_REPORT_KIND } from '~/constants/daily-report-kind'
 import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { DailyReportsProjectSummaryTable } from '~/features/reports/daily/components/daily-reports-project-summary-table'
 import { DailyReportsSearchDateRangePicker } from '~/features/reports/daily/components/daily-reports-search-date-range-picker'
@@ -39,7 +39,7 @@ export default async function MyDailyPage({
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
       <Heading>{session.user.name}の日報</Heading>
 
-      <Form action={`${DAILY_REPORT.BASE}/${DAILY_REPORT.KIND.MINE}`} className="flex gap-x-2">
+      <Form action={`${DAILY_REPORT_BASE_PATH}/${DAILY_REPORT_KIND.MINE}`} className="flex gap-x-2">
         <input type="hidden" name="tab" value={tab} />
         <DailyReportsSearchDateRangePicker />
         <Button type="submit">
@@ -57,7 +57,7 @@ export default async function MyDailyPage({
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
           >
             <DailyReportsTabContent
-              kind={DAILY_REPORT.KIND.MINE}
+              kind={DAILY_REPORT_KIND.MINE}
               reportsTable={
                 <Suspense fallback={null}>
                   {getDailyReports(
@@ -84,7 +84,7 @@ export default async function MyDailyPage({
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
           >
             <DailyReportsTabContent
-              kind={DAILY_REPORT.KIND.MINE}
+              kind={DAILY_REPORT_KIND.MINE}
               reportsTable={
                 <Suspense fallback={null}>
                   {getProjectSummary(

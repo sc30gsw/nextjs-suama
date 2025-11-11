@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { DAILY_REPORT } from '~/constants/kind'
+import { DAILY_REPORT_BASE_PATH, DAILY_REPORT_KIND } from '~/constants/daily-report-kind'
 import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
@@ -12,7 +12,7 @@ import { dateUtils } from '~/utils/date-utils'
 
 type DailyReportsTabContentProps = {
   reportsTable: ReactNode
-  kind: (typeof DAILY_REPORT.KIND)[keyof typeof DAILY_REPORT.KIND]
+  kind: (typeof DAILY_REPORT_KIND)[keyof typeof DAILY_REPORT_KIND]
 }
 
 export async function DailyReportsTabContent({ reportsTable, kind }: DailyReportsTabContentProps) {
@@ -29,7 +29,7 @@ export async function DailyReportsTabContent({ reportsTable, kind }: DailyReport
     {
       startDate: startDate ?? undefined,
       endDate: endDate ?? undefined,
-      userId: kind === DAILY_REPORT.KIND.MINE ? session.user.id : undefined,
+      userId: kind === DAILY_REPORT_KIND.MINE ? session.user.id : undefined,
       userNames,
     },
     session.user.id,
@@ -51,9 +51,9 @@ export async function DailyReportsTabContent({ reportsTable, kind }: DailyReport
     }).toString()
 
     const redirectKindPath =
-      kind === DAILY_REPORT.KIND.MINE ? DAILY_REPORT.KIND.MINE : DAILY_REPORT.KIND.EVERYONE
+      kind === DAILY_REPORT_KIND.MINE ? DAILY_REPORT_KIND.MINE : DAILY_REPORT_KIND.EVERYONE
 
-    redirect(`${DAILY_REPORT.BASE}/${redirectKindPath}/?${searchParams}`)
+    redirect(`${DAILY_REPORT_BASE_PATH}/${redirectKindPath}/?${searchParams}`)
   }
 
   return (
