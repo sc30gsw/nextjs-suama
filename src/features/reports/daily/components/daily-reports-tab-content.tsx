@@ -12,7 +12,7 @@ import { dateUtils } from '~/utils/date-utils'
 
 type DailyReportsTabContentProps = {
   children: ReactNode
-  userId?: Session['userId']
+  userId?: Session['userId'] //?:userIdがある場合はmine、ない場合はevery
 }
 
 export async function DailyReportsTabContent({ children, userId }: DailyReportsTabContentProps) {
