@@ -1,4 +1,4 @@
-import { subMonths } from 'date-fns'
+import { type format, subMonths } from 'date-fns'
 import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
 import { APP_TIMEZONE, DATE_TIME } from '~/constants/date'
 
@@ -16,7 +16,7 @@ export const dateUtils = {
     return fromZonedTime(`${cleanDateString}${dateTime}`, APP_TIMEZONE)
   },
 
-  formatDateByJST: (date: Date, formatStr = DATE_FORMAT) => {
+  formatDateByJST: (date: Date, formatStr: Parameters<typeof format>[1] = DATE_FORMAT) => {
     return formatInTimeZone(date, APP_TIMEZONE, formatStr)
   },
 
