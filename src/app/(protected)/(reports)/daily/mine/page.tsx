@@ -10,9 +10,10 @@ import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { DailyReportsProjectSummaryTable } from '~/features/reports/daily/components/daily-reports-project-summary-table'
 import { DailyReportsSearchDateRangePicker } from '~/features/reports/daily/components/daily-reports-search-date-range-picker'
 import { DailyReportsTabContent } from '~/features/reports/daily/components/daily-reports-tab-content'
-import { DailyReportsTabContentSkeleton } from '~/features/reports/daily/components/daily-reports-tab-content-skeleton'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { DailyReportsTabs } from '~/features/reports/daily/components/daily-reports-tabs'
+import { DailyReportsProjectSummaryTableSkeleton } from '~/features/reports/daily/components/skelton/daily-reports-project-summary-table-skeleton'
+import { DailyReportsTableSkeleton } from '~/features/reports/daily/components/skelton/daily-reports-table-skeleton'
 import { getDailyReports, getProjectSummary } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
@@ -51,47 +52,53 @@ export default async function MyDailyPage({
         https://github.com/vercel/next.js/issues/84489 */}
       <DailyReportsTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
-          <Suspense
-            key={`date-${JSON.stringify(minePageSearchParams)}`}
-            fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
-          >
-            <DailyReportsTabContent userId={session.user.id}>
-              {getDailyReports(
-                {
-                  skip,
-                  limit,
-                  startDate: startDate ?? undefined,
-                  endDate: endDate ?? undefined,
-                  userId: session.user.id,
-                },
-                session.user.id,
-              ).then((data) => (
-                <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
-              ))}
-            </DailyReportsTabContent>
-          </Suspense>
+          <DailyReportsTabContent
+            userId={session.user.id}
+            reportsTable={
+              <Suspense
+                key={`date-${JSON.stringify(minePageSearchParams)}`}
+                fallback={<DailyReportsTableSkeleton />}
+              >
+                {getDailyReports(
+                  {
+                    skip,
+                    limit,
+                    startDate: startDate ?? undefined,
+                    endDate: endDate ?? undefined,
+                    userId: session.user.id,
+                  },
+                  session.user.id,
+                ).then((data) => (
+                  <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
+                ))}
+              </Suspense>
+            }
+          />
         </TabPanel>
 
         <TabPanel id={DAILY_REPORT_TABS_MAP.PROJECT.id}>
-          <Suspense
-            key={`project-${JSON.stringify(minePageSearchParams)}`}
-            fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
-          >
-            <DailyReportsTabContent userId={session.user.id}>
-              {getProjectSummary(
-                {
-                  startDate: startDate ?? undefined,
-                  endDate: endDate ?? undefined,
-                  limit,
-                  skip,
-                  userId: session.user.id,
-                },
-                session.user.id,
-              ).then((data) => (
-                <DailyReportsProjectSummaryTable summary={data.summary} />
-              ))}
-            </DailyReportsTabContent>
-          </Suspense>
+          <DailyReportsTabContent
+            userId={session.user.id}
+            reportsTable={
+              <Suspense
+                key={`project-${JSON.stringify(minePageSearchParams)}`}
+                fallback={<DailyReportsProjectSummaryTableSkeleton />}
+              >
+                {getProjectSummary(
+                  {
+                    startDate: startDate ?? undefined,
+                    endDate: endDate ?? undefined,
+                    limit,
+                    skip,
+                    userId: session.user.id,
+                  },
+                  session.user.id,
+                ).then((data) => (
+                  <DailyReportsProjectSummaryTable summary={data.summary} />
+                ))}
+              </Suspense>
+            }
+          />
         </TabPanel>
       </DailyReportsTabs>
     </div>

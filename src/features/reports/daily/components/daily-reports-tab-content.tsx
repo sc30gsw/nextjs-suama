@@ -11,11 +11,14 @@ import { getServerSession } from '~/lib/get-server-session'
 import { dateUtils } from '~/utils/date-utils'
 
 type DailyReportsTabContentProps = {
-  children: ReactNode
   userId?: Session['userId'] //?:userIdがある場合はmine、ない場合はevery
+  reportsTable: ReactNode
 }
 
-export async function DailyReportsTabContent({ children, userId }: DailyReportsTabContentProps) {
+export async function DailyReportsTabContent({
+  reportsTable,
+  userId,
+}: DailyReportsTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {
@@ -67,7 +70,7 @@ export async function DailyReportsTabContent({ children, userId }: DailyReportsT
       </div>
 
       <Card className="max-w-full border-t-0 pt-0">
-        <Card.Content>{children}</Card.Content>
+        <Card.Content>{reportsTable}</Card.Content>
 
         <Card.Footer>
           <TablePagination pageCount={pageCount} />
