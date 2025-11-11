@@ -1,5 +1,5 @@
 import { type format, subMonths } from 'date-fns'
-import { formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz'
+import { formatInTimeZone, fromZonedTime } from 'date-fns-tz'
 import { APP_TIMEZONE, DATE_TIME } from '~/constants/date'
 
 export const SEPARATOR = 'T'
@@ -21,8 +21,7 @@ export const dateUtils = {
   },
 
   getTodayRangeByJST: () => {
-    const nowInJST = toZonedTime(new Date(), APP_TIMEZONE)
-    const dateString = formatInTimeZone(nowInJST, APP_TIMEZONE, DATE_FORMAT)
+    const dateString = formatInTimeZone(new Date(), APP_TIMEZONE, DATE_FORMAT)
 
     return {
       start: dateUtils.convertJstDateToUtc(dateString, 'start'),

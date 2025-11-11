@@ -1,9 +1,9 @@
-import type { Session } from 'better-auth'
 import { redirect, unauthorized } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
+import { DAILY_REPORT } from '~/constants/daily-report-page-kind'
 import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
@@ -11,14 +11,11 @@ import { getServerSession } from '~/lib/get-server-session'
 import { dateUtils } from '~/utils/date-utils'
 
 type DailyReportsTabContentProps = {
-  userId?: Session['userId'] //?:userIdがある場合はmine、ない場合はevery
   reportsTable: ReactNode
+  kind: (typeof DAILY_REPORT.KIND)[keyof typeof DAILY_REPORT.KIND]
 }
 
-export async function DailyReportsTabContent({
-  reportsTable,
-  userId,
-}: DailyReportsTabContentProps) {
+export async function DailyReportsTabContent({ reportsTable, kind }: DailyReportsTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {
@@ -32,7 +29,7 @@ export async function DailyReportsTabContent({
     {
       startDate: startDate ?? undefined,
       endDate: endDate ?? undefined,
-      userId,
+      userId: kind === DAILY_REPORT.KIND.MINE ? session.user.id : undefined,
       userNames,
     },
     session.user.id,
@@ -53,9 +50,10 @@ export async function DailyReportsTabContent({
       userNames: userNames.join(','),
     }).toString()
 
-    const redirectKindPath = userId ? 'mine' : 'every'
+    const redirectKindPath =
+      kind === DAILY_REPORT.KIND.MINE ? DAILY_REPORT.KIND.MINE : DAILY_REPORT.KIND.EVERYONE
 
-    redirect(`/daily/${redirectKindPath}/?${searchParams}`)
+    redirect(`${DAILY_REPORT.BASE}/${redirectKindPath}/?${searchParams}`)
   }
 
   return (
