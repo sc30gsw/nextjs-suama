@@ -5,7 +5,6 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
-import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { getClients } from '~/features/report-contexts/clients/server/fetcher'
 import { NameSearchTagField } from '~/features/report-contexts/components/name-search-tag-field'
 import { ReportContextMenu } from '~/features/report-contexts/components/report-context-menu'
@@ -17,6 +16,7 @@ import { nameSearchParamsCache } from '~/features/report-contexts/types/search-p
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+import { paginationUtils } from '~/utils/pagination-utils'
 
 export default async function ProjectListPage({
   searchParams,
@@ -33,13 +33,8 @@ export default async function ProjectListPage({
   ])
 
   const projectsPromise = getProjects(session.user.id, {
-    skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-    limit:
-      rowsPerPage > MAX_ROWS_PER_PAGE
-        ? MAX_ROWS_PER_PAGE
-        : rowsPerPage < MIN_ROWS_PER_PAGE
-          ? MIN_ROWS_PER_PAGE
-          : rowsPerPage,
+    skip: paginationUtils.getOffset(page, rowsPerPage),
+    limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
   })
 

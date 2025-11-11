@@ -36,7 +36,6 @@ export const fetchWeeklyReportsInfiniteQuery = createInfiniteQueryFactory<
   [Record<'year' | 'week', number>, InferSelectModel<typeof users>['id']],
   number
 >(
-  // keyFn
   (params: Record<'year' | 'week', number>, userId: InferSelectModel<typeof users>['id']) => [
     GET_WEEKLY_REPORTS_CACHE_KEY,
     params,

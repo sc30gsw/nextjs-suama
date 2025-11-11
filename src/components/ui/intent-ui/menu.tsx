@@ -23,11 +23,11 @@ import { twMerge } from 'tailwind-merge'
 import type { VariantProps } from 'tailwind-variants'
 import {
   DropdownDescription,
-  dropdownItemStyles,
   DropdownKeyboard,
   DropdownLabel,
-  dropdownSectionStyles,
   DropdownSeparator,
+  dropdownItemStyles,
+  dropdownSectionStyles,
 } from '~/components/ui/intent-ui/dropdown'
 import { PopoverContent, type PopoverContentProps } from '~/components/ui/intent-ui/popover'
 import { cx } from '~/lib/primitive'

@@ -52,7 +52,7 @@ export function EditProjectModal({
         toast.success(TOAST_MESSAGES.PROJECT.UPDATE_SUCCESS)
         toggle(false)
         setClient(result.initialValue?.clientId.toString() ?? '')
-        setChecked(result.initialValue?.isArchive === 'on')
+        setChecked(result.initialValue?.isArchived === 'on')
 
         // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
         setTimeout(() => {
@@ -109,7 +109,7 @@ export function EditProjectModal({
       name,
       likeKeywords,
       clientId,
-      isArchive: isArchived ? 'on' : 'off',
+      isArchived: isArchived ? 'on' : 'off',
     },
   })
 
@@ -165,7 +165,9 @@ export function EditProjectModal({
                 placeholder="検索単語を入力（例: apple,banana,orange）"
                 isRequired={true}
                 isDisabled={isPending}
-                defaultValue={lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords}
+                defaultValue={
+                  lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords ?? undefined
+                }
                 errorMessage={''}
               />
               <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
@@ -201,7 +203,7 @@ export function EditProjectModal({
               </span>
             </div>
             <div>
-              {getCollectionProps(fields.isArchive, {
+              {getCollectionProps(fields.isArchived, {
                 type: 'checkbox',
                 options: ['on'],
               }).map((props) => {
@@ -211,12 +213,12 @@ export function EditProjectModal({
                   <Checkbox
                     key={key}
                     {...rest}
-                    name={fields.isArchive.name}
+                    name={fields.isArchived.name}
                     isSelected={checked}
-                    onChange={(checked) => {
+                    onChange={(checked: boolean) => {
                       setChecked(checked)
                       form.update({
-                        name: fields.isArchive.name,
+                        name: fields.isArchived.name,
                         value: checked ? 'on' : 'off',
                       })
                     }}
@@ -229,8 +231,8 @@ export function EditProjectModal({
                   </Checkbox>
                 )
               })}
-              <span id={fields.isArchive.errorId} className="break-words text-red-500 text-sm">
-                {fields.isArchive.errors}
+              <span id={fields.isArchived.errorId} className="break-words text-red-500 text-sm">
+                {fields.isArchived.errors}
               </span>
             </div>
           </Modal.Body>

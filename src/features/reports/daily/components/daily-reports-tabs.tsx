@@ -3,22 +3,21 @@
 import { useQueryStates } from 'nuqs'
 import type { ReactNode } from 'react'
 import { Tab, TabList, Tabs } from '~/components/ui/intent-ui/tabs'
-
-import { DAILY_REPORT_MINE_TABS } from '~/constants'
-import { dailyReportForMineSearchParamsParsers } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
+import { DAILY_REPORT_TABS } from '~/constants/tabs'
+import { dailyReportSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 const INITIAL_PAGE = 1
 
-type MineTabsProps = {
-  currentTab: (typeof DAILY_REPORT_MINE_TABS)[number]['id']
+type DailyReportsTabsProps = {
+  currentTab: (typeof DAILY_REPORT_TABS)[number]['id']
   children: ReactNode
 }
 
-export function MineTabs({ currentTab, children }: MineTabsProps) {
+export function DailyReportsTabs({ currentTab, children }: DailyReportsTabsProps) {
   const [, setQueryStates] = useQueryStates(
     {
-      ...dailyReportForMineSearchParamsParsers,
+      ...dailyReportSearchParamsParsers,
       ...paginationSearchParamsParsers,
     },
     {
@@ -42,7 +41,7 @@ export function MineTabs({ currentTab, children }: MineTabsProps) {
       }}
     >
       <TabList>
-        {DAILY_REPORT_MINE_TABS.map((tab) => (
+        {DAILY_REPORT_TABS.map((tab) => (
           <Tab
             key={tab.id}
             id={tab.id}

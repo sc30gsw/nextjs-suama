@@ -9,7 +9,7 @@ import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { EditDailyForm } from '~/features/reports/daily/components/edit-daily-form'
 import { ReportAppealOrTroubleContainer } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
-import { getReportById } from '~/features/reports/daily/server/fetcher'
+import { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 
@@ -24,7 +24,7 @@ export default async function EditDailyReportPage({
 
   const reportId = (await params).id
 
-  const reportData = await getReportById(reportId, session.user.id)
+  const reportData = await getDailyReportById(reportId, session.user.id)
 
   const projectPromise = getProjects(session.user.id)
   const missionPromise = getMissions(session.user.id)

@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 
 const singleHourSchema = z
   .string()
@@ -58,38 +58,34 @@ export const dailyReportFormSchema = z.object({
     .refine((data) => (Array.isArray(data) ? data.every((d) => d > 0) : data > 0), {
       error: '0より大きい数値で入力してください',
     }),
-  appeal: z
-    .union([singleAppealSchema, multipleAppealSchema])
-    .refine(
-      (data) =>
-        Array.isArray(data)
-          ? data.every((d) => {
-              if (d) {
-                return d.length <= 256
-              }
-              return true
-            })
-          : true,
-      {
-        error: '内容は256文字以下で入力してください',
-      },
-    ),
-  trouble: z
-    .union([singleTroubleSchema, multipleTroubleSchema])
-    .refine(
-      (data) =>
-        Array.isArray(data)
-          ? data.every((d) => {
-              if (d) {
-                return d.length <= 256
-              }
-              return true
-            })
-          : true,
-      {
-        error: '内容は256文字以下で入力してください',
-      },
-    ),
+  appeal: z.union([singleAppealSchema, multipleAppealSchema]).refine(
+    (data) =>
+      Array.isArray(data)
+        ? data.every((d) => {
+            if (d) {
+              return d.length <= 256
+            }
+            return true
+          })
+        : true,
+    {
+      error: '内容は256文字以下で入力してください',
+    },
+  ),
+  trouble: z.union([singleTroubleSchema, multipleTroubleSchema]).refine(
+    (data) =>
+      Array.isArray(data)
+        ? data.every((d) => {
+            if (d) {
+              return d.length <= 256
+            }
+            return true
+          })
+        : true,
+    {
+      error: '内容は256文字以下で入力してください',
+    },
+  ),
 })
 
 export type DailyReportFormSchema = z.infer<typeof dailyReportFormSchema>

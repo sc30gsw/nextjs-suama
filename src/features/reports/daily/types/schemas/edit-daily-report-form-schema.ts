@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 import {
   appealEntrySchema,
   dailyReportEntrySchema,
@@ -19,7 +19,6 @@ export const updateDailyReportFormSchema = z
     troubleEntries: z.array(troubleEntrySchema).default([]),
   })
   .superRefine((data, ctx) => {
-    // アピールエントリーのバリデーション
     data.appealEntries.forEach((entry, index) => {
       if (entry.content && entry.content.length > 0) {
         if (!entry.categoryId) {
@@ -48,7 +47,6 @@ export const updateDailyReportFormSchema = z
       }
     })
 
-    // トラブルエントリーのバリデーション
     data.troubleEntries.forEach((entry, index) => {
       if (entry.content && entry.content.length > 0) {
         if (!entry.categoryId) {

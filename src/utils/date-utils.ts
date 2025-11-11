@@ -1,4 +1,4 @@
-import { subMonths } from 'date-fns'
+import { type format, subMonths } from 'date-fns'
 import { formatInTimeZone, fromZonedTime } from 'date-fns-tz'
 import { APP_TIMEZONE, DATE_TIME } from '~/constants/date'
 
@@ -10,14 +10,13 @@ type DateType = 'start' | 'end'
 
 export const dateUtils = {
   convertJstDateToUtc: (dateStr: DateInput, type: DateType) => {
-    // ISO文字列が来た場合はyyyy-MM-dd部分だけ抽出
     const cleanDateString = dateStr.includes(SEPARATOR) ? dateStr.split(SEPARATOR)[0] : dateStr
     const dateTime = type === 'start' ? DATE_TIME.START : DATE_TIME.END
 
     return fromZonedTime(`${cleanDateString}${dateTime}`, APP_TIMEZONE)
   },
 
-  formatDateByJST: (date: Date, formatStr = DATE_FORMAT) => {
+  formatDateByJST: (date: Date, formatStr: Parameters<typeof format>[1] = DATE_FORMAT) => {
     return formatInTimeZone(date, APP_TIMEZONE, formatStr)
   },
 
@@ -49,4 +48,4 @@ export const dateUtils = {
 
     return date ?? ''
   },
-} as const
+} as const satisfies Record<string, (...args: any[]) => unknown>

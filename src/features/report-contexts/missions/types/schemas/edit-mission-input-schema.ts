@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 import { LIKE_KEYWORDS_REGEX } from '~/constants'
 
 export const editMissionInputSchema = z.object({
@@ -14,7 +14,6 @@ export const editMissionInputSchema = z.object({
 
       const trimmed = value.trim()
 
-      // カンマ区切りのみを許容する
       const isValid = LIKE_KEYWORDS_REGEX.test(trimmed)
 
       return isValid

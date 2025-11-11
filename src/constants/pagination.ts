@@ -4,6 +4,10 @@ type PaginationConfig = {
   DISPLAY: typeof DISPLAY
   DIVIDING_PATTERN: typeof DIVIDING_PATTERN
   BOUNDARY: typeof BOUNDARY
+  VALUES: {
+    LIMITS: typeof LIMITS
+    DEFAULTS: typeof DEFAULTS
+  }
 }
 
 const UI = {
@@ -29,10 +33,25 @@ const BOUNDARY = {
   COUNT: 4,
 } as const satisfies Record<string, number>
 
+const LIMITS = {
+  MAX_ROWS_PER_PAGE: 100,
+  MIN_ROWS_PER_PAGE: 10,
+  MAX_LIMIT: 500,
+} as const satisfies Record<string, number>
+
+const DEFAULTS = {
+  SKIP: 0,
+  LIMIT: 10,
+} as const satisfies Record<string, number>
+
 export const PAGINATION = {
   UI,
   PAGE,
   DISPLAY,
   DIVIDING_PATTERN,
   BOUNDARY,
+  VALUES: {
+    LIMITS,
+    DEFAULTS,
+  },
 } as const satisfies PaginationConfig

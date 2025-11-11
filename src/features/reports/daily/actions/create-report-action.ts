@@ -5,10 +5,10 @@ import { and, eq, inArray } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import { filter, isDefined, map, pipe } from 'remeda'
 import {
+  GET_DAILY_PROJECT_SUMMARY_CACHE_KEY,
+  GET_DAILY_REPORT_BY_ID_CACHE_KEY,
+  GET_DAILY_REPORTS_CACHE_KEY,
   GET_DAILY_REPORTS_COUNT_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
   GET_TROUBLE_CATEGORIES_CACHE_KEY,
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
@@ -16,7 +16,7 @@ import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '
 import { createDailyReportFormSchema } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+import { dateUtils } from '~/utils/date-utils'
 
 export async function createReportAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -51,8 +51,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
   }
 
   try {
-    await db.transaction(async (tx) => {
-      // 日報の基本情報を作成
+    const newDailyReportId = await db.transaction(async (tx) => {
       const [newDailyReport] = await tx
         .insert(dailyReports)
         .values({
@@ -64,7 +63,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
         })
         .returning({ id: dailyReports.id })
 
-      // ミッション情報を作成
       const reportEntries = submission.value.reportEntries
       if (reportEntries.length > 0) {
         const submittedMissionIds = pipe(
@@ -73,7 +71,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
           filter(isDefined),
         )
 
-        // [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
+        //? [ミッションA, ミッションB, ミッションA]というようにミッションが重複する場合、[A, B]のように重複を省く
         const uniqueMissionIds = [...new Set(submittedMissionIds)]
 
         if (uniqueMissionIds.length > 0) {
@@ -83,7 +81,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
           })
 
           if (existingMissions.length !== uniqueMissionIds.length) {
-            // 1つでも存在しないmissionIdがあればエラーをスローしてロールバック
             throw new Error(ERROR_STATUS.INVALID_MISSION_RELATION)
           }
         }
@@ -98,7 +95,6 @@ export async function createReportAction(_: unknown, formData: FormData) {
         )
       }
 
-      // アピール情報を作成
       const validAppealEntries = submission.value.appealEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
@@ -114,12 +110,10 @@ export async function createReportAction(_: unknown, formData: FormData) {
         )
       }
 
-      // トラブル情報を作成
       const validTroubleEntries = submission.value.troubleEntries.filter(
         (entry) => entry.content && entry.content.length > 0 && entry.categoryId,
       )
 
-      // upsertで既存はresolved更新、新規は追加
       if (validTroubleEntries.length > 0) {
         for (const entry of validTroubleEntries) {
           await tx
@@ -139,13 +133,18 @@ export async function createReportAction(_: unknown, formData: FormData) {
             })
         }
       }
+
+      return newDailyReport.id
     })
 
-    const reportDateJST = dateUtils.formatDateByJST(reportDate, DATE_FORMAT)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${reportDateJST}`)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    // TODO:本日の日報・自分の日報・みんなの日報の cache key の管理はまだ改善の余地がありそう。
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-every`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-every`)
     revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-every`)
+    revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${newDailyReportId}`)
     revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
 
     return {

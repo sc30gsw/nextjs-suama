@@ -1,4 +1,4 @@
-import { z } from 'zod/v4'
+import * as z from 'zod/v4'
 import { LIKE_KEYWORDS_REGEX } from '~/constants'
 
 export const editProjectInputSchema = z.object({
@@ -14,7 +14,6 @@ export const editProjectInputSchema = z.object({
 
       const trimmed = value.trim()
 
-      // カンマ区切りのみを許容する
       const isValid = LIKE_KEYWORDS_REGEX.test(trimmed)
 
       return isValid
@@ -24,7 +23,7 @@ export const editProjectInputSchema = z.object({
     },
   ),
   clientId: z.string({ error: 'クライアントを選択してください' }),
-  isArchive: z.enum(['on', 'off']).optional().default('off'),
+  isArchived: z.enum(['on', 'off']).optional().default('off'),
 })
 
 export type EditProjectInputSchema = z.infer<typeof editProjectInputSchema>

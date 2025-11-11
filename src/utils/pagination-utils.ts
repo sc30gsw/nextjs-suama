@@ -4,7 +4,7 @@ const PAGE_PATTERN = {
   START: 'START',
   MIDDLE: 'MIDDLE',
   END: 'END',
-} as const
+} as const satisfies Record<string, string>
 
 function addPagesToArray(
   pages: (number | typeof PAGINATION.UI.ELLIPSIS)[],
@@ -31,16 +31,16 @@ function getPagePattern(
 }
 
 export const paginationUtils = {
-  createPageNumbers: (currentPageIndex: number, totalPages: number) => {
-    if (totalPages <= PAGINATION.DISPLAY.MAX_PAGES) {
-      return Array.from({ length: totalPages }, (_, i) => i)
+  createPageNumbers: (currentPageIndex: number, totalPage: number) => {
+    if (totalPage <= PAGINATION.DISPLAY.MAX_PAGES) {
+      return Array.from({ length: totalPage }, (_, i) => i)
     }
 
-    const lastPageIndex = totalPages - PAGINATION.PAGE.OFFSET
+    const lastPageIndex = totalPage - PAGINATION.PAGE.OFFSET
 
     const pages: (number | typeof PAGINATION.UI.ELLIPSIS)[] = []
 
-    const pattern = getPagePattern(currentPageIndex, totalPages)
+    const pattern = getPagePattern(currentPageIndex, totalPage)
 
     switch (pattern) {
       case PAGE_PATTERN.START:
@@ -77,4 +77,26 @@ export const paginationUtils = {
 
     return pages
   },
-} as const
+
+  getOffset: (page: number, rowsPerPage: number) => {
+    if (page <= PAGINATION.PAGE.FIRST) {
+      return PAGINATION.PAGE.FIRST_INDEX
+    }
+
+    return (page - PAGINATION.PAGE.FIRST) * rowsPerPage
+  },
+
+  getMaxRowsLimit: (rowsPerPage: number) => {
+    const { MIN_ROWS_PER_PAGE, MAX_ROWS_PER_PAGE } = PAGINATION.VALUES.LIMITS
+
+    if (rowsPerPage > MAX_ROWS_PER_PAGE) {
+      return MAX_ROWS_PER_PAGE
+    }
+
+    if (rowsPerPage < MIN_ROWS_PER_PAGE) {
+      return MIN_ROWS_PER_PAGE
+    }
+
+    return rowsPerPage
+  },
+} as const satisfies Record<string, (...args: number[]) => unknown>

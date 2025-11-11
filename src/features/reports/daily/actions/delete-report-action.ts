@@ -4,10 +4,10 @@ import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import {
+  GET_DAILY_PROJECT_SUMMARY_CACHE_KEY,
+  GET_DAILY_REPORT_BY_ID_CACHE_KEY,
+  GET_DAILY_REPORTS_CACHE_KEY,
   GET_DAILY_REPORTS_COUNT_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY,
-  GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY,
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { dailyReports } from '~/db/schema'
@@ -17,7 +17,6 @@ import {
   type CommonDeleteIdSchema,
   commonDeleteIdSchema,
 } from '~/types/schemas/common-delete-id-schema'
-import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
   const parseResult = commonDeleteIdSchema.safeParse({ id })
@@ -38,7 +37,6 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
     } as const satisfies SubmissionResult
   }
 
-  // 既存の日報を確認
   const existingReport = await db.query.dailyReports.findFirst({
     where: eq(dailyReports.id, parseResult.data.id),
   })
@@ -50,7 +48,6 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
     } as const satisfies SubmissionResult
   }
 
-  // 自分の日報か確認
   if (existingReport.userId !== session.user.id) {
     return {
       status: 'error',
@@ -59,18 +56,16 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
   }
 
   try {
-    // 日報を削除（関連するdailyReportMissionsは外部キー制約のcascadeで自動削除される）
     await db.delete(dailyReports).where(eq(dailyReports.id, parseResult.data.id))
 
-    // キャッシュを再検証
-    if (existingReport.reportDate) {
-      const reportDateJST = dateUtils.formatDateByJST(existingReport.reportDate, DATE_FORMAT)
-      revalidateTag(`${GET_DAILY_REPORTS_FOR_TODAY_CACHE_KEY}-${reportDateJST}`)
-    }
-
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_FOR_MINE_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    // TODO:本日の日報・自分の日報・みんなの日報の cache key の管理はまだ改善の余地ありそう。
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-every`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-every`)
     revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
+    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-every`)
+    revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${parseResult.data.id}`)
 
     return {
       status: 'success',

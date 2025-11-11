@@ -6,17 +6,19 @@ import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { TabPanel } from '~/components/ui/intent-ui/tabs'
-import { DAILY_REPORT_MINE_TABS, MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
+import { DAILY_REPORT_BASE_PATH, DAILY_REPORT_KIND } from '~/constants/daily-report-kind'
+import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
+import { DailyReportsProjectSummaryTable } from '~/features/reports/daily/components/daily-reports-project-summary-table'
+import { DailyReportsSearchDateRangePicker } from '~/features/reports/daily/components/daily-reports-search-date-range-picker'
+import { DailyReportsTabContent } from '~/features/reports/daily/components/daily-reports-tab-content'
+import { DailyReportsTabContentSkeleton } from '~/features/reports/daily/components/daily-reports-tab-content-skelton'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
-import { DailySearchDateRangePicker } from '~/features/reports/daily/components/daily-search-date-range-picker'
-import { MineTabContent } from '~/features/reports/mine/components/mine-tab-content'
-import { MineTabContentSkeleton } from '~/features/reports/mine/components/mine-tab-content-skeleton'
-import { MineTabs } from '~/features/reports/mine/components/mine-tabs'
-import { ProjectSummaryTable } from '~/features/reports/mine/components/project-summary-table'
-import { getProjectSummaryForMine, getReportsForMine } from '~/features/reports/mine/server/fetcher'
-import { minePageSearchParamsCache } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
+import { DailyReportsTabs } from '~/features/reports/daily/components/daily-reports-tabs'
+import { getDailyReports, getProjectSummary } from '~/features/reports/daily/server/fetcher'
+import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
+import { paginationUtils } from '~/utils/pagination-utils'
 
 export default async function MyDailyPage({
   searchParams,
@@ -27,25 +29,19 @@ export default async function MyDailyPage({
     unauthorized()
   }
 
-  const minePageSearchParams = await minePageSearchParamsCache.parse(searchParams)
+  const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
   const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
 
-  const skip = page <= 1 ? 0 : (page - 1) * rowsPerPage
-
-  const limit =
-    rowsPerPage > MAX_ROWS_PER_PAGE
-      ? MAX_ROWS_PER_PAGE
-      : rowsPerPage < MIN_ROWS_PER_PAGE
-        ? MIN_ROWS_PER_PAGE
-        : rowsPerPage
+  const skip = paginationUtils.getOffset(page, rowsPerPage)
+  const limit = paginationUtils.getMaxRowsLimit(rowsPerPage)
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
       <Heading>{session.user.name}の日報</Heading>
 
-      <Form action="/daily/mine" className="flex gap-x-2">
+      <Form action={`${DAILY_REPORT_BASE_PATH}/${DAILY_REPORT_KIND.MINE}`} className="flex gap-x-2">
         <input type="hidden" name="tab" value={tab} />
-        <DailySearchDateRangePicker />
+        <DailyReportsSearchDateRangePicker />
         <Button type="submit">
           検索
           <IconSearch />
@@ -54,49 +50,61 @@ export default async function MyDailyPage({
 
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
         https://github.com/vercel/next.js/issues/84489 */}
-      <MineTabs currentTab={tab}>
-        <TabPanel id={DAILY_REPORT_MINE_TABS[0].id}>
+      <DailyReportsTabs currentTab={tab}>
+        <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
           <Suspense
             key={`date-${JSON.stringify(minePageSearchParams)}`}
-            fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[0].id} />}
+            fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
           >
-            <MineTabContent>
-              {getReportsForMine(
-                {
-                  skip,
-                  limit,
-                  startDate: startDate ?? undefined,
-                  endDate: endDate ?? undefined,
-                },
-                session.user.id,
-              ).then((data) => (
-                <DailyReportsTable reports={data.myReports} />
-              ))}
-            </MineTabContent>
+            <DailyReportsTabContent
+              kind={DAILY_REPORT_KIND.MINE}
+              reportsTable={
+                <Suspense fallback={null}>
+                  {getDailyReports(
+                    {
+                      skip,
+                      limit,
+                      startDate: startDate ?? undefined,
+                      endDate: endDate ?? undefined,
+                      userId: session.user.id,
+                    },
+                    session.user.id,
+                  ).then((data) => (
+                    <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
+                  ))}
+                </Suspense>
+              }
+            />
           </Suspense>
         </TabPanel>
 
-        <TabPanel id={DAILY_REPORT_MINE_TABS[1].id}>
+        <TabPanel id={DAILY_REPORT_TABS_MAP.PROJECT.id}>
           <Suspense
-            key={`project-${JSON.stringify(minePageSearchParams)}`}
-            fallback={<MineTabContentSkeleton tab={DAILY_REPORT_MINE_TABS[1].id} />}
+            key={`date-${JSON.stringify(minePageSearchParams)}`}
+            fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
           >
-            <MineTabContent>
-              {getProjectSummaryForMine(
-                {
-                  startDate: startDate ?? undefined,
-                  endDate: endDate ?? undefined,
-                  limit,
-                  skip,
-                },
-                session.user.id,
-              ).then((data) => (
-                <ProjectSummaryTable summary={data.summary} />
-              ))}
-            </MineTabContent>
+            <DailyReportsTabContent
+              kind={DAILY_REPORT_KIND.MINE}
+              reportsTable={
+                <Suspense fallback={null}>
+                  {getProjectSummary(
+                    {
+                      startDate: startDate ?? undefined,
+                      endDate: endDate ?? undefined,
+                      limit,
+                      skip,
+                      userId: session.user.id,
+                    },
+                    session.user.id,
+                  ).then((data) => (
+                    <DailyReportsProjectSummaryTable summaries={data.summaries} />
+                  ))}
+                </Suspense>
+              }
+            />
           </Suspense>
         </TabPanel>
-      </MineTabs>
+      </DailyReportsTabs>
     </div>
   )
 }

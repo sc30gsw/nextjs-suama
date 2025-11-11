@@ -23,11 +23,11 @@ import type { getProjects } from '~/features/report-contexts/projects/server/fet
 import { TotalHours } from '~/features/reports/components/total-hours'
 import { EditDailyReportContentInputEntries } from '~/features/reports/daily/components/edit-daily-report-content-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
-import type { getReportById } from '~/features/reports/daily/server/fetcher'
+import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { DATE_FORMAT } from '~/utils/date-utils'
 
 type EditDailyFormProps = {
-  reportData: Awaited<ReturnType<typeof getReportById>>
+  reportData: Awaited<ReturnType<typeof getDailyReportById>>
   promises: Promise<
     [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
   >
