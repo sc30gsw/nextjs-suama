@@ -49,4 +49,4 @@ export const dateUtils = {
 
     return date ?? ''
   },
-} as const
+} as const satisfies Record<string, (...args: any[]) => unknown>
