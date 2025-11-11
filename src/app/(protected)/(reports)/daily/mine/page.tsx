@@ -6,7 +6,7 @@ import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { TabPanel } from '~/components/ui/intent-ui/tabs'
-import { DAILY_REPORT } from '~/constants/daily-report-page-kind'
+import { DAILY_REPORT } from '~/constants/kind'
 import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { DailyReportsProjectSummaryTable } from '~/features/reports/daily/components/daily-reports-project-summary-table'
 import { DailyReportsSearchDateRangePicker } from '~/features/reports/daily/components/daily-reports-search-date-range-picker'
@@ -86,7 +86,7 @@ export default async function MyDailyPage({
             <DailyReportsTabContent
               kind={DAILY_REPORT.KIND.MINE}
               reportsTable={
-                <Suspense key={`project-${JSON.stringify(minePageSearchParams)}`} fallback={null}>
+                <Suspense fallback={null}>
                   {getProjectSummary(
                     {
                       startDate: startDate ?? undefined,
