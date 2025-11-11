@@ -28,8 +28,8 @@ export class DailyReportSummaryService {
   ) {
     const { userId, userNames, startDate, endDate, limit, skip } = params
 
-    const skipNumber = Number(skip) || PAGINATION.PARAMS.DEFAULT_SKIP
-    const limitNumber = Number(limit) || PAGINATION.PARAMS.DEFAULT_LIMIT
+    const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
+    const limitNumber = Number(limit) || PAGINATION.VALUES.DEFAULTS.LIMIT
 
     const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
 

@@ -98,7 +98,7 @@ export const paginationUtils = {
   },
 
   getMaxRowsLimit: (rowsPerPage: number) => {
-    const { MIN_ROWS_PER_PAGE, MAX_ROWS_PER_PAGE } = PAGINATION.PARAMS
+    const { MIN_ROWS_PER_PAGE, MAX_ROWS_PER_PAGE } = PAGINATION.VALUES.LIMITS
 
     if (rowsPerPage > MAX_ROWS_PER_PAGE) {
       return MAX_ROWS_PER_PAGE

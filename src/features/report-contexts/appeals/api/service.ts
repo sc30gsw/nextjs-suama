@@ -20,8 +20,8 @@ export class AppealService {
   ) {
     const { skip, limit, names, withData, reportId } = params
 
-    const skipNumber = Number(skip) || PAGINATION.PARAMS.DEFAULT_SKIP
-    const limitNumber = Number(limit) || PAGINATION.PARAMS.MAX_LIMIT
+    const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
+    const limitNumber = Number(limit) || PAGINATION.VALUES.DEFAULTS.LIMIT
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
     try {
