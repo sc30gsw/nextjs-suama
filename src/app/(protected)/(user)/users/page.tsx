@@ -28,7 +28,7 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
   ])
 
   const usersPromise = getUsers(session.user.id, {
-    skip: paginationUtils.getOffeset(page, rowsPerPage),
+    skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     userNames,
   })

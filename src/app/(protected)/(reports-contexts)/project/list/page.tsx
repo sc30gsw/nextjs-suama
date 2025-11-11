@@ -33,7 +33,7 @@ export default async function ProjectListPage({
   ])
 
   const projectsPromise = getProjects(session.user.id, {
-    skip: paginationUtils.getOffeset(page, rowsPerPage),
+    skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
   })

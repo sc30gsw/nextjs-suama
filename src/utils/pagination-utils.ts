@@ -4,7 +4,7 @@ const PAGE_PATTERN = {
   START: 'START',
   MIDDLE: 'MIDDLE',
   END: 'END',
-} as const
+} as const satisfies Record<string, string>
 
 function addPagesToArray(
   pages: (number | typeof PAGINATION.UI.ELLIPSIS)[],
@@ -30,28 +30,17 @@ function getPagePattern(
   return PAGE_PATTERN.MIDDLE
 }
 
-type PaginationUtils = Readonly<{
-  createPageNumbers: (
-    currentPageIndex: number,
-    totalPages: number,
-  ) => (number | typeof PAGINATION.UI.ELLIPSIS)[]
-
-  getOffeset: (page: number, rowsPerPage: number) => number
-
-  getMaxRowsLimit: (rowsPerPage: number) => number
-}>
-
 export const paginationUtils = {
-  createPageNumbers: (currentPageIndex: number, totalPages: number) => {
-    if (totalPages <= PAGINATION.DISPLAY.MAX_PAGES) {
-      return Array.from({ length: totalPages }, (_, i) => i)
+  createPageNumbers: (currentPageIndex: number, totalPage: number) => {
+    if (totalPage <= PAGINATION.DISPLAY.MAX_PAGES) {
+      return Array.from({ length: totalPage }, (_, i) => i)
     }
 
-    const lastPageIndex = totalPages - PAGINATION.PAGE.OFFSET
+    const lastPageIndex = totalPage - PAGINATION.PAGE.OFFSET
 
     const pages: (number | typeof PAGINATION.UI.ELLIPSIS)[] = []
 
-    const pattern = getPagePattern(currentPageIndex, totalPages)
+    const pattern = getPagePattern(currentPageIndex, totalPage)
 
     switch (pattern) {
       case PAGE_PATTERN.START:
@@ -89,7 +78,7 @@ export const paginationUtils = {
     return pages
   },
 
-  getOffeset: (page: number, rowsPerPage: number) => {
+  getOffset: (page: number, rowsPerPage: number) => {
     if (page <= PAGINATION.PAGE.FIRST) {
       return PAGINATION.PAGE.FIRST_INDEX
     }
@@ -110,4 +99,4 @@ export const paginationUtils = {
 
     return rowsPerPage
   },
-} as const satisfies PaginationUtils
+} as const satisfies Record<string, (...args: number[]) => unknown>

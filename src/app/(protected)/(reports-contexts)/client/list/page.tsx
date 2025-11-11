@@ -32,7 +32,7 @@ export default async function ClientListPage({
   ])
 
   const clientsPromise = getClients(session.user.id, {
-    skip: paginationUtils.getOffeset(page, rowsPerPage),
+    skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
   })

@@ -32,7 +32,7 @@ export default async function MyDailyPage({
   const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
   const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
 
-  const skip = paginationUtils.getOffeset(page, rowsPerPage)
+  const skip = paginationUtils.getOffset(page, rowsPerPage)
   const limit = paginationUtils.getMaxRowsLimit(rowsPerPage)
 
   return (

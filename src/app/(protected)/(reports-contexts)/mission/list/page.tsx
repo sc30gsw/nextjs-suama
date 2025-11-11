@@ -33,7 +33,7 @@ export default async function MissionListPage({
   ])
 
   const missionsPromise = getMissions(session.user.id, {
-    skip: paginationUtils.getOffeset(page, rowsPerPage),
+    skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
   })

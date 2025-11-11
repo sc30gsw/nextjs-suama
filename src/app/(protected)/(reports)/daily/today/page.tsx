@@ -32,7 +32,7 @@ export default async function DailyForTodayPage({
 
   const reportsPromise = getDailyReports(
     {
-      skip: paginationUtils.getOffeset(page, rowsPerPage),
+      skip: paginationUtils.getOffset(page, rowsPerPage),
       limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
       userNames,
       startDate: dateUtils.getTodayRangeByJST().start,
