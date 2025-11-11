@@ -6,16 +6,17 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { MAX_ROWS_PER_PAGE, MIN_ROWS_PER_PAGE } from '~/constants'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
-import { getReportsForToday } from '~/features/reports/daily/server/fetcher'
+import { getDailyReports } from '~/features/reports/daily/server/fetcher'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { userSearchParamsCache } from '~/features/users/types/search-params/user-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
+import { dateUtils } from '~/utils/date-utils'
+import { paginationUtils } from '~/utils/pagination-utils'
 
-export default async function DailyOfTodayPage({
+export default async function DailyForTodayPage({
   searchParams,
 }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
@@ -29,16 +30,13 @@ export default async function DailyOfTodayPage({
     paginationSearchParamsCache.parse(searchParams),
   ])
 
-  const reportsPromise = getReportsForToday(
+  const reportsPromise = getDailyReports(
     {
-      skip: page <= 1 ? 0 : (page - 1) * rowsPerPage,
-      limit:
-        rowsPerPage > MAX_ROWS_PER_PAGE
-          ? MAX_ROWS_PER_PAGE
-          : rowsPerPage < MIN_ROWS_PER_PAGE
-            ? MIN_ROWS_PER_PAGE
-            : rowsPerPage,
+      skip: paginationUtils.getOffset(page, rowsPerPage),
+      limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
       userNames,
+      startDate: dateUtils.getTodayRangeByJST().start,
+      endDate: dateUtils.getTodayRangeByJST().end,
     },
     session.user.id,
   )
@@ -100,7 +98,7 @@ export default async function DailyOfTodayPage({
             }
           >
             {reportsPromise.then((res) => (
-              <DailyReportsTable reports={res.userReports} userId={session.user.id} />
+              <DailyReportsTable reports={res.dailyReports} userId={session.user.id} />
             ))}
           </Suspense>
         </Card.Content>

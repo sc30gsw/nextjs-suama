@@ -5,16 +5,18 @@ import {
   TroubleService,
   TroubleServiceError,
 } from '~/features/report-contexts/troubles/api/service'
+import type { AdditionalVariables } from '~/features/reports/types'
 
 const troubleService = new TroubleService()
 
 export async function getTroubleCategoriesHandler(
-  c: Parameters<RouteHandler<typeof getTroubleCategoriesRoute>>[0],
+  c: Parameters<RouteHandler<typeof getTroubleCategoriesRoute, AdditionalVariables>>[0],
 ) {
   const params = c.req.valid('query')
+  const user = c.get('user')
 
   try {
-    const result = await troubleService.getTroubleCategories(params)
+    const result = await troubleService.getTroubleCategories(params, user.id)
 
     return c.json(result, 200)
   } catch (error) {

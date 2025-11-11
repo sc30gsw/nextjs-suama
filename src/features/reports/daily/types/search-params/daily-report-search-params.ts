@@ -1,5 +1,6 @@
 import { createParser, createSearchParamsCache, parseAsStringLiteral } from 'nuqs/server'
-import { DAILY_REPORT_MINE_TABS } from '~/constants'
+import { DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
+import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 import { SEPARATOR } from '~/utils/date-utils'
 
@@ -17,17 +18,18 @@ const parseAsOptionalIsoDate = createParser({
   serialize: (value) => value?.toISOString().split(SEPARATOR)[0] ?? '',
 })
 
-export const tabParser = parseAsStringLiteral(
-  DAILY_REPORT_MINE_TABS.map((tab) => tab.id),
-).withDefault(DAILY_REPORT_MINE_TABS[0].id)
+export const tabParser = parseAsStringLiteral(DAILY_REPORT_TABS.map((tab) => tab.id)).withDefault(
+  DAILY_REPORT_TABS_MAP.DATE.id,
+)
 
-export const dailyReportForMineSearchParamsParsers = {
+export const dailyReportSearchParamsParsers = {
   startDate: parseAsOptionalIsoDate,
   endDate: parseAsOptionalIsoDate,
   tab: tabParser,
 }
 
-export const minePageSearchParamsCache = createSearchParamsCache({
-  ...dailyReportForMineSearchParamsParsers,
+export const dailyReportPageSearchParamsCache = createSearchParamsCache({
+  ...dailyReportSearchParamsParsers,
   ...paginationSearchParamsParsers,
+  ...userSearchParamsParsers,
 })

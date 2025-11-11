@@ -16,11 +16,12 @@ import { DailyReportsTable } from '~/features/reports/daily/components/daily-rep
 import { DailyReportsTabs } from '~/features/reports/daily/components/daily-reports-tabs'
 import { getDailyReports, getProjectSummary } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
+import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationUtils } from '~/utils/pagination-utils'
 
-export default async function MyDailyPage({
+export default async function EveryDailyReportPage({
   searchParams,
 }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
@@ -29,17 +30,20 @@ export default async function MyDailyPage({
     unauthorized()
   }
 
-  const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
-  const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
+  const everyPageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
+  const { page, rowsPerPage, tab, startDate, endDate, userNames } = everyPageSearchParams
 
   const skip = paginationUtils.getOffset(page, rowsPerPage)
   const limit = paginationUtils.getMaxRowsLimit(rowsPerPage)
 
   return (
     <div className="flex flex-col gap-y-4 p-4 lg:p-6">
-      <Heading>{session.user.name}の日報</Heading>
+      <Heading>みんなの日報</Heading>
 
-      <Form action={`${DAILY_REPORT_BASE_PATH}/${DAILY_REPORT_KIND.MINE}`} className="flex gap-x-2">
+      <Form
+        action={`${DAILY_REPORT_BASE_PATH}/${DAILY_REPORT_KIND.EVERYONE}`}
+        className="flex gap-x-2"
+      >
         <input type="hidden" name="tab" value={tab} />
         <DailyReportsSearchDateRangePicker />
         <Button type="submit">
@@ -48,16 +52,18 @@ export default async function MyDailyPage({
         </Button>
       </Form>
 
+      <UserSearchTagField />
+
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
         https://github.com/vercel/next.js/issues/84489 */}
       <DailyReportsTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
           <Suspense
-            key={`date-${JSON.stringify(minePageSearchParams)}`}
+            key={`date-${JSON.stringify(everyPageSearchParams)}`}
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
           >
             <DailyReportsTabContent
-              kind={DAILY_REPORT_KIND.MINE}
+              kind={DAILY_REPORT_KIND.EVERYONE}
               reportsTable={
                 <Suspense fallback={null}>
                   {getDailyReports(
@@ -66,7 +72,7 @@ export default async function MyDailyPage({
                       limit,
                       startDate: startDate ?? undefined,
                       endDate: endDate ?? undefined,
-                      userId: session.user.id,
+                      userNames,
                     },
                     session.user.id,
                   ).then((data) => (
@@ -80,20 +86,20 @@ export default async function MyDailyPage({
 
         <TabPanel id={DAILY_REPORT_TABS_MAP.PROJECT.id}>
           <Suspense
-            key={`date-${JSON.stringify(minePageSearchParams)}`}
+            key={`date-${JSON.stringify(everyPageSearchParams)}`}
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
           >
             <DailyReportsTabContent
-              kind={DAILY_REPORT_KIND.MINE}
+              kind={DAILY_REPORT_KIND.EVERYONE}
               reportsTable={
                 <Suspense fallback={null}>
                   {getProjectSummary(
                     {
+                      skip,
+                      limit,
                       startDate: startDate ?? undefined,
                       endDate: endDate ?? undefined,
-                      limit,
-                      skip,
-                      userId: session.user.id,
+                      userNames,
                     },
                     session.user.id,
                   ).then((data) => (

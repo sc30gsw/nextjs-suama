@@ -3,33 +3,40 @@ import type { ReactNode } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { DAILY_REPORT_MINE_TABS } from '~/constants'
-import { getDailyReportsCount } from '~/features/reports/mine/server/fetcher'
-import { minePageSearchParamsCache } from '~/features/reports/mine/types/search-params/daily-report-for-mine-search-params'
+import { DAILY_REPORT_BASE_PATH, DAILY_REPORT_KIND } from '~/constants/daily-report-kind'
+import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
+import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
+import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import { dateUtils } from '~/utils/date-utils'
 
-export async function MineTabContent({ children }: Record<'children', ReactNode>) {
+type DailyReportsTabContentProps = {
+  reportsTable: ReactNode
+  kind: (typeof DAILY_REPORT_KIND)[keyof typeof DAILY_REPORT_KIND]
+}
+
+export async function DailyReportsTabContent({ reportsTable, kind }: DailyReportsTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {
     unauthorized()
   }
 
-  const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParamsCache.all()
+  const { page, rowsPerPage, tab, startDate, endDate, userNames } =
+    dailyReportPageSearchParamsCache.all()
 
   const countData = await getDailyReportsCount(
     {
-      kind: 'mine',
       startDate: startDate ?? undefined,
       endDate: endDate ?? undefined,
+      userId: kind === DAILY_REPORT_KIND.MINE ? session.user.id : undefined,
+      userNames,
     },
     session.user.id,
   )
 
   const total =
-    tab === DAILY_REPORT_MINE_TABS[0].id ? countData.dailyReportsCount : countData.projectsCount
-  const totalHour = countData.totalHours
+    tab === DAILY_REPORT_TABS_MAP.DATE.id ? countData.dailyReportsCount : countData.projectsCount
 
   const pageCount = Math.ceil(total / rowsPerPage)
 
@@ -40,9 +47,13 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
       rowsPerPage: rowsPerPage.toString(),
       startDate: dateUtils.formatDateParamForUrl(startDate),
       endDate: dateUtils.formatDateParamForUrl(endDate),
+      userNames: userNames.join(','),
     }).toString()
 
-    redirect(`/daily/mine?${searchParams}`)
+    const redirectKindPath =
+      kind === DAILY_REPORT_KIND.MINE ? DAILY_REPORT_KIND.MINE : DAILY_REPORT_KIND.EVERYONE
+
+    redirect(`${DAILY_REPORT_BASE_PATH}/${redirectKindPath}/?${searchParams}`)
   }
 
   return (
@@ -51,13 +62,13 @@ export async function MineTabContent({ children }: Record<'children', ReactNode>
 
       <div className="flex items-end justify-between">
         <p className="text-sm">
-          全 {total} 件の{tab === DAILY_REPORT_MINE_TABS[0].id ? '日報' : 'プロジェクト'}
+          全 {total} 件の{tab === DAILY_REPORT_TABS_MAP.DATE.id ? '日報' : 'プロジェクト'}
         </p>
-        <div className="font-bold text-lg">総合計時間: {totalHour} 時間</div>
+        <div className="font-bold text-lg">総合計時間: {countData.totalHours} 時間</div>
       </div>
 
       <Card className="max-w-full border-t-0 pt-0">
-        <Card.Content>{children}</Card.Content>
+        <Card.Content>{reportsTable}</Card.Content>
 
         <Card.Footer>
           <TablePagination pageCount={pageCount} />

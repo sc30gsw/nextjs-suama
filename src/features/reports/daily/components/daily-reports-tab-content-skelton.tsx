@@ -1,17 +1,17 @@
 import { Card } from '~/components/ui/intent-ui/card'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
-import { DAILY_REPORT_MINE_TABS } from '~/constants'
+import { type DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { cn } from '~/utils/classes'
 
 const ROW_COUNT = 5
 const PAGINATION_TOTAL_COUNT = 11
 const ACTION_BUTTON_COUNT = 3
 
-const DATE_TAB_ID = DAILY_REPORT_MINE_TABS[0].id
+const DATE_TAB_ID = DAILY_REPORT_TABS_MAP.DATE.id
 
-export function MineTabContentSkeleton({
+export function DailyReportsTabContentSkeleton({
   tab,
-}: Record<'tab', (typeof DAILY_REPORT_MINE_TABS)[number]['id']>) {
+}: Record<'tab', (typeof DAILY_REPORT_TABS)[number]['id']>) {
   const isDateTab = tab === DATE_TAB_ID
 
   return (

@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
-import type { getReportById } from '~/features/reports/daily/server/fetcher'
+import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import {
   type UpdateDailyReportEntrySchema,
   type UpdateDailyReportFormSchema,
@@ -17,7 +17,7 @@ import { useSafeForm } from '~/hooks/use-safe-form'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getReportById>>) {
+export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDailyReportById>>) {
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(

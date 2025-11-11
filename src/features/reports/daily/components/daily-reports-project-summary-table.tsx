@@ -12,9 +12,9 @@ import type { client } from '~/lib/rpc'
 import { dateUtils } from '~/utils/date-utils'
 
 type ProjectSummary = InferResponseType<
-  (typeof client.api.dailies.mine)['summary']['$get'],
+  typeof client.api.dailies.summary.$get,
   200
->['summary'][number]
+>['summaries'][number]
 
 const columnHelper = createColumnHelper<ProjectSummary>()
 
@@ -50,9 +50,11 @@ const COLUMNS = [
   }),
 ]
 
-export function ProjectSummaryTable({ summary }: Record<'summary', ProjectSummary[]>) {
+export function DailyReportsProjectSummaryTable({
+  summaries,
+}: Record<'summaries', ProjectSummary[]>) {
   const table = useReactTable({
-    data: summary,
+    data: summaries,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
   })

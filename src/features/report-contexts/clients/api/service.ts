@@ -1,6 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { count, like, or } from 'drizzle-orm'
-import { MAX_LIMIT } from '~/constants'
+import { PAGINATION } from '~/constants/pagination'
 import { clients } from '~/db/schema'
 import type { getClientsRoute } from '~/features/report-contexts/clients/api/route'
 import { db } from '~/index'
@@ -18,8 +18,8 @@ export class ClientService {
   ) {
     const { skip, limit, names } = params
 
-    const skipNumber = Number(skip) || 0
-    const limitNumber = Number(limit) || MAX_LIMIT
+    const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
+    const limitNumber = Number(limit) || PAGINATION.VALUES.DEFAULTS.LIMIT
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
     try {
       const whereClause =
