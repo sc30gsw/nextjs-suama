@@ -30,8 +30,8 @@ export default async function EveryDailyReportPage({
     unauthorized()
   }
 
-  const dailyPageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
-  const { page, rowsPerPage, tab, startDate, endDate, userNames } = dailyPageSearchParams
+  const everyPageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
+  const { page, rowsPerPage, tab, startDate, endDate, userNames } = everyPageSearchParams
 
   const skip = paginationUtils.getOffset(page, rowsPerPage)
   const limit = paginationUtils.getMaxRowsLimit(rowsPerPage)
@@ -56,7 +56,7 @@ export default async function EveryDailyReportPage({
       <DailyReportsTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
           <Suspense
-            key={`date-${JSON.stringify(dailyPageSearchParams)}`}
+            key={`date-${JSON.stringify(everyPageSearchParams)}`}
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
           >
             <DailyReportsTabContent
@@ -83,7 +83,7 @@ export default async function EveryDailyReportPage({
 
         <TabPanel id={DAILY_REPORT_TABS_MAP.PROJECT.id}>
           <Suspense
-            key={`date-${JSON.stringify(dailyPageSearchParams)}`}
+            key={`date-${JSON.stringify(everyPageSearchParams)}`}
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
           >
             <DailyReportsTabContent
