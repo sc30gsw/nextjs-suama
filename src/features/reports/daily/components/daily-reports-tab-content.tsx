@@ -32,7 +32,7 @@ export async function DailyReportsTabContent({
     {
       startDate: startDate ?? undefined,
       endDate: endDate ?? undefined,
-      userId: userId,
+      userId,
       userNames,
     },
     session.user.id,
