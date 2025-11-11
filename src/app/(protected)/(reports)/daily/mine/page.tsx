@@ -97,7 +97,7 @@ export default async function MyDailyPage({
                     },
                     session.user.id,
                   ).then((data) => (
-                    <DailyReportsProjectSummaryTable summary={data.summary} />
+                    <DailyReportsProjectSummaryTable summaries={data.summaries} />
                   ))}
                 </Suspense>
               }

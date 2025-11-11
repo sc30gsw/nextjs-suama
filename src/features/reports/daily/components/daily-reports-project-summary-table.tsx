@@ -14,7 +14,7 @@ import { dateUtils } from '~/utils/date-utils'
 type ProjectSummary = InferResponseType<
   typeof client.api.dailies.summary.$get,
   200
->['summary'][number]
+>['summaries'][number]
 
 const columnHelper = createColumnHelper<ProjectSummary>()
 
@@ -50,9 +50,11 @@ const COLUMNS = [
   }),
 ]
 
-export function DailyReportsProjectSummaryTable({ summary }: Record<'summary', ProjectSummary[]>) {
+export function DailyReportsProjectSummaryTable({
+  summaries,
+}: Record<'summaries', ProjectSummary[]>) {
   const table = useReactTable({
-    data: summary,
+    data: summaries,
     columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
   })

@@ -58,7 +58,7 @@ export class DailyReportSummaryService {
         const targetUserIds = targetUsers.map((user) => user.id)
 
         if (targetUserIds.length === 0) {
-          return { summary: [] }
+          return { summaries: [] }
         }
 
         whereConditions.push(inArray(dailyReports.userId, targetUserIds))
@@ -90,7 +90,7 @@ export class DailyReportSummaryService {
         averageHoursPerDay: item.workDays > 0 ? item.totalHours / item.workDays : 0,
       }))
 
-      return { summary: formattedProjectSummaries }
+      return { summaries: formattedProjectSummaries }
     } catch (error) {
       throw new DailyReportServiceError(
         `Failed to get daily report summary: ${error instanceof Error ? error.message : 'Unknown error'}`,

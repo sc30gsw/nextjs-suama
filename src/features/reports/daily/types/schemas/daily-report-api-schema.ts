@@ -223,5 +223,5 @@ export const DailyReportSummaryQuerySchema = z.object({
 })
 
 export const DailyReportSummaryResponseSchema = z.object({
-  summary: z.array(ProjectSummarySchema).openapi({ description: 'プロジェクトサマリーリスト' }),
+  summaries: z.array(ProjectSummarySchema).openapi({ description: 'プロジェクトサマリーリスト' }),
 })
