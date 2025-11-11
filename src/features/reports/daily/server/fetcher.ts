@@ -14,6 +14,7 @@ import {
 import type { dailyReports, users } from '~/db/schema'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'
+import { dateUtils } from '~/utils/date-utils'
 
 export async function getDailyReportById(
   reportId: InferSelectModel<typeof dailyReports>['id'],
@@ -60,6 +61,8 @@ export async function getDailyReports(
     },
     params: {
       ...params,
+      startDate: params.startDate ? dateUtils.formatDateByJST(params.startDate) : undefined,
+      endDate: params.endDate ? dateUtils.formatDateByJST(params.endDate) : undefined,
     },
   })
 
@@ -83,6 +86,8 @@ export async function getDailyReportsCount(
     },
     params: {
       ...params,
+      startDate: params.startDate ? dateUtils.formatDateByJST(params.startDate) : undefined,
+      endDate: params.endDate ? dateUtils.formatDateByJST(params.endDate) : undefined,
     },
   })
 
@@ -113,6 +118,8 @@ export async function getProjectSummary(
     },
     params: {
       ...params,
+      startDate: params.startDate ? dateUtils.formatDateByJST(params.startDate) : undefined,
+      endDate: params.endDate ? dateUtils.formatDateByJST(params.endDate) : undefined,
     },
   })
 
