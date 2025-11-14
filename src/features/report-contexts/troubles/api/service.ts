@@ -23,7 +23,7 @@ export class TroubleService {
     const { skip, limit, names, withData } = params
 
     const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
-    const limitNumber = Number(limit) || PAGINATION.VALUES.DEFAULTS.LIMIT
+    const limitNumber = Number(limit) || PAGINATION.VALUES.LIMITS.MAX_LIMIT
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
     try {
