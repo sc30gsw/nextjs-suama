@@ -20,7 +20,7 @@ export class UserService {
     const { skip, limit, userNames } = params
 
     const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
-    const limitNumber = Number(limit) || API_LIMITS.MAX_RECORDS
+    const limitNumber = Number(limit) || API_LIMITS.COMBOBOX_MAX_ITEMS
     const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : undefined
 
     try {

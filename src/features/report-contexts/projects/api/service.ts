@@ -20,7 +20,7 @@ export class ProjectService {
     const { skip, limit, names } = params
 
     const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
-    const limitNumber = Number(limit) || API_LIMITS.MAX_RECORDS
+    const limitNumber = Number(limit) || API_LIMITS.COMBOBOX_MAX_ITEMS
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
     try {
