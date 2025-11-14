@@ -1,5 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { count, like, or } from 'drizzle-orm'
+import { API_LIMITS } from '~/constants/api-limits'
 import { PAGINATION } from '~/constants/pagination'
 import { users } from '~/db/schema'
 import type { getUsersRoute } from '~/features/users/api/route'
@@ -19,7 +20,7 @@ export class UserService {
     const { skip, limit, userNames } = params
 
     const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
-    const limitNumber = Number(limit) || PAGINATION.VALUES.LIMITS.MAX_LIMIT
+    const limitNumber = Number(limit) || API_LIMITS.MAX_RECORDS
     const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : undefined
 
     try {

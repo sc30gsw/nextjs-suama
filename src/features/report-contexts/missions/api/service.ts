@@ -1,5 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { count, like, or } from 'drizzle-orm'
+import { API_LIMITS } from '~/constants/api-limits'
 import { PAGINATION } from '~/constants/pagination'
 import { missions } from '~/db/schema'
 import type { getMissionsRoute } from '~/features/report-contexts/missions/api/route'
@@ -19,7 +20,7 @@ export class MissionService {
     const { skip, limit, names } = params
 
     const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
-    const limitNumber = Number(limit) || PAGINATION.VALUES.LIMITS.MAX_LIMIT
+    const limitNumber = Number(limit) || API_LIMITS.MAX_RECORDS
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
     try {

@@ -36,7 +36,6 @@ const BOUNDARY = {
 const LIMITS = {
   MAX_ROWS_PER_PAGE: 100,
   MIN_ROWS_PER_PAGE: 10,
-  MAX_LIMIT: 500,
 } as const satisfies Record<string, number>
 
 const DEFAULTS = {

@@ -3,7 +3,7 @@ import type { Session } from 'better-auth'
 import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, gte, lte } from 'drizzle-orm'
 import { pipe, sortBy } from 'remeda'
-import { WEEKLY_REPORTS_LIMIT } from '~/constants'
+import { API_LIMITS } from '~/constants/api-limits'
 import {
   type dailyReportMissions,
   dailyReports,
@@ -65,7 +65,7 @@ export class WeeklyReportService {
 
     try {
       const users = await db.query.users.findMany({
-        limit: WEEKLY_REPORTS_LIMIT,
+        limit: API_LIMITS.WEEKLY_REPORTS,
         offset: Number(offset),
       })
 
