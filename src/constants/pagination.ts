@@ -1,14 +1,13 @@
 type PaginationConfig = {
   FIRST_PAGE: typeof FIRST_PAGE
   DISPLAY: typeof DISPLAY
-  DIVIDING_POINT: number
-  BOUNDARY_COUNT: number
+  PAGE_OFFSET: 1
+  DIVIDING_POINT: 3
+  BOUNDARY_COUNT: 4
   VALUES: {
     LIMITS: typeof LIMITS
   }
 }
-
-export const PAGE_OFFSET = 1
 
 const FIRST_PAGE_NUMBER = 1
 const FIRST_PAGE_INDEX = 0
@@ -30,6 +29,7 @@ const LIMITS = {
 export const PAGINATION = {
   FIRST_PAGE,
   DISPLAY,
+  PAGE_OFFSET: 1,
   DIVIDING_POINT: 3,
   BOUNDARY_COUNT: 4,
   VALUES: {

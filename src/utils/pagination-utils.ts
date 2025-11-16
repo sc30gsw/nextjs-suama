@@ -1,4 +1,4 @@
-import { PAGE_OFFSET, PAGINATION } from '~/constants/pagination'
+import { PAGINATION.PAGE_OFFSET, PAGINATION } from '~/constants/pagination'
 
 const ELLIPSIS = '...'
 const PAGE_PATTERN = {
@@ -33,7 +33,7 @@ export const paginationUtils = {
       return Array.from({ length: totalPage }, (_, i) => i)
     }
 
-    const lastPageIndex = totalPage - PAGE_OFFSET
+    const lastPageIndex = totalPage - PAGINATION.PAGE_OFFSET
 
     const pages: (number | typeof ELLIPSIS)[] = []
 
@@ -41,7 +41,7 @@ export const paginationUtils = {
 
     switch (pattern) {
       case PAGE_PATTERN.START:
-        addPagesToArray(pages, PAGINATION.FIRST_PAGE.INDEX, PAGINATION.BOUNDARY_COUNT - PAGE_OFFSET)
+        addPagesToArray(pages, PAGINATION.FIRST_PAGE.INDEX, PAGINATION.BOUNDARY_COUNT - PAGINATION.PAGE_OFFSET)
         pages.push(ELLIPSIS, lastPageIndex)
 
         break
@@ -61,7 +61,7 @@ export const paginationUtils = {
         pages.push(PAGINATION.FIRST_PAGE.INDEX, ELLIPSIS)
         addPagesToArray(
           pages,
-          lastPageIndex - PAGINATION.BOUNDARY_COUNT + PAGE_OFFSET,
+          lastPageIndex - PAGINATION.BOUNDARY_COUNT + PAGINATION.PAGE_OFFSET,
           lastPageIndex,
         )
 

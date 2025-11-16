@@ -2,7 +2,7 @@
 
 import { useQueryStates } from 'nuqs'
 import { Pagination } from '~/components/ui/intent-ui/pagination'
-import { PAGE_OFFSET, PAGINATION } from '~/constants/pagination'
+import { PAGINATION } from '~/constants/pagination'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 import { paginationUtils } from '~/utils/pagination-utils'
 
@@ -16,9 +16,11 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
   )
 
   const currentPageIndex =
-    page <= PAGINATION.FIRST_PAGE.NUMBER ? PAGINATION.FIRST_PAGE.INDEX : page - PAGE_OFFSET
+    page <= PAGINATION.FIRST_PAGE.NUMBER
+      ? PAGINATION.FIRST_PAGE.INDEX
+      : page - PAGINATION.PAGE_OFFSET
 
-  const lastPageIndex = pageCount - PAGE_OFFSET
+  const lastPageIndex = pageCount - PAGINATION.PAGE_OFFSET
 
   const isFirstPage = currentPageIndex === PAGINATION.FIRST_PAGE.INDEX
   const isLastPage = currentPageIndex === lastPageIndex
@@ -38,7 +40,7 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
           segment="previous"
           onAction={() =>
             setPaginationParams({
-              page: page - PAGE_OFFSET,
+              page: page - PAGINATION.PAGE_OFFSET,
               rowsPerPage,
             })
           }
@@ -60,13 +62,13 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
                   key={item.id}
                   onAction={() =>
                     setPaginationParams({
-                      page: pageIndex + PAGE_OFFSET,
+                      page: pageIndex + PAGINATION.PAGE_OFFSET,
                       rowsPerPage,
                     })
                   }
                   isCurrent={pageIndex === currentPageIndex}
                 >
-                  {pageIndex + PAGE_OFFSET}
+                  {pageIndex + PAGINATION.PAGE_OFFSET}
                 </Pagination.Item>
               )
             }
@@ -79,7 +81,7 @@ export function TablePagination({ pageCount }: Record<'pageCount', number>) {
           segment="next"
           onAction={() =>
             setPaginationParams({
-              page: page + PAGE_OFFSET,
+              page: page + PAGINATION.PAGE_OFFSET,
               rowsPerPage,
             })
           }
