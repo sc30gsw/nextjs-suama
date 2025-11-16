@@ -1,16 +1,13 @@
-import { PAGINATION } from '~/constants/pagination'
+import { PAGE_OFFSET, PAGINATION } from '~/constants/pagination'
 
+const ELLIPSIS = '...'
 const PAGE_PATTERN = {
   START: 'START',
   MIDDLE: 'MIDDLE',
   END: 'END',
 } as const satisfies Record<string, string>
 
-function addPagesToArray(
-  pages: (number | typeof PAGINATION.UI.ELLIPSIS)[],
-  start: number,
-  end: number,
-) {
+function addPagesToArray(pages: (number | typeof ELLIPSIS)[], start: number, end: number) {
   for (let i = start; i <= end; i++) {
     pages.push(i)
   }
@@ -19,11 +16,11 @@ function addPagesToArray(
 function getPagePattern(
   ...[currentPageIndex, totalPages]: Parameters<typeof paginationUtils.createPageNumbers>
 ) {
-  if (currentPageIndex <= PAGINATION.DIVIDING_PATTERN.POINT) {
+  if (currentPageIndex <= PAGINATION.DIVIDING_POINT) {
     return PAGE_PATTERN.START
   }
 
-  if (currentPageIndex >= totalPages - PAGINATION.BOUNDARY.COUNT) {
+  if (currentPageIndex >= totalPages - PAGINATION.BOUNDARY_COUNT) {
     return PAGE_PATTERN.END
   }
 
@@ -36,39 +33,35 @@ export const paginationUtils = {
       return Array.from({ length: totalPage }, (_, i) => i)
     }
 
-    const lastPageIndex = totalPage - PAGINATION.PAGE.OFFSET
+    const lastPageIndex = totalPage - PAGE_OFFSET
 
-    const pages: (number | typeof PAGINATION.UI.ELLIPSIS)[] = []
+    const pages: (number | typeof ELLIPSIS)[] = []
 
     const pattern = getPagePattern(currentPageIndex, totalPage)
 
     switch (pattern) {
       case PAGE_PATTERN.START:
-        addPagesToArray(
-          pages,
-          PAGINATION.PAGE.FIRST_INDEX,
-          PAGINATION.BOUNDARY.COUNT - PAGINATION.PAGE.OFFSET,
-        )
-        pages.push(PAGINATION.UI.ELLIPSIS, lastPageIndex)
+        addPagesToArray(pages, PAGINATION.FIRST_PAGE.INDEX, PAGINATION.BOUNDARY_COUNT - PAGE_OFFSET)
+        pages.push(ELLIPSIS, lastPageIndex)
 
         break
 
       case PAGE_PATTERN.MIDDLE:
-        pages.push(PAGINATION.PAGE.FIRST_INDEX, PAGINATION.UI.ELLIPSIS)
+        pages.push(PAGINATION.FIRST_PAGE.INDEX, ELLIPSIS)
         addPagesToArray(
           pages,
           currentPageIndex - PAGINATION.DISPLAY.SIBLING_COUNT,
           currentPageIndex + PAGINATION.DISPLAY.SIBLING_COUNT,
         )
-        pages.push(PAGINATION.UI.ELLIPSIS, lastPageIndex)
+        pages.push(ELLIPSIS, lastPageIndex)
 
         break
 
       case PAGE_PATTERN.END:
-        pages.push(PAGINATION.PAGE.FIRST_INDEX, PAGINATION.UI.ELLIPSIS)
+        pages.push(PAGINATION.FIRST_PAGE.INDEX, ELLIPSIS)
         addPagesToArray(
           pages,
-          lastPageIndex - PAGINATION.BOUNDARY.COUNT + PAGINATION.PAGE.OFFSET,
+          lastPageIndex - PAGINATION.BOUNDARY_COUNT + PAGE_OFFSET,
           lastPageIndex,
         )
 
@@ -79,11 +72,11 @@ export const paginationUtils = {
   },
 
   getOffset: (page: number, rowsPerPage: number) => {
-    if (page <= PAGINATION.PAGE.FIRST) {
-      return PAGINATION.PAGE.FIRST_INDEX
+    if (page <= PAGINATION.FIRST_PAGE.NUMBER) {
+      return PAGINATION.FIRST_PAGE.INDEX
     }
 
-    return (page - PAGINATION.PAGE.FIRST) * rowsPerPage
+    return (page - PAGINATION.FIRST_PAGE.NUMBER) * rowsPerPage
   },
 
   getMaxRowsLimit: (rowsPerPage: number) => {
