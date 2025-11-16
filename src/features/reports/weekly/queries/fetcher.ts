@@ -1,7 +1,7 @@
 import type { Session } from 'better-auth'
 import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
-import { API_LIMITS } from '~/constants/api-limits'
+import { QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { GET_WEEKLY_REPORTS_CACHE_KEY } from '~/constants/cache-keys'
 import type { users } from '~/db/schema'
 import { upfetch } from '~/lib/fetcher'
@@ -44,8 +44,8 @@ export const fetchWeeklyReportsInfiniteQuery = createInfiniteQueryFactory<
   (offset: number, params: Record<'year' | 'week', number>, userId: Session['userId']) =>
     getWeeklyReports(userId, params, offset),
   (lastPage, allPages) => {
-    return lastPage.reports.length === API_LIMITS.WEEKLY_REPORTS
-      ? allPages.length * API_LIMITS.WEEKLY_REPORTS
+    return lastPage.reports.length === QUERY_MAX_LIMIT_VALUES.WEEKLY_REPORTS
+      ? allPages.length * QUERY_MAX_LIMIT_VALUES.WEEKLY_REPORTS
       : undefined
   },
   0,

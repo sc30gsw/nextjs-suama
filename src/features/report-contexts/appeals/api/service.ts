@@ -1,7 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { count, eq, like, or } from 'drizzle-orm'
-import { API_LIMITS } from '~/constants/api-limits'
-import { PAGINATION } from '~/constants/pagination'
+import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { appeals, categoryOfAppeals } from '~/db/schema'
 import type { getAppealCategoriesRoute } from '~/features/report-contexts/appeals/api/route'
 import { db } from '~/index'
@@ -21,8 +20,8 @@ export class AppealService {
   ) {
     const { skip, limit, names, withData, reportId } = params
 
-    const skipNumber = Number(skip) || PAGINATION.VALUES.DEFAULTS.SKIP
-    const limitNumber = Number(limit) || API_LIMITS.COMBOBOX_MAX_ITEMS
+    const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
+    const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
 
     try {
