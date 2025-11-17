@@ -1,23 +1,19 @@
 type PaginationConfig = {
-  UI: typeof UI
-  PAGE: typeof PAGE
+  FIRST_PAGE: typeof FIRST_PAGE
   DISPLAY: typeof DISPLAY
-  DIVIDING_PATTERN: typeof DIVIDING_PATTERN
-  BOUNDARY: typeof BOUNDARY
+  PAGE_OFFSET: 1
+  DIVIDING_POINT: 3
+  BOUNDARY_COUNT: 4
   VALUES: {
     LIMITS: typeof LIMITS
-    DEFAULTS: typeof DEFAULTS
   }
 }
 
-const UI = {
-  ELLIPSIS: '...',
-} as const satisfies Record<string, string>
-
-const PAGE = {
-  FIRST: 1,
-  FIRST_INDEX: 0,
-  OFFSET: 1,
+const FIRST_PAGE_NUMBER = 1
+const FIRST_PAGE_INDEX = 0
+const FIRST_PAGE = {
+  NUMBER: FIRST_PAGE_NUMBER,
+  INDEX: FIRST_PAGE_INDEX,
 } as const satisfies Record<string, number>
 
 const DISPLAY = {
@@ -25,33 +21,18 @@ const DISPLAY = {
   SIBLING_COUNT: 1,
 } as const satisfies Record<string, number>
 
-const DIVIDING_PATTERN = {
-  POINT: 3,
-} as const satisfies Record<string, number>
-
-const BOUNDARY = {
-  COUNT: 4,
-} as const satisfies Record<string, number>
-
 const LIMITS = {
   MAX_ROWS_PER_PAGE: 100,
   MIN_ROWS_PER_PAGE: 10,
-  MAX_LIMIT: 500,
-} as const satisfies Record<string, number>
-
-const DEFAULTS = {
-  SKIP: 0,
-  LIMIT: 10,
 } as const satisfies Record<string, number>
 
 export const PAGINATION = {
-  UI,
-  PAGE,
+  FIRST_PAGE,
   DISPLAY,
-  DIVIDING_PATTERN,
-  BOUNDARY,
+  PAGE_OFFSET: 1,
+  DIVIDING_POINT: 3,
+  BOUNDARY_COUNT: 4,
   VALUES: {
     LIMITS,
-    DEFAULTS,
   },
 } as const satisfies PaginationConfig
