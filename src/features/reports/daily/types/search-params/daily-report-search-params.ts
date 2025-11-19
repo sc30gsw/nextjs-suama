@@ -1,4 +1,9 @@
-import { createParser, createSearchParamsCache, parseAsStringLiteral } from 'nuqs/server'
+import {
+  createParser,
+  createSearchParamsCache,
+  type ParserBuilder,
+  parseAsStringLiteral,
+} from 'nuqs/server'
 import { DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
@@ -12,6 +17,7 @@ const parseAsOptionalIsoDate = createParser({
     }
 
     const date = new Date(value)
+
     return Number.isNaN(date.getTime()) ? null : date
   },
 
@@ -26,10 +32,22 @@ export const dailyReportSearchParamsParsers = {
   startDate: parseAsOptionalIsoDate,
   endDate: parseAsOptionalIsoDate,
   tab: tabParser,
-}
+} as const satisfies Record<
+  string,
+  | ParserBuilder<Date>
+  | Omit<
+      ParserBuilder<(typeof DAILY_REPORT_TABS_MAP)[keyof typeof DAILY_REPORT_TABS_MAP]['id']>,
+      'parseServerSide'
+    >
+>
 
 export const dailyReportPageSearchParamsCache = createSearchParamsCache({
   ...dailyReportSearchParamsParsers,
   ...paginationSearchParamsParsers,
   ...userSearchParamsParsers,
+})
+
+export const myDailyReportPageSearchParamsCache = createSearchParamsCache({
+  ...dailyReportSearchParamsParsers,
+  ...paginationSearchParamsParsers,
 })
