@@ -15,12 +15,12 @@ import { DailyReportsTabContentSkeleton } from '~/features/reports/daily/compone
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { DailyReportsTabs } from '~/features/reports/daily/components/daily-reports-tabs'
 import { getDailyReports, getProjectSummary } from '~/features/reports/daily/server/fetcher'
-import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
+import { myDailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationUtils } from '~/utils/pagination-utils'
 
-export default async function MyDailyPage({
+export default async function MyDailyReportPage({
   searchParams,
 }: NextPageProps<undefined, SearchParams>) {
   const session = await getServerSession()
@@ -29,8 +29,9 @@ export default async function MyDailyPage({
     unauthorized()
   }
 
-  const minePageSearchParams = await dailyReportPageSearchParamsCache.parse(searchParams)
-  const { page, rowsPerPage, tab, startDate, endDate } = minePageSearchParams
+  const myDailyReportSearchParamsCache =
+    await myDailyReportPageSearchParamsCache.parse(searchParams)
+  const { page, rowsPerPage, tab, startDate, endDate } = myDailyReportSearchParamsCache
 
   const skip = paginationUtils.getOffset(page, rowsPerPage)
   const limit = paginationUtils.getMaxRowsLimit(rowsPerPage)
@@ -53,7 +54,7 @@ export default async function MyDailyPage({
       <DailyReportsTabs currentTab={tab}>
         <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
           <Suspense
-            key={`date-${JSON.stringify(minePageSearchParams)}`}
+            key={`date-${JSON.stringify(myDailyReportSearchParamsCache)}`}
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.DATE.id} />}
           >
             <DailyReportsTabContent
@@ -80,7 +81,7 @@ export default async function MyDailyPage({
 
         <TabPanel id={DAILY_REPORT_TABS_MAP.PROJECT.id}>
           <Suspense
-            key={`date-${JSON.stringify(minePageSearchParams)}`}
+            key={`date-${JSON.stringify(myDailyReportSearchParamsCache)}`}
             fallback={<DailyReportsTabContentSkeleton tab={DAILY_REPORT_TABS_MAP.PROJECT.id} />}
           >
             <DailyReportsTabContent

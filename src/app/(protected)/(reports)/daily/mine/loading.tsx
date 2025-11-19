@@ -1,5 +1,5 @@
 import { AppLoader } from '~/components/ui/app-loader'
 
-export default function MyDailyLoading() {
+export default function MyDailyReportPageLoading() {
   return <AppLoader />
 }
