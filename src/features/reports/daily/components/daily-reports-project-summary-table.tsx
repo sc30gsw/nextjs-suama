@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
+import { Note } from '~/components/ui/intent-ui/note'
 import { Table } from '~/components/ui/intent-ui/table'
 import type { client } from '~/lib/rpc'
 import { dateUtils } from '~/utils/date-utils'
@@ -59,6 +60,8 @@ export function DailyReportsProjectSummaryTable({
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const rows = table.getRowModel().rows
+
   return (
     <Table aria-label="Project Summary">
       <Table.Header>
@@ -76,15 +79,30 @@ export function DailyReportsProjectSummaryTable({
       </Table.Header>
 
       <Table.Body>
-        {table.getRowModel().rows.map((row) => (
-          <Table.Row key={row.original.projectId}>
-            {row.getVisibleCells().map((cell) => (
-              <Table.Cell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Table.Cell>
-            ))}
+        {rows.length === 0 ? (
+          <Table.Row>
+            <Table.Cell colSpan={table.getHeaderGroups()[0]?.headers.length ?? 1}>
+              <Note intent="info">
+                <p>条件に合致する集計結果は見つかりませんでした。</p>
+                <p className="mt-1">
+                  フィルター条件や期間を変更するか、日報対象のプロジェクトを含めて
+                  <br />
+                  登録してください。
+                </p>
+              </Note>
+            </Table.Cell>
           </Table.Row>
-        ))}
+        ) : (
+          rows.map((row) => (
+            <Table.Row key={row.original.projectId}>
+              {row.getVisibleCells().map((cell) => (
+                <Table.Cell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Table.Cell>
+              ))}
+            </Table.Row>
+          ))
+        )}
       </Table.Body>
     </Table>
   )

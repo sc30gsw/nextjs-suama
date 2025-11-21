@@ -70,9 +70,11 @@ export async function DailyReportsTabContent({ reportsTable, kind }: DailyReport
       <Card className="max-w-full border-t-0 pt-0">
         <Card.Content>{reportsTable}</Card.Content>
 
-        <Card.Footer>
-          <TablePagination pageCount={pageCount} />
-        </Card.Footer>
+        {total > 0 && (
+          <Card.Footer>
+            <TablePagination pageCount={pageCount} />
+          </Card.Footer>
+        )}
       </Card>
     </div>
   )

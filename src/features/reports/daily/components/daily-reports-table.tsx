@@ -10,6 +10,7 @@ import {
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
 import { Button } from '~/components/ui/intent-ui/button'
+import { Note } from '~/components/ui/intent-ui/note'
 import { Table } from '~/components/ui/intent-ui/table'
 import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
@@ -90,6 +91,8 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const rows = table.getRowModel().rows
+
   return (
     <Table aria-label="Daily Reports">
       <Table.Header>
@@ -106,15 +109,28 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
         ))}
       </Table.Header>
       <Table.Body>
-        {table.getRowModel().rows.map((row) => (
-          <Table.Row key={row.original.id}>
-            {row.getVisibleCells().map((cell) => (
-              <Table.Cell key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Table.Cell>
-            ))}
+        {rows.length === 0 ? (
+          <Table.Row>
+            <Table.Cell colSpan={table.getHeaderGroups()[0]?.headers.length ?? 1}>
+              <Note intent="info">
+                <p>条件に合致する日報は見つかりませんでした。</p>
+                <p className="mt-1">
+                  フィルター条件や期間を変更するか、新しく日報を登録してください。
+                </p>
+              </Note>
+            </Table.Cell>
           </Table.Row>
-        ))}
+        ) : (
+          rows.map((row) => (
+            <Table.Row key={row.original.id}>
+              {row.getVisibleCells().map((cell) => (
+                <Table.Cell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Table.Cell>
+              ))}
+            </Table.Row>
+          ))
+        )}
       </Table.Body>
     </Table>
   )
