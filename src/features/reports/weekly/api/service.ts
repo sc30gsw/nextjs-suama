@@ -1,7 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import type { Session } from 'better-auth'
 import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
-import { and, eq, gte, lte } from 'drizzle-orm'
+import { and, eq, exists, gte, lte, or } from 'drizzle-orm'
 import { pipe, sortBy } from 'remeda'
 import { QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import {
@@ -10,6 +10,7 @@ import {
   type missions,
   type projects,
   troubles,
+  users,
   type weeklyReportMissions,
   weeklyReports,
 } from '~/db/schema'
@@ -59,18 +60,57 @@ export class WeeklyReportService {
       weekStartsOn: 1,
     })
     const weekEndDate = addDays(weekStartDate, 6)
+    const nextWeek = Number(week) + 1
 
     const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
     const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
 
     try {
-      const users = await db.query.users.findMany({
+      const targetUsers = await db.query.users.findMany({
+        where: or(
+          exists(
+            db
+              .select()
+              .from(weeklyReports)
+              .where(
+                and(
+                  eq(weeklyReports.userId, users.id),
+                  eq(weeklyReports.year, Number(year)),
+                  eq(weeklyReports.week, Number(week)),
+                ),
+              ),
+          ),
+          exists(
+            db
+              .select()
+              .from(dailyReports)
+              .where(
+                and(
+                  eq(dailyReports.userId, users.id),
+                  gte(dailyReports.reportDate, startDate),
+                  lte(dailyReports.reportDate, endDate),
+                ),
+              ),
+          ),
+          exists(
+            db
+              .select()
+              .from(weeklyReports)
+              .where(
+                and(
+                  eq(weeklyReports.userId, users.id),
+                  eq(weeklyReports.year, Number(year)),
+                  eq(weeklyReports.week, nextWeek),
+                ),
+              ),
+          ),
+        ),
         limit: QUERY_MAX_LIMIT_VALUES.WEEKLY_REPORTS,
         offset: Number(offset),
       })
 
       const reports = await Promise.all(
-        users.map(async (user) => {
+        targetUsers.map(async (user) => {
           const [lastWeekReports, dailyReportList, nextWeekReports, troubleList] =
             await Promise.all([
               db.query.weeklyReports.findMany({
