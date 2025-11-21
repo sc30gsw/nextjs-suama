@@ -87,9 +87,9 @@ export default async function AppealListPage({
             ))}
           </Suspense>
         </Card.Content>
-        <Card.Footer>
-          <Suspense
-            fallback={
+        <Suspense
+          fallback={
+            <Card.Footer>
               <div className="flex items-center justify-center gap-x-1">
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
@@ -102,19 +102,27 @@ export default async function AppealListPage({
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
               </div>
+            </Card.Footer>
+          }
+        >
+          {appealCategoriesPromise.then((res) => {
+            if (res.total === 0) {
+              return null
             }
-          >
-            {appealCategoriesPromise.then((res) => {
-              const pageCount = Math.ceil(res.total / rowsPerPage)
 
-              if (page > pageCount) {
-                redirect(`/appeal/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`)
-              }
+            const pageCount = Math.ceil(res.total / rowsPerPage)
 
-              return <ReportContextTablePagination page={page} pageCount={pageCount} />
-            })}
-          </Suspense>
-        </Card.Footer>
+            if (page > pageCount) {
+              redirect(`/appeal/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`)
+            }
+
+            return (
+              <Card.Footer>
+                <ReportContextTablePagination page={page} pageCount={pageCount} />
+              </Card.Footer>
+            )
+          })}
+        </Suspense>
       </Card>
     </div>
   )

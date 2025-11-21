@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 import { useRef } from 'react'
 import type { VirtuosoHandle } from 'react-virtuoso'
 import { Heading } from '~/components/ui/intent-ui/heading'
+import { Note } from '~/components/ui/intent-ui/note'
 import { WeeklyReportsBackToTopButton } from '~/features/reports/weekly/components/weekly-reports-back-to-top-button'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsCards } from '~/features/reports/weekly/components/weekly-reports-cards'
@@ -33,6 +34,27 @@ export function WeeklyReports({ userId, year, week }: WeeklyReportsProps) {
 
   if (!data || error) {
     notFound()
+  }
+
+  const hasAnyReports = data.pages.some((page) =>
+    page.reports.some((report) => {
+      const hasLastWeek = report.lastWeekReports.length > 0
+      const hasDaily = report.dailyReports.length > 0
+      const hasNextWeek = report.nextWeekReports.length > 0
+
+      return hasLastWeek || hasDaily || hasNextWeek
+    }),
+  )
+
+  if (!hasAnyReports) {
+    return (
+      <div className="flex-1">
+        <Note intent="danger">
+          <p>この週には、前週の予定・今週の日報・次週の予定がまだ登録されていません。</p>
+          <p className="mt-1">週報や日報を登録してから再度、ご確認ください。</p>
+        </Note>
+      </div>
+    )
   }
 
   const loadMore = () => {

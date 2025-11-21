@@ -8,7 +8,7 @@ import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 
 export default function UnauthorizedPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4 dark:bg-gray-900">
+    <main className="flex min-h-screen w-full items-center justify-center bg-gray-50 p-4 dark:bg-gray-900">
       <div className="mx-auto w-full max-w-md">
         <Card className="max-w-lg">
           <Card.Header className="flex flex-col items-center">
