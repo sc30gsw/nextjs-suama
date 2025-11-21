@@ -1,7 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { count, like, or } from 'drizzle-orm'
+import { and, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
-import { missions } from '~/db/schema'
+import { missions, projects } from '~/db/schema'
 import type { getMissionsRoute } from '~/features/report-contexts/missions/api/route'
 import { db } from '~/index'
 
@@ -16,14 +16,14 @@ export class MissionService {
   async getMissions(
     params: ReturnType<Parameters<RouteHandler<typeof getMissionsRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, names } = params
+    const { skip, limit, names, isArchived } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
+    const shouldFilterArchived = isArchived === 'false'
 
     try {
-      const whereClause =
+      const nameConditions =
         namesArray.length > 0
           ? or(
               ...namesArray.flatMap((word) => [
@@ -33,31 +33,52 @@ export class MissionService {
             )
           : undefined
 
-      const missionList = await db.query.missions.findMany({
-        where: whereClause,
-        offset: skipNumber,
-        limit: limitNumber,
-        orderBy: (missionsTable, { asc }) => [asc(missionsTable.createdAt)],
-        with: {
-          project: {
-            columns: {
-              name: true,
-            },
-          },
-        },
-      })
+      const whereClause = shouldFilterArchived
+        ? nameConditions
+          ? and(eq(projects.isArchived, false), nameConditions)
+          : eq(projects.isArchived, false)
+        : nameConditions
 
-      const total = await db.select({ count: count() }).from(missions).where(whereClause)
+      const totalResult = await db
+        .select({ count: count() })
+        .from(missions)
+        .innerJoin(projects, eq(missions.projectId, projects.id))
+        .where(whereClause)
+      const total = totalResult[0].count
+
+      const limitNumber = shouldFilterArchived
+        ? total
+        : Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
+
+      const missionList = await db
+        .select({
+          id: missions.id,
+          name: missions.name,
+          projectId: missions.projectId,
+          likeKeywords: missions.likeKeywords,
+          createdAt: missions.createdAt,
+          updatedAt: missions.updatedAt,
+          projectName: projects.name,
+        })
+        .from(missions)
+        .innerJoin(projects, eq(missions.projectId, projects.id))
+        .where(whereClause)
+        .orderBy(missions.createdAt)
+        .limit(limitNumber)
+        .offset(skipNumber)
 
       const formattedMissions = missionList.map((mission) => ({
         ...mission,
         createdAt: mission.createdAt.toISOString(),
         updatedAt: mission.updatedAt?.toISOString() ?? null,
+        project: {
+          name: mission.projectName,
+        },
       }))
 
       return {
         missions: formattedMissions,
-        total: total[0].count,
+        total,
         skip: skipNumber,
         limit: limitNumber,
       }

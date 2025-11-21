@@ -8,7 +8,7 @@ import { client } from '~/lib/rpc'
 
 export async function getProjects(
   userId: Session['userId'],
-  params?: { skip: number; limit: number; names: string[] },
+  params?: { skip?: number; limit?: number; names?: string[]; isArchived?: boolean },
 ) {
   'use cache'
   cacheTag(GET_PROJECTS_CACHE_KEY)
@@ -21,7 +21,10 @@ export async function getProjects(
       Authorization: userId,
     },
     params: {
-      ...params,
+      skip: params?.skip?.toString(),
+      limit: params?.limit?.toString(),
+      names: params?.names?.join(','),
+      isArchived: params?.isArchived?.toString(),
     },
   })
 
