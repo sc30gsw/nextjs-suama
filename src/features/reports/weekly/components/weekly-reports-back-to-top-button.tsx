@@ -6,6 +6,8 @@ import type { VirtuosoHandle } from 'react-virtuoso'
 import { Button } from '~/components/ui/intent-ui/button'
 import { cn } from '~/utils/classes'
 
+const SCROLL_THRESHOLD = 300
+
 export function WeeklyReportsBackToTopButton({
   virtuosoRef,
 }: Record<'virtuosoRef', RefObject<VirtuosoHandle | null>>) {
@@ -13,7 +15,7 @@ export function WeeklyReportsBackToTopButton({
 
   useEffect(() => {
     const handleScroll = () => {
-      toggle(scrollY > 300)
+      toggle(scrollY > SCROLL_THRESHOLD)
     }
 
     addEventListener('scroll', handleScroll)
