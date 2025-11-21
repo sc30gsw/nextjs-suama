@@ -87,9 +87,9 @@ export default async function ClientListPage({
             ))}
           </Suspense>
         </Card.Content>
-        <Card.Footer>
-          <Suspense
-            fallback={
+        <Suspense
+          fallback={
+            <Card.Footer>
               <div className="flex items-center justify-center gap-x-1">
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
@@ -102,19 +102,27 @@ export default async function ClientListPage({
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
               </div>
+            </Card.Footer>
+          }
+        >
+          {clientsPromise.then((res) => {
+            if (res.total === 0) {
+              return null
             }
-          >
-            {clientsPromise.then((res) => {
-              const pageCount = Math.ceil(res.total / rowsPerPage)
 
-              if (page > pageCount) {
-                redirect(`/client/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`)
-              }
+            const pageCount = Math.ceil(res.total / rowsPerPage)
 
-              return <ReportContextTablePagination page={page} pageCount={pageCount} />
-            })}
-          </Suspense>
-        </Card.Footer>
+            if (page > pageCount) {
+              redirect(`/client/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`)
+            }
+
+            return (
+              <Card.Footer>
+                <ReportContextTablePagination page={page} pageCount={pageCount} />
+              </Card.Footer>
+            )
+          })}
+        </Suspense>
       </Card>
     </div>
   )

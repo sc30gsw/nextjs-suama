@@ -4,9 +4,7 @@ import {
   IconBrandProducthunt,
   IconCalendarDays,
   IconCirclePerson,
-  IconCircleQuestionmark,
   IconHome,
-  IconPackage,
   IconPeople,
 } from '@intentui/icons'
 import {
@@ -91,35 +89,6 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
           <SidebarDisclosure id={3} className="py-3">
             <SidebarDisclosureTrigger>
-              <IconPackage />
-              <SidebarLabel>集計</SidebarLabel>
-            </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href="#" tooltip="ユーザーの日時集計">
-                <IconCircleQuestionmark />
-                <SidebarLabel>ユーザーの日時集計</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="#" tooltip="ユーザーの簡易集計">
-                <IconCircleQuestionmark />
-                <SidebarLabel>ユーザーの簡易集計</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="#" tooltip="ユーザーの詳細集計">
-                <IconCircleQuestionmark />
-                <SidebarLabel>ユーザーの詳細集計</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="#" tooltip="ミッションの詳細集計">
-                <IconCircleQuestionmark />
-                <SidebarLabel>ミッションの詳細集計</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="#" tooltip="プロジェクトの詳細集計">
-                <IconCircleQuestionmark />
-                <SidebarLabel>プロジェクトの詳細集計</SidebarLabel>
-              </SidebarItem>
-            </SidebarDisclosurePanel>
-          </SidebarDisclosure>
-
-          <SidebarDisclosure id={4} className="py-3">
-            <SidebarDisclosureTrigger>
               <IconCirclePerson />
               <SidebarLabel>ユーザー</SidebarLabel>
             </SidebarDisclosureTrigger>
@@ -131,7 +100,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosurePanel>
           </SidebarDisclosure>
 
-          <SidebarDisclosure id={5} className="py-3">
+          <SidebarDisclosure id={4} className="py-3">
             <SidebarDisclosureTrigger>
               <IconBuilding stroke={1} size={20} />
               <SidebarLabel>クライアント</SidebarLabel>
@@ -144,7 +113,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosurePanel>
           </SidebarDisclosure>
 
-          <SidebarDisclosure id={6} className="py-3">
+          <SidebarDisclosure id={5} className="py-3">
             <SidebarDisclosureTrigger>
               <IconBrandProducthunt />
               <SidebarLabel>プロジェクト</SidebarLabel>
@@ -157,7 +126,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosurePanel>
           </SidebarDisclosure>
 
-          <SidebarDisclosure id={7} className="py-3">
+          <SidebarDisclosure id={6} className="py-3">
             <SidebarDisclosureTrigger>
               <IconList stroke={1} size={20} />
               <SidebarLabel>ミッション</SidebarLabel>
@@ -170,7 +139,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosurePanel>
           </SidebarDisclosure>
 
-          <SidebarDisclosure id={8} className="py-3">
+          <SidebarDisclosure id={7} className="py-3">
             <SidebarDisclosureTrigger>
               <IconHelpTriangle stroke={1} size={20} />
               <SidebarLabel>困っていることカテゴリー</SidebarLabel>
@@ -183,7 +152,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosurePanel>
           </SidebarDisclosure>
 
-          <SidebarDisclosure id={9} className="py-3">
+          <SidebarDisclosure id={8} className="py-3">
             <SidebarDisclosureTrigger>
               <IconBulb stroke={1} size={20} />
               <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>

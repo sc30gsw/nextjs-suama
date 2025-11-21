@@ -102,9 +102,10 @@ export default async function DailyForTodayPage({
             ))}
           </Suspense>
         </Card.Content>
-        <Card.Footer>
-          <Suspense
-            fallback={
+
+        <Suspense
+          fallback={
+            <Card.Footer>
               <div className="flex items-center justify-center gap-x-1">
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
@@ -117,21 +118,29 @@ export default async function DailyForTodayPage({
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
               </div>
+            </Card.Footer>
+          }
+        >
+          {reportsPromise.then((res) => {
+            if (res.total === 0) {
+              return null
             }
-          >
-            {reportsPromise.then((res) => {
-              const pageCount = Math.ceil(res.total / rowsPerPage)
 
-              if (page > pageCount) {
-                redirect(
-                  `/daily/today?page=${pageCount}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`,
-                )
-              }
+            const pageCount = Math.ceil(res.total / rowsPerPage)
 
-              return <TablePagination pageCount={pageCount} />
-            })}
-          </Suspense>
-        </Card.Footer>
+            if (page > pageCount) {
+              redirect(
+                `/daily/today?page=${pageCount}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`,
+              )
+            }
+
+            return (
+              <Card.Footer>
+                <TablePagination pageCount={pageCount} />
+              </Card.Footer>
+            )
+          })}
+        </Suspense>
       </Card>
     </div>
   )
