@@ -47,7 +47,3 @@ export const dailyReportPageSearchParamsCache = createSearchParamsCache({
   ...userSearchParamsParsers,
 })
 
-export const myDailyReportPageSearchParamsCache = createSearchParamsCache({
-  ...dailyReportSearchParamsParsers,
-  ...paginationSearchParamsParsers,
-})
