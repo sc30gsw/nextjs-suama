@@ -26,8 +26,8 @@ export default async function EditDailyReportPage({
 
   const reportData = await getDailyReportById(reportId, session.user.id)
 
-  const projectPromise = getProjects(session.user.id)
-  const missionPromise = getMissions(session.user.id)
+  const projectPromise = getProjects(session.user.id, { isArchived: false })
+  const missionPromise = getMissions(session.user.id, { isArchived: false })
 
   const promises = Promise.all([projectPromise, missionPromise])
 

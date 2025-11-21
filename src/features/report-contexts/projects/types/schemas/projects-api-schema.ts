@@ -34,6 +34,17 @@ export const ProjectsQuerySchema = z.object({
       example: 'ProjectA,ProjectB',
       description: 'カンマ区切りのプロジェクト名フィルター',
     }),
+  isArchived: z
+    .enum(['true', 'false'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'isArchived',
+        in: 'query',
+      },
+      example: 'false',
+      description: 'アーカイブ済みプロジェクトを含めるかどうか (true/false)',
+    }),
 })
 
 export const MissionRefSchema = z.object({

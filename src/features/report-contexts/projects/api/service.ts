@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { count, like, or } from 'drizzle-orm'
+import { and, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { projects } from '~/db/schema'
 import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
@@ -16,14 +16,14 @@ export class ProjectService {
   async getProjects(
     params: ReturnType<Parameters<RouteHandler<typeof getProjectsRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, names } = params
+    const { skip, limit, names, isArchived } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
+    const shouldFilterArchived = isArchived === 'false'
 
     try {
-      const whereClause =
+      const nameConditions =
         namesArray.length > 0
           ? or(
               ...namesArray.flatMap((word) => [
@@ -32,6 +32,20 @@ export class ProjectService {
               ]),
             )
           : undefined
+
+      const whereClause =
+        shouldFilterArchived && nameConditions
+          ? and(eq(projects.isArchived, false), nameConditions)
+          : shouldFilterArchived
+            ? eq(projects.isArchived, false)
+            : nameConditions
+
+      const totalResult = await db.select({ count: count() }).from(projects).where(whereClause)
+      const total = totalResult[0].count
+
+      const limitNumber = shouldFilterArchived
+        ? total
+        : Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
 
       const projectList = await db.query.projects.findMany({
         where: whereClause,
@@ -48,8 +62,6 @@ export class ProjectService {
         },
       })
 
-      const total = await db.select({ count: count() }).from(projects).where(whereClause)
-
       const formattedProjects = projectList.map((project) => ({
         ...project,
         createdAt: project.createdAt.toISOString(),
@@ -63,7 +75,7 @@ export class ProjectService {
 
       return {
         projects: formattedProjects,
-        total: total[0].count,
+        total: total,
         skip: skipNumber,
         limit: limitNumber,
       }

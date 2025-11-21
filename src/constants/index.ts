@@ -12,7 +12,7 @@ export const QUERY_DEFAULT_PARAMS = {
 } as const satisfies Record<string, number>
 
 export const QUERY_MAX_LIMIT_VALUES = {
-  GENERAL: 100,
+  GENERAL: 500,
   // TODO: リリース後のパフォーマンス・UX次第で調整を検討（現在: ユーザー30人/回）
   WEEKLY_REPORTS: 100,
 } as const satisfies Record<string, number>
