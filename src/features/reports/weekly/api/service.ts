@@ -60,6 +60,7 @@ export class WeeklyReportService {
       weekStartsOn: 1,
     })
     const weekEndDate = addDays(weekStartDate, 6)
+    const nextWeek = Number(week) + 1
 
     const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
     const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
@@ -88,6 +89,18 @@ export class WeeklyReportService {
                   eq(dailyReports.userId, users.id),
                   gte(dailyReports.reportDate, startDate),
                   lte(dailyReports.reportDate, endDate),
+                ),
+              ),
+          ),
+          exists(
+            db
+              .select()
+              .from(weeklyReports)
+              .where(
+                and(
+                  eq(weeklyReports.userId, users.id),
+                  eq(weeklyReports.year, Number(year)),
+                  eq(weeklyReports.week, nextWeek),
                 ),
               ),
           ),
