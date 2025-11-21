@@ -1,5 +1,6 @@
 'use client'
-import type { ReactNode } from 'react'
+import { type ReactNode, useRef } from 'react'
+import { useToggle } from 'react-use'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Popover } from '~/components/ui/intent-ui/popover'
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
@@ -15,10 +16,20 @@ type WeeklyCalendarHintProps = {
 export function WeeklyCalendarHint({ children, startDay, label, endDay }: WeeklyCalendarHintProps) {
   const { year, week } = getYearAndWeek(startDay.toISOString())
 
+  const [isOpen, toggle] = useToggle(false)
+  const triggerRef = useRef(null)
+
   return (
-    <Popover>
-      <Button intent="plain">{children}</Button>
-      <Popover.Content className="sm:min-w-96">
+    <>
+      <Button ref={triggerRef} onPress={toggle} intent="plain">
+        {children}
+      </Button>
+      <Popover.Content
+        triggerRef={triggerRef}
+        isOpen={isOpen}
+        onOpenChange={toggle}
+        className="sm:min-w-96"
+      >
         <Popover.Header>
           <Popover.Title>{label}</Popover.Title>
           <Popover.Description>
@@ -33,9 +44,11 @@ export function WeeklyCalendarHint({ children, startDay, label, endDay }: Weekly
           </div>
         </Popover.Body>
         <Popover.Footer className="mt-2">
-          <Popover.Close className="w-full">閉じる</Popover.Close>
+          <Popover.Close onPress={toggle} className="w-full">
+            閉じる
+          </Popover.Close>
         </Popover.Footer>
       </Popover.Content>
-    </Popover>
+    </>
   )
 }
