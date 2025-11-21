@@ -5,7 +5,6 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
 import { WeeklyRegisterLink } from '~/features/reports/weekly/components/weekly-register-link'
-import { WeeklyReportsBackToTopButton } from '~/features/reports/weekly/components/weekly-reports-back-to-top-button'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsContainer } from '~/features/reports/weekly/components/weekly-reports-container'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
@@ -59,7 +58,6 @@ export default async function WeeklyReportsPage({
           <WeeklyReportsContainer year={year.toString()} week={week.toString()} />
         </Suspense>
       </div>
-      <WeeklyReportsBackToTopButton />
     </div>
   )
 }
