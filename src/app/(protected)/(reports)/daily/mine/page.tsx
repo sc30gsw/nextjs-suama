@@ -15,7 +15,7 @@ import { DailyReportsTabContentSkeleton } from '~/features/reports/daily/compone
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { DailyReportsTabs } from '~/features/reports/daily/components/daily-reports-tabs'
 import { getDailyReports, getProjectSummary } from '~/features/reports/daily/server/fetcher'
-import { dailyReportPageSearchParamsCache, myDailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
+import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
 import { paginationUtils } from '~/utils/pagination-utils'
