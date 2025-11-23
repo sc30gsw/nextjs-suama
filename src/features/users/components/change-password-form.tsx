@@ -14,7 +14,7 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 import { changePasswordAction } from '~/features/users/actions/change-password-action'
 import {
   type ChangePasswordInputSchema,
@@ -89,7 +89,9 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
         {getError() && (
           <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
-            <p>{getError()}</p>
+            <p>
+              {getErrorMessage('password', getError() as Parameters<typeof getErrorMessage>[1])}
+            </p>
           </div>
         )}
         <input {...getInputProps(fields.id, { type: 'hidden' })} />
