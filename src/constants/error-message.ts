@@ -10,6 +10,36 @@ export const ERROR_STATUS = {
   INVALID_CLIENT_RELATION: 'InvalidClientRelation',
 } as const satisfies Record<string, string>
 
+export function getErrorMessage(
+  type:
+    | 'common'
+    | 'auth'
+    | 'password'
+    | 'user'
+    | 'daily-report'
+    | 'weekly-report'
+    | 'client'
+    | 'project'
+    | 'mission',
+  key: ErrorStatus,
+) {
+  const alreadyExistMessage = `${type === 'daily-report' ? '選択した日付の日報' : type === 'user' ? '入力したメールアドレスのユーザー' : 'データ'}は既に存在します`
+
+  const errorMessages = {
+    [ERROR_STATUS.UNAUTHORIZED]: 'セッションが切れました。再度ログインしてください',
+    [ERROR_STATUS.NOT_FOUND]: 'ページが見つかりません',
+    [ERROR_STATUS.FOR_BIDDEN]: 'アクセス権限がありません',
+    [ERROR_STATUS.ALREADY_EXISTS]: alreadyExistMessage,
+    [ERROR_STATUS.SOMETHING_WENT_WRONG]: '予期しないエラーが発生しました',
+    [ERROR_STATUS.EMAIL_NOT_FOUND]: 'メールアドレスが見つかりません',
+    [ERROR_STATUS.INVALID_PROJECT_RELATION]: 'プロジェクトが見つかりません',
+    [ERROR_STATUS.INVALID_MISSION_RELATION]: 'ミッションが見つかりません',
+    [ERROR_STATUS.INVALID_CLIENT_RELATION]: 'クライアントが見つかりません',
+  } as const satisfies Record<(typeof ERROR_STATUS)[keyof typeof ERROR_STATUS], string>
+
+  return errorMessages[key]
+}
+
 export type ErrorStatus = (typeof ERROR_STATUS)[keyof typeof ERROR_STATUS]
 
 export const TOAST_MESSAGES = {
@@ -60,7 +90,7 @@ export const TOAST_MESSAGES = {
     DELETE_FAILED: '日報の削除に失敗しました',
     NOT_FOUND: '日報が見つかりません',
     FORBIDDEN: 'この日報を編集する権限がありません',
-    ALREADY_EXISTS: '本日の日報は既に作成されています',
+    ALREADY_EXISTS: '選択された日付の日報は既に作成されています',
   },
 
   WEEKLY_REPORT: {
