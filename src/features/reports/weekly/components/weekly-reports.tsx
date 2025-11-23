@@ -76,10 +76,12 @@ export function WeeklyReports({ userId, year, week }: WeeklyReportsProps) {
       </div>
 
       <aside className="sticky top-20 hidden h-fit w-64 pr-4 lg:block">
-        <nav className="flex flex-col gap-1 text-sm">
+        <div className="flex flex-col gap-1 text-sm">
           <Heading level={5}>On this page</Heading>
-          <WeeklyReportsNavigationButton data={data} virtuosoRef={virtuosoRef} />
-        </nav>
+          <nav className="flex h-[calc(100vh-121px)] flex-col gap-1 overflow-y-auto">
+            <WeeklyReportsNavigationButton data={data} virtuosoRef={virtuosoRef} />
+          </nav>
+        </div>
       </aside>
 
       <WeeklyReportsBackToTopButton virtuosoRef={virtuosoRef} />
