@@ -53,6 +53,7 @@ export function useUpdatedWeeklyReportContentInputEntries(
     filter((mission) => {
       const nameMatch = mission.name.toLowerCase().includes(missionFilter.toLowerCase())
       const keywordMatch = mission.likeKeywords?.toLowerCase().includes(missionFilter.toLowerCase())
+
       return nameMatch || keywordMatch
     }),
   )
