@@ -19,6 +19,7 @@ export function useCreateDailyReportContentInputEntries(
   formId: string,
   name: FieldName<DailyReportEntrySchema, CreateDailyReportFormSchema>,
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects'],
+  missions: InferResponseType<typeof client.api.missions.$get, 200>['missions'],
 ) {
   const [meta] = useField(name, { formId })
   const field = meta.getFieldset()
@@ -30,9 +31,33 @@ export function useCreateDailyReportContentInputEntries(
 
   const { setReportEntry } = useDailyReportSearchParams(initialDailyInputCountSearchParamsParsers)
 
-  // form resetがConformのものでは反映されないため
+  //? form resetがConformのものでは反映されないため
   const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
   const [missionId, setMissionId] = useState<Key | null>(missionInput.value ?? null)
+
+  const [projectFilter, setProjectFilter] = useState('')
+  const [missionFilter, setMissionFilter] = useState('')
+
+  const filteredProjects = projects.filter((project) => {
+    const nameMatch = project.name.toLowerCase().includes(projectFilter.toLowerCase())
+    const keywordMatch = project.likeKeywords?.toLowerCase().includes(projectFilter.toLowerCase())
+    return nameMatch || keywordMatch
+  })
+
+  const filteredMissions = pipe(
+    projectId
+      ? pipe(
+          missions,
+          filter((mission) => mission.projectId === projectId),
+        )
+      : missions,
+    filter((mission) => {
+      const nameMatch = mission.name.toLowerCase().includes(missionFilter.toLowerCase())
+      const keywordMatch = mission.likeKeywords?.toLowerCase().includes(missionFilter.toLowerCase())
+
+      return nameMatch || keywordMatch
+    }),
+  )
 
   const handleChangeItem = (
     id: ReportEntry['id'],
@@ -172,5 +197,9 @@ export function useCreateDailyReportContentInputEntries(
     missionId,
     handleChangeItem,
     handleChangeValue,
+    filteredProjects,
+    filteredMissions,
+    setProjectFilter,
+    setMissionFilter,
   } as const
 }

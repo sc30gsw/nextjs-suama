@@ -2,12 +2,13 @@ import { type FieldName, useField, useInputControl } from '@conform-to/react'
 import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
-import { find, pipe } from 'remeda'
+import { filter, find, pipe } from 'remeda'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type {
   CreateWeeklyReportFormSchema,
   CreateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
+
 import type {
   WeeklyInputCountSearchParams,
   WeeklyReportEntry,
@@ -19,6 +20,7 @@ export function useCreateWeeklyReportContentInputEntries(
   formId: string,
   name: FieldName<CreateWeeklyReportSchema, CreateWeeklyReportFormSchema>,
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects'],
+  missions: InferResponseType<typeof client.api.missions.$get, 200>['missions'],
 ) {
   const [meta] = useField(name, { formId })
   const field = meta.getFieldset()
@@ -35,6 +37,31 @@ export function useCreateWeeklyReportContentInputEntries(
   //? form resetがConformのものでは反映されないため
   const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
   const [missionId, setMissionId] = useState<Key | null>(missionInput.value ?? null)
+
+  const [projectFilter, setProjectFilter] = useState('')
+  const [missionFilter, setMissionFilter] = useState('')
+
+  const filteredProjects = projects.filter((project) => {
+    const nameMatch = project.name.toLowerCase().includes(projectFilter.toLowerCase())
+    const keywordMatch = project.likeKeywords?.toLowerCase().includes(projectFilter.toLowerCase())
+
+    return nameMatch || keywordMatch
+  })
+
+  const filteredMissions = pipe(
+    projectId
+      ? pipe(
+          missions,
+          filter((mission) => mission.projectId === projectId),
+        )
+      : missions,
+    filter((mission) => {
+      const nameMatch = mission.name.toLowerCase().includes(missionFilter.toLowerCase())
+      const keywordMatch = mission.likeKeywords?.toLowerCase().includes(missionFilter.toLowerCase())
+
+      return nameMatch || keywordMatch
+    }),
+  )
 
   const handleChangeItem = (
     id: WeeklyReportEntry['id'],
@@ -168,5 +195,9 @@ export function useCreateWeeklyReportContentInputEntries(
     missionId,
     handleChangeItem,
     handleChangeValue,
+    filteredProjects,
+    filteredMissions,
+    setProjectFilter,
+    setMissionFilter,
   } as const
 }
