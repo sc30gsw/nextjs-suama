@@ -42,6 +42,16 @@ export async function updateReportAction(_: unknown, formData: FormData) {
   const reportDateString = submission.value.reportDate
   const reportDate = dateUtils.convertJstDateToUtc(reportDateString, 'start')
 
+  const existingReport = await db.query.dailyReports.findFirst({
+    where: and(eq(dailyReports.userId, session.user.id), eq(dailyReports.reportDate, reportDate)),
+  })
+
+  if (existingReport) {
+    return submission.reply({
+      fieldErrors: { message: [ERROR_STATUS.ALREADY_EXISTS] },
+    })
+  }
+
   const report = await db.query.dailyReports.findFirst({
     where: eq(dailyReports.id, reportId),
   })
