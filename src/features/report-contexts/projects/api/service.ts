@@ -1,6 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { and, count, eq, like, or } from 'drizzle-orm'
-import { QUERY_DEFAULT_PARAMS } from '~/constants'
+import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { projects } from '~/db/schema'
 import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
 import { db } from '~/index'
@@ -43,7 +43,9 @@ export class ProjectService {
       const totalResult = await db.select({ count: count() }).from(projects).where(whereClause)
       const total = totalResult[0].count
 
-      const limitNumber = Number(limit) || total
+      const limitNumber = shouldFilterArchived
+        ? total
+        : Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
 
       const projectList = await db.query.projects.findMany({
         where: whereClause,
@@ -73,7 +75,7 @@ export class ProjectService {
 
       return {
         projects: formattedProjects,
-        total,
+        total: total,
         skip: skipNumber,
         limit: limitNumber,
       }

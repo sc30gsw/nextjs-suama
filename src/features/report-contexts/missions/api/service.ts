@@ -1,6 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import { and, count, eq, like, or } from 'drizzle-orm'
-import { QUERY_DEFAULT_PARAMS } from '~/constants'
+import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { missions, projects } from '~/db/schema'
 import type { getMissionsRoute } from '~/features/report-contexts/missions/api/route'
 import { db } from '~/index'
@@ -46,7 +46,9 @@ export class MissionService {
         .where(whereClause)
       const total = totalResult[0].count
 
-      const limitNumber = Number(limit) || total
+      const limitNumber = shouldFilterArchived
+        ? total
+        : Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
 
       const missionList = await db
         .select({
