@@ -2,6 +2,7 @@ import { type FieldName, getInputProps } from '@conform-to/react'
 import type { InferResponseType } from 'hono'
 import type { JSX } from 'react'
 import { useFormStatus } from 'react-dom'
+import { filter, pipe } from 'remeda'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { TextField } from '~/components/ui/intent-ui/text-field'
@@ -37,11 +38,7 @@ export function EditDailyReportContentInputEntries({
     missionId,
     handleChangeItem,
     handleChangeValue,
-    filteredProjects,
-    filteredMissions,
-    setProjectFilter,
-    setMissionFilter,
-  } = useEditDailyReportContentInputEntries(formId, name, projects, missions)
+  } = useEditDailyReportContentInputEntries(formId, name, projects)
 
   const { pending } = useFormStatus()
 
@@ -58,13 +55,11 @@ export function EditDailyReportContentInputEntries({
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'project')
           }}
-          onInputChange={setProjectFilter}
-          defaultFilter={() => true}
           selectedKey={projectId}
           isDisabled={pending}
         >
           <ComboBox.Input />
-          <ComboBox.List items={filteredProjects}>
+          <ComboBox.List items={projects}>
             {(project) => <ComboBox.Option id={project.id}>{project.name}</ComboBox.Option>}
           </ComboBox.List>
         </ComboBox>
@@ -82,13 +77,20 @@ export function EditDailyReportContentInputEntries({
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'mission')
           }}
-          onInputChange={setMissionFilter}
-          defaultFilter={() => true}
           selectedKey={missionId}
           isDisabled={pending}
         >
           <ComboBox.Input />
-          <ComboBox.List items={filteredMissions}>
+          <ComboBox.List
+            items={
+              projectId
+                ? pipe(
+                    missions,
+                    filter((mission) => mission.projectId === projectId),
+                  )
+                : missions
+            }
+          >
             {(mission) => <ComboBox.Option id={mission.id}>{mission.name}</ComboBox.Option>}
           </ComboBox.List>
         </ComboBox>
