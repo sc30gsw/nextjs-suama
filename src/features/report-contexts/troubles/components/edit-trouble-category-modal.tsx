@@ -20,6 +20,7 @@ import {
 } from '~/features/report-contexts/troubles/types/schemas/edit-trouble-category-input-schema'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -53,7 +54,7 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -63,7 +64,7 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
               toast.error(TOAST_MESSAGES.TROUBLE.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/trouble'),
+                  onClick: () => router.push(urls.href({ route: '/trouble/list' })),
                 },
               })
 

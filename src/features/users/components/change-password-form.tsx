@@ -22,6 +22,7 @@ import {
 } from '~/features/users/types/schemas/change-password-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -124,7 +125,10 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
         </Button>
         <Separator orientation="horizontal" />
         <Button intent="outline" isDisabled={isPending} className="w-full">
-          <Link href={`/${id}/settings`} className="flex items-center gap-x-2">
+          <Link
+            href={urls.build({ route: '/[userId]/settings', params: { userId: id } }).href}
+            className="flex items-center gap-x-2"
+          >
             ユーザー設定に戻る
             <LinkLoadingIndicator>
               <IconCirclePerson />

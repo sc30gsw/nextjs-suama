@@ -14,6 +14,7 @@ import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
+import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { paginationUtils } from '~/utils/pagination-utils'
@@ -126,7 +127,13 @@ export default async function MissionListPage({
             const pageCount = Math.ceil(res.total / rowsPerPage)
 
             if (page > pageCount) {
-              redirect(`/mission/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`)
+              redirect(
+                urls.build({
+                  route: '/mission/list',
+                  searchParams: { page: pageCount, rowsPerPage, names },
+                } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> })
+                  .href,
+              )
             }
 
             return (

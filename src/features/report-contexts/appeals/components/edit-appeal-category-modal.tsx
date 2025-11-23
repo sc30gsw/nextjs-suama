@@ -20,6 +20,7 @@ import {
 } from '~/features/report-contexts/appeals/types/schemas/edit-appeal-category-input-schema'
 import type { AppealCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -53,7 +54,7 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -63,7 +64,7 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
               toast.error(TOAST_MESSAGES.APPEAL.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/appeal'),
+                  onClick: () => router.push(urls.href({ route: '/appeal/list' })),
                 },
               })
 

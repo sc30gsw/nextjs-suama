@@ -10,6 +10,7 @@ import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { deleteUserAction } from '~/features/users/actions/delete-user-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 
 type UserDeleteButtonProps = Pick<
@@ -58,7 +59,7 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.USER.DELETE_SUCCESS)
-        router.push('/sign-in')
+        router.push(urls.href({ route: '/sign-in' }))
       } catch (_) {
         toast.error(TOAST_MESSAGES.USER.DELETE_FAILED)
       }

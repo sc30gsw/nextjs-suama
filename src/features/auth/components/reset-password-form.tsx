@@ -19,6 +19,7 @@ import {
 } from '~/features/auth/types/schemas/reset-password-input-schema'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -34,7 +35,7 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
     withCallbacks(resetPasswordAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.PASSWORD.RESET_SUCCESS)
-        router.push('/sign-in')
+        router.push(urls.href({ route: '/sign-in' }))
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]

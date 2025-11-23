@@ -34,6 +34,7 @@ import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -64,7 +65,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -74,7 +75,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               toast.error(TOAST_MESSAGES.USER.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/user'),
+                  onClick: () => router.push(urls.href({ route: '/users' })),
                 },
               })
 
@@ -245,7 +246,10 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
         </Button>
         <Separator orientation="horizontal" />
         <Button intent="outline" isDisabled={isPending || pending} className="w-full">
-          <Link href={`/${id}/change-password`} className="flex items-center gap-x-2">
+          <Link
+            href={urls.build({ route: '/[userId]/change-password', params: { userId: id } }).href}
+            className="flex items-center gap-x-2"
+          >
             パスワードを変更する
             <LinkLoadingIndicator>
               <IconLock />

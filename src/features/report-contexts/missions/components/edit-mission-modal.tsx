@@ -23,6 +23,7 @@ import {
 } from '~/features/report-contexts/missions/types/schemas/edit-mission-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -65,7 +66,7 @@ export function EditMissionModal({
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -75,7 +76,7 @@ export function EditMissionModal({
               toast.error(TOAST_MESSAGES.MISSION.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/mission'),
+                  onClick: () => router.push(urls.href({ route: '/mission/list' })),
                 },
               })
 

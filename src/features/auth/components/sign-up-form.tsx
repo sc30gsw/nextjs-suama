@@ -20,6 +20,7 @@ import {
   signUpInputSchema,
 } from '~/features/auth/types/schemas/sign-up-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -36,7 +37,7 @@ export function SignUpForm({
     withCallbacks(signUpAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.AUTH.SIGN_UP_SUCCESS)
-        router.push('/daily')
+        router.push(urls.href({ route: '/daily' }))
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]

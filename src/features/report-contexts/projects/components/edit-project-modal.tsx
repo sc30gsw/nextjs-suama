@@ -24,6 +24,7 @@ import {
 } from '~/features/report-contexts/projects/types/schemas/edit-project-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -69,7 +70,7 @@ export function EditProjectModal({
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -79,7 +80,7 @@ export function EditProjectModal({
               toast.error(TOAST_MESSAGES.PROJECT.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/project'),
+                  onClick: () => router.push(urls.href({ route: '/project/list' })),
                 },
               })
 

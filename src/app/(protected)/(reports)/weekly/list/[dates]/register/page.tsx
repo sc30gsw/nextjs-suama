@@ -23,6 +23,7 @@ import {
   splitDates,
 } from '~/features/reports/weekly/utils/weekly-date-utils'
 import { getServerSession } from '~/lib/get-server-session'
+import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
 
 export default async function WeeklyReportRegisterPage({
@@ -46,7 +47,12 @@ export default async function WeeklyReportRegisterPage({
   )
 
   if (res.weeklyReport) {
-    redirect(`/weekly/list/${dates}/edit/${res.weeklyReport.id}`)
+    redirect(
+      urls.build({
+        route: '/weekly/list/[dates]/edit/[weeklyReportId]',
+        params: { dates, weeklyReportId: res.weeklyReport.id },
+      }).href,
+    )
   }
 
   const { weeklyReportEntry, isReference } =

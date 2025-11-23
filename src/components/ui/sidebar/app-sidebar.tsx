@@ -34,15 +34,15 @@ import {
   SidebarSectionGroup,
 } from '~/components/ui/intent-ui/sidebar'
 import { AppSidebarUserMenu } from '~/components/ui/sidebar/app-sidebar-user-menu'
+import { urls } from '~/lib/urls'
 
-// TODO: 各種アイコン・リンクの設定
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <Link
           className="flex items-center gap-x-2 group-data-[state=collapsed]:justify-center"
-          href="/daily"
+          href={urls.href({ route: '/daily' })}
         >
           <IconHome className="size-5 text-muted-fg" />
           <SidebarLabel className="font-medium">SUAMA</SidebarLabel>
@@ -57,17 +57,17 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>日報</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/daily/today" tooltip="本日の日報">
+              <SidebarItem href={urls.href({ route: '/daily/today' })} tooltip="本日の日報">
                 <IconCalendarEvent stroke={1} size={20} />
                 <SidebarLabel>本日の日報</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/daily/mine" tooltip="自分の日報">
+              <SidebarItem href={urls.href({ route: '/daily/mine' })} tooltip="自分の日報">
                 <IconCalendarUser stroke={1} size={20} />
                 <SidebarLabel>自分の日報</SidebarLabel>
               </SidebarItem>
 
               {/* TODO: ユーザーの role が admin のみ表示されるように修正する。データ移行のタスクと連携して修正 */}
-              <SidebarItem href="/daily/every" tooltip="みんなの日報">
+              <SidebarItem href={urls.href({ route: '/daily/every' })} tooltip="みんなの日報">
                 <IconCalendarStats stroke={1} size={20} />
                 <SidebarLabel>みんなの日報</SidebarLabel>
               </SidebarItem>
@@ -80,7 +80,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>週報</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/weekly" tooltip="今年の週報">
+              <SidebarItem href={urls.href({ route: '/weekly' })} tooltip="今年の週報">
                 <IconCalendarDays />
                 <SidebarLabel>今年の週報</SidebarLabel>
               </SidebarItem>
@@ -93,7 +93,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>ユーザー</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/users" tooltip="ユーザー一覧">
+              <SidebarItem href={urls.href({ route: '/users' })} tooltip="ユーザー一覧">
                 <IconPeople />
                 <SidebarLabel>ユーザー一覧</SidebarLabel>
               </SidebarItem>
@@ -106,7 +106,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>クライアント</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/client/list" tooltip="クライアント一覧">
+              <SidebarItem href={urls.href({ route: '/client/list' })} tooltip="クライアント一覧">
                 <IconBuildings stroke={1} size={20} />
                 <SidebarLabel>クライアント一覧</SidebarLabel>
               </SidebarItem>
@@ -119,7 +119,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>プロジェクト</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/project/list" tooltip="プロジェクト一覧">
+              <SidebarItem href={urls.href({ route: '/project/list' })} tooltip="プロジェクト一覧">
                 <IconBrandProducthunt />
                 <SidebarLabel>プロジェクト一覧</SidebarLabel>
               </SidebarItem>
@@ -132,7 +132,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>ミッション</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/mission/list" tooltip="ミッション一覧">
+              <SidebarItem href={urls.href({ route: '/mission/list' })} tooltip="ミッション一覧">
                 <IconList stroke={1} size={20} />
                 <SidebarLabel>ミッション一覧</SidebarLabel>
               </SidebarItem>
@@ -145,7 +145,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>困っていることカテゴリー</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/trouble/list" tooltip="カテゴリー一覧">
+              <SidebarItem href={urls.href({ route: '/trouble/list' })} tooltip="カテゴリー一覧">
                 <IconHelpTriangle stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
               </SidebarItem>
@@ -158,7 +158,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel>
-              <SidebarItem href="/appeal/list" tooltip="カテゴリー一覧">
+              <SidebarItem href={urls.href({ route: '/appeal/list' })} tooltip="カテゴリー一覧">
                 <IconBulb stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
               </SidebarItem>

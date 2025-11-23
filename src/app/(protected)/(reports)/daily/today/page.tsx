@@ -11,6 +11,7 @@ import { getDailyReports } from '~/features/reports/daily/server/fetcher'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { userSearchParamsCache } from '~/features/users/types/search-params/user-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
+import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { dateUtils } from '~/utils/date-utils'
@@ -130,7 +131,11 @@ export default async function DailyForTodayPage({
 
             if (page > pageCount) {
               redirect(
-                `/daily/today?page=${pageCount}&rowsPerPage=${rowsPerPage}&userNames=${userNames}`,
+                urls.build({
+                  route: '/daily/today',
+                  searchParams: { page: pageCount, rowsPerPage, userNames },
+                } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> })
+                  .href,
               )
             }
 

@@ -14,6 +14,7 @@ import {
   updateDailyReportFormSchema,
 } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -45,7 +46,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -55,7 +56,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
               toast.error(TOAST_MESSAGES.DAILY_REPORT.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/daily/mine'),
+                  onClick: () => router.push(urls.href({ route: '/daily/mine' })),
                 },
               })
 
@@ -65,7 +66,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
               toast.error(TOAST_MESSAGES.DAILY_REPORT.FORBIDDEN, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/daily/mine'),
+                  onClick: () => router.push(urls.href({ route: '/daily/mine' })),
                 },
               })
 
