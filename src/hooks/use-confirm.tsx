@@ -14,7 +14,9 @@ export const { Root, ...Confirm } = createCallable<Record<'title' | 'message', s
         </Modal.Header>
         <Modal.Footer className="pt-2">
           <Modal.Close>閉じる</Modal.Close>
-          <Button onPress={() => call.end(true)}>実行する</Button>
+          <Button intent="danger" onPress={() => call.end(true)}>
+            実行する
+          </Button>
         </Modal.Footer>
       </Modal.Content>
     </Modal>
