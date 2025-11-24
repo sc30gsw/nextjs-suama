@@ -10,7 +10,7 @@ import { MonthSelector } from '~/features/reports/weekly/components/month-select
 import { WeekRangeCalendar } from '~/features/reports/weekly/components/weeks-range-calendar'
 import { monthSelectSearchParamsCache } from '~/features/reports/weekly/types/search-params/month-select-search-params-cache'
 import { getWeeksByMonth } from '~/features/reports/weekly/utils/weekly-date-utils'
-
+import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
 import { DATE_FORMAT } from '~/utils/date-utils'
 
@@ -39,7 +39,14 @@ export default async function WeeklyPage({ searchParams }: NextPageProps<undefin
             <div className="flex items-center justify-end">
               <Button size="xs" className="mt-2">
                 <Link
-                  href={`/weekly/list/${format(week.startDay, DATE_FORMAT, { locale: ja })}-${format(week.endDay, DATE_FORMAT, { locale: ja })}`}
+                  href={
+                    urls.build({
+                      route: '/weekly/list/[dates]',
+                      params: {
+                        dates: `${format(week.startDay, DATE_FORMAT, { locale: ja })}-${format(week.endDay, DATE_FORMAT, { locale: ja })}`,
+                      },
+                    }).href
+                  }
                   prefetch={false}
                   className="flex items-center justify-end gap-x-1.5"
                 >

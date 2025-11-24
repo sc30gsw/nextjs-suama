@@ -13,6 +13,7 @@ import { TroubleCategoriesTable } from '~/features/report-contexts/troubles/comp
 import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
+import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
 import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { paginationUtils } from '~/utils/pagination-utils'
@@ -113,7 +114,13 @@ export default async function TroubleListPage({
             const pageCount = Math.ceil(res.total / rowsPerPage)
 
             if (page > pageCount) {
-              redirect(`/trouble/list?page=${pageCount}&rowsPerPage=${rowsPerPage}&names=${names}`)
+              redirect(
+                urls.build({
+                  route: '/trouble/list',
+                  searchParams: { page: pageCount, rowsPerPage, names },
+                } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> })
+                  .href,
+              )
             }
 
             return (

@@ -14,7 +14,7 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { RELOAD_DELAY } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { updateClientAction } from '~/features/report-contexts/clients/actions/update-client-action'
 import {
@@ -23,6 +23,7 @@ import {
 } from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -56,7 +57,7 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -66,7 +67,7 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
               toast.error(TOAST_MESSAGES.CLIENT.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/client'),
+                  onClick: () => router.push(urls.href({ route: '/client/list' })),
                 },
               })
 
@@ -117,7 +118,9 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
             {getError() && (
               <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
-                <p>{getError()}</p>
+                <p>
+                  {getErrorMessage('client', getError() as Parameters<typeof getErrorMessage>[1])}
+                </p>
               </div>
             )}
             <input {...getInputProps(fields.id, { type: 'hidden' })} />

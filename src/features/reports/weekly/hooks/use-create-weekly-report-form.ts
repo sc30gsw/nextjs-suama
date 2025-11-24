@@ -12,6 +12,7 @@ import {
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
 import type { WeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -33,7 +34,7 @@ export function useCreateWeeklyForm(
     withCallbacks(createWeeklyReportAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.WEEKLY_REPORT.CREATE_SUCCESS)
-        router.push(`/weekly/list/${date.dates}`)
+        router.push(urls.build({ route: '/weekly/list/[dates]', params: { dates: date.dates } }).href)
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
@@ -44,7 +45,7 @@ export function useCreateWeeklyForm(
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 

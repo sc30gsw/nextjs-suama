@@ -5,6 +5,7 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
+import { urls } from '~/lib/urls'
 
 export default function UnauthorizedPage() {
   return (
@@ -28,7 +29,7 @@ export default function UnauthorizedPage() {
           </Card.Header>
           <Card.Content className="flex flex-col items-center">
             <div className="mb-4 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href="/sign-in">
+              <Link href={urls.href({ route: '/sign-in' })}>
                 <Button intent="outline" className="flex items-center gap-2">
                   ログイン
                   <LinkLoadingIndicator>

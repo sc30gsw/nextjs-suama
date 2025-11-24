@@ -11,7 +11,7 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { RELOAD_DELAY } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { updateTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/update-trouble-category-action'
 import {
@@ -20,6 +20,7 @@ import {
 } from '~/features/report-contexts/troubles/types/schemas/edit-trouble-category-input-schema'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -53,7 +54,7 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -63,7 +64,7 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
               toast.error(TOAST_MESSAGES.TROUBLE.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/trouble'),
+                  onClick: () => router.push(urls.href({ route: '/trouble/list' })),
                 },
               })
 
@@ -115,7 +116,9 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
             {getError() && (
               <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
-                <p>{getError()}</p>
+                <p>
+                  {getErrorMessage('common', getError() as Parameters<typeof getErrorMessage>[1])}
+                </p>
               </div>
             )}
             <input {...getInputProps(fields.id, { type: 'hidden' })} />

@@ -3,11 +3,12 @@ import type { ReactNode } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
-import { DAILY_REPORT_BASE_PATH, DAILY_REPORT_KIND } from '~/constants/daily-report-kind'
+import { DAILY_REPORT_KIND } from '~/constants/daily-report-kind'
 import { DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
+import { urls } from '~/lib/urls'
 import { dateUtils } from '~/utils/date-utils'
 
 type DailyReportsTabContentProps = {
@@ -41,19 +42,27 @@ export async function DailyReportsTabContent({ reportsTable, kind }: DailyReport
   const pageCount = Math.ceil(total / rowsPerPage)
 
   if (page > pageCount && pageCount > 0) {
-    const searchParams = new URLSearchParams({
-      tab,
-      page: pageCount.toString(),
-      rowsPerPage: rowsPerPage.toString(),
-      startDate: dateUtils.formatDateParamForUrl(startDate),
-      endDate: dateUtils.formatDateParamForUrl(endDate),
-      userNames: userNames.join(','),
-    }).toString()
-
     const redirectKindPath =
       kind === DAILY_REPORT_KIND.MINE ? DAILY_REPORT_KIND.MINE : DAILY_REPORT_KIND.EVERYONE
 
-    redirect(`${DAILY_REPORT_BASE_PATH}/${redirectKindPath}/?${searchParams}`)
+    const route =
+      redirectKindPath === DAILY_REPORT_KIND.MINE
+        ? urls.href({ route: '/daily/mine' })
+        : urls.href({ route: '/daily/every' })
+
+    redirect(
+      urls.build({
+        route,
+        searchParams: {
+          tab,
+          page: pageCount,
+          rowsPerPage,
+          startDate: dateUtils.formatDateParamForUrl(startDate),
+          endDate: dateUtils.formatDateParamForUrl(endDate),
+          userNames: userNames.join(','),
+        },
+      } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> }).href,
+    )
   }
 
   return (

@@ -2,19 +2,21 @@
 
 import { usePathname } from 'next/navigation'
 import { AppBreadcrumbs } from '~/components/ui/app-breadcrumbs'
+import { urls } from '~/lib/urls'
+import type { NextjsSuamaRoute } from '../../../../../../typed-url'
 
 const ITEMS = [
-  { path: '/daily', name: '日報作成' },
+  { path: urls.href({ route: '/daily' }), name: '日報作成' },
   {
-    path: '/daily/today',
+    path: urls.href({ route: '/daily/today' }),
     name: '本日の日報',
   },
   {
-    path: '/daily/mine',
+    path: urls.href({ route: '/daily/mine' }),
     name: '自分の日報',
   },
-  { path: '/daily/every', name: 'みんなの日報' },
-] as const satisfies readonly Record<'path' | 'name', string>[]
+  { path: urls.href({ route: '/daily/every' }), name: 'みんなの日報' },
+] as const satisfies readonly Record<'path' | 'name', NextjsSuamaRoute | string>[]
 
 export default function DailyBreadcrumbsDefaultPage() {
   const pathname = usePathname()
