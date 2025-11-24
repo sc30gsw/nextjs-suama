@@ -9,9 +9,10 @@ import {
 } from '@tanstack/react-table'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
-import { Button } from '~/components/ui/intent-ui/button'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Note } from '~/components/ui/intent-ui/note'
 import { Table } from '~/components/ui/intent-ui/table'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
@@ -69,12 +70,14 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
 
             {isCurrentUser && (
               <div className="flex gap-2">
-                <Link href={`/daily/edit/${report.id}`}>
-                  <Button intent="outline" size="sm">
-                    修正
-                    <IconDocumentEdit />
-                  </Button>
-                </Link>
+                <Tooltip delay={0}>
+                  <Link href={`/daily/edit/${report.id}`}>
+                    <Tooltip.Trigger className={buttonStyles({ size: 'sm' })}>
+                      <IconDocumentEdit />
+                    </Tooltip.Trigger>
+                  </Link>
+                  <Tooltip.Content>編集</Tooltip.Content>
+                </Tooltip>
 
                 <DailyReportDeleteButton id={report.id} />
               </div>
