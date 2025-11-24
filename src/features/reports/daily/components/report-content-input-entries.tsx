@@ -4,17 +4,19 @@ import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import type { Key } from 'react-aria-components'
 import { filter, pipe } from 'remeda'
-import { Button } from '~/components/ui/intent-ui/button'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { NumberField } from '~/components/ui/intent-ui/number-field'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { TotalHours } from '~/features/reports/components/total-hours'
 import {
   inputCountSearchParamsParsers,
   type ReportEntry,
 } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
+import { cn } from '~/utils/classes'
 
 type ReportContentInputEntriesProps = {
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
@@ -129,9 +131,15 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
 
   return (
     <>
-      <Button size="sq-sm" onPress={handleAdd} className="mt-4 rounded-full">
-        <IconPlus />
-      </Button>
+      <Tooltip delay={0}>
+        <Tooltip.Trigger
+          className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+          onPress={handleAdd}
+        >
+          <IconPlus />
+        </Tooltip.Trigger>
+        <Tooltip.Content>職務内容を追加</Tooltip.Content>
+      </Tooltip>
       {reportEntry.entries.map((entry, index) => {
         const filteredProjects = entry.mission
           ? pipe(
@@ -216,14 +224,18 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
               onChange={(val) => handleChangeValue(entry.id, val)}
               className="col-span-4"
             />
-            <Button
-              size="sq-xs"
-              intent="danger"
-              onPress={() => handleRemove(entry.id)}
-              className="col-span-1 mt-6 rounded-full"
-            >
-              <IconMinus />
-            </Button>
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(
+                  buttonStyles({ size: 'sq-xs', intent: 'danger', isCircle: true }),
+                  'mt-6',
+                )}
+                onPress={() => handleRemove(entry.id)}
+              >
+                <IconMinus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>職務内容を削除</Tooltip.Content>
+            </Tooltip>
           </div>
         )
       })}
