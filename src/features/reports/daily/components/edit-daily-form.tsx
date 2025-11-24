@@ -9,7 +9,6 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
-import { format } from 'date-fns'
 import { type JSX, use } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
@@ -25,7 +24,6 @@ import { TotalHours } from '~/features/reports/components/total-hours'
 import { EditDailyReportContentInputEntries } from '~/features/reports/daily/components/edit-daily-report-content-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
-import { DATE_FORMAT } from '~/utils/date-utils'
 
 type EditDailyFormProps = {
   reportData: Awaited<ReturnType<typeof getDailyReportById>>
@@ -87,7 +85,7 @@ export function EditDailyForm({
           {/* // ? https://ja.conform.guide/integration/ui-libraries */}
           <DatePicker
             isDisabled={isPending}
-            value={parseDate(reportDate.value ?? format(new Date(), DATE_FORMAT))}
+            value={reportDate.value ? parseDate(reportDate.value) : null}
             onChange={(newValue) => {
               if (newValue) {
                 reportDate.change(newValue.toString())

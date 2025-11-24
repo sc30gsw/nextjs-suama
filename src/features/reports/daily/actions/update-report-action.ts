@@ -46,7 +46,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     where: and(eq(dailyReports.userId, session.user.id), eq(dailyReports.reportDate, reportDate)),
   })
 
-  if (existingReport) {
+  if (existingReport && existingReport.id !== reportId) {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.ALREADY_EXISTS] },
     })
