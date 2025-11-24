@@ -111,6 +111,7 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
   const reportDate = useControl({
     defaultValue: fields.reportDate.initialValue,
   })
+
   const remote = useInputControl(fields.remote)
 
   const dailyReports = fields.reportEntries.getFieldList()
