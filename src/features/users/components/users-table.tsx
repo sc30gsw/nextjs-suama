@@ -18,7 +18,7 @@ import { paginationSearchParamsParsers } from '~/types/search-params/pagination-
 
 type UserTableData = Pick<
   InferResponseType<typeof client.api.users.$get, 200>['users'][number],
-  'id' | 'name' | 'image'
+  'id' | 'email' | 'name' | 'image'
 > &
   Record<'operate' | 'currentUserId', string>
 
@@ -29,8 +29,8 @@ const COLUMNS = [
     header: 'アイコン',
     cell: ({ row }) => <Avatar initials={row.original.name.charAt(0)} src={row.original.image} />,
   }),
-  columnHelper.accessor('id', {
-    header: 'ユーザーID',
+  columnHelper.accessor('email', {
+    header: 'メールアドレス',
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('name', {
@@ -68,7 +68,8 @@ type UsersTableProps = {
 
 export function UsersTable({ users, currentUserId }: UsersTableProps) {
   const initialData: UserTableData[] = users.users.map((user) => ({
-    id: user.id.toString(),
+    id: user.id,
+    email: user.email,
     name: user.name,
     image: user.image,
     operate: '',
