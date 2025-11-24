@@ -56,7 +56,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconReport stroke={1} size={20} />
               <SidebarLabel>日報</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/daily/today" tooltip="本日の日報">
                 <IconCalendarEvent stroke={1} size={20} />
                 <SidebarLabel>本日の日報</SidebarLabel>
@@ -79,7 +79,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconCalendarDays />
               <SidebarLabel>週報</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/weekly" tooltip="今年の週報">
                 <IconCalendarDays />
                 <SidebarLabel>今年の週報</SidebarLabel>
@@ -92,7 +92,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconCirclePerson />
               <SidebarLabel>ユーザー</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/users" tooltip="ユーザー一覧">
                 <IconPeople />
                 <SidebarLabel>ユーザー一覧</SidebarLabel>
@@ -105,7 +105,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconBuilding stroke={1} size={20} />
               <SidebarLabel>クライアント</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/client/list" tooltip="クライアント一覧">
                 <IconBuildings stroke={1} size={20} />
                 <SidebarLabel>クライアント一覧</SidebarLabel>
@@ -118,7 +118,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconBrandProducthunt />
               <SidebarLabel>プロジェクト</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/project/list" tooltip="プロジェクト一覧">
                 <IconBrandProducthunt />
                 <SidebarLabel>プロジェクト一覧</SidebarLabel>
@@ -131,7 +131,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconList stroke={1} size={20} />
               <SidebarLabel>ミッション</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/mission/list" tooltip="ミッション一覧">
                 <IconList stroke={1} size={20} />
                 <SidebarLabel>ミッション一覧</SidebarLabel>
@@ -144,7 +144,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconHelpTriangle stroke={1} size={20} />
               <SidebarLabel>困っていることカテゴリー</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/trouble/list" tooltip="カテゴリー一覧">
                 <IconHelpTriangle stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
@@ -157,7 +157,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconBulb stroke={1} size={20} />
               <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
+            <SidebarDisclosurePanel className="ml-7">
               <SidebarItem href="/appeal/list" tooltip="カテゴリー一覧">
                 <IconBulb stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
