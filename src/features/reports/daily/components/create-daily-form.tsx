@@ -210,6 +210,20 @@ export function CreateDailyForm({ promises }: CreateDailyFormProps) {
             )
           })}
 
+          {troubleEntries.length >
+            0(
+              <Tooltip delay={0}>
+                <Tooltip.Trigger
+                  className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                  onPress={handleAddTrouble}
+                  isDisabled={isPending}
+                >
+                  <IconPlus />
+                </Tooltip.Trigger>
+                <Tooltip.Content>困っていることを追加</Tooltip.Content>
+              </Tooltip>,
+            )}
+
           <Separator orientation="horizontal" />
           <div className="mt-4 flex items-center">
             <Heading level={3}>アピールポイント</Heading>
@@ -236,6 +250,19 @@ export function CreateDailyForm({ promises }: CreateDailyFormProps) {
               onChangeCategory={handleChangeAppealCategory}
             />
           ))}
+
+          {appealEntries.length > 0 && (
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAddAppeal}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
+            </Tooltip>
+          )}
 
           <Separator orientation="horizontal" />
           <div className="my-4 flex items-center justify-end gap-x-2">
