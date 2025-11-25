@@ -56,7 +56,7 @@ export default async function EveryDailyReportPage({
 
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
         https://github.com/vercel/next.js/issues/84489 */}
-      <DailyReportsTabs currentTab={tab}>
+      <DailyReportsTabs>
         <TabPanel id={DAILY_REPORT_TABS_MAP.DATE.id}>
           <Suspense
             key={`date-${JSON.stringify(everyPageSearchParams)}`}
