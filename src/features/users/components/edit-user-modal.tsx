@@ -8,12 +8,13 @@ import { useActionState, useRef, useState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
-import { Button } from '~/components/ui/intent-ui/button'
+import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { FileTrigger } from '~/components/ui/intent-ui/file-trigger'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB, RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
@@ -117,10 +118,12 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
 
   return (
     <Modal>
-      <Button size="sm" onPress={toggle}>
-        編集
-        <IconDocumentEdit />
-      </Button>
+      <Tooltip delay={0}>
+        <Tooltip.Trigger className={buttonStyles({ size: 'sm' })} onPress={toggle}>
+          <IconDocumentEdit />
+        </Tooltip.Trigger>
+        <Tooltip.Content>編集</Tooltip.Content>
+      </Tooltip>
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
           <Modal.Title>ユーザーを編集する</Modal.Title>

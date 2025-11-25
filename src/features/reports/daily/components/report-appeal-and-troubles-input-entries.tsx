@@ -1,7 +1,8 @@
 'use client'
 
 import { IconPlus } from '@intentui/icons'
-import { Button } from '~/components/ui/intent-ui/button'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import type { Kind } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
 import { ReportEntryForm } from '~/features/reports/daily/components/report-entry-form'
 import { useAppealOrTroubleEntries } from '~/features/reports/daily/hooks/use-appeal-or-trouble-entries'
@@ -9,6 +10,7 @@ import type {
   AppealCategoriesResponse,
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
+import { cn } from '~/utils/classes'
 
 type ReportAppealAndTroublesInputEntriesProps<
   T extends
@@ -48,9 +50,17 @@ export function ReportAppealAndTroubleInputEntries<
 
   return (
     <>
-      <Button size="sq-sm" onPress={handleAdd} className="mt-4 rounded-full">
-        <IconPlus />
-      </Button>
+      <Tooltip delay={0}>
+        <Tooltip.Trigger
+          className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+          onPress={handleAdd}
+        >
+          <IconPlus />
+        </Tooltip.Trigger>
+        <Tooltip.Content>
+          {kind === 'appeal' ? 'アピールポイント' : '困っていること'}を追加
+        </Tooltip.Content>
+      </Tooltip>
 
       {kind === 'trouble' &&
         mutableUnresolvedTroubles.map((entry, index) => (
@@ -118,9 +128,17 @@ export function ReportAppealAndTroubleInputEntries<
       ))}
 
       {entries.length >= 1 && (
-        <Button size="sm" onPress={handleAdd} className="mt-4 rounded-full">
-          <IconPlus />
-        </Button>
+        <Tooltip delay={0}>
+          <Tooltip.Trigger
+            className={cn(buttonStyles({ size: 'sm', isCircle: true }), 'mt-4')}
+            onPress={handleAdd}
+          >
+            <IconPlus />
+          </Tooltip.Trigger>
+          <Tooltip.Content>
+            {kind === 'appeal' ? 'アピールポイント' : '困っていること'}を追加
+          </Tooltip.Content>
+        </Tooltip>
       )}
     </>
   )

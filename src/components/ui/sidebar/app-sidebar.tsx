@@ -2,21 +2,23 @@
 
 import {
   IconBrandProducthunt,
-  IconCalendarDays,
-  IconCirclePerson,
-  IconHome,
-  IconPeople,
-} from '@intentui/icons'
-import {
   IconBuilding,
   IconBuildings,
   IconBulb,
+  IconCalendar,
   IconCalendarEvent,
   IconCalendarStats,
   IconCalendarUser,
+  IconCalendarWeek,
+  IconCategory,
+  IconFolder,
   IconHelpTriangle,
+  IconHome,
   IconList,
+  IconListCheck,
   IconReport,
+  IconUser,
+  IconUsers,
 } from '@tabler/icons-react'
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
@@ -44,7 +46,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
           className="flex items-center gap-x-2 group-data-[state=collapsed]:justify-center"
           href={urls.href({ route: '/daily' })}
         >
-          <IconHome className="size-5 text-muted-fg" />
+          <IconHome stroke={1} size={20} className="text-muted-fg" />
           <SidebarLabel className="font-medium">SUAMA</SidebarLabel>
         </Link>
       </SidebarHeader>
@@ -56,8 +58,8 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconReport stroke={1} size={20} />
               <SidebarLabel>日報</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/daily/today' })} tooltip="本日の日報">
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/daily/today" tooltip="本日の日報">
                 <IconCalendarEvent stroke={1} size={20} />
                 <SidebarLabel>本日の日報</SidebarLabel>
               </SidebarItem>
@@ -76,12 +78,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
           <SidebarDisclosure id={2} className="py-3">
             <SidebarDisclosureTrigger>
-              <IconCalendarDays />
+              <IconCalendarWeek stroke={1} size={20} />
               <SidebarLabel>週報</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/weekly' })} tooltip="今年の週報">
-                <IconCalendarDays />
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/weekly" tooltip="今年の週報">
+                <IconCalendar stroke={1} size={20} />
                 <SidebarLabel>今年の週報</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -89,12 +91,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
           <SidebarDisclosure id={3} className="py-3">
             <SidebarDisclosureTrigger>
-              <IconCirclePerson />
+              <IconUser stroke={1} size={20} />
               <SidebarLabel>ユーザー</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/users' })} tooltip="ユーザー一覧">
-                <IconPeople />
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/users" tooltip="ユーザー一覧">
+                <IconUsers stroke={1} size={20} />
                 <SidebarLabel>ユーザー一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -105,8 +107,8 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconBuilding stroke={1} size={20} />
               <SidebarLabel>クライアント</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/client/list' })} tooltip="クライアント一覧">
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/client/list" tooltip="クライアント一覧">
                 <IconBuildings stroke={1} size={20} />
                 <SidebarLabel>クライアント一覧</SidebarLabel>
               </SidebarItem>
@@ -115,12 +117,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
           <SidebarDisclosure id={5} className="py-3">
             <SidebarDisclosureTrigger>
-              <IconBrandProducthunt />
+              <IconBrandProducthunt stroke={1} size={20} />
               <SidebarLabel>プロジェクト</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/project/list' })} tooltip="プロジェクト一覧">
-                <IconBrandProducthunt />
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/project/list" tooltip="プロジェクト一覧">
+                <IconFolder stroke={1} size={20} />
                 <SidebarLabel>プロジェクト一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -131,9 +133,9 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconList stroke={1} size={20} />
               <SidebarLabel>ミッション</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/mission/list' })} tooltip="ミッション一覧">
-                <IconList stroke={1} size={20} />
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/mission/list" tooltip="ミッション一覧">
+                <IconListCheck stroke={1} size={20} />
                 <SidebarLabel>ミッション一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -144,9 +146,9 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconHelpTriangle stroke={1} size={20} />
               <SidebarLabel>困っていることカテゴリー</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/trouble/list' })} tooltip="カテゴリー一覧">
-                <IconHelpTriangle stroke={1} size={20} />
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/trouble/list" tooltip="カテゴリー一覧">
+                <IconCategory stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -157,9 +159,9 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               <IconBulb stroke={1} size={20} />
               <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel>
-              <SidebarItem href={urls.href({ route: '/appeal/list' })} tooltip="カテゴリー一覧">
-                <IconBulb stroke={1} size={20} />
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+              <SidebarItem href="/appeal/list" tooltip="カテゴリー一覧">
+                <IconCategory stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>

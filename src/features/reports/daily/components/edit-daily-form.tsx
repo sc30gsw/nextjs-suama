@@ -10,13 +10,14 @@ import {
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
 import { type JSX, use } from 'react'
-import { Button } from '~/components/ui/intent-ui/button'
+import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { DatePicker } from '~/components/ui/intent-ui/date-picker'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { getErrorMessage } from '~/constants/error-message'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
@@ -24,6 +25,8 @@ import { TotalHours } from '~/features/reports/components/total-hours'
 import { EditDailyReportContentInputEntries } from '~/features/reports/daily/components/edit-daily-report-content-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
+import { cn } from '~/utils/classes'
+import { DATE_FORMAT } from '~/utils/date-utils'
 
 type EditDailyFormProps = {
   reportData: Awaited<ReturnType<typeof getDailyReportById>>
@@ -101,14 +104,16 @@ export function EditDailyForm({
             disabled={isPending}
           />
 
-          <Button
-            size="sq-sm"
-            onPress={handleAdd}
-            className="mt-4 rounded-full"
-            isDisabled={isPending}
-          >
-            <IconPlus />
-          </Button>
+          <Tooltip delay={0}>
+            <Tooltip.Trigger
+              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+              onPress={handleAdd}
+              isDisabled={isPending}
+            >
+              <IconPlus />
+            </Tooltip.Trigger>
+            <Tooltip.Content>職務内容を追加</Tooltip.Content>
+          </Tooltip>
 
           {dailyReports.map((dailyReport) => (
             <EditDailyReportContentInputEntries
@@ -119,17 +124,21 @@ export function EditDailyForm({
               projects={projectsResponse.projects}
               missions={missionsResponse.missions}
               removeButton={
-                <Button
-                  size="sq-sm"
-                  intent="danger"
-                  onPress={() => {
-                    handleRemove(dailyReport.getFieldset().id.value ?? '')
-                  }}
-                  isDisabled={isPending}
-                  className="mt-6 rounded-full"
-                >
-                  <IconMinus />
-                </Button>
+                <Tooltip delay={0}>
+                  <Tooltip.Trigger
+                    className={cn(
+                      buttonStyles({ size: 'sq-sm', intent: 'danger', isCircle: true }),
+                      'mt-6',
+                    )}
+                    onPress={() => {
+                      handleRemove(dailyReport.getFieldset().id.value ?? '')
+                    }}
+                    isDisabled={isPending}
+                  >
+                    <IconMinus />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>職務内容を削除</Tooltip.Content>
+                </Tooltip>
               }
             />
           ))}
