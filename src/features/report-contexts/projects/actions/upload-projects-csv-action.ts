@@ -1,5 +1,6 @@
 'use server'
 
+import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
 import { revalidateTag } from 'next/cache'
 import Papa from 'papaparse'
@@ -26,11 +27,15 @@ const ALLOWED_COLUMNS = [
   'isArchived',
 ] as const satisfies ReadonlyArray<keyof ProjectsInsert>
 
-export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
+export async function uploadProjectsCsvAction(
+  _: unknown,
+  formData: FormData,
+): Promise<SubmissionResult<string[]>> {
   const session = await getServerSession()
 
   if (!session) {
     return {
+      status: 'error',
       error: {
         message: [ERROR_STATUS.UNAUTHORIZED],
       },
@@ -42,6 +47,7 @@ export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
 
   if (!fileValidation.success) {
     return {
+      status: 'error',
       error: {
         message: fileValidation.error.issues.map((issue) => issue.message),
       },
@@ -53,13 +59,14 @@ export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
   try {
     const fileText = await validatedFile.text()
 
-    return new Promise<{ error?: Record<'message', string[]>; success?: boolean }>((resolve) => {
+    return new Promise<SubmissionResult<string[]>>((resolve) => {
       Papa.parse<Record<string, string>>(fileText, {
         header: true,
         skipEmptyLines: true,
         complete: async (results) => {
           if (results.errors.length > 0) {
             resolve({
+              status: 'error',
               error: {
                 message: [`${CSV_ERROR_MESSAGES.PARSE_FAILED}: ${results.errors[0].message}`],
               },
@@ -72,6 +79,7 @@ export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
 
           if (rows.length === 0) {
             resolve({
+              status: 'error',
               error: {
                 message: [CSV_ERROR_MESSAGES.NO_DATA],
               },
@@ -89,6 +97,7 @@ export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
 
           if (missingColumns.length > 0) {
             resolve({
+              status: 'error',
               error: {
                 message: [`${CSV_ERROR_MESSAGES.MISSING_COLUMNS}: ${missingColumns.join(', ')}`],
               },
@@ -99,6 +108,7 @@ export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
 
           if (invalidColumns.length > 0) {
             resolve({
+              status: 'error',
               error: {
                 message: [`${CSV_ERROR_MESSAGES.INVALID_COLUMNS}: ${invalidColumns.join(', ')}`],
               },
@@ -178,10 +188,11 @@ export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
             revalidateTag(GET_PROJECTS_CACHE_KEY)
 
             resolve({
-              success: true,
+              status: 'success',
             })
           } catch (error) {
             resolve({
+              status: 'error',
               error: {
                 message: [
                   error instanceof Error ? error.message : CSV_ERROR_MESSAGES.REGISTRATION_FAILED,
@@ -194,6 +205,7 @@ export async function uploadProjectsCsvAction(_: unknown, formData: FormData) {
     })
   } catch (error) {
     return {
+      status: 'error',
       error: {
         message: [error instanceof Error ? error.message : ERROR_STATUS.SOMETHING_WENT_WRONG],
       },

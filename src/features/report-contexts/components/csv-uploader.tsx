@@ -1,10 +1,12 @@
 'use client'
 
+import type { SubmissionResult } from '@conform-to/react'
 import { IconTriangleExclamation } from '@intentui/icons'
 import { IconFileUpload } from '@tabler/icons-react'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
 import { FileTrigger } from '~/components/ui/intent-ui/file-trigger'
+import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { uploadAppealCategoriesCsvAction } from '~/features/report-contexts/appeals/actions/upload-appeal-categories-csv-action'
 import { uploadClientsCsvAction } from '~/features/report-contexts/clients/actions/upload-clients-csv-action'
@@ -22,13 +24,7 @@ const UPLOAD_ACTIONS = {
   カテゴリー: uploadTroubleCategoriesCsvAction,
 } as const satisfies Record<
   ReportContextMenuLabel,
-  (
-    _: unknown,
-    formData: FormData,
-  ) => Promise<{
-    error?: Record<'message', string[]>
-    success?: boolean
-  }>
+  (_: unknown, formData: FormData) => Promise<SubmissionResult<string[]>>
 >
 
 const TOAST_MESSAGE_KEYS = {
@@ -62,7 +58,7 @@ export function CsvUploader({
         // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
-        }, 2000)
+        }, RELOAD_DELAY)
       },
 
       onError(result) {
