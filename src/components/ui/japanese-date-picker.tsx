@@ -32,12 +32,14 @@ type JapaneseDatePickerOverlayProps = Omit<PopoverProps, 'children'> & {
   range?: boolean
   visibleDuration?: DateDuration
   pageBehavior?: 'visible' | 'single'
+  isDateUnavailable?: (date: DateValue) => boolean
 }
 
 export function JapaneseDatePickerOverlay({
   visibleDuration = { months: 1 },
   pageBehavior = 'visible',
   range,
+  isDateUnavailable,
   ...props
 }: JapaneseDatePickerOverlayProps) {
   const isMobile = useMediaQuery('(max-width: 767px)') ?? false
@@ -48,7 +50,7 @@ export function JapaneseDatePickerOverlay({
         {range ? (
           <JapaneseRangeCalendar pageBehavior={pageBehavior} visibleDuration={visibleDuration} />
         ) : (
-          <JapaneseCalendar />
+          <JapaneseCalendar isDateUnavailable={isDateUnavailable} />
         )}
       </div>
     </Modal.Content>
@@ -64,7 +66,7 @@ export function JapaneseDatePickerOverlay({
       {range ? (
         <JapaneseRangeCalendar pageBehavior={pageBehavior} visibleDuration={visibleDuration} />
       ) : (
-        <JapaneseCalendar />
+        <JapaneseCalendar isDateUnavailable={isDateUnavailable} />
       )}
     </PopoverContent>
   )
@@ -83,7 +85,7 @@ export function JapaneseDatePickerIcon() {
 }
 
 export type JapaneseDatePickerProps<T extends DateValue> = DatePickerPrimitiveProps<T> &
-  Pick<JapaneseDatePickerOverlayProps, 'placement'> &
+  Pick<JapaneseDatePickerOverlayProps, 'placement' | 'isDateUnavailable'> &
   Omit<FieldProps, 'placeholder'>
 
 export function JapaneseDatePicker<T extends DateValue>({
@@ -92,6 +94,7 @@ export function JapaneseDatePicker<T extends DateValue>({
   description,
   errorMessage,
   placement,
+  isDateUnavailable,
   ...props
 }: JapaneseDatePickerProps<T>) {
   return (
@@ -106,7 +109,7 @@ export function JapaneseDatePicker<T extends DateValue>({
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <JapaneseDatePickerOverlay placement={placement} />
+      <JapaneseDatePickerOverlay placement={placement} isDateUnavailable={isDateUnavailable} />
     </DatePickerPrimitive>
   )
 }

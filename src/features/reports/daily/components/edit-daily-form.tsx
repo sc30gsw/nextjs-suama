@@ -9,6 +9,7 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
+import type { Session } from 'better-auth'
 import { use } from 'react'
 import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
@@ -28,12 +29,14 @@ import { TotalHours } from '~/features/reports/components/total-hours'
 import { AppealInputEntries } from '~/features/reports/daily/components/appeal-input-entries'
 import { EditDailyReportContentInputEntries } from '~/features/reports/daily/components/edit-daily-report-content-input-entries'
 import { TroubleInputEntries } from '~/features/reports/daily/components/trouble-input-entries'
+import { useDisabledDates } from '~/features/reports/daily/hooks/use-disabled-dates'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { createEditSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { cn } from '~/utils/classes'
 
 type EditDailyFormProps = {
+  userId: Session['userId']
   reportData: Awaited<ReturnType<typeof getDailyReportById>>
   promises: Promise<
     [
@@ -45,9 +48,14 @@ type EditDailyFormProps = {
   >
 }
 
-export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
+export function EditDailyForm({ userId, reportData, promises }: EditDailyFormProps) {
   const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
     use(promises)
+
+  const { isDateUnavailable, handleFocusChange } = useDisabledDates({
+    userId,
+    excludeReportId: reportData.id,
+  })
 
   const unResolvedTroubles = troubleCategoriesResponse.unResolvedTroubles ?? []
 
@@ -163,6 +171,7 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
             }}
             label="日付"
             className="max-w-3xs"
+            isDateUnavailable={isDateUnavailable}
           />
           <input
             ref={reportDate.register}

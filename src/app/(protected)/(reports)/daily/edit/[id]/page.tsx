@@ -1,3 +1,5 @@
+import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
+import { getMonth, getYear, parseISO } from 'date-fns'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
@@ -10,6 +12,7 @@ import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { EditDailyForm } from '~/features/reports/daily/components/edit-daily-form'
+import { fetchDailyReportDatesQuery } from '~/features/reports/daily/queries/fetcher'
 import { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
@@ -24,9 +27,23 @@ export default async function EditDailyReportPage({
     unauthorized()
   }
 
+  const queryClient = new QueryClient()
+
   const reportId = (await params).id
 
   const reportData = await getDailyReportById(reportId, session.user.id)
+
+  const reportDate = parseISO(reportData.reportDate)
+  await fetchDailyReportDatesQuery(
+    {
+      query: {
+        year: getYear(reportDate).toString(),
+        month: (getMonth(reportDate) + 1).toString(),
+        excludeReportId: reportId,
+      },
+    },
+    session.user.id,
+  ).prefetch(queryClient)
 
   const projectPromise = getProjects(session.user.id, { isArchived: false })
   const missionPromise = getMissions(session.user.id, { isArchived: false })
@@ -64,7 +81,9 @@ export default async function EditDailyReportPage({
           </div>
         }
       >
-        <EditDailyForm reportData={reportData} promises={promises} />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <EditDailyForm userId={session.user.id} reportData={reportData} promises={promises} />
+        </HydrationBoundary>
       </Suspense>
     </div>
   )

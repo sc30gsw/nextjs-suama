@@ -65,17 +65,22 @@ export function JapaneseCalendar<T extends DateValue>({
                 data-saturday={saturday || undefined}
                 data-sunday={sunday || undefined}
                 data-holiday={holiday || undefined}
-                className={({ isSelected, isDisabled }) =>
-                  twMerge(
-                    'relative flex size-11 cursor-default items-center justify-center rounded-lg text-fg tabular-nums outline-hidden hover:bg-secondary-fg/15 sm:size-9 sm:text-sm/6 forced-colors:text-[ButtonText] forced-colors:outline-0',
+                className={({ isSelected, isDisabled, date }) => {
+                  const isUnavailable = props.isDateUnavailable?.(date) ?? false
+
+                  return twMerge(
+                    'relative flex size-11 cursor-default items-center justify-center rounded-lg text-fg tabular-nums outline-hidden sm:size-9 sm:text-sm/6 forced-colors:text-[ButtonText] forced-colors:outline-0',
+                    !isDisabled && !isUnavailable && 'hover:bg-secondary-fg/15',
                     isSelected &&
                       'bg-primary pressed:bg-primary text-primary-fg hover:bg-primary/90 data-invalid:bg-danger data-invalid:text-danger-fg forced-colors:bg-[Highlight] forced-colors:text-[Highlight] forced-colors:data-invalid:bg-[Mark]',
-                    isDisabled && 'text-muted-fg forced-colors:text-[GrayText]',
+                    isDisabled || isUnavailable
+                      ? '!cursor-not-allowed !bg-muted/60 !text-muted-fg !opacity-60 hover:!bg-muted/60 hover:!text-muted-fg forced-colors:!bg-[GrayText] forced-colors:!text-[GrayText]'
+                      : '',
                     date.compare(now) === 0 &&
                       'after:-translate-x-1/2 after:pointer-events-none after:absolute after:start-1/2 after:bottom-1 after:z-10 after:size-[3px] after:rounded-full after:bg-primary selected:after:bg-primary-fg focus-visible:after:bg-primary-fg',
                     className,
                   )
-                }
+                }}
               />
             )
           }}
