@@ -13,6 +13,7 @@ import {
 } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
 import type { UpdateWeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -33,7 +34,7 @@ export function useUpdateWeeklyReportForm(
     withCallbacks(updateWeeklyReportAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.WEEKLY_REPORT.UPDATE_SUCCESS)
-        router.push(`/weekly/list/${dates}`)
+        router.push(urls.build({ route: '/weekly/list/[dates]', params: { dates } }).href)
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
@@ -44,7 +45,7 @@ export function useUpdateWeeklyReportForm(
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -54,7 +55,7 @@ export function useUpdateWeeklyReportForm(
               toast.error(TOAST_MESSAGES.WEEKLY_REPORT.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push(`/weekly/list/${dates}`),
+                  onClick: () => router.push(urls.build({ route: '/weekly/list/[dates]', params: { dates } }).href),
                 },
               })
 
@@ -64,7 +65,7 @@ export function useUpdateWeeklyReportForm(
               toast.error(TOAST_MESSAGES.WEEKLY_REPORT.FORBIDDEN, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push(`/weekly/list/${dates}`),
+                  onClick: () => router.push(urls.build({ route: '/weekly/list/[dates]', params: { dates } }).href),
                 },
               })
 

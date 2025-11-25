@@ -6,6 +6,7 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
+import { urls } from '~/lib/urls'
 
 export default function NotFound() {
   return (
@@ -27,7 +28,7 @@ export default function NotFound() {
           </Card.Header>
           <Card.Content className="flex flex-col items-center">
             <div className="mb-4 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href="/daily">
+              <Link href={urls.href({ route: '/daily' })}>
                 <Button intent="outline" className="flex items-center gap-2">
                   ホームに戻る
                   <LinkLoadingIndicator>

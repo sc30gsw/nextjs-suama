@@ -9,6 +9,7 @@ import { SidebarLabel, useSidebar } from '~/components/ui/intent-ui/sidebar'
 import { ThemeSwitch } from '~/components/ui/theme-switch'
 import { useSignOut } from '~/hooks/use-sign-out'
 import { authClient } from '~/lib/auth-client'
+import { urls } from '~/lib/urls'
 import { cn } from '~/utils/classes'
 
 export function AppSidebarUserMenu() {
@@ -33,7 +34,12 @@ export function AppSidebarUserMenu() {
             <span className="-mt-0.5 block text-muted-fg">{session?.user.email}</span>
           </div>
         </div>
-        <IconChevronLgDown className={cn('ml-2 transition-transform', isOpen && 'rotate-180')} />
+        <IconChevronLgDown
+          className={cn(
+            'ml-2 transition-transform group-data-[state=collapsed]:invisible',
+            isOpen && 'rotate-180',
+          )}
+        />
       </Menu.Trigger>
 
       <Menu.Content
@@ -50,20 +56,20 @@ export function AppSidebarUserMenu() {
           </Menu.Header>
         </Menu.Section>
 
-        <Menu.Item href="/daily">
+        <Menu.Item href={urls.href({ route: '/daily' })}>
           <IconReport stroke={1} size={20} />
           <Menu.Label>日報作成</Menu.Label>
         </Menu.Item>
-        <Menu.Item href="/daily/mine">
+        <Menu.Item href={urls.href({ route: '/daily/mine' })}>
           <IconCalendarUser stroke={1} size={20} />
           <Menu.Label>自分の日報</Menu.Label>
         </Menu.Item>
-        <Menu.Item href="/daily/today">
+        <Menu.Item href={urls.href({ route: '/daily/today' })}>
           <IconCalendarEvent stroke={1} size={20} />
           <Menu.Label>本日の日報</Menu.Label>
         </Menu.Item>
         <Menu.Separator />
-        <Menu.Item href={`/${session?.user.id}/settings`}>
+        <Menu.Item href={urls.build({ route: '/[userId]/settings', params: { userId: session?.user.id ?? '' } }).href}>
           <IconCirclePerson />
           <Menu.Label>ユーザー設定</Menu.Label>
         </Menu.Item>

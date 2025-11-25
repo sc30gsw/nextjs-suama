@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
-import { Button } from '~/components/ui/intent-ui/button'
+import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { RELOAD_DELAY } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { updateAppealCategoryAction } from '~/features/report-contexts/appeals/actions/update-appeal-category-action'
 import {
@@ -20,6 +21,7 @@ import {
 } from '~/features/report-contexts/appeals/types/schemas/edit-appeal-category-input-schema'
 import type { AppealCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -53,7 +55,7 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -63,7 +65,7 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
               toast.error(TOAST_MESSAGES.APPEAL.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/appeal'),
+                  onClick: () => router.push(urls.href({ route: '/appeal/list' })),
                 },
               })
 
@@ -99,10 +101,12 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
 
   return (
     <Modal>
-      <Button size="sm" onPress={toggle}>
-        編集
-        <IconDocumentEdit />
-      </Button>
+      <Tooltip delay={0}>
+        <Tooltip.Trigger className={buttonStyles({ size: 'sm' })} onPress={toggle}>
+          <IconDocumentEdit />
+        </Tooltip.Trigger>
+        <Tooltip.Content>編集</Tooltip.Content>
+      </Tooltip>
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
           <Modal.Title>アピールポイントカテゴリーを編集する</Modal.Title>
@@ -115,7 +119,9 @@ export function EditAppealCategoryModal({ id, name }: EditAppealCategoryModalPro
             {getError() && (
               <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
-                <p>{getError()}</p>
+                <p>
+                  {getErrorMessage('common', getError() as Parameters<typeof getErrorMessage>[1])}
+                </p>
               </div>
             )}
             <input {...getInputProps(fields.id, { type: 'hidden' })} />

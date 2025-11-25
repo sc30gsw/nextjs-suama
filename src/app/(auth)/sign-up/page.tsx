@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Card } from '~/components/ui/intent-ui/card'
 import { SignUpForm } from '~/features/auth/components/sign-up-form'
+import { urls } from '~/lib/urls'
 
 export default function SignUpPage() {
   return (
@@ -8,7 +9,10 @@ export default function SignUpPage() {
       haveAccountArea={
         <div className="flex items-center justify-between">
           アカウントをお持ちですか？
-          <Link className="ml-2 text-blue-500 hover:text-blue-500/80" href="/sign-in">
+          <Link
+            className="ml-2 text-blue-500 hover:text-blue-500/80"
+            href={urls.href({ route: '/sign-in' })}
+          >
             サインイン
           </Link>
         </div>

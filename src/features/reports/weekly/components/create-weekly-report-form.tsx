@@ -4,10 +4,12 @@ import { FormProvider, getFormProps, getInputProps } from '@conform-to/react'
 import { IconMinus, IconPlus, IconSend3, IconTriangleExclamation } from '@intentui/icons'
 import { parseAsBoolean, parseAsJson } from 'nuqs'
 import { use } from 'react'
-import { Button } from '~/components/ui/intent-ui/button'
+import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
+import { getErrorMessage } from '~/constants/error-message'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
@@ -18,6 +20,7 @@ import {
   weeklyInputCountSearchParamsParsers,
   weeklyReportStateSchema,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
+import { cn } from '~/utils/classes'
 
 type CreateWeeklyReportFormProps = {
   promises: Promise<
@@ -80,17 +83,24 @@ export function CreateWeeklyReportForm({
         {getError() && (
           <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
-            <p>{getError()}</p>
+            <p>
+              {getErrorMessage(
+                'weekly-report',
+                getError() as Parameters<typeof getErrorMessage>[1],
+              )}
+            </p>
           </div>
         )}
-        <Button
-          size="sq-sm"
-          onPress={handleAdd}
-          className="mt-4 rounded-full"
-          isDisabled={isPending}
-        >
-          <IconPlus />
-        </Button>
+        <Tooltip delay={0}>
+          <Tooltip.Trigger
+            className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+            onPress={handleAdd}
+            isDisabled={isPending}
+          >
+            <IconPlus />
+          </Tooltip.Trigger>
+          <Tooltip.Content>職務内容を追加</Tooltip.Content>
+        </Tooltip>
       </div>
       <FormProvider context={form.context}>
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
@@ -106,30 +116,36 @@ export function CreateWeeklyReportForm({
               missions={missionsResponse.missions}
               lastWeeklyReportMissions={lastWeeklyReportMissions}
               removeButton={
-                <Button
-                  size="sq-sm"
-                  intent="danger"
-                  onPress={() => {
-                    handleRemove(weeklyReport.getFieldset().id.value ?? '')
-                  }}
-                  isDisabled={isPending}
-                  className="mt-6 rounded-full"
-                >
-                  <IconMinus />
-                </Button>
+                <Tooltip delay={0}>
+                  <Tooltip.Trigger
+                    className={cn(
+                      buttonStyles({ size: 'sq-sm', intent: 'danger', isCircle: true }),
+                      'mt-6',
+                    )}
+                    onPress={() => {
+                      handleRemove(weeklyReport.getFieldset().id.value ?? '')
+                    }}
+                    isDisabled={isPending}
+                  >
+                    <IconMinus />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>職務内容を削除</Tooltip.Content>
+                </Tooltip>
               }
             />
           ))}
 
           {weeklyReports.length >= 1 && (
-            <Button
-              size="sq-sm"
-              onPress={handleAdd}
-              className="mt-4 rounded-full"
-              isDisabled={isPending}
-            >
-              <IconPlus />
-            </Button>
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAdd}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>職務内容を追加</Tooltip.Content>
+            </Tooltip>
           )}
 
           <Separator orientation="horizontal" />

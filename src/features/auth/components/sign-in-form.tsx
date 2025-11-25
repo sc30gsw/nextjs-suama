@@ -13,7 +13,7 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { signInAction } from '~/features/auth/actions/sign-in-action'
 import {
@@ -23,6 +23,7 @@ import {
 
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -40,7 +41,7 @@ export function SignInForm({
     withCallbacks(signInAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
-        router.push('/daily')
+        router.push(urls.href({ route: '/daily' }))
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
@@ -92,7 +93,7 @@ export function SignInForm({
           {getError() && (
             <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
               <IconTriangleExclamation className="size-4" />
-              <p>{getError()}</p>
+              <p>{getErrorMessage('auth', getError() as Parameters<typeof getErrorMessage>[1])}</p>
             </div>
           )}
           <div>
@@ -117,7 +118,10 @@ export function SignInForm({
             <span id={fields.password.errorId} className="text-red-500 text-sm">
               {fields.password.errors}
             </span>
-            <Link href={'/forgot-password'} className="mt-2 text-blue-500 hover:text-blue-500/80">
+            <Link
+              href={urls.href({ route: '/forgot-password' })}
+              className="mt-2 text-blue-500 hover:text-blue-500/80"
+            >
               パスワードをお忘れですか？
             </Link>
           </div>
@@ -167,7 +171,7 @@ export function SignInForm({
                 }
 
                 toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
-                router.push('/daily')
+                router.push(urls.href({ route: '/daily' }))
               })
             }}
             className="w-full"

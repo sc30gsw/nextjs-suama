@@ -1,8 +1,9 @@
 import { IconMinus } from '@intentui/icons'
-import { Button } from '~/components/ui/intent-ui/button'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { Textarea } from '~/components/ui/intent-ui/textarea'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import type { Kind } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
 import type { useAppealOrTroubleEntries } from '~/features/reports/daily/hooks/use-appeal-or-trouble-entries'
 import type {
@@ -10,6 +11,7 @@ import type {
   TroubleCategoriesResponse,
 } from '~/features/reports/daily/types/api-response'
 import type { AppealsAndTroublesEntry } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import { cn } from '~/utils/classes'
 
 type Item =
   | AppealCategoriesResponse['appealCategories'][number]
@@ -87,14 +89,20 @@ export function ReportEntryForm({
           解決済み
         </Checkbox>
       ) : (
-        <Button
-          size="sq-sm"
-          intent="danger"
-          onPress={() => onRemove(entry.id)}
-          className="col-span-1 mt-6 rounded-full"
-        >
-          <IconMinus />
-        </Button>
+        <Tooltip delay={0}>
+          <Tooltip.Trigger
+            className={cn(
+              buttonStyles({ size: 'sq-sm', intent: 'danger', isCircle: true }),
+              'mt-6',
+            )}
+            onPress={() => onRemove(entry.id)}
+          >
+            <IconMinus />
+          </Tooltip.Trigger>
+          <Tooltip.Content>
+            {kind === 'appeal' ? 'アピールポイント' : '困っていること'}を削除
+          </Tooltip.Content>
+        </Tooltip>
       )}
     </div>
   )

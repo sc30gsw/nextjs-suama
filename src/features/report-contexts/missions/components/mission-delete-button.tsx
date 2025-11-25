@@ -2,8 +2,9 @@ import { IconTrashEmpty } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
-import { Button } from '~/components/ui/intent-ui/button'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
@@ -69,9 +70,15 @@ export function MissionDeleteButton({ id }: MissionDeleteButtonProps) {
   }
 
   return (
-    <Button intent="danger" size="sm" isDisabled={isPending} onPress={handleDelete}>
-      削除
-      {isPending ? <Loader /> : <IconTrashEmpty />}
-    </Button>
+    <Tooltip delay={0}>
+      <Tooltip.Trigger
+        className={buttonStyles({ size: 'sm', intent: 'danger' })}
+        isDisabled={isPending}
+        onPress={handleDelete}
+      >
+        {isPending ? <Loader /> : <IconTrashEmpty />}
+      </Tooltip.Trigger>
+      <Tooltip.Content>削除</Tooltip.Content>
+    </Tooltip>
   )
 }

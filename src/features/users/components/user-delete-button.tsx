@@ -3,13 +3,15 @@ import type { InferResponseType } from 'hono'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
-import { Button } from '~/components/ui/intent-ui/button'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteUserAction } from '~/features/users/actions/delete-user-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 
 type UserDeleteButtonProps = Pick<
@@ -58,7 +60,7 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.USER.DELETE_SUCCESS)
-        router.push('/sign-in')
+        router.push(urls.href({ route: '/sign-in' }))
       } catch (_) {
         toast.error(TOAST_MESSAGES.USER.DELETE_FAILED)
       }
@@ -66,9 +68,15 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
   }
 
   return (
-    <Button intent="danger" size="sm" isDisabled={isPending} onPress={handleDelete}>
-      削除
-      {isPending ? <Loader /> : <IconTrashEmpty />}
-    </Button>
+    <Tooltip delay={0}>
+      <Tooltip.Trigger
+        className={buttonStyles({ size: 'sm', intent: 'danger' })}
+        isDisabled={isPending}
+        onPress={handleDelete}
+      >
+        {isPending ? <Loader /> : <IconTrashEmpty />}
+      </Tooltip.Trigger>
+      <Tooltip.Content>削除</Tooltip.Content>
+    </Tooltip>
   )
 }

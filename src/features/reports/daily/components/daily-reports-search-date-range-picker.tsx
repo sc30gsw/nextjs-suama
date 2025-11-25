@@ -3,7 +3,7 @@
 import { type CalendarDate, parseDate } from '@internationalized/date'
 import { format } from 'date-fns'
 import { useQueryStates } from 'nuqs'
-import { DateRangePicker } from '~/components/ui/intent-ui/date-range-picker'
+import { JapaneseDateRangePicker } from '~/components/ui/japanese-date-picker'
 import { dailyReportSearchParamsParsers } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { DATE_FORMAT } from '~/utils/date-utils'
 
@@ -19,7 +19,7 @@ export function DailyReportsSearchDateRangePicker() {
       : undefined
 
   return (
-    <DateRangePicker
+    <JapaneseDateRangePicker
       defaultValue={defaultValue}
       startName="startDate"
       endName="endDate"

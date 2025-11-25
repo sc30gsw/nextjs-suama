@@ -288,3 +288,35 @@
   outline: 1px solid var(--primary);
   transform: translateZ(0);
 }
+
+:root {
+  --calendar-saturday: oklch(0.546 0.245 250);
+  --calendar-sunday: oklch(0.577 0.245 27.325);
+  --calendar-holiday: oklch(0.577 0.245 27.325);
+}
+
+.dark {
+  --calendar-saturday: oklch(0.65 0.2 250);
+  --calendar-sunday: oklch(0.65 0.2 27.325);
+  --calendar-holiday: oklch(0.65 0.2 27.325);
+}
+
+[data-saturday="true"]:not([data-selected]) {
+  color: var(--calendar-saturday) !important;
+}
+
+[data-sunday="true"]:not([data-selected]) {
+  color: var(--calendar-sunday) !important;
+}
+
+[data-holiday="true"]:not([data-selected]) {
+  color: var(--calendar-holiday) !important;
+}
+
+[data-slot="calendar-header-cell"][data-saturday="true"] {
+  color: var(--calendar-saturday) !important;
+}
+
+[data-slot="calendar-header-cell"][data-sunday="true"] {
+  color: var(--calendar-sunday) !important;
+}

@@ -24,7 +24,7 @@ import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 import { settingUserAction } from '~/features/users/actions/setting-user-action'
 import {
   type SettingUserInputSchema,
@@ -34,6 +34,7 @@ import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -64,7 +65,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -74,7 +75,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               toast.error(TOAST_MESSAGES.USER.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/user'),
+                  onClick: () => router.push(urls.href({ route: '/users' })),
                 },
               })
 
@@ -140,7 +141,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
         {getError() && (
           <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
-            <p>{getError()}</p>
+            <p>{getErrorMessage('user', getError() as Parameters<typeof getErrorMessage>[1])}</p>
           </div>
         )}
         <input {...getInputProps(fields.id, { type: 'hidden' })} />
@@ -245,7 +246,10 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
         </Button>
         <Separator orientation="horizontal" />
         <Button intent="outline" isDisabled={isPending || pending} className="w-full">
-          <Link href={`/${id}/change-password`} className="flex items-center gap-x-2">
+          <Link
+            href={urls.build({ route: '/[userId]/change-password', params: { userId: id } }).href}
+            className="flex items-center gap-x-2"
+          >
             パスワードを変更する
             <LinkLoadingIndicator>
               <IconLock />

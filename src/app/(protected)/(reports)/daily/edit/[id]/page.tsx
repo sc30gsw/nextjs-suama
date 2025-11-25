@@ -11,6 +11,7 @@ import { EditDailyForm } from '~/features/reports/daily/components/edit-daily-fo
 import { ReportAppealOrTroubleContainer } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
 import { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { getServerSession } from '~/lib/get-server-session'
+import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
 
 export default async function EditDailyReportPage({
@@ -35,7 +36,7 @@ export default async function EditDailyReportPage({
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <div className="flex items-center justify-between">
         <Heading>日報編集</Heading>
-        <Link href="/daily/mine">
+        <Link href={urls.href({ route: '/daily/mine' })}>
           <Button intent="outline">一覧に戻る</Button>
         </Link>
       </div>

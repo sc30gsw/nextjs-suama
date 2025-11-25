@@ -3,6 +3,7 @@ import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Dialog } from '~/components/ui/intent-ui/dialog'
 import { GridList } from '~/components/ui/intent-ui/grid-list'
 import { Popover } from '~/components/ui/intent-ui/popover'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import type { WorkContentResponse } from '~/features/reports/daily/types/api-response'
 
 export function DailyReportWorkContentPopover({
@@ -10,10 +11,15 @@ export function DailyReportWorkContentPopover({
 }: Record<'contents', WorkContentResponse[]>) {
   return (
     <Popover>
-      <Popover.Trigger aria-label="職務内容を表示" className={buttonStyles({ size: 'sm' })}>
-        職務内容
-        <IconFileText />
-      </Popover.Trigger>
+      <Tooltip delay={0}>
+        <Popover.Trigger
+          aria-label="職務内容を表示"
+          className={buttonStyles({ size: 'sm', intent: 'outline' })}
+        >
+          <IconFileText />
+        </Popover.Trigger>
+        <Tooltip.Content>職務内容</Tooltip.Content>
+      </Tooltip>
 
       <Popover.Content className="sm:min-w-96">
         <Dialog role="dialog" aria-label="職務内容">

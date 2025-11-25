@@ -7,14 +7,15 @@ import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
-import { Button } from '~/components/ui/intent-ui/button'
+import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { RELOAD_DELAY } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { updateMissionAction } from '~/features/report-contexts/missions/actions/update-mission-action'
 import {
@@ -23,6 +24,7 @@ import {
 } from '~/features/report-contexts/missions/types/schemas/edit-mission-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -65,7 +67,7 @@ export function EditMissionModal({
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -75,7 +77,7 @@ export function EditMissionModal({
               toast.error(TOAST_MESSAGES.MISSION.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push('/mission'),
+                  onClick: () => router.push(urls.href({ route: '/mission/list' })),
                 },
               })
 
@@ -120,10 +122,12 @@ export function EditMissionModal({
 
   return (
     <Modal>
-      <Button size="sm" onPress={toggle}>
-        編集
-        <IconDocumentEdit />
-      </Button>
+      <Tooltip delay={0}>
+        <Tooltip.Trigger className={buttonStyles({ size: 'sm' })} onPress={toggle}>
+          <IconDocumentEdit />
+        </Tooltip.Trigger>
+        <Tooltip.Content>編集</Tooltip.Content>
+      </Tooltip>
       <Modal.Content isOpen={open} onOpenChange={toggle}>
         <Modal.Header>
           <Modal.Title>ミッションを編集する</Modal.Title>
@@ -134,7 +138,9 @@ export function EditMissionModal({
             {getError() && (
               <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
-                <p>{getError()}</p>
+                <p>
+                  {getErrorMessage('mission', getError() as Parameters<typeof getErrorMessage>[1])}
+                </p>
               </div>
             )}
             <input {...getInputProps(fields.id, { type: 'hidden' })} />
