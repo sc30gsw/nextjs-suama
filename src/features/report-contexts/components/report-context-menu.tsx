@@ -40,7 +40,7 @@ export function ReportContextMenu({ categoryType, label }: ReportContextMenuProp
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-6">
-            <CsvUploader label={label} categoryType={categoryType} />
+            <CsvUploader label={label} categoryType={categoryType} onClose={toggle} />
             <CsvDownloadButton label={label} categoryType={categoryType} />
           </div>
         </Popover.Body>

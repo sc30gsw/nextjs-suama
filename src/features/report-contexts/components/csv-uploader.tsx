@@ -1,5 +1,3 @@
-'use client'
-
 import type { SubmissionResult } from '@conform-to/react'
 import { IconTriangleExclamation } from '@intentui/icons'
 import { IconFileUpload } from '@tabler/icons-react'
@@ -34,13 +32,13 @@ const TOAST_MESSAGE_KEYS = {
   カテゴリー: 'TROUBLE',
 } as const satisfies Record<ReportContextMenuLabel, string>
 
-export function CsvUploader({
-  label,
-  categoryType,
-}: {
+type CsvUploaderProps = {
   label: ReportContextMenuLabel
   categoryType?: 'trouble' | 'appeal'
-}) {
+  onClose: () => void
+}
+
+export function CsvUploader({ label, categoryType, onClose }: CsvUploaderProps) {
   const uploadAction =
     label === 'カテゴリー' && categoryType === 'appeal'
       ? uploadAppealCategoriesCsvAction
@@ -51,9 +49,10 @@ export function CsvUploader({
 
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(uploadAction, {
-      onSuccess(result) {
-        console.log('🚀 ~ CsvUploader ~ result:', result)
+      onSuccess() {
         toast.success(TOAST_MESSAGES[toastKey].CSV_UPLOAD_SUCCESS)
+
+        onClose()
 
         // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
         setTimeout(() => {
@@ -81,7 +80,7 @@ export function CsvUploader({
   )
   console.log('🚀 ~ CsvUploader ~ lastResult:', lastResult)
 
-  const handleFileSelect = async (files: FileList | null) => {
+  const handleFileSelect = (files: FileList | null) => {
     if (!files || files.length === 0) {
       return
     }
@@ -90,7 +89,7 @@ export function CsvUploader({
     const formData = new FormData()
     formData.append('file', file)
 
-    await action(formData)
+    action(formData)
   }
 
   return (
