@@ -229,7 +229,9 @@ export function useCreateDailyForm(
     } as const satisfies (typeof appealsAndTroublesEntry.appeals.entries)[number]
 
     setReportEntry((prev) => {
-      if (!prev) return prev
+      if (!prev) {
+        return prev
+      }
 
       return {
         ...prev,
@@ -258,7 +260,9 @@ export function useCreateDailyForm(
     const entryId = entry?.value?.id ?? entry?.initialValue?.id
 
     setReportEntry((prev) => {
-      if (!prev) return prev
+      if (!prev) {
+        return prev
+      }
 
       const filteredEntries = prev.appealsAndTroublesEntry.appeals.entries.filter(
         (e) => e.id !== entryId,
