@@ -97,8 +97,9 @@ export function TroubleInputEntries({
         <div className="col-span-2">
           <input
             name={field.resolved.name}
-            defaultValue={field.resolved.initialValue ?? 'false'}
+            value={resolvedInput.value ?? 'false'}
             type="hidden"
+            readOnly
           />
           <Checkbox
             isSelected={resolvedInput.value === 'true'}
