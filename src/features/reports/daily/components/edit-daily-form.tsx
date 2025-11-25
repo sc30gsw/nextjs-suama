@@ -194,9 +194,7 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
           </Tooltip>
 
           {troubleEntries.map((trouble, index) => {
-            const isExisting =
-              trouble.value?.isExisting === 'true' ||
-              trouble.initialValue?.isExisting === 'true'
+            const isExisting = trouble.value?.isExisting === 'on'
 
             return (
               <TroubleInputEntries
