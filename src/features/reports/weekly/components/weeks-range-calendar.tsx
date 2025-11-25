@@ -1,13 +1,13 @@
 'use client'
 
 import { fromDate, getLocalTimeZone } from '@internationalized/date'
-import { RangeCalendar } from '~/components/ui/intent-ui/range-calendar'
+import { JapaneseRangeCalendar } from '~/components/ui/japanese-calendar'
 
 type WeekRangeCalendarProps = Record<'startDay' | 'endDay', Date>
 
 export function WeekRangeCalendar({ startDay, endDay }: WeekRangeCalendarProps) {
   return (
-    <RangeCalendar
+    <JapaneseRangeCalendar
       className="**:data-[slot=calendar-header]:items-center"
       aria-label="Date range"
       defaultValue={{
