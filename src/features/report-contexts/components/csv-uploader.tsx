@@ -1,6 +1,5 @@
 import type { SubmissionResult } from '@conform-to/react'
 import { IconTriangleExclamation } from '@intentui/icons'
-import { IconFileUpload } from '@tabler/icons-react'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
 import { FileTrigger } from '~/components/ui/intent-ui/file-trigger'
@@ -12,6 +11,7 @@ import type { ReportContextMenuLabel } from '~/features/report-contexts/componen
 import { uploadMissionsCsvAction } from '~/features/report-contexts/missions/actions/upload-missions-csv-action'
 import { uploadProjectsCsvAction } from '~/features/report-contexts/projects/actions/upload-projects-csv-action'
 import { uploadTroubleCategoriesCsvAction } from '~/features/report-contexts/troubles/actions/upload-trouble-categories-csv-action'
+import { Confirm } from '~/hooks/use-confirm'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
@@ -78,10 +78,34 @@ export function CsvUploader({ label, categoryType, onClose }: CsvUploaderProps) 
     }),
     null,
   )
-  console.log('🚀 ~ CsvUploader ~ lastResult:', lastResult)
 
-  const handleFileSelect = (files: FileList | null) => {
+  const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) {
+      return
+    }
+
+    const ok = await Confirm.call({
+      title: 'CSVをアップロードしますか?',
+      message: (
+        <div className="space-y-2">
+          <p>この操作により、以下の処理が実行されます：</p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>
+              CSVに含まれるデータで、<b>既存データとIDが一致する場合</b>は
+              <span className="font-bold text-danger">更新</span>されます
+            </li>
+            <li>
+              CSVに含まれるデータで、<b>既存データとIDが一致しない場合</b>は
+              <span className="font-bold text-danger">新規登録</span>されます
+            </li>
+            <li>CSVにIDが含まれていない行は、すべて新規登録されます</li>
+          </ul>
+          <p className="font-bold text-danger">※ この操作は取り消せません。</p>
+        </div>
+      ),
+    })
+
+    if (!ok) {
       return
     }
 
@@ -111,9 +135,9 @@ export function CsvUploader({ label, categoryType, onClose }: CsvUploaderProps) 
           handleFileSelect(e)
         }}
         isDisabled={isPending}
+        isPending={isPending}
       >
-        <IconFileUpload className="size-4" />
-        CSVアップロード
+        {isPending ? 'アップロード中...' : 'CSVアップロード'}
       </FileTrigger>
     </>
   )

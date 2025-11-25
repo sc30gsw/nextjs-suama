@@ -1,6 +1,8 @@
 import { IconFileDownload } from '@intentui/icons'
+import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
+import { Loader } from '~/components/ui/intent-ui/loader'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { downloadAppealCategoriesCsvAction } from '~/features/report-contexts/appeals/actions/download-appeal-categories-csv-action'
 import { downloadClientsCsvAction } from '~/features/report-contexts/clients/actions/download-clients-csv-action'
@@ -38,9 +40,12 @@ const CSV_FILENAMES = {
 type CsvDownloadButtonProps = {
   label: ReportContextMenuLabel
   categoryType?: 'trouble' | 'appeal'
+  onClose: () => void
 }
 
-export function CsvDownloadButton({ label, categoryType }: CsvDownloadButtonProps) {
+export function CsvDownloadButton({ label, categoryType, onClose }: CsvDownloadButtonProps) {
+  const [isPending, startTransition] = useTransition()
+
   const downloadAction =
     label === 'カテゴリー' && categoryType === 'appeal'
       ? downloadAppealCategoriesCsvAction
@@ -54,42 +59,50 @@ export function CsvDownloadButton({ label, categoryType }: CsvDownloadButtonProp
       ? 'appeal-categories.csv'
       : CSV_FILENAMES[label]
 
-  const handleDownload = async () => {
-    try {
-      const result = await downloadAction()
+  const handleDownload = () => {
+    startTransition(async () => {
+      try {
+        const result = await downloadAction()
 
-      if (result.error) {
-        const errorMessage = result.error.message?.[0]
+        if (result.error) {
+          const errorMessage = result.error.message?.[0]
 
-        if (isErrorStatus(errorMessage)) {
-          switch (errorMessage) {
-            case ERROR_STATUS.UNAUTHORIZED:
-              toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
+          if (isErrorStatus(errorMessage)) {
+            switch (errorMessage) {
+              case ERROR_STATUS.UNAUTHORIZED:
+                toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
 
-              return
+                return
+            }
           }
+
+          toast.error(TOAST_MESSAGES[toastKey].CSV_DOWNLOAD_FAILED)
+
+          return
         }
 
+        if (result.success && result.csv) {
+          const blob = createCsvBlob(result.csv)
+          downloadBlob(blob, filename)
+
+          toast.success(TOAST_MESSAGES[toastKey].CSV_DOWNLOAD_SUCCESS)
+
+          onClose()
+        }
+      } catch (_) {
         toast.error(TOAST_MESSAGES[toastKey].CSV_DOWNLOAD_FAILED)
-
-        return
       }
-
-      if (result.success && result.csv) {
-        const blob = createCsvBlob(result.csv)
-        downloadBlob(blob, filename)
-
-        toast.success(TOAST_MESSAGES[toastKey].CSV_DOWNLOAD_SUCCESS)
-      }
-    } catch (_) {
-      toast.error(TOAST_MESSAGES[toastKey].CSV_DOWNLOAD_FAILED)
-    }
+    })
   }
 
   return (
-    <Button intent="primary" onPress={handleDownload}>
-      <IconFileDownload />
-      CSVダウンロード
+    <Button intent="primary" isDisabled={isPending} onPress={handleDownload} className="relative">
+      {isPending ? (
+        <Loader variant="ring" size="medium" className="-top-2 -right-2 absolute" />
+      ) : (
+        <IconFileDownload className="size-4" />
+      )}
+      {isPending ? 'ダウンロード中...' : 'CSVダウンロード'}
     </Button>
   )
 }
