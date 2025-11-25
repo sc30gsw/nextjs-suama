@@ -225,3 +225,31 @@ export const DailyReportSummaryQuerySchema = z.object({
 export const DailyReportSummaryResponseSchema = z.object({
   summaries: z.array(ProjectSummarySchema).openapi({ description: 'プロジェクトサマリーリスト' }),
 })
+
+export const DailyReportDatesQuerySchema = z.object({
+  year: z.string().openapi({
+    param: { name: 'year', in: 'query' },
+    example: '2024',
+    description: '年（YYYY形式）',
+  }),
+  month: z.string().openapi({
+    param: { name: 'month', in: 'query' },
+    example: '1',
+    description: '月（1-12）',
+  }),
+  excludeReportId: z
+    .string()
+    .optional()
+    .openapi({
+      param: { name: 'excludeReportId', in: 'query' },
+      example: 'report_123',
+      description: '除外する日報ID（編集時に使用）',
+    }),
+})
+
+export const DailyReportDatesResponseSchema = z.object({
+  dates: z.array(z.string()).openapi({
+    description: '登録済み日報の日付リスト（YYYY-MM-DD形式、JST）',
+    example: ['2024-01-01', '2024-01-15', '2024-01-20'],
+  }),
+})
