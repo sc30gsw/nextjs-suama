@@ -17,7 +17,6 @@ export function AppSidebarNavUserMenu() {
   const [isOpen, toggle] = useToggle(false)
 
   return (
-    // TODO: 各種リンク・アイコンの設定
     <Menu isOpen={isOpen} onOpenChange={toggle}>
       <Menu.Trigger className="ml-auto cursor-pointer md:hidden" aria-label="Open Menu">
         <Avatar
