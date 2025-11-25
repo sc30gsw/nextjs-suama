@@ -44,7 +44,7 @@ export default async function TroubleListPage({
         <Heading>困っていることカテゴリー一覧</Heading>
         <div className="flex flex-col gap-2">
           <CreateTroubleCategoryModal />
-          <ReportContextMenu label="カテゴリー" />
+          <ReportContextMenu label="カテゴリー" categoryType="trouble" />
         </div>
       </div>
       <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">

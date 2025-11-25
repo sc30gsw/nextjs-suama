@@ -11,10 +11,15 @@ import { cn } from '~/utils/classes'
 
 export type ReportContextMenuLabel = 'クライアント' | 'プロジェクト' | 'ミッション' | 'カテゴリー'
 
-type ReportContextMenuProps = {
-  categoryType: 'trouble' | 'appeal'
-  label: ReportContextMenuLabel
-}
+type ReportContextMenuProps =
+  | {
+      label: 'カテゴリー'
+      categoryType: 'trouble' | 'appeal'
+    }
+  | {
+      label: 'クライアント' | 'プロジェクト' | 'ミッション'
+      categoryType?: never
+    }
 
 export function ReportContextMenu({ categoryType, label }: ReportContextMenuProps) {
   const [open, toggle] = useToggle(false)
@@ -40,8 +45,16 @@ export function ReportContextMenu({ categoryType, label }: ReportContextMenuProp
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-6 py-2">
-            <CsvUploader label={label} categoryType={categoryType} onClose={toggle} />
-            <CsvDownloadButton label={label} categoryType={categoryType} onClose={toggle} />
+            <CsvUploader
+              label={label}
+              categoryType={label === 'カテゴリー' ? categoryType : undefined}
+              onClose={toggle}
+            />
+            <CsvDownloadButton
+              label={label}
+              categoryType={label === 'カテゴリー' ? categoryType : undefined}
+              onClose={toggle}
+            />
           </div>
         </Popover.Body>
         <Popover.Footer className="mt-2">
