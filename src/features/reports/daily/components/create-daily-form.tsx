@@ -11,6 +11,7 @@ import {
 import { parseDate } from '@internationalized/date'
 import type { Session } from 'better-auth'
 import { use } from 'react'
+import type { DateValue } from 'react-aria-components'
 import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Form } from '~/components/ui/intent-ui/form'
@@ -114,6 +115,11 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
             label="日付"
             className="max-w-3xs"
             isDateUnavailable={isDateUnavailable}
+            onFocusChange={(date) => {
+              if (date && typeof date !== 'boolean' && 'year' in date && 'month' in date) {
+                handleFocusChange((date as DateValue).year, (date as DateValue).month)
+              }
+            }}
           />
           <input
             ref={reportDate.register}

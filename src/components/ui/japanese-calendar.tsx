@@ -38,17 +38,20 @@ export type JapaneseCalendarProps<T extends DateValue> = Omit<
   CalendarPrimitiveProps<T>,
   'visibleDuration'
 > &
-  Partial<Record<'errorMessage' | 'className', string>>
+  Partial<Record<'errorMessage' | 'className', string>> & {
+    onFocusChange?: (date: DateValue | false) => void
+  }
 
 export function JapaneseCalendar<T extends DateValue>({
   errorMessage,
   className,
+  onFocusChange,
   ...props
 }: JapaneseCalendarProps<T>) {
   const now = today(getLocalTimeZone())
 
   return (
-    <CalendarPrimitive data-slot="calendar" {...props}>
+    <CalendarPrimitive data-slot="calendar" onFocusChange={onFocusChange} {...props}>
       <JapaneseCalendarHeader />
       <CalendarGrid>
         <JapaneseCalendarGridHeader />

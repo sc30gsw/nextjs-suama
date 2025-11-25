@@ -33,6 +33,7 @@ type JapaneseDatePickerOverlayProps = Omit<PopoverProps, 'children'> & {
   visibleDuration?: DateDuration
   pageBehavior?: 'visible' | 'single'
   isDateUnavailable?: (date: DateValue) => boolean
+  onFocusChange?: (date: DateValue | false) => void
 }
 
 export function JapaneseDatePickerOverlay({
@@ -40,6 +41,7 @@ export function JapaneseDatePickerOverlay({
   pageBehavior = 'visible',
   range,
   isDateUnavailable,
+  onFocusChange,
   ...props
 }: JapaneseDatePickerOverlayProps) {
   const isMobile = useMediaQuery('(max-width: 767px)') ?? false
@@ -50,7 +52,7 @@ export function JapaneseDatePickerOverlay({
         {range ? (
           <JapaneseRangeCalendar pageBehavior={pageBehavior} visibleDuration={visibleDuration} />
         ) : (
-          <JapaneseCalendar isDateUnavailable={isDateUnavailable} />
+          <JapaneseCalendar isDateUnavailable={isDateUnavailable} onFocusChange={onFocusChange} />
         )}
       </div>
     </Modal.Content>
@@ -66,7 +68,7 @@ export function JapaneseDatePickerOverlay({
       {range ? (
         <JapaneseRangeCalendar pageBehavior={pageBehavior} visibleDuration={visibleDuration} />
       ) : (
-        <JapaneseCalendar isDateUnavailable={isDateUnavailable} />
+        <JapaneseCalendar isDateUnavailable={isDateUnavailable} onFocusChange={onFocusChange} />
       )}
     </PopoverContent>
   )
@@ -85,7 +87,7 @@ export function JapaneseDatePickerIcon() {
 }
 
 export type JapaneseDatePickerProps<T extends DateValue> = DatePickerPrimitiveProps<T> &
-  Pick<JapaneseDatePickerOverlayProps, 'placement' | 'isDateUnavailable'> &
+  Pick<JapaneseDatePickerOverlayProps, 'placement' | 'isDateUnavailable' | 'onFocusChange'> &
   Omit<FieldProps, 'placeholder'>
 
 export function JapaneseDatePicker<T extends DateValue>({
@@ -95,6 +97,7 @@ export function JapaneseDatePicker<T extends DateValue>({
   errorMessage,
   placement,
   isDateUnavailable,
+  onFocusChange,
   ...props
 }: JapaneseDatePickerProps<T>) {
   return (
@@ -109,7 +112,11 @@ export function JapaneseDatePicker<T extends DateValue>({
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <JapaneseDatePickerOverlay placement={placement} isDateUnavailable={isDateUnavailable} />
+      <JapaneseDatePickerOverlay
+        placement={placement}
+        isDateUnavailable={isDateUnavailable}
+        onFocusChange={onFocusChange}
+      />
     </DatePickerPrimitive>
   )
 }
