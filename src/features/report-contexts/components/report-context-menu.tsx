@@ -1,17 +1,22 @@
 'use client'
 
-import { IconChevronLgDown, IconFileDownload } from '@intentui/icons'
+import { IconChevronLgDown } from '@intentui/icons'
 import { useRef } from 'react'
 import { useToggle } from 'react-use'
-import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
+import { Button } from '~/components/ui/intent-ui/button'
 import { Popover } from '~/components/ui/intent-ui/popover'
-import { Tooltip } from '~/components/ui/intent-ui/tooltip'
+import { CsvDownloadButton } from '~/features/report-contexts/components/csv-download-button'
 import { CsvUploader } from '~/features/report-contexts/components/csv-uploader'
 import { cn } from '~/utils/classes'
 
-export function ReportContextMenu({
-  label,
-}: Record<'label', 'クライアント' | 'プロジェクト' | 'ミッション' | 'カテゴリー'>) {
+export type ReportContextMenuLabel = 'クライアント' | 'プロジェクト' | 'ミッション' | 'カテゴリー'
+
+type ReportContextMenuProps = {
+  categoryType: 'trouble' | 'appeal'
+  label: ReportContextMenuLabel
+}
+
+export function ReportContextMenu({ categoryType, label }: ReportContextMenuProps) {
   const [open, toggle] = useToggle(false)
   const triggerRef = useRef(null)
 
@@ -35,14 +40,8 @@ export function ReportContextMenu({
         </Popover.Header>
         <Popover.Body>
           <div className="flex flex-col gap-6">
-            <CsvUploader />
-            <Tooltip delay={0}>
-              <Tooltip.Trigger className={buttonStyles({ isDisabled: true })}>
-                <IconFileDownload />
-                CSVダウンロード
-              </Tooltip.Trigger>
-              <Tooltip.Content>この機能は現在開発中です。</Tooltip.Content>
-            </Tooltip>
+            <CsvUploader label={label} categoryType={categoryType} />
+            <CsvDownloadButton label={label} categoryType={categoryType} />
           </div>
         </Popover.Body>
         <Popover.Footer className="mt-2">
