@@ -1,19 +1,22 @@
-import { getSessionCookie } from 'better-auth/cookies'
+import { headers } from 'next/headers'
 import { type NextRequest, NextResponse } from 'next/server'
-import { urls } from '~/lib/urls'
+import { auth } from '~/lib/auth'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // ? https://www.better-auth.com/docs/integrations/next#middleware
-  const sessionCookie = getSessionCookie(request)
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
 
-  if (!sessionCookie) {
-    return NextResponse.redirect(new URL(urls.href({ route: '/sign-in' }), request.nextUrl.origin))
+  if (!session) {
+    return NextResponse.redirect(new URL('/sign-in', request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
+  runtime: 'nodejs',
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|api|trpc|sign-in|sign-up|forgot-password|reset-password|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
