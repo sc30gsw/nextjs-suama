@@ -26,7 +26,6 @@ import { EditDailyReportContentInputEntries } from '~/features/reports/daily/com
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { cn } from '~/utils/classes'
-import { DATE_FORMAT } from '~/utils/date-utils'
 
 type EditDailyFormProps = {
   reportData: Awaited<ReturnType<typeof getDailyReportById>>
