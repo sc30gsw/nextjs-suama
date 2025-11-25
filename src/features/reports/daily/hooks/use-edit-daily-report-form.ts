@@ -30,7 +30,7 @@ export function useEditDailyForm(
 ) {
   const { unResolvedTroubles = [] } = options
 
-  const { appealsAndTroublesEntry, remote, impression, setReportEntry } =
+  const { reportEntry, appealsAndTroublesEntry, remote, impression, setReportEntry } =
     useDailyReportSearchParams(initialDailyInputCountSearchParamsParsers)
 
   const router = useRouter()
@@ -99,9 +99,16 @@ export function useEditDailyForm(
     null,
   )
 
+  // nuqsから初期値を構築（createフォームと同じパターン）
+  // nuqsのデフォルト値は親コンポーネントで既存データに設定されている
   const initialTroubleEntries: UpdateDailyReportFormSchema['troubleEntries'] = [
+    // 既存の未解決トラブル（サーバーから取得、nuqsには含まれない）
     ...unResolvedTroubles
-      .filter((trouble) => !initialData.troubleEntries.some((e) => e.id === trouble.id))
+      .filter(
+        (trouble) =>
+          !initialData.troubleEntries.some((e) => e.id === trouble.id) &&
+          !appealsAndTroublesEntry.troubles.entries.some((e) => e.id === trouble.id),
+      )
       .map((trouble) => ({
         id: trouble.id,
         categoryId: trouble.categoryOfTroubleId,
@@ -109,47 +116,32 @@ export function useEditDailyForm(
         resolved: trouble.resolved,
         isExisting: true,
       })),
-    ...initialData.troubleEntries.map((entry) => ({
-      id: entry.id,
-      categoryId: entry.categoryId,
-      content: entry.content,
-      resolved: false,
-      isExisting: true,
-    })),
-    ...appealsAndTroublesEntry.troubles.entries
-      .filter(
-        (entry) =>
-          !unResolvedTroubles.some((t) => t.id === entry.id) &&
-          !initialData.troubleEntries.some((t) => t.id === entry.id),
-      )
-      .map((entry) => ({
+    ...appealsAndTroublesEntry.troubles.entries.map((entry) => {
+      const isExisting =
+        unResolvedTroubles.some((t) => t.id === entry.id) ||
+        initialData.troubleEntries.some((t) => t.id === entry.id)
+
+      return {
         id: entry.id,
         categoryId: entry.item ?? undefined,
         content: entry.content,
         resolved: entry.resolved ?? false,
-        isExisting: false,
-      })),
+        isExisting,
+      }
+    }),
   ]
 
-  const initialAppealEntries: UpdateDailyReportFormSchema['appealEntries'] = [
-    ...initialData.appealEntries.map((entry) => ({
+  const initialAppealEntries: UpdateDailyReportFormSchema['appealEntries'] =
+    appealsAndTroublesEntry.appeals.entries.map((entry) => ({
       id: entry.id,
-      categoryId: entry.categoryId,
+      categoryId: entry.item ?? undefined,
       content: entry.content,
-    })),
-    ...appealsAndTroublesEntry.appeals.entries
-      .filter((entry) => !initialData.appealEntries.some((a) => a.id === entry.id))
-      .map((entry) => ({
-        id: entry.id,
-        categoryId: entry.item ?? undefined,
-        content: entry.content,
-      })),
-  ]
+    }))
 
-  const initialReportEntries = initialData.reportEntries.map((entry) => ({
+  const initialReportEntries = reportEntry.entries.map((entry) => ({
     id: entry.id,
-    project: entry.projectId,
-    mission: entry.missionId,
+    project: entry.project ?? '',
+    mission: entry.mission ?? '',
     hours: entry.hours.toString(),
     content: entry.content,
   }))
@@ -163,8 +155,8 @@ export function useEditDailyForm(
     defaultValue: {
       reportId: initialData.id,
       reportDate: initialData.reportDate,
-      remote: remote ?? initialData.remote,
-      impression: impression ?? initialData.impression,
+      remote,
+      impression,
       reportEntries: initialReportEntries,
       appealEntries: initialAppealEntries,
       troubleEntries: initialTroubleEntries,
@@ -213,13 +205,7 @@ export function useEditDailyForm(
 
     form.insert({
       name: fields.reportEntries.name,
-      defaultValue: {
-        id: newEntry.id,
-        project: '',
-        mission: '',
-        content: '',
-        hours: 0,
-      } as UpdateDailyReportFormSchema['reportEntries'][number],
+      defaultValue: newEntry,
     })
   }
 

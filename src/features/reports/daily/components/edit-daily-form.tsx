@@ -30,7 +30,7 @@ import { EditDailyReportContentInputEntries } from '~/features/reports/daily/com
 import { TroubleInputEntries } from '~/features/reports/daily/components/trouble-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
-import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import { createEditSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { cn } from '~/utils/classes'
 
 type EditDailyFormProps = {
@@ -48,6 +48,58 @@ type EditDailyFormProps = {
 export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
   const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
     use(promises)
+
+  const unResolvedTroubles = troubleCategoriesResponse.unResolvedTroubles ?? []
+
+  const existingReportEntries = reportData.reportEntries.map((entry) => ({
+    id: entry.id,
+    project: entry.projectId,
+    mission: entry.missionId,
+    content: entry.content,
+    hours: entry.hours,
+  }))
+
+  const existingTroubleEntries = [
+    ...unResolvedTroubles
+      .filter((trouble) => !reportData.troubleEntries.some((e) => e.id === trouble.id))
+      .map((trouble) => ({
+        id: trouble.id,
+        content: trouble.trouble,
+        item: trouble.categoryOfTroubleId,
+        resolved: trouble.resolved,
+      })),
+    ...reportData.troubleEntries.map((entry) => ({
+      id: entry.id,
+      content: entry.content,
+      item: entry.categoryId,
+      resolved: false,
+    })),
+  ]
+
+  const existingAppealEntries = reportData.appealEntries.map((entry) => ({
+    id: entry.id,
+    content: entry.content,
+    item: entry.categoryId,
+  }))
+
+  const editSearchParamsParsers = createEditSearchParamsParsers({
+    reportEntry: {
+      count: existingReportEntries.length,
+      entries: existingReportEntries,
+    },
+    appealsAndTroublesEntry: {
+      appeals: {
+        count: existingAppealEntries.length,
+        entries: existingAppealEntries,
+      },
+      troubles: {
+        count: existingTroubleEntries.length,
+        entries: existingTroubleEntries,
+      },
+    },
+    remote: reportData.remote,
+    impression: reportData.impression ?? '',
+  })
 
   const {
     action,
@@ -74,7 +126,7 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
     handleChangeRemote,
     handleChangeImpression,
     getError,
-  } = useEditDailyForm(reportData, inputCountSearchParamsParsers, {
+  } = useEditDailyForm(reportData, editSearchParamsParsers, {
     unResolvedTroubles: troubleCategoriesResponse.unResolvedTroubles,
   })
 
