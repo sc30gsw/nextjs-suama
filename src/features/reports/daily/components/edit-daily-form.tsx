@@ -190,6 +190,7 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
               name={dailyReport.name}
               projects={projectsResponse.projects}
               missions={missionsResponse.missions}
+              initialDailyInputCountSearchParamsParsers={editSearchParamsParsers}
               removeButton={
                 <Tooltip delay={0}>
                   <Tooltip.Trigger

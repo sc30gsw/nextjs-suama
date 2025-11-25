@@ -3,14 +3,19 @@ import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
 import { filter, find, pipe } from 'remeda'
+import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
 import type {
   UpdateDailyReportEntrySchema,
   UpdateDailyReportFormSchema,
 } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
-import type { ReportEntry } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import type {
+  DailyInputCountSearchParams,
+  ReportEntry,
+} from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 export function useEditDailyReportContentInputEntries(
+  initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
   formId: string,
   name: FieldName<UpdateDailyReportEntrySchema, UpdateDailyReportFormSchema>,
   projects: InferResponseType<typeof client.api.projects.$get, 200>['projects'],
@@ -23,6 +28,8 @@ export function useEditDailyReportContentInputEntries(
   const missionInput = useInputControl(field.mission)
   const contentInput = useInputControl(field.content)
   const hoursInput = useInputControl(field.hours)
+
+  const { setReportEntry } = useDailyReportSearchParams(initialDailyInputCountSearchParamsParsers)
 
   // ? form resetがConformのものでは反映されないため
   const [projectId, setProjectId] = useState<Key | null>(projectInput.value ?? null)
@@ -62,12 +69,54 @@ export function useEditDailyReportContentInputEntries(
       return
     }
 
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.reportEntry.entries.map((e) =>
+        e.id === id ? { ...e, [kind]: newItem } : e,
+      )
+
+      return {
+        ...prev,
+        reportEntry: {
+          ...prev.reportEntry,
+          entries: updatedEntries,
+        },
+      }
+    })
+
     if (kind === 'project') {
       setProjectId(newItem)
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+
+      setReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.reportEntry.entries.map((e) =>
+          e.id === id ? { ...e, project: newItem.toString(), mission: '' } : e,
+        )
+
+        return {
+          ...prev,
+          reportEntry: {
+            ...prev.reportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
     } else {
+      missionId
+        ? pipe(
+            projects,
+            filter((project) => project.missions.some((mission) => mission.id === missionId)),
+          )
+        : projects
       setMissionId(newItem)
       missionInput.change(newItem.toString())
 
@@ -75,6 +124,31 @@ export function useEditDailyReportContentInputEntries(
         projects,
         find((project) => project.missions.some((mission) => mission.id === newItem)),
       )
+
+      setReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const updatedEntries = prev.reportEntry.entries.map((e) => {
+          if (e.id === id) {
+            return {
+              ...e,
+              mission: newItem.toString(),
+              project: findProject?.id ?? '',
+            }
+          }
+          return e
+        })
+
+        return {
+          ...prev,
+          reportEntry: {
+            ...prev.reportEntry,
+            entries: updatedEntries,
+          },
+        }
+      })
 
       setProjectId(findProject?.id ?? null)
       projectInput.change(findProject?.id.toString() ?? '')
@@ -88,6 +162,25 @@ export function useEditDailyReportContentInputEntries(
     if (!id) {
       return
     }
+
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const key = typeof newValue === 'string' ? 'content' : 'hours'
+      const updatedEntries = prev.reportEntry.entries.map((e) =>
+        e.id === id ? { ...e, [key]: newValue } : e,
+      )
+
+      return {
+        ...prev,
+        reportEntry: {
+          ...prev.reportEntry,
+          entries: updatedEntries,
+        },
+      }
+    })
 
     if (typeof newValue === 'string') {
       contentInput.change(newValue)
