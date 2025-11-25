@@ -33,7 +33,12 @@ export function AppSidebarUserMenu() {
             <span className="-mt-0.5 block text-muted-fg">{session?.user.email}</span>
           </div>
         </div>
-        <IconChevronLgDown className={cn('ml-2 transition-transform', isOpen && 'rotate-180')} />
+        <IconChevronLgDown
+          className={cn(
+            'ml-2 transition-transform group-data-[state=collapsed]:invisible',
+            isOpen && 'rotate-180',
+          )}
+        />
       </Menu.Trigger>
 
       <Menu.Content
