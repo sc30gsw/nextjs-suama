@@ -2,22 +2,25 @@
 
 import {
   IconBrandProducthunt,
-  IconCalendarDays,
-  IconCirclePerson,
-  IconHome,
-  IconPeople,
-} from '@intentui/icons'
-import {
   IconBuilding,
   IconBuildings,
   IconBulb,
+  IconCalendar,
   IconCalendarEvent,
   IconCalendarStats,
   IconCalendarUser,
+  IconCalendarWeek,
+  IconCategory,
+  IconFolder,
   IconHelpTriangle,
+  IconHome,
   IconList,
+  IconListCheck,
   IconReport,
+  IconUser,
+  IconUsers,
 } from '@tabler/icons-react'
+
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import {
@@ -44,7 +47,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
           className="flex items-center gap-x-2 group-data-[state=collapsed]:justify-center"
           href="/daily"
         >
-          <IconHome className="size-5 text-muted-fg" />
+          <IconHome stroke={1} size={20} className="text-muted-fg" />
           <SidebarLabel className="font-medium">SUAMA</SidebarLabel>
         </Link>
       </SidebarHeader>
@@ -76,12 +79,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
           <SidebarDisclosure id={2} className="py-3">
             <SidebarDisclosureTrigger>
-              <IconCalendarDays />
+              <IconCalendarWeek stroke={1} size={20} />
               <SidebarLabel>週報</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-1">
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
               <SidebarItem href="/weekly" tooltip="今年の週報">
-                <IconCalendarDays />
+                <IconCalendar stroke={1} size={20} />
                 <SidebarLabel>今年の週報</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -89,12 +92,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
           <SidebarDisclosure id={3} className="py-3">
             <SidebarDisclosureTrigger>
-              <IconCirclePerson />
+              <IconUser stroke={1} size={20} />
               <SidebarLabel>ユーザー</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-1">
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
               <SidebarItem href="/users" tooltip="ユーザー一覧">
-                <IconPeople />
+                <IconUsers stroke={1} size={20} />
                 <SidebarLabel>ユーザー一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -115,12 +118,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
 
           <SidebarDisclosure id={5} className="py-3">
             <SidebarDisclosureTrigger>
-              <IconBrandProducthunt />
+              <IconBrandProducthunt stroke={1} size={20} />
               <SidebarLabel>プロジェクト</SidebarLabel>
             </SidebarDisclosureTrigger>
-            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-1">
+            <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
               <SidebarItem href="/project/list" tooltip="プロジェクト一覧">
-                <IconBrandProducthunt />
+                <IconFolder stroke={1} size={20} />
                 <SidebarLabel>プロジェクト一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -133,7 +136,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
               <SidebarItem href="/mission/list" tooltip="ミッション一覧">
-                <IconList stroke={1} size={20} />
+                <IconListCheck stroke={1} size={20} />
                 <SidebarLabel>ミッション一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -146,7 +149,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
               <SidebarItem href="/trouble/list" tooltip="カテゴリー一覧">
-                <IconHelpTriangle stroke={1} size={20} />
+                <IconCategory stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
@@ -159,7 +162,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             </SidebarDisclosureTrigger>
             <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
               <SidebarItem href="/appeal/list" tooltip="カテゴリー一覧">
-                <IconBulb stroke={1} size={20} />
+                <IconCategory stroke={1} size={20} />
                 <SidebarLabel>カテゴリー一覧</SidebarLabel>
               </SidebarItem>
             </SidebarDisclosurePanel>
