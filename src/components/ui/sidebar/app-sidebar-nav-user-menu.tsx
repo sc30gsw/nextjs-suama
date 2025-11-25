@@ -24,7 +24,9 @@ export function AppSidebarNavUserMenu() {
           src={session?.user?.image}
           initials={session?.user.name.charAt(0)}
         />
-        <IconChevronLgDown className={cn('ml-2 transition-transform', isOpen && 'rotate-180')} />
+        <IconChevronLgDown
+          className={cn('invisible ml-2 transition-transform md:visible', isOpen && 'rotate-180')}
+        />
       </Menu.Trigger>
       <Menu.Content popover={{ placement: 'bottom end' }} className="sm:min-w-64">
         <Menu.Section>
