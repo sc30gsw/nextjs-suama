@@ -144,6 +144,7 @@ export function JapaneseCalendarHeader({
   )
 }
 
+const INITIAL_MONTH = 1
 function SelectMonth({ state }: Record<'state', CalendarState>) {
   const months: string[] = []
 
@@ -153,10 +154,12 @@ function SelectMonth({ state }: Record<'state', CalendarState>) {
   })
 
   const numMonths = state.focusedDate.calendar.getMonthsInYear(state.focusedDate)
-  for (let i = 1; i <= numMonths; i++) {
+
+  for (let i = INITIAL_MONTH; i <= numMonths; i++) {
     const date = state.focusedDate.set({ month: i })
     months.push(formatter.format(date.toDate(state.timeZone)))
   }
+
   return (
     <Select
       className="[popover-width:8rem]"
@@ -178,6 +181,8 @@ function SelectMonth({ state }: Record<'state', CalendarState>) {
   )
 }
 
+const INITIAL_YEAR = 20
+
 function SelectYear({ state }: Record<'state', CalendarState>) {
   const years: { value: CalendarDate; formatted: string }[] = []
 
@@ -186,7 +191,7 @@ function SelectYear({ state }: Record<'state', CalendarState>) {
     timeZone: state.timeZone,
   })
 
-  for (let i = -20; i <= 20; i++) {
+  for (let i = -INITIAL_YEAR; i <= INITIAL_YEAR; i++) {
     const date = state.focusedDate.add({ years: i })
 
     years.push({
@@ -194,10 +199,11 @@ function SelectYear({ state }: Record<'state', CalendarState>) {
       formatted: formatter.format(date.toDate(state.timeZone)),
     })
   }
+
   return (
     <Select
       aria-label="Select year"
-      selectedKey={20}
+      selectedKey={INITIAL_YEAR}
       onSelectionChange={(value) => {
         state.setFocusedDate(years[Number(value)]?.value as CalendarDate)
       }}
