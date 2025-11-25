@@ -9,6 +9,7 @@ import {
   getYearAndWeek,
   splitDates,
 } from '~/features/reports/weekly/utils/weekly-date-utils'
+import { urls } from '~/lib/urls'
 
 export async function WeeklyRegisterLink({ dates, userId }: Record<'dates' | 'userId', string>) {
   const { startDate, endDate } = splitDates(dates)
@@ -27,8 +28,19 @@ export async function WeeklyRegisterLink({ dates, userId }: Record<'dates' | 'us
   }
 
   const href = res.weeklyReport
-    ? `/weekly/list/${dates}/edit/${res.weeklyReport.id}`
-    : `/weekly/list/${dates}/register`
+    ? urls.build({
+        route: '/weekly/list/[dates]/edit/[weeklyReportId]',
+        params: {
+          dates,
+          weeklyReportId: res.weeklyReport.id,
+        },
+      }).href
+    : urls.build({
+        route: '/weekly/list/[dates]/register',
+        params: {
+          dates,
+        },
+      }).href
 
   return (
     <Link href={href} prefetch={false} className="max-w-fit">

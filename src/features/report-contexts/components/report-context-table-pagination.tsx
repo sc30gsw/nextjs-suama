@@ -23,7 +23,6 @@ export function ReportContextTablePagination({
     const last = pageCount - 1
     const result: (number | string)[] = []
 
-    // 常に最初と最後のページは表示
     result.push(0)
 
     const pushResult = (start: number, end: number) => {
@@ -32,7 +31,6 @@ export function ReportContextTablePagination({
       }
     }
 
-    // 現在のページ周辺のページを表示
     if (pageIndex <= 3) {
       pushResult(1, 3)
       result.push('...')

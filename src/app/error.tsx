@@ -8,6 +8,7 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
+import { urls } from '~/lib/urls'
 
 export default function GlobalError({
   error,
@@ -46,7 +47,7 @@ export default function GlobalError({
                 <IconRefresh />
               </Button>
 
-              <Link href="/daily">
+              <Link href={urls.href({ route: '/daily' })}>
                 <Button intent="outline" className="flex items-center gap-2">
                   ホームに戻る
                   <LinkLoadingIndicator>

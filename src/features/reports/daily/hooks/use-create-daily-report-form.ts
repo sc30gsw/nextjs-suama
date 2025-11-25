@@ -16,6 +16,7 @@ import {
 } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
 import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { DATE_FORMAT } from '~/utils/date-utils'
 import { withCallbacks } from '~/utils/with-callbacks'
@@ -53,7 +54,7 @@ export function useCreateDailyForm(
               toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED, {
                 cancel: {
                   label: 'ログイン',
-                  onClick: () => router.push('/sign-in'),
+                  onClick: () => router.push(urls.href({ route: '/sign-in' })),
                 },
               })
 
@@ -63,7 +64,7 @@ export function useCreateDailyForm(
               toast.error(TOAST_MESSAGES.DAILY_REPORT.ALREADY_EXISTS, {
                 cancel: {
                   label: '日報一覧へ',
-                  onClick: () => router.push('/mine'),
+                  onClick: () => router.push(urls.href({ route: '/daily/mine' })),
                 },
               })
 

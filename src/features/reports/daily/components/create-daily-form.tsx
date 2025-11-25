@@ -18,6 +18,7 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
+import { getErrorMessage } from '~/constants/error-message'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
@@ -74,7 +75,9 @@ export function CreateDailyForm({
         {getError() && (
           <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
             <IconTriangleExclamation className="size-4" />
-            <p>{getError()}</p>
+            <p>
+              {getErrorMessage('daily-report', getError() as Parameters<typeof getErrorMessage>[1])}
+            </p>
           </div>
         )}
       </div>

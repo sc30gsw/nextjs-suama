@@ -1,12 +1,13 @@
 import { getSessionCookie } from 'better-auth/cookies'
 import { type NextRequest, NextResponse } from 'next/server'
+import { urls } from '~/lib/urls'
 
 export function middleware(request: NextRequest) {
   // ? https://www.better-auth.com/docs/integrations/next#middleware
   const sessionCookie = getSessionCookie(request)
 
   if (!sessionCookie) {
-    return NextResponse.redirect(new URL('/sign-in', request.nextUrl.origin))
+    return NextResponse.redirect(new URL(urls.href({ route: '/sign-in' }), request.nextUrl.origin))
   }
 
   return NextResponse.next()

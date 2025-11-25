@@ -16,7 +16,7 @@ import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB, RELOAD_DELAY } from '~/constants'
-import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
   type SettingUserInputSchema,
@@ -134,7 +134,9 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
             {getError() && (
               <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
                 <IconTriangleExclamation className="size-4" />
-                <p>{getError()}</p>
+                <p>
+                  {getErrorMessage('user', getError() as Parameters<typeof getErrorMessage>[1])}
+                </p>
               </div>
             )}
             <input {...getInputProps(fields.id, { type: 'hidden' })} />

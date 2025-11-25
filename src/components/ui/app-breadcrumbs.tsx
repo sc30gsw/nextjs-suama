@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import { Breadcrumbs } from '~/components/ui/intent-ui/breadcrumbs'
+import type { NextjsSuamaRoute } from '../../../typed-url'
 
 // const ITEMS = [
 //   { path: '/', name: 'ダッシュボード' },
@@ -43,7 +44,11 @@ import { Breadcrumbs } from '~/components/ui/intent-ui/breadcrumbs'
 //   { path: '/appeals/register', name: 'アピールポイントカテゴリー登録' },
 // ] as const satisfies readonly Record<'path' | 'name', string>[]
 
-export function AppBreadcrumbs({ items }: { items: readonly Record<'path' | 'name', string>[] }) {
+export function AppBreadcrumbs({
+  items,
+}: {
+  items: readonly Record<'path' | 'name', NextjsSuamaRoute | string>[]
+}) {
   const pathname = usePathname()
 
   return (

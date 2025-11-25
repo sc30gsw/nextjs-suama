@@ -20,7 +20,6 @@ import {
   IconUser,
   IconUsers,
 } from '@tabler/icons-react'
-
 import Link from 'next/link'
 import type { ComponentProps } from 'react'
 import {
@@ -37,15 +36,15 @@ import {
   SidebarSectionGroup,
 } from '~/components/ui/intent-ui/sidebar'
 import { AppSidebarUserMenu } from '~/components/ui/sidebar/app-sidebar-user-menu'
+import { urls } from '~/lib/urls'
 
-// TODO: 各種アイコン・リンクの設定
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <Link
           className="flex items-center gap-x-2 group-data-[state=collapsed]:justify-center"
-          href="/daily"
+          href={urls.href({ route: '/daily' })}
         >
           <IconHome stroke={1} size={20} className="text-muted-fg" />
           <SidebarLabel className="font-medium">SUAMA</SidebarLabel>
@@ -64,13 +63,13 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                 <IconCalendarEvent stroke={1} size={20} />
                 <SidebarLabel>本日の日報</SidebarLabel>
               </SidebarItem>
-              <SidebarItem href="/daily/mine" tooltip="自分の日報">
+              <SidebarItem href={urls.href({ route: '/daily/mine' })} tooltip="自分の日報">
                 <IconCalendarUser stroke={1} size={20} />
                 <SidebarLabel>自分の日報</SidebarLabel>
               </SidebarItem>
 
               {/* TODO: ユーザーの role が admin のみ表示されるように修正する。データ移行のタスクと連携して修正 */}
-              <SidebarItem href="/daily/every" tooltip="みんなの日報">
+              <SidebarItem href={urls.href({ route: '/daily/every' })} tooltip="みんなの日報">
                 <IconCalendarStats stroke={1} size={20} />
                 <SidebarLabel>みんなの日報</SidebarLabel>
               </SidebarItem>
