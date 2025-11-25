@@ -30,6 +30,7 @@ import { EditDailyReportContentInputEntries } from '~/features/reports/daily/com
 import { TroubleInputEntries } from '~/features/reports/daily/components/trouble-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
+import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { cn } from '~/utils/classes'
 
 type EditDailyFormProps = {
@@ -54,8 +55,8 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
     form,
     fields,
     reportDate,
-    remote,
-    impression,
+    remoteInput,
+    impressionInput,
     dailyReports,
     appealEntries,
     troubleEntries,
@@ -66,8 +67,14 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
     handleRemoveAppeal,
     handleAddTrouble,
     handleRemoveTrouble,
+    handleChangeAppealContent,
+    handleChangeAppealCategory,
+    handleChangeTroubleContent,
+    handleChangeTroubleCategory,
+    handleChangeRemote,
+    handleChangeImpression,
     getError,
-  } = useEditDailyForm(reportData, {
+  } = useEditDailyForm(reportData, inputCountSearchParamsParsers, {
     unResolvedTroubles: troubleCategoriesResponse.unResolvedTroubles,
   })
 
@@ -153,17 +160,13 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
 
           <Separator orientation="horizontal" />
           <div className="my-4 space-y-2">
-            {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
-            {/* // ? https://ja.conform.guide/integration/ui-libraries */}
             <Checkbox
-              name={fields.remote.name}
-              isSelected={remote.value === 'on'}
-              onChange={(checked) => remote.change(checked ? 'on' : '')}
-              onFocus={remote.focus}
-              onBlur={remote.blur}
+              {...getInputProps(fields.remote, { type: 'checkbox' })}
               isDisabled={isPending}
               size="lg"
               className="mt-2 cursor-pointer"
+              isSelected={remoteInput.value === 'on'}
+              onChange={handleChangeRemote}
             >
               <span className="ml-2">リモート勤務</span>
             </Checkbox>
@@ -172,8 +175,8 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
               {...getInputProps(fields.impression, { type: 'text' })}
               label="所感"
               isDisabled={isPending}
-              value={impression.value ?? ''}
-              onChange={(val) => impression.change(val)}
+              value={impressionInput.value ?? ''}
+              onChange={handleChangeImpression}
             />
           </div>
 
@@ -204,9 +207,24 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
                 categories={troubleCategoriesResponse.troubleCategories}
                 isExisting={isExisting}
                 onRemove={isExisting ? undefined : () => handleRemoveTrouble(index)}
+                onChangeContent={handleChangeTroubleContent}
+                onChangeCategory={handleChangeTroubleCategory}
               />
             )
           })}
+
+          {troubleEntries.length > 0 && (
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAddTrouble}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>困っていることを追加</Tooltip.Content>
+            </Tooltip>
+          )}
 
           <Separator orientation="horizontal" />
           <div className="mt-4 flex items-center">
@@ -230,8 +248,23 @@ export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
               name={appeal.name}
               categories={appealCategoriesResponse.appealCategories}
               onRemove={() => handleRemoveAppeal(index)}
+              onChangeContent={handleChangeAppealContent}
+              onChangeCategory={handleChangeAppealCategory}
             />
           ))}
+
+          {appealEntries.length > 0 && (
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAddAppeal}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
+            </Tooltip>
+          )}
 
           <Separator orientation="horizontal" />
           <div className="my-4 flex items-center justify-end gap-x-2">
