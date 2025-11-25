@@ -16,11 +16,11 @@ type AppealInputEntriesProps = {
   name: FieldName<AppealEntrySchema, CreateDailyReportFormSchema>
   categories: AppealCategoriesResponse['appealCategories']
   onRemove: () => void
-  onChangeContent: (
+  onChangeContent?: (
     id: AppealEntrySchema['id'],
     content: Exclude<AppealEntrySchema['content'], undefined>,
   ) => void
-  onChangeCategory: (
+  onChangeCategory?: (
     id: AppealEntrySchema['id'],
     categoryId: Exclude<AppealEntrySchema['categoryId'], undefined>,
   ) => void
@@ -56,7 +56,7 @@ export function AppealInputEntries({
           value={contentInput.value ?? ''}
           onChange={(val) => {
             contentInput.change(val)
-            onChangeContent(entryId, val)
+            onChangeContent?.(entryId, val)
           }}
           isDisabled={pending}
         />
@@ -74,7 +74,7 @@ export function AppealInputEntries({
           onSelectionChange={(key) => {
             const value = key ? String(key) : undefined
             categoryIdInput.change(value)
-            onChangeCategory(entryId, value ?? '')
+            onChangeCategory?.(entryId, value ?? '')
           }}
           isDisabled={pending}
         >

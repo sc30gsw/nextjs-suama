@@ -5,10 +5,11 @@ import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
+import { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
+import { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { EditDailyForm } from '~/features/reports/daily/components/edit-daily-form'
-import { ReportAppealOrTroubleContainer } from '~/features/reports/daily/components/report-appeal-or-trouble-container'
 import { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
@@ -29,8 +30,18 @@ export default async function EditDailyReportPage({
 
   const projectPromise = getProjects(session.user.id, { isArchived: false })
   const missionPromise = getMissions(session.user.id, { isArchived: false })
+  const appealCategoriesPromise = getAppealCategories(session.user.id, {
+    withData: true,
+    reportId,
+  })
+  const troubleCategoriesPromise = getTroubleCategories(session.user.id, { withData: true })
 
-  const promises = Promise.all([projectPromise, missionPromise])
+  const promises = Promise.all([
+    projectPromise,
+    missionPromise,
+    appealCategoriesPromise,
+    troubleCategoriesPromise,
+  ])
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
@@ -53,22 +64,7 @@ export default async function EditDailyReportPage({
           </div>
         }
       >
-        <EditDailyForm
-          reportData={reportData}
-          promises={promises}
-          troubleHeadings={
-            <div className="mt-4 flex items-center">
-              <Heading level={3}>困っていること</Heading>
-            </div>
-          }
-          troubles={<ReportAppealOrTroubleContainer kind="trouble" />}
-          appealHeadings={
-            <div className="mt-4 flex items-center">
-              <Heading level={3}>アピールポイント</Heading>
-            </div>
-          }
-          appeals={<ReportAppealOrTroubleContainer kind="appeal" reportId={reportId} />}
-        />
+        <EditDailyForm reportData={reportData} promises={promises} />
       </Suspense>
     </div>
   )

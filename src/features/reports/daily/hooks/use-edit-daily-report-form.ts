@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
+import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import {
   type UpdateDailyReportEntrySchema,
@@ -18,7 +19,14 @@ import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDailyReportById>>) {
+export function useEditDailyForm(
+  initialData: Awaited<ReturnType<typeof getDailyReportById>>,
+  options: Partial<
+    Record<'unResolvedTroubles', TroubleCategoriesResponse['unResolvedTroubles']>
+  > = {},
+) {
+  const { unResolvedTroubles = [] } = options
+
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
@@ -85,6 +93,25 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
     null,
   )
 
+  const initialTroubleEntries: UpdateDailyReportFormSchema['troubleEntries'] = [
+    ...unResolvedTroubles
+      .filter((trouble) => !initialData.troubleEntries.some((e) => e.id === trouble.id))
+      .map((trouble) => ({
+        id: trouble.id,
+        categoryId: trouble.categoryOfTroubleId,
+        content: trouble.trouble,
+        resolved: trouble.resolved,
+        isExisting: true,
+      })),
+    ...initialData.troubleEntries.map((entry) => ({
+      id: entry.id,
+      categoryId: entry.categoryId,
+      content: entry.content,
+      resolved: false,
+      isExisting: true,
+    })),
+  ]
+
   const [form, fields] = useSafeForm<UpdateDailyReportFormSchema>({
     constraint: getZodConstraint(updateDailyReportFormSchema),
     lastResult,
@@ -103,8 +130,12 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
         hours: entry.hours.toString(),
         content: entry.content,
       })),
-      appealEntries: initialData.appealEntries,
-      troubleEntries: initialData.troubleEntries,
+      appealEntries: initialData.appealEntries.map((entry) => ({
+        id: entry.id,
+        categoryId: entry.categoryId,
+        content: entry.content,
+      })),
+      troubleEntries: initialTroubleEntries,
     },
   })
 
@@ -113,8 +144,11 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
   })
 
   const remote = useInputControl(fields.remote)
+  const impression = useInputControl(fields.impression)
 
   const dailyReports = fields.reportEntries.getFieldList()
+  const appealEntries = fields.appealEntries.getFieldList()
+  const troubleEntries = fields.troubleEntries.getFieldList()
 
   const totalHours = dailyReports.reduce((acc, entry) => {
     const hours = Number(entry.value?.hours ?? 0)
@@ -149,6 +183,44 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
     })
   }
 
+  const handleAddAppeal = () => {
+    form.insert({
+      name: fields.appealEntries.name,
+      defaultValue: {
+        id: crypto.randomUUID(),
+        categoryId: undefined,
+        content: '',
+      },
+    })
+  }
+
+  const handleRemoveAppeal = (index: number) => {
+    form.remove({
+      name: fields.appealEntries.name,
+      index,
+    })
+  }
+
+  const handleAddTrouble = () => {
+    form.insert({
+      name: fields.troubleEntries.name,
+      defaultValue: {
+        id: crypto.randomUUID(),
+        categoryId: undefined,
+        content: '',
+        resolved: false,
+        isExisting: false,
+      },
+    })
+  }
+
+  const handleRemoveTrouble = (index: number) => {
+    form.remove({
+      name: fields.troubleEntries.name,
+      index,
+    })
+  }
+
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       const filteredMessages = lastResult.error.message.filter(
@@ -168,10 +240,17 @@ export function useEditDailyForm(initialData: Awaited<ReturnType<typeof getDaily
     fields,
     reportDate,
     remote,
+    impression,
     dailyReports,
+    appealEntries,
+    troubleEntries,
     totalHours,
     handleAdd,
     handleRemove,
+    handleAddAppeal,
+    handleRemoveAppeal,
+    handleAddTrouble,
+    handleRemoveTrouble,
     getError,
   } as const
 }
