@@ -9,13 +9,8 @@ import { paginationSearchParamsParsers } from '~/types/search-params/pagination-
 
 const INITIAL_PAGE = 1
 
-type DailyReportsTabsProps = {
-  currentTab: (typeof DAILY_REPORT_TABS)[number]['id']
-  children: ReactNode
-}
-
-export function DailyReportsTabs({ currentTab, children }: DailyReportsTabsProps) {
-  const [, setQueryStates] = useQueryStates(
+export function DailyReportsTabs({ children }: Record<'children', ReactNode>) {
+  const [{ tab }, setQueryStates] = useQueryStates(
     {
       ...dailyReportSearchParamsParsers,
       ...paginationSearchParamsParsers,
@@ -28,7 +23,7 @@ export function DailyReportsTabs({ currentTab, children }: DailyReportsTabsProps
 
   return (
     <Tabs
-      selectedKey={currentTab}
+      selectedKey={tab}
       onSelectionChange={(key) => {
         if (key !== 'date' && key !== 'project') {
           return
