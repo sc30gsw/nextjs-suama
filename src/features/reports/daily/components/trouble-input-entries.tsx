@@ -95,8 +95,12 @@ export function TroubleInputEntries({
 
       {isExisting ? (
         <div className="col-span-2">
+          <input
+            name={field.resolved.name}
+            defaultValue={field.resolved.initialValue ?? 'false'}
+            type="hidden"
+          />
           <Checkbox
-            {...getInputProps(field.resolved, { type: 'checkbox' })}
             isSelected={resolvedInput.value === 'true'}
             onChange={(checked) => resolvedInput.change(checked ? 'true' : 'false')}
             isDisabled={pending}
