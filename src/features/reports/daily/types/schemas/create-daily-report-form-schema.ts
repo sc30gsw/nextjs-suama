@@ -27,6 +27,11 @@ export const troubleEntrySchema = z.object({
     .union([z.literal('true'), z.literal('false'), z.boolean()])
     .transform((val) => val === 'true' || val === true)
     .default(false),
+  isExisting: z
+    .union([z.literal('on'), z.undefined()])
+    .transform((val) => val === 'on')
+    .optional()
+    .default(false),
 })
 
 export const createDailyReportFormSchema = z

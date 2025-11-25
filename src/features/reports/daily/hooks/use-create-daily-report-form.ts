@@ -9,6 +9,7 @@ import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { createReportAction } from '~/features/reports/daily/actions/create-report-action'
 import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
+import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import {
   type CreateDailyReportFormSchema,
   createDailyReportFormSchema,
@@ -23,7 +24,12 @@ import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useCreateDailyForm(
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
+  options: Partial<
+    Record<'unResolvedTroubles', TroubleCategoriesResponse['unResolvedTroubles']>
+  > = {},
 ) {
+  const { unResolvedTroubles = [] } = options
+
   const { reportEntry, appealsAndTroublesEntry, remote, impression, setReportEntry } =
     useDailyReportSearchParams(initialDailyInputCountSearchParamsParsers)
 
@@ -83,6 +89,30 @@ export function useCreateDailyForm(
     null,
   )
 
+  const initialTroubleEntries: CreateDailyReportFormSchema['troubleEntries'] = [
+    ...unResolvedTroubles.map((trouble) => ({
+      id: trouble.id,
+      categoryId: trouble.categoryOfTroubleId,
+      content: trouble.trouble,
+      resolved: trouble.resolved,
+      isExisting: true,
+    })),
+    ...appealsAndTroublesEntry.troubles.entries.map((entry) => ({
+      id: entry.id,
+      categoryId: entry.item ?? undefined,
+      content: entry.content,
+      resolved: entry.resolved ?? false,
+      isExisting: false,
+    })),
+  ]
+
+  const initialAppealEntries: CreateDailyReportFormSchema['appealEntries'] =
+    appealsAndTroublesEntry.appeals.entries.map((entry) => ({
+      id: entry.id,
+      categoryId: entry.item ?? undefined,
+      content: entry.content,
+    }))
+
   const [form, fields] = useSafeForm<CreateDailyReportFormSchema>({
     constraint: getZodConstraint(createDailyReportFormSchema),
     lastResult,
@@ -99,16 +129,8 @@ export function useCreateDailyForm(
         mission: entry.mission ?? '',
         hours: entry.hours.toString(),
       })),
-      appealEntries: appealsAndTroublesEntry.appeals.entries.map((entry) => ({
-        id: entry.id,
-        categoryId: entry.item ?? undefined,
-        content: entry.content ?? undefined,
-      })),
-      troubleEntries: appealsAndTroublesEntry.troubles.entries.map((entry) => ({
-        id: entry.id,
-        categoryId: entry.item ?? undefined,
-        content: entry.content ?? undefined,
-      })),
+      appealEntries: initialAppealEntries,
+      troubleEntries: initialTroubleEntries,
     },
   })
 
@@ -125,9 +147,12 @@ export function useCreateDailyForm(
   // ? https://github.com/techtalkjp/techtalk.jp/blob/main/app/routes/demo+/conform.nested-array/route.tsx
   // ? https://www.techtalk.jp/demo/conform/nested-array
   const dailyReports = fields.reportEntries.getFieldList()
+  const appealEntries = fields.appealEntries.getFieldList()
+  const troubleEntries = fields.troubleEntries.getFieldList()
 
   const totalHours = dailyReports.reduce((acc, entry) => {
     const hours = Number(entry.value?.hours ?? 0)
+
     return acc + (hours > 0 ? hours : 0)
   }, 0)
 
@@ -196,6 +221,234 @@ export function useCreateDailyForm(
     })
   }
 
+  const handleAddAppeal = () => {
+    const newEntry = {
+      id: crypto.randomUUID(),
+      content: '',
+      item: null,
+    } as const satisfies (typeof appealsAndTroublesEntry.appeals.entries)[number]
+
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          appeals: {
+            count: prev.appealsAndTroublesEntry.appeals.count + 1,
+            entries: [...prev.appealsAndTroublesEntry.appeals.entries, newEntry],
+          },
+        },
+      }
+    })
+
+    form.insert({
+      name: fields.appealEntries.name,
+      defaultValue: {
+        id: newEntry.id,
+        categoryId: undefined,
+        content: '',
+      },
+    })
+  }
+
+  const handleRemoveAppeal = (index: number) => {
+    const entry = appealEntries[index]
+    const entryId = entry?.value?.id ?? entry?.initialValue?.id
+
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const filteredEntries = prev.appealsAndTroublesEntry.appeals.entries.filter(
+        (e) => e.id !== entryId,
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          appeals: {
+            count: filteredEntries.length,
+            entries: filteredEntries,
+          },
+        },
+      }
+    })
+
+    form.remove({
+      name: fields.appealEntries.name,
+      index,
+    })
+  }
+
+  const handleAddTrouble = () => {
+    const newEntry = {
+      id: crypto.randomUUID(),
+      content: '',
+      item: null,
+      resolved: false,
+    } as const satisfies (typeof appealsAndTroublesEntry.troubles.entries)[number]
+
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            count: prev.appealsAndTroublesEntry.troubles.count + 1,
+            entries: [...prev.appealsAndTroublesEntry.troubles.entries, newEntry],
+          },
+        },
+      }
+    })
+
+    form.insert({
+      name: fields.troubleEntries.name,
+      defaultValue: {
+        id: newEntry.id,
+        categoryId: undefined,
+        content: '',
+        resolved: false,
+        isExisting: false,
+      },
+    })
+  }
+
+  const handleRemoveTrouble = (index: number) => {
+    const entry = troubleEntries[index]
+    const entryId = entry?.value?.id ?? entry?.initialValue?.id
+    const isExisting = entry?.value?.isExisting ?? entry?.initialValue?.isExisting
+
+    if (!isExisting) {
+      setReportEntry((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        const filteredEntries = prev.appealsAndTroublesEntry.troubles.entries.filter(
+          (e) => e.id !== entryId,
+        )
+
+        return {
+          ...prev,
+          appealsAndTroublesEntry: {
+            ...prev.appealsAndTroublesEntry,
+            troubles: {
+              count: filteredEntries.length,
+              entries: filteredEntries,
+            },
+          },
+        }
+      })
+    }
+
+    form.remove({
+      name: fields.troubleEntries.name,
+      index,
+    })
+  }
+
+  const handleChangeAppealContent = (id: string, content: string) => {
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((entry) =>
+        entry.id === id ? { ...entry, content } : entry,
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          appeals: {
+            ...prev.appealsAndTroublesEntry.appeals,
+            entries: updatedEntries,
+          },
+        },
+      }
+    })
+  }
+
+  const handleChangeAppealCategory = (id: string, categoryId: string | null) => {
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.appealsAndTroublesEntry.appeals.entries.map((entry) =>
+        entry.id === id ? { ...entry, item: categoryId } : entry,
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          appeals: {
+            ...prev.appealsAndTroublesEntry.appeals,
+            entries: updatedEntries,
+          },
+        },
+      }
+    })
+  }
+
+  const handleChangeTroubleContent = (id: string, content: string) => {
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((entry) =>
+        entry.id === id ? { ...entry, content } : entry,
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            ...prev.appealsAndTroublesEntry.troubles,
+            entries: updatedEntries,
+          },
+        },
+      }
+    })
+  }
+
+  const handleChangeTroubleCategory = (id: string, categoryId: string | null) => {
+    setReportEntry((prev) => {
+      if (!prev) {
+        return prev
+      }
+
+      const updatedEntries = prev.appealsAndTroublesEntry.troubles.entries.map((entry) =>
+        entry.id === id ? { ...entry, item: categoryId } : entry,
+      )
+
+      return {
+        ...prev,
+        appealsAndTroublesEntry: {
+          ...prev.appealsAndTroublesEntry,
+          troubles: {
+            ...prev.appealsAndTroublesEntry.troubles,
+            entries: updatedEntries,
+          },
+        },
+      }
+    })
+  }
+
   const handleChangeRemote = (isSelected: CreateDailyReportFormSchema['remote']) => {
     setReportEntry({ remote: isSelected })
 
@@ -229,9 +482,19 @@ export function useCreateDailyForm(
     remoteInput,
     impressionInput,
     dailyReports,
+    appealEntries,
+    troubleEntries,
     totalHours,
     handleAdd,
     handleRemove,
+    handleAddAppeal,
+    handleRemoveAppeal,
+    handleAddTrouble,
+    handleRemoveTrouble,
+    handleChangeAppealContent,
+    handleChangeAppealCategory,
+    handleChangeTroubleContent,
+    handleChangeTroubleCategory,
     handleChangeRemote,
     handleChangeImpression,
     getError,

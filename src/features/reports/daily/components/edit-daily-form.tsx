@@ -9,44 +9,97 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
-import { type JSX, use } from 'react'
+import { use } from 'react'
 import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Form } from '~/components/ui/intent-ui/form'
+import { Heading } from '~/components/ui/intent-ui/heading'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { JapaneseDatePicker } from '~/components/ui/japanese-date-picker'
 import { getErrorMessage } from '~/constants/error-message'
+import type { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
+import type { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
+import { AppealInputEntries } from '~/features/reports/daily/components/appeal-input-entries'
 import { EditDailyReportContentInputEntries } from '~/features/reports/daily/components/edit-daily-report-content-input-entries'
+import { TroubleInputEntries } from '~/features/reports/daily/components/trouble-input-entries'
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
+import { createEditSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { cn } from '~/utils/classes'
 
 type EditDailyFormProps = {
   reportData: Awaited<ReturnType<typeof getDailyReportById>>
   promises: Promise<
-    [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
+    [
+      Awaited<ReturnType<typeof getProjects>>,
+      Awaited<ReturnType<typeof getMissions>>,
+      Awaited<ReturnType<typeof getAppealCategories>>,
+      Awaited<ReturnType<typeof getTroubleCategories>>,
+    ]
   >
-  troubleHeadings: JSX.Element
-  troubles: JSX.Element
-  appealHeadings: JSX.Element
-  appeals: JSX.Element
 }
 
-export function EditDailyForm({
-  reportData,
-  promises,
-  troubleHeadings,
-  troubles,
-  appealHeadings,
-  appeals,
-}: EditDailyFormProps) {
-  const [projectsResponse, missionsResponse] = use(promises)
+export function EditDailyForm({ reportData, promises }: EditDailyFormProps) {
+  const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
+    use(promises)
+
+  const unResolvedTroubles = troubleCategoriesResponse.unResolvedTroubles ?? []
+
+  const existingReportEntries = reportData.reportEntries.map((entry) => ({
+    id: entry.id,
+    project: entry.projectId,
+    mission: entry.missionId,
+    content: entry.content,
+    hours: entry.hours,
+  }))
+
+  const existingTroubleEntries = [
+    ...unResolvedTroubles
+      .filter((trouble) => !reportData.troubleEntries.some((e) => e.id === trouble.id))
+      .map((trouble) => ({
+        id: trouble.id,
+        content: trouble.trouble,
+        item: trouble.categoryOfTroubleId,
+        resolved: trouble.resolved,
+      })),
+    ...reportData.troubleEntries.map((entry) => ({
+      id: entry.id,
+      content: entry.content,
+      item: entry.categoryId,
+      resolved: false,
+    })),
+  ]
+
+  const existingAppealEntries = reportData.appealEntries.map((entry) => ({
+    id: entry.id,
+    content: entry.content,
+    item: entry.categoryId,
+  }))
+
+  const editSearchParamsParsers = createEditSearchParamsParsers({
+    reportEntry: {
+      count: existingReportEntries.length,
+      entries: existingReportEntries,
+    },
+    appealsAndTroublesEntry: {
+      appeals: {
+        count: existingAppealEntries.length,
+        entries: existingAppealEntries,
+      },
+      troubles: {
+        count: existingTroubleEntries.length,
+        entries: existingTroubleEntries,
+      },
+    },
+    remote: reportData.remote,
+    impression: reportData.impression ?? '',
+  })
 
   const {
     action,
@@ -54,13 +107,28 @@ export function EditDailyForm({
     form,
     fields,
     reportDate,
-    remote,
+    remoteInput,
+    impressionInput,
     dailyReports,
+    appealEntries,
+    troubleEntries,
     totalHours,
     handleAdd,
     handleRemove,
+    handleAddAppeal,
+    handleRemoveAppeal,
+    handleAddTrouble,
+    handleRemoveTrouble,
+    handleChangeAppealContent,
+    handleChangeAppealCategory,
+    handleChangeTroubleContent,
+    handleChangeTroubleCategory,
+    handleChangeRemote,
+    handleChangeImpression,
     getError,
-  } = useEditDailyForm(reportData)
+  } = useEditDailyForm(reportData, editSearchParamsParsers, {
+    unResolvedTroubles: troubleCategoriesResponse.unResolvedTroubles,
+  })
 
   return (
     <>
@@ -122,6 +190,7 @@ export function EditDailyForm({
               name={dailyReport.name}
               projects={projectsResponse.projects}
               missions={missionsResponse.missions}
+              initialDailyInputCountSearchParamsParsers={editSearchParamsParsers}
               removeButton={
                 <Tooltip delay={0}>
                   <Tooltip.Trigger
@@ -144,17 +213,13 @@ export function EditDailyForm({
 
           <Separator orientation="horizontal" />
           <div className="my-4 space-y-2">
-            {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
-            {/* // ? https://ja.conform.guide/integration/ui-libraries */}
             <Checkbox
-              name={fields.remote.name}
-              isSelected={remote.value === 'on'}
-              onChange={(checked) => remote.change(checked ? 'on' : '')}
-              onFocus={remote.focus}
-              onBlur={remote.blur}
+              {...getInputProps(fields.remote, { type: 'checkbox' })}
               isDisabled={isPending}
               size="lg"
               className="mt-2 cursor-pointer"
+              isSelected={remoteInput.value === 'on'}
+              onChange={handleChangeRemote}
             >
               <span className="ml-2">リモート勤務</span>
             </Checkbox>
@@ -163,14 +228,97 @@ export function EditDailyForm({
               {...getInputProps(fields.impression, { type: 'text' })}
               label="所感"
               isDisabled={isPending}
+              value={impressionInput.value ?? ''}
+              onChange={handleChangeImpression}
             />
           </div>
+
           <Separator orientation="horizontal" />
-          {troubleHeadings}
-          {troubles}
+          <div className="mt-4 flex items-center">
+            <Heading level={3}>困っていること</Heading>
+          </div>
+
+          <Tooltip delay={0}>
+            <Tooltip.Trigger
+              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+              onPress={handleAddTrouble}
+              isDisabled={isPending}
+            >
+              <IconPlus />
+            </Tooltip.Trigger>
+            <Tooltip.Content>困っていることを追加</Tooltip.Content>
+          </Tooltip>
+
+          {troubleEntries.map((trouble, index) => {
+            const isExisting = trouble.value?.isExisting === 'on'
+
+            return (
+              <TroubleInputEntries
+                key={trouble.key}
+                formId={form.id}
+                name={trouble.name}
+                categories={troubleCategoriesResponse.troubleCategories}
+                isExisting={isExisting}
+                onRemove={isExisting ? undefined : () => handleRemoveTrouble(index)}
+                onChangeContent={handleChangeTroubleContent}
+                onChangeCategory={handleChangeTroubleCategory}
+              />
+            )
+          })}
+
+          {troubleEntries.length > 0 && (
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAddTrouble}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>困っていることを追加</Tooltip.Content>
+            </Tooltip>
+          )}
+
           <Separator orientation="horizontal" />
-          {appealHeadings}
-          {appeals}
+          <div className="mt-4 flex items-center">
+            <Heading level={3}>アピールポイント</Heading>
+          </div>
+          <Tooltip delay={0}>
+            <Tooltip.Trigger
+              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+              onPress={handleAddAppeal}
+              isDisabled={isPending}
+            >
+              <IconPlus />
+            </Tooltip.Trigger>
+            <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
+          </Tooltip>
+
+          {appealEntries.map((appeal, index) => (
+            <AppealInputEntries
+              key={appeal.key}
+              formId={form.id}
+              name={appeal.name}
+              categories={appealCategoriesResponse.appealCategories}
+              onRemove={() => handleRemoveAppeal(index)}
+              onChangeContent={handleChangeAppealContent}
+              onChangeCategory={handleChangeAppealCategory}
+            />
+          ))}
+
+          {appealEntries.length > 0 && (
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAddAppeal}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
+            </Tooltip>
+          )}
+
           <Separator orientation="horizontal" />
           <div className="my-4 flex items-center justify-end gap-x-2">
             <Button

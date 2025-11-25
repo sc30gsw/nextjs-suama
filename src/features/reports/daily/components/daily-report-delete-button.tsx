@@ -6,15 +6,12 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
+import type { dailyReports } from '~/db/schema'
 import { deleteReportAction } from '~/features/reports/daily/actions/delete-report-action'
 import { Confirm } from '~/hooks/use-confirm'
 import { isErrorStatus } from '~/utils'
 
-type DailyReportDeleteButtonProps = {
-  id: string
-}
-
-export function DailyReportDeleteButton({ id }: DailyReportDeleteButtonProps) {
+export function DailyReportDeleteButton({ id }: Pick<typeof dailyReports.$inferSelect, 'id'>) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {

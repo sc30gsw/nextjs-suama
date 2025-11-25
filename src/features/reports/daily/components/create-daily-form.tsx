@@ -9,42 +9,43 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
-import { type JSX, use } from 'react'
+import { use } from 'react'
 import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
-import { JapaneseDatePicker } from '~/components/ui/japanese-date-picker'
 import { Form } from '~/components/ui/intent-ui/form'
+import { Heading } from '~/components/ui/intent-ui/heading'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
+import { JapaneseDatePicker } from '~/components/ui/japanese-date-picker'
 import { getErrorMessage } from '~/constants/error-message'
+import type { getAppealCategories } from '~/features/report-contexts/appeals/server/fetcher'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
+import type { getTroubleCategories } from '~/features/report-contexts/troubles/server/fetcher'
 import { TotalHours } from '~/features/reports/components/total-hours'
+import { AppealInputEntries } from '~/features/reports/daily/components/appeal-input-entries'
 import { CreateDailyReportContentInputEntries } from '~/features/reports/daily/components/create-daily-report-content-input-entries'
+import { TroubleInputEntries } from '~/features/reports/daily/components/trouble-input-entries'
 import { useCreateDailyForm } from '~/features/reports/daily/hooks/use-create-daily-report-form'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { cn } from '~/utils/classes'
 
 type CreateDailyFormProps = {
   promises: Promise<
-    [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
+    [
+      Awaited<ReturnType<typeof getProjects>>,
+      Awaited<ReturnType<typeof getMissions>>,
+      Awaited<ReturnType<typeof getAppealCategories>>,
+      Awaited<ReturnType<typeof getTroubleCategories>>,
+    ]
   >
-  troubleHeadings: JSX.Element
-  troubles: JSX.Element
-  appealHeadings: JSX.Element
-  appeals: JSX.Element
 }
 
-export function CreateDailyForm({
-  promises,
-  troubleHeadings,
-  troubles,
-  appealHeadings,
-  appeals,
-}: CreateDailyFormProps) {
-  const [projectsResponse, missionsResponse] = use(promises)
+export function CreateDailyForm({ promises }: CreateDailyFormProps) {
+  const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
+    use(promises)
 
   const {
     action,
@@ -55,13 +56,25 @@ export function CreateDailyForm({
     remoteInput,
     impressionInput,
     dailyReports,
+    appealEntries,
+    troubleEntries,
     totalHours,
     handleAdd,
     handleRemove,
+    handleAddAppeal,
+    handleRemoveAppeal,
+    handleAddTrouble,
+    handleRemoveTrouble,
+    handleChangeAppealContent,
+    handleChangeAppealCategory,
+    handleChangeTroubleContent,
+    handleChangeTroubleCategory,
     handleChangeRemote,
     handleChangeImpression,
     getError,
-  } = useCreateDailyForm(inputCountSearchParamsParsers)
+  } = useCreateDailyForm(inputCountSearchParamsParsers, {
+    unResolvedTroubles: troubleCategoriesResponse.unResolvedTroubles,
+  })
 
   return (
     <>
@@ -163,12 +176,93 @@ export function CreateDailyForm({
               onChange={handleChangeImpression}
             />
           </div>
+
           <Separator orientation="horizontal" />
-          {troubleHeadings}
-          {troubles}
+          <div className="mt-4 flex items-center">
+            <Heading level={3}>困っていること</Heading>
+          </div>
+
+          <Tooltip delay={0}>
+            <Tooltip.Trigger
+              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+              onPress={handleAddTrouble}
+              isDisabled={isPending}
+            >
+              <IconPlus />
+            </Tooltip.Trigger>
+            <Tooltip.Content>困っていることを追加</Tooltip.Content>
+          </Tooltip>
+
+          {troubleEntries.map((trouble, index) => {
+            const isExisting = trouble.value?.isExisting === 'on'
+
+            return (
+              <TroubleInputEntries
+                key={trouble.key}
+                formId={form.id}
+                name={trouble.name}
+                categories={troubleCategoriesResponse.troubleCategories}
+                isExisting={isExisting}
+                onRemove={isExisting ? undefined : () => handleRemoveTrouble(index)}
+                onChangeContent={isExisting ? undefined : handleChangeTroubleContent}
+                onChangeCategory={isExisting ? undefined : handleChangeTroubleCategory}
+              />
+            )
+          })}
+
+          {troubleEntries.length > 0 && (
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAddTrouble}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>困っていることを追加</Tooltip.Content>
+            </Tooltip>
+          )}
+
           <Separator orientation="horizontal" />
-          {appealHeadings}
-          {appeals}
+          <div className="mt-4 flex items-center">
+            <Heading level={3}>アピールポイント</Heading>
+          </div>
+          <Tooltip delay={0}>
+            <Tooltip.Trigger
+              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+              onPress={handleAddAppeal}
+              isDisabled={isPending}
+            >
+              <IconPlus />
+            </Tooltip.Trigger>
+            <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
+          </Tooltip>
+
+          {appealEntries.map((appeal, index) => (
+            <AppealInputEntries
+              key={appeal.key}
+              formId={form.id}
+              name={appeal.name}
+              categories={appealCategoriesResponse.appealCategories}
+              onRemove={() => handleRemoveAppeal(index)}
+              onChangeContent={handleChangeAppealContent}
+              onChangeCategory={handleChangeAppealCategory}
+            />
+          ))}
+
+          {appealEntries.length > 0 && (
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAddAppeal}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
+            </Tooltip>
+          )}
+
           <Separator orientation="horizontal" />
           <div className="my-4 flex items-center justify-end gap-x-2">
             <Button
