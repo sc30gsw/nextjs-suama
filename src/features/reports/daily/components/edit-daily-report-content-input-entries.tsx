@@ -10,6 +10,7 @@ import type {
   UpdateDailyReportEntrySchema,
   UpdateDailyReportFormSchema,
 } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
+import type { DailyInputCountSearchParams } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
 type EditDailyReportContentInputEntriesProps = {
@@ -18,6 +19,7 @@ type EditDailyReportContentInputEntriesProps = {
   missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
   formId: string
   name: FieldName<UpdateDailyReportEntrySchema, UpdateDailyReportFormSchema>
+  initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams
   removeButton: JSX.Element
 }
 
@@ -27,6 +29,7 @@ export function EditDailyReportContentInputEntries({
   missions,
   formId,
   name,
+  initialDailyInputCountSearchParamsParsers,
   removeButton,
 }: EditDailyReportContentInputEntriesProps) {
   const {
@@ -41,7 +44,13 @@ export function EditDailyReportContentInputEntries({
     filteredMissions,
     setProjectFilter,
     setMissionFilter,
-  } = useEditDailyReportContentInputEntries(formId, name, projects, missions)
+  } = useEditDailyReportContentInputEntries(
+    initialDailyInputCountSearchParamsParsers,
+    formId,
+    name,
+    projects,
+    missions,
+  )
 
   const { pending } = useFormStatus()
 

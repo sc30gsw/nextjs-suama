@@ -16,7 +16,6 @@ import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
 import type { client } from '~/lib/rpc'
-import { urls } from '~/lib/urls'
 
 type DailyReport = InferResponseType<typeof client.api.dailies.$get, 200>['dailyReports'][number]
 

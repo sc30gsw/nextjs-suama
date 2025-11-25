@@ -1,5 +1,6 @@
 import { createSearchParamsCache, parseAsBoolean, parseAsJson, parseAsString } from 'nuqs/server'
 import * as z from 'zod/v4'
+import type { dailyReports } from '~/db/schema'
 
 export const reportEntrySchema = z.object({
   id: z.string(),
@@ -61,3 +62,25 @@ export const inputCountSearchParamsCache = createSearchParamsCache(inputCountSea
 export type ReportEntry = z.infer<typeof reportEntrySchema>
 export type DailyInputCountSearchParams = typeof inputCountSearchParamsParsers
 export type AppealsAndTroublesEntry = z.infer<typeof appealsAndTroublesEntrySchema>
+export type ReportState = z.infer<typeof reportStateSchema>
+export type AppealsAndTroublesState = z.infer<typeof appealsAndTroublesStateSchema>
+
+export function createEditSearchParamsParsers(defaults: {
+  reportEntry: ReportState
+  appealsAndTroublesEntry: AppealsAndTroublesState
+  remote: (typeof dailyReports.$inferSelect)['remote']
+  impression: (typeof dailyReports.$inferSelect)['impression']
+}): DailyInputCountSearchParams {
+  return {
+    reportEntry: parseAsJson(reportStateSchema.parse)
+      .withDefault(defaults.reportEntry)
+      .withOptions({ throttleMs: 1000 }),
+    appealsAndTroublesEntry: parseAsJson(appealsAndTroublesStateSchema.parse)
+      .withDefault(defaults.appealsAndTroublesEntry)
+      .withOptions({ throttleMs: 1000 }),
+    remote: parseAsBoolean.withDefault(defaults.remote).withOptions({ throttleMs: 1000 }),
+    impression: parseAsString
+      .withDefault(defaults.impression ?? '')
+      .withOptions({ throttleMs: 1000 }),
+  }
+}
