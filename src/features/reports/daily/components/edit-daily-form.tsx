@@ -12,12 +12,12 @@ import { parseDate } from '@internationalized/date'
 import { type JSX, use } from 'react'
 import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
-import { DatePicker } from '~/components/ui/intent-ui/date-picker'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
+import { JapaneseDatePicker } from '~/components/ui/japanese-date-picker'
 import { getErrorMessage } from '~/constants/error-message'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
@@ -26,7 +26,6 @@ import { EditDailyReportContentInputEntries } from '~/features/reports/daily/com
 import { useEditDailyForm } from '~/features/reports/daily/hooks/use-edit-daily-report-form'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import { cn } from '~/utils/classes'
-import { DATE_FORMAT } from '~/utils/date-utils'
 
 type EditDailyFormProps = {
   reportData: Awaited<ReturnType<typeof getDailyReportById>>
@@ -86,7 +85,7 @@ export function EditDailyForm({
           <input {...getInputProps(fields.reportId, { type: 'hidden' })} />
           {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
           {/* // ? https://ja.conform.guide/integration/ui-libraries */}
-          <DatePicker
+          <JapaneseDatePicker
             isDisabled={isPending}
             value={reportDate.value ? parseDate(reportDate.value) : null}
             onChange={(newValue) => {

@@ -12,7 +12,7 @@ import { parseDate } from '@internationalized/date'
 import { type JSX, use } from 'react'
 import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
-import { DatePicker } from '~/components/ui/intent-ui/date-picker'
+import { JapaneseDatePicker } from '~/components/ui/japanese-date-picker'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
@@ -85,7 +85,7 @@ export function CreateDailyForm({
         <Form className="space-y-2" action={action} {...getFormProps(form)}>
           {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
           {/* // ? https://ja.conform.guide/integration/ui-libraries */}
-          <DatePicker
+          <JapaneseDatePicker
             isDisabled={isPending}
             value={reportDate.value ? parseDate(reportDate.value) : null}
             onChange={(newValue) => {
