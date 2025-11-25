@@ -73,19 +73,23 @@ export function WeeklyReportsCards({
             </Card.Header>
             <Card.Content className="space-y-4">
               <div className="p-4">
-                <Heading level={3}>前週に立てた予定：総時間数: {totalLastWeekHours}時間</Heading>
+                <Heading level={3}>
+                  前週に立てた予定：総時間数: {totalLastWeekHours.toFixed(2)}時間
+                </Heading>
               </div>
               <WeeklyReportsTable<'lastWeekReports'>
                 data={report.lastWeekReports.flatMap((r) => r.weeklyReportMissions)}
               />
               <div className="p-4">
-                <Heading level={3}>職務内容：総時間数: {totalThisWeekHours}時間</Heading>
+                <Heading level={3}>職務内容：総時間数: {totalThisWeekHours.toFixed(2)}時間</Heading>
               </div>
               <DailyReportsInWeeklyReportListTable
                 data={report.dailyReports.flatMap((r) => r.dailyReportMissions)}
               />
               <div className="p-4">
-                <Heading level={3}>次週の予定：総時間数: {totalNextWeekHours}時間</Heading>
+                <Heading level={3}>
+                  次週の予定：総時間数: {totalNextWeekHours.toFixed(2)}時間
+                </Heading>
               </div>
               <WeeklyReportsTable<'nextWeekReports'>
                 data={report.nextWeekReports.flatMap((r) => r.weeklyReportMissions)}
@@ -98,8 +102,8 @@ export function WeeklyReportsCards({
                 <Table.Body items={report.troubles}>
                   {(item) => (
                     <Table.Row id={item.id}>
-                      <Table.Cell>{item.trouble}</Table.Cell>
                       <Table.Cell>{item.categoryOfTrouble.name}</Table.Cell>
+                      <Table.Cell>{item.trouble}</Table.Cell>
                     </Table.Row>
                   )}
                 </Table.Body>
@@ -111,8 +115,8 @@ export function WeeklyReportsCards({
                 <Table.Body items={report.dailyReports.flatMap((r) => r.appeals)}>
                   {(item) => (
                     <Table.Row id={item.id}>
-                      <Table.Cell>{item.appeal}</Table.Cell>
                       <Table.Cell>{item.categoryOfAppeal.name}</Table.Cell>
+                      <Table.Cell>{item.appeal}</Table.Cell>
                     </Table.Row>
                   )}
                 </Table.Body>

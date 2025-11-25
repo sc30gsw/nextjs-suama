@@ -35,7 +35,7 @@ export function DailyReportsInWeeklyReportListTable({
               {item.mission.project.name}
             </Table.Cell>
             <Table.Cell className="whitespace-normal break-words ">{item.mission.name}</Table.Cell>
-            <Table.Cell>{item.hours ? item.hours.toFixed(1) : 0}</Table.Cell>
+            <Table.Cell>{item.hours ? item.hours.toFixed(2) : '0.00'}</Table.Cell>
             <Table.Cell className="whitespace-normal break-words ">{item.workContent}</Table.Cell>
           </Table.Row>
         )}
