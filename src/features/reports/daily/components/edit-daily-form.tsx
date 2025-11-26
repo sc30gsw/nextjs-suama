@@ -53,7 +53,7 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
   const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
     use(promises)
 
-  const { isDateUnavailable, handleFocusChange } = useDisabledDates({
+  const { isDateUnavailable, handleFocusChange, isLoading } = useDisabledDates({
     userId,
     excludeReportId: reportData.id,
   })
@@ -178,6 +178,7 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
                 handleFocusChange((date as DateValue).year, (date as DateValue).month)
               }
             }}
+            isLoading={isLoading}
           />
           <input
             ref={reportDate.register}
