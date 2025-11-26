@@ -1,11 +1,14 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { getCountHandler } from '~/features/reports/daily/api/handlers/count-handler'
+import { getDailyReportDatesHandler } from '~/features/reports/daily/api/handlers/dates-handler'
 import { getDailyReportDetailHandler } from '~/features/reports/daily/api/handlers/detail-handler'
 import { getDailyReportsListHandler } from '~/features/reports/daily/api/handlers/list-handler'
 import { getDailyReportSummaryHandler } from '~/features/reports/daily/api/handlers/summary-handler'
 import {
   DailyReportCountQuerySchema,
   DailyReportCountResponseSchema,
+  DailyReportDatesQuerySchema,
+  DailyReportDatesResponseSchema,
   DailyReportDetailResponseSchema,
   DailyReportsQuerySchema,
   DailyReportsResponseSchema,
@@ -185,6 +188,45 @@ export const getDailyReportDetailRoute = createRoute({
   description: '指定されたIDの、認証済みユーザーの日報の詳細情報を取得します。',
 })
 
+export const getDailyReportDatesRoute = createRoute({
+  method: 'get',
+  path: '/dates',
+  request: {
+    query: DailyReportDatesQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': {
+          schema: DailyReportDatesResponseSchema,
+        },
+      },
+      description: '登録済み日報の日付リストを正常に取得',
+    },
+    401: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: '認証が必要です',
+    },
+    500: {
+      content: {
+        'application/json': {
+          schema: ErrorResponseSchema,
+        },
+      },
+      description: 'サーバーエラー',
+    },
+  },
+  security: [{ UserIdAuth: [] }],
+  tags: ['Daily Reports'],
+  summary: '登録済み日報の日付取得',
+  description:
+    '指定された年月の認証済みユーザーの登録済み日報日付を取得します。DatePickerで重複登録を防ぐために使用します。',
+})
+
 const app = new OpenAPIHono<AdditionalVariables>()
 app.use('/*', sessionMiddleware)
 
@@ -192,4 +234,5 @@ export const dailyApi = app
   .openapi(getDailyReportsListRoute, getDailyReportsListHandler)
   .openapi(getCountRoute, getCountHandler)
   .openapi(getDailyReportSummaryRoute, getDailyReportSummaryHandler)
+  .openapi(getDailyReportDatesRoute, getDailyReportDatesHandler)
   .openapi(getDailyReportDetailRoute, getDailyReportDetailHandler)

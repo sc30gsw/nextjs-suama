@@ -168,7 +168,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                   画像をアップロード
                 </FileTrigger>
                 {imageError && (
-                  <span className="break-words text-red-500 text-sm">{imageError}</span>
+                  <span className="wrap-break-words text-red-500 text-sm">{imageError}</span>
                 )}
               </div>
               {imageInput.value ? (

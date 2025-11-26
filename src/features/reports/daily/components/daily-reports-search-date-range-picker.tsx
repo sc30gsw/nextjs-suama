@@ -23,7 +23,7 @@ export function DailyReportsSearchDateRangePicker() {
       defaultValue={defaultValue}
       startName="startDate"
       endName="endDate"
-      className="w-full max-w-64"
+      className="w-full md:max-w-64"
     />
   )
 }

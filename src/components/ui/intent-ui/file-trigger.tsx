@@ -41,7 +41,7 @@ const FileTrigger = ({
             <IconPaperclip45 />
           )
         ) : (
-          <Loader />
+          <Loader variant="ring" size="medium" className="-top-2 -right-2 absolute" />
         )}
         {props.children ? (
           props.children

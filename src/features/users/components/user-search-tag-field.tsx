@@ -20,6 +20,7 @@ export function UserSearchTagField() {
 
   return (
     <TagField
+      name="userNames"
       appearance="outline"
       label="ユーザー名"
       placeholder={userNames.length > 0 ? '' : 'ユーザー名（複数選択可）で検索できます'}

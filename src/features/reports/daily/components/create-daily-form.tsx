@@ -9,7 +9,9 @@ import {
   IconTriangleExclamation,
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
+import type { Session } from 'better-auth'
 import { use } from 'react'
+import type { DateValue } from 'react-aria-components'
 import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Form } from '~/components/ui/intent-ui/form'
@@ -29,10 +31,12 @@ import { AppealInputEntries } from '~/features/reports/daily/components/appeal-i
 import { CreateDailyReportContentInputEntries } from '~/features/reports/daily/components/create-daily-report-content-input-entries'
 import { TroubleInputEntries } from '~/features/reports/daily/components/trouble-input-entries'
 import { useCreateDailyForm } from '~/features/reports/daily/hooks/use-create-daily-report-form'
+import { useDisabledDates } from '~/features/reports/daily/hooks/use-disabled-dates'
 import { inputCountSearchParamsParsers } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
 import { cn } from '~/utils/classes'
 
 type CreateDailyFormProps = {
+  userId: Session['userId']
   promises: Promise<
     [
       Awaited<ReturnType<typeof getProjects>>,
@@ -43,9 +47,11 @@ type CreateDailyFormProps = {
   >
 }
 
-export function CreateDailyForm({ promises }: CreateDailyFormProps) {
+export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
   const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
     use(promises)
+
+  const { isDateUnavailable, handleFocusChange } = useDisabledDates({ userId })
 
   const {
     action,
@@ -108,6 +114,12 @@ export function CreateDailyForm({ promises }: CreateDailyFormProps) {
             }}
             label="日付"
             className="max-w-3xs"
+            isDateUnavailable={isDateUnavailable}
+            onFocusChange={(date) => {
+              if (date && typeof date !== 'boolean' && 'year' in date && 'month' in date) {
+                handleFocusChange((date as DateValue).year, (date as DateValue).month)
+              }
+            }}
           />
           <input
             ref={reportDate.register}

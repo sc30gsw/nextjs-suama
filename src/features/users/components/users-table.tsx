@@ -1,4 +1,6 @@
 'use client'
+
+import { IconCalendarCheck } from '@intentui/icons'
 import {
   createColumnHelper,
   flexRender,
@@ -7,13 +9,17 @@ import {
 } from '@tanstack/react-table'
 import type { InferSelectModel } from 'drizzle-orm'
 import type { InferResponseType } from 'hono'
+import Link from 'next/link'
 import { useQueryStates } from 'nuqs'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Table } from '~/components/ui/intent-ui/table'
+import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import type { users } from '~/db/schema'
 import { EditUserModal } from '~/features/users/components/edit-user-modal'
 import { UserDeleteButton } from '~/features/users/components/user-delete-button'
 import type { client } from '~/lib/rpc'
+import { urls } from '~/lib/urls'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type UserTableData = Pick<
@@ -45,6 +51,33 @@ const COLUMNS = [
 
       return (
         <div className="flex items-center gap-2">
+          <Tooltip delay={0}>
+            <Link
+              href={
+                isCurrentUser
+                  ? urls.href({ route: '/daily/mine' })
+                  : urls.build({
+                      route: '/daily/every',
+                      searchParams: { userNames: row.original.name },
+                    } as Parameters<typeof urls.build>[0] & {
+                      searchParams?: Record<string, unknown>
+                    }).href
+              }
+            >
+              <Tooltip.Trigger className={buttonStyles({ size: 'sm', intent: 'outline' })}>
+                <IconCalendarCheck />
+              </Tooltip.Trigger>
+            </Link>
+            <Tooltip.Content>
+              {isCurrentUser ? (
+                '自分の日報'
+              ) : (
+                <p>
+                  <b>{row.original.name}</b>の日報
+                </p>
+              )}
+            </Tooltip.Content>
+          </Tooltip>
           {isCurrentUser && (
             <div className="flex gap-2">
               <EditUserModal
