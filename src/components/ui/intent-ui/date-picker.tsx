@@ -53,7 +53,7 @@ const DatePickerOverlay = ({
     <PopoverContent
       showArrow={false}
       className={twJoin(
-        'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-[16.5rem] sm:p-2 sm:pt-3',
+        'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-66 sm:p-2 sm:pt-3',
         visibleDuration?.months === 1 ? 'sm:max-w-2xs' : 'sm:max-w-none',
       )}
       {...props}
