@@ -8,8 +8,9 @@ import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
-import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
+import { GlowCard } from '~/components/ui/glow-card'
+import { Card } from '~/components/ui/intent-ui/card'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
@@ -82,7 +83,7 @@ export function SignInForm({
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md">
+    <GlowCard className="mx-auto w-full max-w-md">
       {children}
       <Form
         {...getFormProps(form)}
@@ -181,6 +182,6 @@ export function SignInForm({
           </Button>
         </Card.Footer>
       </Form>
-    </Card>
+    </GlowCard>
   )
 }

@@ -3,8 +3,9 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconTriangleExclamation } from '@intentui/icons'
-import { type ReactNode, useActionState } from 'react'
+import { JSX, type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
+import { GlowCard } from '~/components/ui/glow-card'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
@@ -21,7 +22,12 @@ import { useSafeForm } from '~/hooks/use-safe-form'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-export function ForgotPasswordForm({ children }: { children: ReactNode }) {
+type ForgotPasswordFormProps = {
+  children: ReactNode
+  backToSignIn: JSX.Element
+}
+
+export function ForgotPasswordForm({ children, backToSignIn }: ForgotPasswordFormProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(forgotPasswordAction, {
       onSuccess() {
@@ -67,7 +73,7 @@ export function ForgotPasswordForm({ children }: { children: ReactNode }) {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md">
+    <GlowCard className="mx-auto w-full max-w-md">
       {children}
       <Form
         {...getFormProps(form)}
@@ -98,8 +104,9 @@ export function ForgotPasswordForm({ children }: { children: ReactNode }) {
             パスワードリセット画面へ
             {isPending && <Loader className="absolute top-3 right-2" />}
           </Button>
+          {backToSignIn}
         </Card.Footer>
       </Form>
-    </Card>
+    </GlowCard>
   )
 }

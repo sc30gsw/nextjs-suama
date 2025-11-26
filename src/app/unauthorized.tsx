@@ -1,6 +1,7 @@
 import { IconLock, IconLogin } from '@intentui/icons'
 import { getYear } from 'date-fns'
 import Link from 'next/link'
+import { GlowCard } from '~/components/ui/glow-card'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Separator } from '~/components/ui/intent-ui/separator'
@@ -11,7 +12,7 @@ export default function UnauthorizedPage() {
   return (
     <main className="flex min-h-screen w-full items-center justify-center bg-gray-50 p-4 dark:bg-gray-900">
       <div className="mx-auto w-full max-w-md">
-        <Card className="max-w-lg">
+        <GlowCard className="max-w-lg">
           <Card.Header className="flex flex-col items-center">
             <div className="mb-6 inline-flex size-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
               <IconLock className="size-8 text-red-600 dark:text-red-500" />
@@ -52,7 +53,7 @@ export default function UnauthorizedPage() {
               お問い合わせ
             </a>
           </Card.Footer>
-        </Card>
+        </GlowCard>
       </div>
     </main>
   )

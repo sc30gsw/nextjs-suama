@@ -6,6 +6,7 @@ import { IconTriangleExclamation } from '@intentui/icons'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
+import { GlowCard } from '~/components/ui/glow-card'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
@@ -78,7 +79,7 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md">
+    <GlowCard className="mx-auto w-full max-w-md">
       {children}
       <Form
         {...getFormProps(form)}
@@ -132,6 +133,6 @@ export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
           </Button>
         </Card.Footer>
       </Form>
-    </Card>
+    </GlowCard>
   )
 }

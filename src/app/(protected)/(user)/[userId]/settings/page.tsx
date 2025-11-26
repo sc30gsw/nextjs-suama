@@ -1,4 +1,5 @@
 import { forbidden, unauthorized } from 'next/navigation'
+import { GlowCard } from '~/components/ui/glow-card'
 import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { EditUserForm } from '~/features/users/components/edit-user-form'
@@ -24,7 +25,7 @@ export default async function UserSettingsPage({
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <Heading>ユーザー設定</Heading>
       <div className="flex flex-col items-center">
-        <Card className="mt-4 w-full max-w-lg py-4">
+        <GlowCard className="mt-4 w-full max-w-lg py-4">
           <Card.Header>
             <Card.Title>ユーザー情報</Card.Title>
             <Card.Description>ユーザー情報を編集する</Card.Description>
@@ -35,7 +36,7 @@ export default async function UserSettingsPage({
             email={session.user.email}
             image={session.user.image ?? null}
           />
-        </Card>
+        </GlowCard>
       </div>
     </div>
   )

@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
-import { Card } from '~/components/ui/intent-ui/card'
 import { Form } from '~/components/ui/intent-ui/form'
+import { GlowCard } from '~/components/ui/glow-card'
+import { Card } from '~/components/ui/intent-ui/card'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
@@ -80,7 +81,7 @@ export function SignUpForm({
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md">
+    <GlowCard className="mx-auto w-full max-w-md">
       {children}
       <Form
         {...getFormProps(form)}
@@ -170,6 +171,6 @@ export function SignUpForm({
           {haveAccountArea}
         </Card.Footer>
       </Form>
-    </Card>
+    </GlowCard>
   )
 }
