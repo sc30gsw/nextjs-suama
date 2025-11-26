@@ -32,6 +32,7 @@ import {
   SelectLabel,
   SelectTrigger,
 } from '~/components/ui/intent-ui/select'
+import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { isJapaneseHoliday, isSaturday, isSunday } from '~/utils/holiday-utils'
 
 export type JapaneseCalendarProps<T extends DateValue> = Omit<
@@ -40,12 +41,14 @@ export type JapaneseCalendarProps<T extends DateValue> = Omit<
 > &
   Partial<Record<'errorMessage' | 'className', string>> & {
     onFocusChange?: (date: DateValue | false) => void
+    isLoading?: boolean
   }
 
 export function JapaneseCalendar<T extends DateValue>({
   errorMessage,
   className,
   onFocusChange,
+  isLoading,
   ...props
 }: JapaneseCalendarProps<T>) {
   const now = today(getLocalTimeZone())
@@ -73,18 +76,25 @@ export function JapaneseCalendar<T extends DateValue>({
 
                   return twMerge(
                     'relative flex size-11 cursor-default items-center justify-center rounded-lg text-fg tabular-nums outline-hidden sm:size-9 sm:text-sm/6 forced-colors:text-[ButtonText] forced-colors:outline-0',
-                    !isDisabled && !isUnavailable && 'hover:bg-secondary-fg/15',
+                    !isDisabled && !isUnavailable && !isLoading && 'hover:bg-secondary-fg/15',
                     isSelected &&
+                      !isLoading &&
                       'bg-primary pressed:bg-primary text-primary-fg hover:bg-primary/90 data-invalid:bg-danger data-invalid:text-danger-fg forced-colors:bg-[Highlight] forced-colors:text-[Highlight] forced-colors:data-invalid:bg-[Mark]',
-                    isDisabled || isUnavailable
-                      ? '!cursor-not-allowed !bg-muted/60 !text-muted-fg !opacity-60 hover:!bg-muted/60 hover:!text-muted-fg forced-colors:!bg-[GrayText] forced-colors:!text-[GrayText]'
+                    isDisabled || isUnavailable || isLoading
+                      ? 'cursor-not-allowed! bg-muted/60! text-muted-fg! opacity-60! hover:bg-muted/60! hover:text-muted-fg! forced-colors:bg-[GrayText]! forced-colors:text-[GrayText]!'
                       : '',
                     date.compare(now) === 0 &&
                       'after:-translate-x-1/2 after:pointer-events-none after:absolute after:start-1/2 after:bottom-1 after:z-10 after:size-[3px] after:rounded-full after:bg-primary selected:after:bg-primary-fg focus-visible:after:bg-primary-fg',
                     className,
                   )
                 }}
-              />
+              >
+                {isLoading ? (
+                  <Skeleton className="size-9 sm:size-7.5" />
+                ) : (
+                  ({ formattedDate }) => formattedDate
+                )}
+              </CalendarCell>
             )
           }}
         </CalendarGridBody>
@@ -98,7 +108,7 @@ export function JapaneseCalendar<T extends DateValue>({
   )
 }
 
-export function JapaneseCalendarHeader({
+function JapaneseCalendarHeader({
   isRange,
   className,
   ...props
@@ -231,7 +241,7 @@ function SelectYear({ state }: Record<'state', CalendarState>) {
 const WEEK_DAYS = ['日', '月', '火', '水', '木', '金', '土'] as const satisfies readonly string[]
 type WeekDay = (typeof WEEK_DAYS)[number]
 
-export function JapaneseCalendarGridHeader() {
+function JapaneseCalendarGridHeader() {
   return (
     <CalendarGridHeaderPrimitive>
       {(day) => {
@@ -254,7 +264,7 @@ export function JapaneseCalendarGridHeader() {
   )
 }
 
-export type JapaneseRangeCalendarProps<T extends DateValue> = RangeCalendarPrimitiveProps<T> &
+type JapaneseRangeCalendarProps<T extends DateValue> = RangeCalendarPrimitiveProps<T> &
   Partial<Record<'errorMessage', string>>
 
 export function JapaneseRangeCalendar<T extends DateValue>({
@@ -294,7 +304,7 @@ export function JapaneseRangeCalendar<T extends DateValue>({
                       className={twMerge([
                         'shrink-0 [--cell-fg:var(--color-primary)] [--cell:color-mix(in_oklab,var(--color-primary)_15%,white_85%)]',
                         'dark:[--cell-fg:color-mix(in_oklab,var(--color-primary)_80%,white_20%)] dark:[--cell:color-mix(in_oklab,var(--color-primary)_30%,black_45%)]',
-                        'group/calendar-cell relative size-10 cursor-default outline-hidden [line-height:2.286rem] selection-start:rounded-s-lg data-selection-end:rounded-e-lg data-outside-month:text-muted-fg sm:size-9 sm:text-sm',
+                        'group/calendar-cell relative size-10 cursor-default outside-month:text-muted-fg leading-[2.286rem] outline-hidden selection-start:rounded-s-lg selection-end:rounded-e-lg sm:size-9 sm:text-sm',
                         'selected:bg-(--cell)/70 selected:text-(--cell-fg) dark:selected:bg-(--cell)',
                         'selected:after:bg-primary-fg invalid:selected:bg-danger/10 focus-visible:after:bg-primary-fg dark:invalid:selected:bg-danger/13',
                         '[td:first-child_&]:rounded-s-lg [td:last-child_&]:rounded-e-lg',

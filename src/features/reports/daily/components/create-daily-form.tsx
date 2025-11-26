@@ -51,7 +51,7 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
   const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
     use(promises)
 
-  const { isDateUnavailable, handleFocusChange } = useDisabledDates({ userId })
+  const { isDateUnavailable, handleFocusChange, isLoading } = useDisabledDates({ userId })
 
   const {
     action,
@@ -120,6 +120,7 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
                 handleFocusChange((date as DateValue).year, (date as DateValue).month)
               }
             }}
+            isLoading={isLoading}
           />
           <input
             ref={reportDate.register}

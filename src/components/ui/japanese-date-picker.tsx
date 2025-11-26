@@ -34,6 +34,7 @@ type JapaneseDatePickerOverlayProps = Omit<PopoverProps, 'children'> & {
   pageBehavior?: 'visible' | 'single'
   isDateUnavailable?: (date: DateValue) => boolean
   onFocusChange?: (date: DateValue | false) => void
+  isLoading?: boolean
 }
 
 export function JapaneseDatePickerOverlay({
@@ -42,6 +43,7 @@ export function JapaneseDatePickerOverlay({
   range,
   isDateUnavailable,
   onFocusChange,
+  isLoading,
   ...props
 }: JapaneseDatePickerOverlayProps) {
   const isMobile = useMediaQuery('(max-width: 767px)') ?? false
@@ -52,7 +54,11 @@ export function JapaneseDatePickerOverlay({
         {range ? (
           <JapaneseRangeCalendar pageBehavior={pageBehavior} visibleDuration={visibleDuration} />
         ) : (
-          <JapaneseCalendar isDateUnavailable={isDateUnavailable} onFocusChange={onFocusChange} />
+          <JapaneseCalendar
+            isDateUnavailable={isDateUnavailable}
+            onFocusChange={onFocusChange}
+            isLoading={isLoading}
+          />
         )}
       </div>
     </Modal.Content>
@@ -60,7 +66,7 @@ export function JapaneseDatePickerOverlay({
     <PopoverContent
       showArrow={false}
       className={twJoin(
-        'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-[16.5rem] sm:p-2 sm:pt-3',
+        'flex min-w-auto max-w-none snap-x justify-center p-4 sm:min-w-66 sm:p-2 sm:pt-3',
         visibleDuration?.months === 1 ? 'sm:max-w-2xs' : 'sm:max-w-none',
       )}
       {...props}
@@ -68,7 +74,11 @@ export function JapaneseDatePickerOverlay({
       {range ? (
         <JapaneseRangeCalendar pageBehavior={pageBehavior} visibleDuration={visibleDuration} />
       ) : (
-        <JapaneseCalendar isDateUnavailable={isDateUnavailable} onFocusChange={onFocusChange} />
+        <JapaneseCalendar
+          isDateUnavailable={isDateUnavailable}
+          onFocusChange={onFocusChange}
+          isLoading={isLoading}
+        />
       )}
     </PopoverContent>
   )
@@ -86,8 +96,11 @@ export function JapaneseDatePickerIcon() {
   )
 }
 
-export type JapaneseDatePickerProps<T extends DateValue> = DatePickerPrimitiveProps<T> &
-  Pick<JapaneseDatePickerOverlayProps, 'placement' | 'isDateUnavailable' | 'onFocusChange'> &
+type JapaneseDatePickerProps<T extends DateValue> = DatePickerPrimitiveProps<T> &
+  Pick<
+    JapaneseDatePickerOverlayProps,
+    'placement' | 'isDateUnavailable' | 'onFocusChange' | 'isLoading'
+  > &
   Omit<FieldProps, 'placeholder'>
 
 export function JapaneseDatePicker<T extends DateValue>({
@@ -98,6 +111,7 @@ export function JapaneseDatePicker<T extends DateValue>({
   placement,
   isDateUnavailable,
   onFocusChange,
+  isLoading,
   ...props
 }: JapaneseDatePickerProps<T>) {
   return (
@@ -116,6 +130,7 @@ export function JapaneseDatePicker<T extends DateValue>({
         placement={placement}
         isDateUnavailable={isDateUnavailable}
         onFocusChange={onFocusChange}
+        isLoading={isLoading}
       />
     </DatePickerPrimitive>
   )
