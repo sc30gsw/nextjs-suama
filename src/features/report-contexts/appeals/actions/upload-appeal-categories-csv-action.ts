@@ -8,8 +8,8 @@ import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
 import { uploadAppealCategoryCsvRowSchema } from '~/features/report-contexts/appeals/types/schemas/upload-appeal-category-csv-schema'
+import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/constants/csv-error-messages'
 import { csvFileSchema } from '~/features/report-contexts/types/schemas/csv-file-schema'
-import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/utils/csv-error-messages'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
@@ -61,7 +61,7 @@ export async function uploadAppealCategoriesCsvAction(
             resolve({
               status: 'error',
               error: {
-                message: [`${CSV_ERROR_MESSAGES.PARSE_FAILED}: ${results.errors[0].message}`],
+                message: [CSV_ERROR_MESSAGES.PARSE_FAILED],
               },
             })
 

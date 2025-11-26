@@ -7,9 +7,9 @@ import Papa from 'papaparse'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfTroubles } from '~/db/schema'
+import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/constants/csv-error-messages'
 import { uploadTroubleCategoryCsvRowSchema } from '~/features/report-contexts/troubles/types/schemas/upload-trouble-category-csv-schema'
 import { csvFileSchema } from '~/features/report-contexts/types/schemas/csv-file-schema'
-import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/utils/csv-error-messages'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
@@ -61,7 +61,7 @@ export async function uploadTroubleCategoriesCsvAction(
             resolve({
               status: 'error',
               error: {
-                message: [`${CSV_ERROR_MESSAGES.PARSE_FAILED}: ${results.errors[0].message}`],
+                message: [CSV_ERROR_MESSAGES.PARSE_FAILED],
               },
             })
 

@@ -7,9 +7,9 @@ import Papa from 'papaparse'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { missions, projects } from '~/db/schema'
+import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/constants/csv-error-messages'
 import { uploadMissionCsvRowSchema } from '~/features/report-contexts/missions/types/schemas/upload-mission-csv-schema'
 import { csvFileSchema } from '~/features/report-contexts/types/schemas/csv-file-schema'
-import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/utils/csv-error-messages'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
@@ -67,7 +67,7 @@ export async function uploadMissionsCsvAction(
             resolve({
               status: 'error',
               error: {
-                message: [`${CSV_ERROR_MESSAGES.PARSE_FAILED}: ${results.errors[0].message}`],
+                message: [CSV_ERROR_MESSAGES.PARSE_FAILED],
               },
             })
 

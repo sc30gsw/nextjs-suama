@@ -68,7 +68,7 @@ export async function uploadProjectsCsvAction(
             resolve({
               status: 'error',
               error: {
-                message: [`${CSV_ERROR_MESSAGES.PARSE_FAILED}: ${results.errors[0].message}`],
+                message: [CSV_ERROR_MESSAGES.PARSE_FAILED],
               },
             })
 
