@@ -44,7 +44,7 @@ export default async function AppealListPage({
         <Heading>アピールポイントカテゴリー一覧</Heading>
         <div className="flex flex-col gap-2">
           <CreateAppealCategoryModal />
-          <ReportContextMenu label="カテゴリー" />
+          <ReportContextMenu label="カテゴリー" categoryType="appeal" />
         </div>
       </div>
       <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">

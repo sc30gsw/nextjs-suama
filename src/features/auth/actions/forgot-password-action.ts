@@ -29,7 +29,7 @@ export async function forgotPasswordAction(_: unknown, formData: FormData) {
     })
   }
 
-  await auth.api.forgetPassword({
+  await auth.api.requestPasswordReset({
     body: {
       email: submission.value.email,
       redirectTo: '/reset-password',

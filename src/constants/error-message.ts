@@ -112,6 +112,10 @@ export const TOAST_MESSAGES = {
     NOT_FOUND: 'クライアントが見つかりません',
     INVALID_RELATION:
       'クライアントが存在しません。再度、選択し直すか、クライアントの登録を行ってください。',
+    CSV_DOWNLOAD_SUCCESS: 'クライアントのCSVダウンロードに成功しました',
+    CSV_DOWNLOAD_FAILED: 'クライアントのCSVダウンロードに失敗しました',
+    CSV_UPLOAD_SUCCESS: 'クライアントのCSVアップロードに成功しました',
+    CSV_UPLOAD_FAILED: 'クライアントのCSVアップロードに失敗しました',
   },
 
   PROJECT: {
@@ -125,6 +129,10 @@ export const TOAST_MESSAGES = {
     INVALID_CLIENT: '未登録のクライアントが選択されています',
     INVALID_RELATION:
       'プロジェクトが存在しません。再度、選択し直すか、プロジェクトの登録を行ってください。',
+    CSV_DOWNLOAD_SUCCESS: 'プロジェクトのCSVダウンロードに成功しました',
+    CSV_DOWNLOAD_FAILED: 'プロジェクトのCSVダウンロードに失敗しました',
+    CSV_UPLOAD_SUCCESS: 'プロジェクトのCSVアップロードに成功しました',
+    CSV_UPLOAD_FAILED: 'プロジェクトのCSVアップロードに失敗しました',
   },
 
   MISSION: {
@@ -138,6 +146,10 @@ export const TOAST_MESSAGES = {
     INVALID_PROJECT: '未登録のプロジェクトが選択されています',
     INVALID_RELATION:
       'ミッションが存在しません。再度、選択し直すか、ミッションの登録を行ってください。',
+    CSV_DOWNLOAD_SUCCESS: 'ミッションのCSVダウンロードに成功しました',
+    CSV_DOWNLOAD_FAILED: 'ミッションのCSVダウンロードに失敗しました',
+    CSV_UPLOAD_SUCCESS: 'ミッションのCSVアップロードに成功しました',
+    CSV_UPLOAD_FAILED: 'ミッションのCSVアップロードに失敗しました',
   },
 
   APPEAL: {
@@ -148,6 +160,10 @@ export const TOAST_MESSAGES = {
     DELETE_SUCCESS: 'アピールポイントカテゴリーの削除に成功しました',
     DELETE_FAILED: 'アピールポイントカテゴリーの削除に失敗しました',
     NOT_FOUND: 'アピールポイントカテゴリーが見つかりません',
+    CSV_DOWNLOAD_SUCCESS: 'アピールポイントカテゴリーのCSVダウンロードに成功しました',
+    CSV_DOWNLOAD_FAILED: 'アピールポイントカテゴリーのCSVダウンロードに失敗しました',
+    CSV_UPLOAD_SUCCESS: 'アピールポイントカテゴリーのCSVアップロードに成功しました',
+    CSV_UPLOAD_FAILED: 'アピールポイントカテゴリーのCSVアップロードに失敗しました',
   },
 
   TROUBLE: {
@@ -158,5 +174,9 @@ export const TOAST_MESSAGES = {
     DELETE_SUCCESS: '困っていることカテゴリーの削除に成功しました',
     DELETE_FAILED: '困っていることカテゴリーの削除に失敗しました',
     NOT_FOUND: '困っていることカテゴリーが見つかりません',
+    CSV_DOWNLOAD_SUCCESS: '困っていることカテゴリーのCSVダウンロードに成功しました',
+    CSV_DOWNLOAD_FAILED: '困っていることカテゴリーのCSVダウンロードに失敗しました',
+    CSV_UPLOAD_SUCCESS: '困っていることカテゴリーのCSVアップロードに成功しました',
+    CSV_UPLOAD_FAILED: '困っていることカテゴリーのCSVアップロードに失敗しました',
   },
 } as const satisfies Record<string, Record<string, string>>
