@@ -43,8 +43,8 @@ export function ReportContextMenu({ categoryType, label }: ReportContextMenuProp
           <Popover.Title>メニュー</Popover.Title>
           <Popover.Description>{label}に関する操作を行うことができます。</Popover.Description>
         </Popover.Header>
-        <Popover.Body>
-          <div className="flex flex-col gap-2 py-2">
+        <Popover.Body className="py-2">
+          <div className="flex flex-col gap-4 ">
             <CsvUploader
               label={label}
               categoryType={label === 'カテゴリー' ? categoryType : undefined}
@@ -57,7 +57,7 @@ export function ReportContextMenu({ categoryType, label }: ReportContextMenuProp
             />
           </div>
         </Popover.Body>
-        <Popover.Footer className="mt-2">
+        <Popover.Footer>
           <Popover.Close onPress={toggle} className="w-full">
             閉じる
           </Popover.Close>

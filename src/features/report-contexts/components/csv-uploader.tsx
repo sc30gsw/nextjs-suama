@@ -119,7 +119,7 @@ export function CsvUploader({ label, categoryType, onClose }: CsvUploaderProps) 
   return (
     <>
       {lastResult?.error && (
-        <div className="mb-6 flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
+        <div className="flex items-center gap-x-2 rounded-md bg-danger/15 p-3 text-danger text-sm">
           <IconTriangleExclamation className="size-4" />
           <p>
             {Array.isArray(lastResult.error.message)
