@@ -42,17 +42,19 @@ export default async function EveryDailyReportPage({
 
       <Form
         action={`${DAILY_REPORT_BASE_PATH}/${DAILY_REPORT_KIND.EVERYONE}`}
-        className="flex gap-x-2"
+        className="grid grid-cols-1 gap-y-4"
       >
         <input type="hidden" name="tab" value={tab} />
-        <DailyReportsSearchDateRangePicker />
-        <Button type="submit">
-          検索
-          <IconSearch />
-        </Button>
-      </Form>
+        <div className="flex flex-col gap-y-4 md:flex-row md:gap-x-2">
+          <DailyReportsSearchDateRangePicker />
+          <Button type="submit" className="w-full md:w-auto">
+            検索
+            <IconSearch />
+          </Button>
+        </div>
 
-      <UserSearchTagField />
+        <UserSearchTagField />
+      </Form>
 
       {/* TODO: React 19.2のActivity が Next.js のバージョン差異で動作しないため、修正されたら Activity に変更する。
         https://github.com/vercel/next.js/issues/84489 */}
