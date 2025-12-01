@@ -8,7 +8,11 @@ import { WeeklyRegisterLink } from '~/features/reports/weekly/components/weekly-
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
 import { WeeklyReportsContainer } from '~/features/reports/weekly/components/weekly-reports-container'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
-import { getYearAndWeek, splitDates } from '~/features/reports/weekly/utils/weekly-date-utils'
+import {
+  formatDateRange,
+  getYearAndWeek,
+  splitDates,
+} from '~/features/reports/weekly/utils/weekly-date-utils'
 
 import { getServerSession } from '~/lib/get-server-session'
 import type { NextPageProps } from '~/types'
@@ -39,7 +43,7 @@ export default async function WeeklyReportsPage({
               endDay={new Date(endDate)}
             >
               <Heading level={2} className="cursor-pointer underline">
-                {startDate} 〜 {endDate}
+                {formatDateRange(startDate, endDate)}
               </Heading>
             </WeeklyCalendarHint>
             <Heading level={2}>の予定一覧</Heading>
