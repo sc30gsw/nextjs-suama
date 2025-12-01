@@ -1,10 +1,13 @@
-import { createSearchParamsCache, parseAsNumberLiteral } from 'nuqs/server'
-import { getWeeksByMonth } from '~/features/reports/weekly/utils/weekly-date-utils'
+import { getYear } from 'date-fns'
+import { createSearchParamsCache, parseAsInteger } from 'nuqs/server'
+import { DECEMBER, getWeeksByMonth } from '~/features/reports/weekly/utils/weekly-date-utils'
 
-const months = getWeeksByMonth().map(({ month }) => month)
+const weeksByMonth = getWeeksByMonth()
+const currentYear = getYear(new Date())
 
 export const monthSelectSearchParamsParsers = {
-  month: parseAsNumberLiteral(months).withDefault(months[0]),
+  month: parseAsInteger.withDefault(weeksByMonth[0]?.month ?? DECEMBER),
+  year: parseAsInteger.withDefault(currentYear),
 }
 
 export const monthSelectSearchParamsCache = createSearchParamsCache(monthSelectSearchParamsParsers)

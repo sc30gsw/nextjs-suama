@@ -15,9 +15,11 @@ import type { NextPageProps } from '~/types'
 import { DATE_FORMAT } from '~/utils/date-utils'
 
 export default async function WeeklyPage({ searchParams }: NextPageProps<undefined, SearchParams>) {
-  const { month } = await monthSelectSearchParamsCache.parse(searchParams)
+  const { month, year } = await monthSelectSearchParamsCache.parse(searchParams)
 
-  const selectedWeeksByMonth = getWeeksByMonth().find((weeks) => weeks.month === month)
+  const selectedWeeksByMonth = getWeeksByMonth().find(
+    (weeks) => weeks.month === month && weeks.year === year,
+  )
 
   if (!selectedWeeksByMonth) {
     notFound()
@@ -27,8 +29,9 @@ export default async function WeeklyPage({ searchParams }: NextPageProps<undefin
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <div className="my-4 flex w-full items-center justify-center">
         <MonthSelector
-          months={getWeeksByMonth().map(({ month }) => ({
+          months={getWeeksByMonth().map(({ month, year }) => ({
             name: month,
+            year,
           }))}
         />
       </div>
