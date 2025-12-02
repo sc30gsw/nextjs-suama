@@ -1,5 +1,6 @@
 'use client'
-import { useRouter } from 'next/navigation'
+
+import { usePathname, useRouter } from 'next/navigation'
 import { type ReactNode, useRef } from 'react'
 import { useToggle } from 'react-use'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -21,19 +22,56 @@ type WeeklyCalendarHintProps = {
 export function WeeklyCalendarHint({ children, startDay, label, endDay }: WeeklyCalendarHintProps) {
   const { year, week } = getYearAndWeek(startDay.toISOString())
   const router = useRouter()
+  const pathname = usePathname()
 
   const [isOpen, toggle] = useToggle(false)
   const triggerRef = useRef(null)
 
   const handleSelectDate = (selectedDate: Date) => {
     const { startDate, endDate } = getWeekRangeFromDate(selectedDate)
+    console.log('🚀 ~ handleSelectDate ~ startDate:', startDate, selectedDate)
 
-    const href = urls.build({
+    const registerMatch = pathname.match(
+      /\/weekly\/list\/\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\/register$/,
+    )
+
+    const editMatch = pathname.match(
+      /\/weekly\/list\/\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\/edit\/([^/]+)$/,
+    )
+
+    const isRegister = registerMatch !== null
+    const isEdit = editMatch !== null
+
+    const newDates = `${startDate}-${endDate}`
+    let href = urls.build({
       route: '/weekly/list/[dates]',
-      params: {
-        dates: `${startDate}-${endDate}`,
-      },
+      params: { dates: newDates },
     }).href
+
+    switch (true) {
+      case isRegister:
+        href = urls.build({
+          route: '/weekly/list/[dates]/register',
+          params: { dates: newDates },
+        }).href
+
+        break
+
+      case isEdit:
+        href = urls.build({
+          route: '/weekly/list/[dates]/edit/[weeklyReportId]',
+          params: { dates: newDates, weeklyReportId: editMatch![1] },
+        }).href
+
+        break
+
+      default:
+        href = urls.build({
+          route: '/weekly/list/[dates]',
+          params: { dates: newDates },
+        }).href
+        break
+    }
 
     toggle(false)
 
