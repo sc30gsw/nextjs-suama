@@ -3,9 +3,11 @@
 import { fromDate, getLocalTimeZone } from '@internationalized/date'
 import { JapaneseRangeCalendar } from '~/components/ui/japanese-calendar'
 
-type WeekRangeCalendarProps = Record<'startDay' | 'endDay', Date>
+type WeekRangeCalendarProps = Record<'startDay' | 'endDay', Date> & {
+  onSelectDate?: (date: Date) => void
+}
 
-export function WeekRangeCalendar({ startDay, endDay }: WeekRangeCalendarProps) {
+export function WeekRangeCalendar({ startDay, endDay, onSelectDate }: WeekRangeCalendarProps) {
   return (
     <JapaneseRangeCalendar
       className="**:data-[slot=calendar-header]:items-center"
@@ -15,6 +17,7 @@ export function WeekRangeCalendar({ startDay, endDay }: WeekRangeCalendarProps) 
         end: fromDate(endDay, getLocalTimeZone()),
       }}
       isReadOnly={true}
+      onCellClick={onSelectDate}
     />
   )
 }

@@ -1,7 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import type { Session } from 'better-auth'
 import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
-import { and, eq, exists, gte, lte, or } from 'drizzle-orm'
+import { and, eq, exists, gte, inArray, lte, or } from 'drizzle-orm'
 import { pipe, sortBy } from 'remeda'
 import { QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import {
@@ -65,6 +65,8 @@ export class WeeklyReportService {
     const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
     const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
 
+    const currentWeek = Number(week)
+
     try {
       const targetUsers = await db.query.users.findMany({
         where: or(
@@ -76,7 +78,7 @@ export class WeeklyReportService {
                 and(
                   eq(weeklyReports.userId, users.id),
                   eq(weeklyReports.year, Number(year)),
-                  eq(weeklyReports.week, Number(week)),
+                  eq(weeklyReports.week, currentWeek),
                 ),
               ),
           ),
@@ -107,111 +109,90 @@ export class WeeklyReportService {
         ),
         limit: QUERY_MAX_LIMIT_VALUES.WEEKLY_REPORTS,
         offset: Number(offset),
-      })
-
-      const reports = await Promise.all(
-        targetUsers.map(async (user) => {
-          const [lastWeekReports, dailyReportList, nextWeekReports, troubleList] =
-            await Promise.all([
-              db.query.weeklyReports.findMany({
-                where: and(
-                  eq(weeklyReports.userId, user.id),
-                  eq(weeklyReports.year, Number(year)),
-                  eq(weeklyReports.week, Number(week)),
-                ),
+        with: {
+          weeklyReports: {
+            where: and(
+              eq(weeklyReports.year, Number(year)),
+              inArray(weeklyReports.week, [currentWeek, nextWeek]),
+            ),
+            with: {
+              weeklyReportMissions: {
                 with: {
-                  weeklyReportMissions: {
+                  mission: {
                     with: {
-                      mission: {
-                        with: {
-                          project: true,
-                        },
-                      },
+                      project: true,
                     },
                   },
                 },
-              }),
-              db.query.dailyReports.findMany({
-                where: and(
-                  eq(dailyReports.userId, user.id),
-                  gte(dailyReports.reportDate, startDate),
-                  lte(dailyReports.reportDate, endDate),
-                ),
+              },
+            },
+          },
+          dailyReports: {
+            where: and(
+              gte(dailyReports.reportDate, startDate),
+              lte(dailyReports.reportDate, endDate),
+            ),
+            with: {
+              dailyReportMissions: {
                 with: {
-                  dailyReportMissions: {
+                  mission: {
                     with: {
-                      mission: {
-                        with: {
-                          project: true,
-                        },
-                      },
-                    },
-                  },
-                  appeals: {
-                    with: {
-                      categoryOfAppeal: {
-                        columns: {
-                          name: true,
-                        },
-                      },
+                      project: true,
                     },
                   },
                 },
-              }),
-              db.query.weeklyReports.findMany({
-                where: and(
-                  eq(weeklyReports.userId, user.id),
-                  eq(weeklyReports.year, Number(year)),
-                  eq(weeklyReports.week, Number(week) + 1),
-                ),
+              },
+              appeals: {
                 with: {
-                  weeklyReportMissions: {
-                    with: {
-                      mission: {
-                        with: {
-                          project: true,
-                        },
-                      },
-                    },
-                  },
-                },
-              }),
-              db.query.troubles.findMany({
-                where: and(eq(troubles.userId, user.id), eq(troubles.resolved, false)),
-                with: {
-                  categoryOfTrouble: {
+                  categoryOfAppeal: {
                     columns: {
                       name: true,
                     },
                   },
                 },
-              }),
-            ])
+              },
+            },
+          },
+          troubles: {
+            where: eq(troubles.resolved, false),
+            with: {
+              categoryOfTrouble: {
+                columns: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      })
 
-          return {
-            user,
-            lastWeekReports: lastWeekReports.map((report) => ({
-              ...report,
-              weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
-                report.weeklyReportMissions,
-              ),
-            })),
-            dailyReports: dailyReportList.map((report) => ({
-              ...report,
-              dailyReportMissions: groupingReportMission<typeof dailyReportMissions.$inferSelect>(
-                report.dailyReportMissions,
-              ),
-            })),
-            nextWeekReports: nextWeekReports.map((report) => ({
-              ...report,
-              weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
-                report.weeklyReportMissions,
-              ),
-            })),
-            troubles: troubleList,
-          }
-        }),
-      )
+      const reports = targetUsers.map((user) => {
+        const lastWeekReports = user.weeklyReports.filter((r) => r.week === currentWeek)
+        const nextWeekReports = user.weeklyReports.filter((r) => r.week === nextWeek)
+
+        return {
+          user,
+          lastWeekReports: lastWeekReports.map((report) => ({
+            ...report,
+            weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
+              report.weeklyReportMissions,
+            ),
+          })),
+          dailyReports: user.dailyReports.map((report) => ({
+            ...report,
+            dailyReportMissions: groupingReportMission<typeof dailyReportMissions.$inferSelect>(
+              report.dailyReportMissions,
+            ),
+          })),
+          nextWeekReports: nextWeekReports.map((report) => ({
+            ...report,
+            weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
+              report.weeklyReportMissions,
+            ),
+          })),
+          troubles: user.troubles,
+        }
+      })
 
       return { reports, startDate, endDate }
     } catch (error) {

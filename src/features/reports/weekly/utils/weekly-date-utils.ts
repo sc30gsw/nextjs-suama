@@ -44,7 +44,6 @@ const RANGE_CONFIG = {
 
 const YEAR_DECREMENT = 1
 
-// インデックス関連の設定
 const INDEX_NOT_FOUND = -1
 
 const SORT_CONFIG = {
@@ -188,4 +187,14 @@ export function formatDateRange(startDate: string, endDate: string): string {
   } else {
     return `${format(start, 'yyyy年M月d日', { locale: ja })} 〜 ${format(end, 'yyyy年M月d日', { locale: ja })}`
   }
+}
+
+export function getWeekRangeFromDate(date: Date) {
+  const weekStart = startOfWeek(date, { weekStartsOn: WEEK_CONFIG.STARTS_ON })
+  const weekEnd = endOfWeek(date, { weekStartsOn: WEEK_CONFIG.STARTS_ON })
+
+  return {
+    startDate: format(weekStart, DATE_FORMAT),
+    endDate: format(weekEnd, DATE_FORMAT),
+  } as const
 }
