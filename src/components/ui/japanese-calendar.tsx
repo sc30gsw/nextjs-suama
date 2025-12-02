@@ -265,12 +265,15 @@ function JapaneseCalendarGridHeader() {
 }
 
 type JapaneseRangeCalendarProps<T extends DateValue> = RangeCalendarPrimitiveProps<T> &
-  Partial<Record<'errorMessage', string>>
+  Partial<Record<'errorMessage', string>> & {
+    onCellClick?: (date: Date) => void
+  }
 
 export function JapaneseRangeCalendar<T extends DateValue>({
   errorMessage,
   className,
   visibleDuration = { months: 1 },
+  onCellClick,
   ...props
 }: JapaneseRangeCalendarProps<T>) {
   const now = today(getLocalTimeZone())
@@ -295,12 +298,19 @@ export function JapaneseRangeCalendar<T extends DateValue>({
                   const sunday = isSunday(jsDate)
                   const holiday = isJapaneseHoliday(jsDate)
 
+                  const handleCellClick = () => {
+                    if (onCellClick) {
+                      onCellClick(jsDate)
+                    }
+                  }
+
                   return (
                     <CalendarCell
                       date={date}
                       data-saturday={saturday || undefined}
                       data-sunday={sunday || undefined}
                       data-holiday={holiday || undefined}
+                      onPointerUp={handleCellClick}
                       className={twMerge([
                         'shrink-0 [--cell-fg:var(--color-primary)] [--cell:color-mix(in_oklab,var(--color-primary)_15%,white_85%)]',
                         'dark:[--cell-fg:color-mix(in_oklab,var(--color-primary)_80%,white_20%)] dark:[--cell:color-mix(in_oklab,var(--color-primary)_30%,black_45%)]',
