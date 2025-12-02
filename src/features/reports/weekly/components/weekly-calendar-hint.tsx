@@ -34,6 +34,8 @@ export function WeeklyCalendarHint({ children, startDay, label, endDay }: Weekly
     const { startDate, endDate } = getWeekRangeFromDate(selectedDate)
     const newDates = `${startDate}-${endDate}`
 
+    // ? 登録・編集画面にも遷移させることは可能だが、選択した日の次の週がRange表示され、違和感がある
+    // ? また週報登録で、既存データがある週に飛んだ場合の読み込みが時間がかかるため、一律で予定一覧に遷移することにしている
     const href = urls.build({
       route: '/weekly/list/[dates]',
       params: { dates: newDates },
