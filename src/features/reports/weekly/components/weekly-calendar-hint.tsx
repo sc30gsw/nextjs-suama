@@ -27,51 +27,17 @@ export function WeeklyCalendarHint({ children, startDay, label, endDay }: Weekly
   const [isOpen, toggle] = useToggle(false)
   const triggerRef = useRef(null)
 
+  const isRegister = pathname.includes('/register')
+  const isEdit = pathname.includes('/edit/')
+
   const handleSelectDate = (selectedDate: Date) => {
     const { startDate, endDate } = getWeekRangeFromDate(selectedDate)
-    console.log('🚀 ~ handleSelectDate ~ startDate:', startDate, selectedDate)
-
-    const registerMatch = pathname.match(
-      /\/weekly\/list\/\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\/register$/,
-    )
-
-    const editMatch = pathname.match(
-      /\/weekly\/list\/\d{4}-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\/edit\/([^/]+)$/,
-    )
-
-    const isRegister = registerMatch !== null
-    const isEdit = editMatch !== null
-
     const newDates = `${startDate}-${endDate}`
-    let href = urls.build({
+
+    const href = urls.build({
       route: '/weekly/list/[dates]',
       params: { dates: newDates },
     }).href
-
-    switch (true) {
-      case isRegister:
-        href = urls.build({
-          route: '/weekly/list/[dates]/register',
-          params: { dates: newDates },
-        }).href
-
-        break
-
-      case isEdit:
-        href = urls.build({
-          route: '/weekly/list/[dates]/edit/[weeklyReportId]',
-          params: { dates: newDates, weeklyReportId: editMatch![1] },
-        }).href
-
-        break
-
-      default:
-        href = urls.build({
-          route: '/weekly/list/[dates]',
-          params: { dates: newDates },
-        }).href
-        break
-    }
 
     toggle(false)
 
@@ -95,6 +61,14 @@ export function WeeklyCalendarHint({ children, startDay, label, endDay }: Weekly
             {year}年 第{week}週の予定を確認できます
             <br />
             日付をクリックするとその週の予定一覧に移動します
+            {(isRegister || isEdit) && (
+              <>
+                <br />
+                <span className="text-danger text-sm">
+                  ※現在の編集中の内容は保存されず、一覧に戻ります
+                </span>
+              </>
+            )}
           </Popover.Description>
         </Popover.Header>
         <Popover.Body className="flex items-center justify-center">
