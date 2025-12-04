@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod/v4'
 import { and, eq, inArray, not } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { filter, isDefined, map, pipe } from 'remeda'
 import {
   GET_APPEAL_CATEGORIES_CACHE_KEY,
@@ -183,15 +183,15 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     })
 
     // TODO:本日の日報・自分の日報・みんなの日報の cache key の管理はまだ改善の余地がありそう。
-    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-every`)
-    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-every`)
-    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-every`)
-    revalidateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
-    revalidateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
-    revalidateTag(`${GET_APPEAL_CATEGORIES_CACHE_KEY}-${reportId}`)
+    updateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${session.user.id}`)
+    updateTag(`${GET_DAILY_REPORTS_CACHE_KEY}-every`)
+    updateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${session.user.id}`)
+    updateTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-every`)
+    updateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${session.user.id}`)
+    updateTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-every`)
+    updateTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
+    updateTag(`${GET_TROUBLE_CATEGORIES_CACHE_KEY}-${session.user.id}`)
+    updateTag(`${GET_APPEAL_CATEGORIES_CACHE_KEY}-${reportId}`)
 
     return {
       ...submission.reply(),

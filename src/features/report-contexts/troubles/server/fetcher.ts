@@ -1,5 +1,5 @@
 import type { Session } from 'better-auth'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
+import { cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'

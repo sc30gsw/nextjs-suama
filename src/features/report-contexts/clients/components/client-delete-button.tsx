@@ -60,7 +60,7 @@ export function ClientDeleteButton({ id }: ClientDeleteButtonProps) {
 
         toast.success(TOAST_MESSAGES.CLIENT.DELETE_SUCCESS)
 
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
         }, RELOAD_DELAY)

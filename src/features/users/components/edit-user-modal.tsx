@@ -45,7 +45,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
         toggle(false)
         setImageError('')
 
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
         }, RELOAD_DELAY)

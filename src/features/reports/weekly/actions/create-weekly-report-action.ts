@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod/v4'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import {
   GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
   GET_WEEKLY_REPORTS_CACHE_KEY,
@@ -72,8 +72,8 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
       })
     }
 
-    revalidateTag(GET_WEEKLY_REPORTS_CACHE_KEY)
-    revalidateTag(
+    updateTag(GET_WEEKLY_REPORTS_CACHE_KEY)
+    updateTag(
       `${GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${submission.value.year}-${submission.value.week}-${session.user.id}`,
     )
 

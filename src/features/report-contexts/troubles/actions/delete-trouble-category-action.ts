@@ -2,7 +2,7 @@
 
 import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfTroubles } from '~/db/schema'
@@ -35,7 +35,7 @@ export async function deleteTroubleCategoryAction(id: CommonDeleteIdSchema['id']
   try {
     await db.delete(categoryOfTroubles).where(eq(categoryOfTroubles.id, parseResult.data.id))
 
-    revalidateTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
+    updateTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
 
     return {
       status: 'success',

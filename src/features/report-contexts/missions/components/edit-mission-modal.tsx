@@ -52,7 +52,7 @@ export function EditMissionModal({
         toggle(false)
         setProject(result.initialValue?.projectId.toString() ?? '')
 
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
         }, RELOAD_DELAY)

@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod/v4'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { GET_CLIENTS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { clients } from '~/db/schema'
@@ -47,7 +47,7 @@ export async function updateClientAction(_: unknown, formData: FormData) {
       })
       .where(eq(clients.id, submission.value.id))
 
-    revalidateTag(GET_CLIENTS_CACHE_KEY)
+    updateTag(GET_CLIENTS_CACHE_KEY)
 
     return submission.reply()
   } catch (_) {

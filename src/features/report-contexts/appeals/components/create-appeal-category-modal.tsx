@@ -32,7 +32,7 @@ export function CreateAppealCategoryModal() {
         toast.success(TOAST_MESSAGES.APPEAL.CREATE_SUCCESS)
         toggle(false)
 
-        // ? use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        // ? use cache が experimental で updateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
         }, RELOAD_DELAY)

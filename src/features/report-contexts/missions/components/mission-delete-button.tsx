@@ -59,7 +59,7 @@ export function MissionDeleteButton({ id }: MissionDeleteButtonProps) {
 
         toast.success(TOAST_MESSAGES.MISSION.DELETE_SUCCESS)
 
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
         }, RELOAD_DELAY)

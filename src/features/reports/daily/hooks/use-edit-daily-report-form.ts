@@ -45,7 +45,7 @@ export function useEditDailyForm(
 
         toast.success(message)
 
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする。reloadだと、nuqsのstateと競合するため、replaceを使用。
+        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする。reloadだと、nuqsのstateと競合するため、replaceを使用。
         setTimeout(() => {
           window.location.replace(`/daily/edit/${initialData.id}`)
         }, RELOAD_DELAY)

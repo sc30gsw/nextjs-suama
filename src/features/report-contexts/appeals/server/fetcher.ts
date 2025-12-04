@@ -1,6 +1,6 @@
 import type { Session } from 'better-auth'
 import type { InferSelectModel } from 'drizzle-orm'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
+import { cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import type { dailyReports } from '~/db/schema'

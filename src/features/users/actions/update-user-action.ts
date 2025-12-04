@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod/v4'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { GET_USERS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
@@ -38,7 +38,7 @@ export async function updateUserAction(_: unknown, formData: FormData) {
       })
       .where(eq(users.id, submission.value.id))
 
-    revalidateTag(GET_USERS_CACHE_KEY)
+    updateTag(GET_USERS_CACHE_KEY)
 
     return submission.reply()
   } catch (_) {

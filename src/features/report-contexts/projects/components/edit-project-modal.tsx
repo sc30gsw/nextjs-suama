@@ -56,7 +56,7 @@ export function EditProjectModal({
         setClient(result.initialValue?.clientId.toString() ?? '')
         setChecked(result.initialValue?.isArchived === 'on')
 
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
+        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
         setTimeout(() => {
           window.location.reload()
         }, RELOAD_DELAY)
