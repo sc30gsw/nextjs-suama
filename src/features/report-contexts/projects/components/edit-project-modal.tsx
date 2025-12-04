@@ -15,7 +15,6 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
-import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { updateProjectAction } from '~/features/report-contexts/projects/actions/update-project-action'
@@ -55,11 +54,6 @@ export function EditProjectModal({
         toggle(false)
         setClient(result.initialValue?.clientId.toString() ?? '')
         setChecked(result.initialValue?.isArchived === 'on')
-
-        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
       },
 
       onError(result) {

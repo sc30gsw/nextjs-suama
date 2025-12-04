@@ -11,7 +11,6 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
-import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { updateTroubleCategoryAction } from '~/features/report-contexts/troubles/actions/update-trouble-category-action'
@@ -39,11 +38,6 @@ export function EditTroubleCategoryModal({ id, name }: EditTroubleCategoryModalP
       onSuccess() {
         toast.success(TOAST_MESSAGES.TROUBLE.UPDATE_SUCCESS)
         toggle(false)
-
-        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
       },
 
       onError(result) {

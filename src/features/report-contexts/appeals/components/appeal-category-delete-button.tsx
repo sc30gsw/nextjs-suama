@@ -4,7 +4,6 @@ import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
-import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteAppealCategoryAction } from '~/features/report-contexts/appeals/actions/delete-appeal-category-action'
@@ -57,11 +56,6 @@ export function AppealCategoryDeleteButton({ id }: AppealCategoryDeleteButtonPro
         }
 
         toast.success(TOAST_MESSAGES.APPEAL.DELETE_SUCCESS)
-
-        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
       } catch (_) {
         toast.error(TOAST_MESSAGES.APPEAL.DELETE_FAILED)
       }

@@ -14,7 +14,6 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { createMissionAction } from '~/features/report-contexts/missions/actions/create-mission-action'
@@ -42,11 +41,6 @@ export function CreateMissionModal({ projects }: CreateMissionModalProps) {
         toast.success(TOAST_MESSAGES.MISSION.CREATE_SUCCESS)
         toggle(false)
         setProject(null)
-
-        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
       },
 
       onError(result) {
