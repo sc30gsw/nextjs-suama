@@ -7,7 +7,7 @@ type ExpandKeys<T extends string> = T extends never ? object : { [K in T]: React
 
 export type NextLayoutProps<Params = undefined, Keys extends string | undefined = undefined> = {
   children: ReactNode
-  params: Params extends NonEmptyObject ? Promise<Params> : never
+  params: Promise<Params extends NonEmptyObject ? Params : Record<string, string>>
 } & (Keys extends string ? ExpandKeys<Keys> : object)
 
 export type NextPageProps<

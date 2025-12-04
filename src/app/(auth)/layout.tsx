@@ -3,8 +3,6 @@ import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
 import type { NextLayoutProps } from '~/types'
 
-export const experimental_ppr = true
-
 export default async function AuthLayout({ children }: NextLayoutProps) {
   const sessionData = await getServerSession()
 

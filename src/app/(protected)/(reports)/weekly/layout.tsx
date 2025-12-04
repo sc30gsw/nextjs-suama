@@ -3,8 +3,6 @@ import { AppSidebar } from '~/components/ui/sidebar/app-sidebar'
 import { AppSidebarNav } from '~/components/ui/sidebar/app-sidebar-nav'
 import type { NextLayoutProps } from '~/types'
 
-export const experimental_ppr = true
-
 export default function WeeklyLayout({
   children,
   breadcrumbs,

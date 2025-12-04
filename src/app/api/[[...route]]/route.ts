@@ -12,8 +12,6 @@ import { dailyApi } from '~/features/reports/daily/api/route'
 import { weeklyApi } from '~/features/reports/weekly/api/route'
 import { userApi } from '~/features/users/api/route'
 
-export const runtime = 'edge'
-
 const app = new OpenAPIHono().basePath('/api')
 
 app.openAPIRegistry.registerComponent('securitySchemes', 'UserIdAuth', {
