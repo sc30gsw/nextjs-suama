@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod/v4'
 import { eq, inArray } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { filter, map, pipe } from 'remeda'
 import { GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
@@ -116,7 +116,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
       }
     }
 
-    revalidateTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${weeklyReport.id}`)
+    updateTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${weeklyReport.id}`)
 
     return submission.reply()
   } catch (_) {

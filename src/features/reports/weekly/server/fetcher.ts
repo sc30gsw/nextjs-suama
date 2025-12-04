@@ -2,7 +2,7 @@ import 'server-only'
 
 import type { Session } from 'better-auth'
 import type { InferRequestType, InferResponseType } from 'hono'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
+import { cacheTag } from 'next/cache'
 import {
   GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
   GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY,

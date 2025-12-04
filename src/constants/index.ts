@@ -4,8 +4,6 @@ export const LIKE_KEYWORDS_REGEX = /^([\wぁ-んァ-ヶー一-龠]+)(\s*,\s*[\w�
 export const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const satisfies string[]
 export const MAX_IMAGE_SIZE_MB = 5
 
-export const RELOAD_DELAY = 1000
-
 export const QUERY_DEFAULT_PARAMS = {
   SKIP: 0,
   LIMIT: 10,

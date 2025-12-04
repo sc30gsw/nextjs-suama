@@ -2,7 +2,7 @@
 
 import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import { GET_USERS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
@@ -49,7 +49,7 @@ export async function deleteUserAction(id: CommonDeleteIdSchema['id']) {
 
     await db.delete(users).where(eq(users.id, parseResult.data.id))
 
-    revalidateTag(GET_USERS_CACHE_KEY)
+    updateTag(GET_USERS_CACHE_KEY)
 
     return {
       status: 'success',

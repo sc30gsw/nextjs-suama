@@ -12,7 +12,8 @@ import { dailyApi } from '~/features/reports/daily/api/route'
 import { weeklyApi } from '~/features/reports/weekly/api/route'
 import { userApi } from '~/features/users/api/route'
 
-export const runtime = 'edge'
+// TODO:Server Componentsの脆弱性のため、一時コメントアウト。v16 のマイグレート時に再度有効化
+// export const runtime = 'edge'
 
 const app = new OpenAPIHono().basePath('/api')
 

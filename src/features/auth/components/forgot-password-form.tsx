@@ -3,7 +3,7 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconTriangleExclamation } from '@intentui/icons'
-import { JSX, type ReactNode, useActionState } from 'react'
+import { type JSX, type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
 import { GlowCard } from '~/components/ui/glow-card'
 import { Button } from '~/components/ui/intent-ui/button'

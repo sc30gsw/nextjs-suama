@@ -1,7 +1,7 @@
 'use server'
 
 import { parseWithZod } from '@conform-to/zod/v4'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
@@ -31,7 +31,7 @@ export async function createAppealCategoryAction(_: unknown, formData: FormData)
       name: submission.value.name,
     })
 
-    revalidateTag(GET_APPEAL_CATEGORIES_CACHE_KEY)
+    updateTag(GET_APPEAL_CATEGORIES_CACHE_KEY)
 
     return submission.reply()
   } catch (_) {

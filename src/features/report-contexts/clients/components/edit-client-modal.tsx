@@ -14,7 +14,6 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
-import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { updateClientAction } from '~/features/report-contexts/clients/actions/update-client-action'
@@ -42,11 +41,6 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
       onSuccess() {
         toast.success(TOAST_MESSAGES.CLIENT.UPDATE_SUCCESS)
         toggle(false)
-
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
       },
 
       onError(result) {
