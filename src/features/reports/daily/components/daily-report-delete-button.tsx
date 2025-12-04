@@ -4,7 +4,6 @@ import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
-import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import type { dailyReports } from '~/db/schema'
 import { deleteReportAction } from '~/features/reports/daily/actions/delete-report-action'
@@ -57,11 +56,6 @@ export function DailyReportDeleteButton({ id }: Pick<typeof dailyReports.$inferS
         }
 
         toast.success(TOAST_MESSAGES.DAILY_REPORT.DELETE_SUCCESS)
-
-        // ?: use cache が experimental で updateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
       } catch (_) {
         toast.error(TOAST_MESSAGES.DAILY_REPORT.DELETE_FAILED)
       }
