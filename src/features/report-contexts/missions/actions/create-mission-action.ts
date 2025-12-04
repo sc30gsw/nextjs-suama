@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod/v4'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { missions, projects } from '~/db/schema'
@@ -45,7 +45,7 @@ export async function createMissionAction(_: unknown, formData: FormData) {
       projectId: submission.value.projectId,
     })
 
-    revalidateTag(GET_MISSIONS_CACHE_KEY)
+    updateTag(GET_MISSIONS_CACHE_KEY)
 
     return submission.reply()
   } catch (_) {

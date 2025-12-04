@@ -1,6 +1,6 @@
 import type { Session } from 'better-auth'
 import type { InferResponseType } from 'hono'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
+import { cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { upfetch } from '~/lib/fetcher'

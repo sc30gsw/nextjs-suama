@@ -2,7 +2,7 @@
 
 import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { missions } from '~/db/schema'
@@ -35,7 +35,7 @@ export async function deleteMissionAction(id: CommonDeleteIdSchema['id']) {
   try {
     await db.delete(missions).where(eq(missions.id, parseResult.data.id))
 
-    revalidateTag(GET_MISSIONS_CACHE_KEY)
+    updateTag(GET_MISSIONS_CACHE_KEY)
 
     return {
       status: 'success',

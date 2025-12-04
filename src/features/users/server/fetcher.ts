@@ -2,7 +2,7 @@ import 'server-only'
 
 import type { Session } from 'better-auth'
 import type { InferResponseType } from 'hono'
-import { unstable_cacheTag as cacheTag } from 'next/cache'
+import { cacheTag } from 'next/cache'
 import { GET_USERS_CACHE_KEY } from '~/constants/cache-keys'
 import { upfetch } from '~/lib/fetcher'
 import { client } from '~/lib/rpc'

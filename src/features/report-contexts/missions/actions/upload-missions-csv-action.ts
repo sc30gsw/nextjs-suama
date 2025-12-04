@@ -2,7 +2,7 @@
 
 import type { SubmissionResult } from '@conform-to/react'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import Papa from 'papaparse'
 import { GET_MISSIONS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
@@ -180,7 +180,7 @@ export async function uploadMissionsCsvAction(
               }
             })
 
-            revalidateTag(GET_MISSIONS_CACHE_KEY)
+            updateTag(GET_MISSIONS_CACHE_KEY)
 
             resolve({
               status: 'success',

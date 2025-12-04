@@ -2,7 +2,7 @@
 
 import { parseWithZod } from '@conform-to/zod/v4'
 import { eq } from 'drizzle-orm'
-import { revalidateTag } from 'next/cache'
+import { updateTag } from 'next/cache'
 import { GET_PROJECTS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { clients, projects } from '~/db/schema'
@@ -49,7 +49,7 @@ export async function updateProjectAction(_: unknown, formData: FormData) {
       })
       .where(eq(projects.id, submission.value.id))
 
-    revalidateTag(GET_PROJECTS_CACHE_KEY)
+    updateTag(GET_PROJECTS_CACHE_KEY)
 
     return submission.reply()
   } catch (_) {

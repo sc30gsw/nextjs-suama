@@ -3,7 +3,6 @@ import { IconTriangleExclamation } from '@intentui/icons'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
 import { FileTrigger } from '~/components/ui/intent-ui/file-trigger'
-import { RELOAD_DELAY } from '~/constants'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { uploadAppealCategoriesCsvAction } from '~/features/report-contexts/appeals/actions/upload-appeal-categories-csv-action'
 import { uploadClientsCsvAction } from '~/features/report-contexts/clients/actions/upload-clients-csv-action'
@@ -51,13 +50,7 @@ export function CsvUploader({ label, categoryType, onClose }: CsvUploaderProps) 
     withCallbacks(uploadAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES[toastKey].CSV_UPLOAD_SUCCESS)
-
         onClose()
-
-        // ?: use cache が experimental で revalidateTag が効かないため、強制的にリロードする
-        setTimeout(() => {
-          window.location.reload()
-        }, RELOAD_DELAY)
       },
 
       onError(result) {
