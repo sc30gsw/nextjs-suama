@@ -39,7 +39,6 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
 
     const ctx = await auth.$context
     const hash = await ctx.password.hash(submission.value.password)
-    console.log('🚀 ~ changePasswordAction ~ hash:', hash)
     await db
       .update(accounts)
       .set({
@@ -48,8 +47,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
       .where(eq(accounts.userId, user.id))
 
     return submission.reply()
-  } catch (err) {
-    console.log('🚀 ~ changePasswordAction ~ err:', err)
+  } catch (_) {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
