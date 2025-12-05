@@ -45,8 +45,8 @@ function groupingReportMission<
 ) {
   return pipe(
     reportMissions,
-    sortBy([(m) => m.mission.name, 'asc']),
     sortBy([(m) => m.mission.project.name, 'asc']),
+    sortBy([(m) => m.mission.name, 'asc']),
   )
 }
 
