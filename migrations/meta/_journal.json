@@ -36,6 +36,13 @@
       "when": 1763706911932,
       "tag": "0004_cheerful_callisto",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1764940248946,
+      "tag": "0005_rapid_quentin_quire",
+      "breakpoints": true
     }
   ]
 }
