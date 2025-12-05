@@ -3,6 +3,7 @@ import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
 import { filter, find, pipe } from 'remeda'
+import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type {
   UpdateWeeklyReportFormSchema,
@@ -13,7 +14,6 @@ import type {
   WeeklyReportEntry,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
-import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 
 export function useUpdatedWeeklyReportContentInputEntries(
   initialWeeklyInputCountSearchParamsParsers: UpdateWeeklyInputCountSearchParams,
@@ -36,6 +36,18 @@ export function useUpdatedWeeklyReportContentInputEntries(
 
   const [projectFilter, setProjectFilter] = useState('')
   const [missionFilter, setMissionFilter] = useState('')
+  const [isProjectFiltering, setIsProjectFiltering] = useState(false)
+  const [isMissionFiltering, setIsMissionFiltering] = useState(false)
+
+  const projectInputValue =
+    isProjectFiltering || !projectId
+      ? projectFilter
+      : (projects.find((project) => project.id === projectId)?.name ?? '')
+
+  const missionInputValue =
+    isMissionFiltering || !missionId
+      ? missionFilter
+      : (missions.find((mission) => mission.id === missionId)?.name ?? '')
 
   const filteredProjects = projects.filter((project) => {
     const nameMatch = matchesJapaneseFilter(project.name, projectFilter)
@@ -81,6 +93,8 @@ export function useUpdatedWeeklyReportContentInputEntries(
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+      setProjectFilter('')
+      setIsProjectFiltering(false)
 
       setWeeklyReportEntry((prev) => {
         if (!prev) {
@@ -115,6 +129,8 @@ export function useUpdatedWeeklyReportContentInputEntries(
       )
 
       const selectedMission = missions.find((mission) => mission.id === newItem)
+      setMissionFilter('')
+      setIsMissionFiltering(false)
       if (selectedMission) {
         handleChangeValue(id, selectedMission.name)
         handleChangeValue(id, 0.5)
@@ -186,6 +202,16 @@ export function useUpdatedWeeklyReportContentInputEntries(
     }
   }
 
+  const handleProjectFilterChange = (value: string) => {
+    setProjectFilter(value)
+    setIsProjectFiltering(value !== '')
+  }
+
+  const handleMissionFilterChange = (value: string) => {
+    setMissionFilter(value)
+    setIsMissionFiltering(value !== '')
+  }
+
   return {
     field,
     hoursInput,
@@ -196,7 +222,9 @@ export function useUpdatedWeeklyReportContentInputEntries(
     handleChangeValue,
     filteredProjects,
     filteredMissions,
-    setProjectFilter,
-    setMissionFilter,
+    projectFilter: projectInputValue,
+    missionFilter: missionInputValue,
+    setProjectFilter: handleProjectFilterChange,
+    setMissionFilter: handleMissionFilterChange,
   } as const
 }

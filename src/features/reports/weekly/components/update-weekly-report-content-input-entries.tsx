@@ -42,6 +42,8 @@ export function UpdateWeeklyReportContentInputEntries({
     handleChangeValue,
     filteredProjects,
     filteredMissions,
+    projectFilter,
+    missionFilter,
     setProjectFilter,
     setMissionFilter,
   } = useUpdatedWeeklyReportContentInputEntries(
@@ -60,13 +62,19 @@ export function UpdateWeeklyReportContentInputEntries({
         {/* // TODO useInputControl を使用して不具合が出る場合、useControl を使用してみてください。 */}
         {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
-          {...getInputProps(field.project, { type: 'text' })}
+          {...(() => {
+            const props = getInputProps(field.project, { type: 'text' }) as Record<string, unknown>
+            const { inputValue: _, ...rest } = props
+
+            return rest
+          })()}
           label="プロジェクト"
           placeholder="プロジェクトを選択"
+          inputValue={projectFilter}
+          onInputChange={setProjectFilter}
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'project')
           }}
-          onInputChange={setProjectFilter}
           defaultFilter={() => true}
           selectedKey={projectId}
           isDisabled={pending}
@@ -84,13 +92,19 @@ export function UpdateWeeklyReportContentInputEntries({
         {/* // TODO useInputControl を使用して不具合が出る場合、useControl を使用してみてください。 */}
         {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
-          {...getInputProps(field.mission, { type: 'text' })}
+          {...(() => {
+            const props = getInputProps(field.mission, { type: 'text' }) as Record<string, unknown>
+            const { inputValue: _, ...rest } = props
+
+            return rest
+          })()}
           label="ミッション"
           placeholder="ミッションを選択"
+          inputValue={missionFilter}
+          onInputChange={setMissionFilter}
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'mission')
           }}
-          onInputChange={setMissionFilter}
           defaultFilter={() => true}
           selectedKey={missionId}
           isDisabled={pending}
