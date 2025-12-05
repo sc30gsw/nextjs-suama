@@ -44,7 +44,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <Link
           className="flex items-center gap-x-2 group-data-[state=collapsed]:justify-center"
-          href={urls.href({ route: '/daily' })}
+          href={urls.href({ route: '/' })}
         >
           <IconHome stroke={1} size={20} className="text-muted-fg" />
           <SidebarLabel className="font-medium">SUAMA</SidebarLabel>
