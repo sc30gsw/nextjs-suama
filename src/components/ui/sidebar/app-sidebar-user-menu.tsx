@@ -56,7 +56,7 @@ export function AppSidebarUserMenu() {
           </Menu.Header>
         </Menu.Section>
 
-        <Menu.Item href={urls.href({ route: '/daily' })}>
+        <Menu.Item href={urls.href({ route: '/' })}>
           <IconReport stroke={1} size={20} />
           <Menu.Label>日報作成</Menu.Label>
         </Menu.Item>
@@ -69,7 +69,12 @@ export function AppSidebarUserMenu() {
           <Menu.Label>本日の日報</Menu.Label>
         </Menu.Item>
         <Menu.Separator />
-        <Menu.Item href={urls.build({ route: '/[userId]/settings', params: { userId: session?.user.id ?? '' } }).href}>
+        <Menu.Item
+          href={
+            urls.build({ route: '/[userId]/settings', params: { userId: session?.user.id ?? '' } })
+              .href
+          }
+        >
           <IconCirclePerson />
           <Menu.Label>ユーザー設定</Menu.Label>
         </Menu.Item>

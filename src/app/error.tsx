@@ -48,7 +48,7 @@ export default function GlobalError({
                 <IconRefresh />
               </Button>
 
-              <Link href={urls.href({ route: '/daily' })}>
+              <Link href={urls.href({ route: '/' })}>
                 <Button intent="outline" className="flex items-center gap-2">
                   ホームに戻る
                   <LinkLoadingIndicator>

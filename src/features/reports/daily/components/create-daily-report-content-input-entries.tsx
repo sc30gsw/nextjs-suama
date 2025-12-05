@@ -69,6 +69,11 @@ export function CreateDailyReportContentInputEntries({
             handleChangeItem(id ?? '', key, 'project')
           }}
           onInputChange={setProjectFilter}
+          onOpenChange={(isOpen) => {
+            if (isOpen) {
+              setProjectFilter('')
+            }
+          }}
           defaultFilter={() => true}
           selectedKey={projectId}
           isDisabled={pending}
@@ -93,6 +98,11 @@ export function CreateDailyReportContentInputEntries({
             handleChangeItem(id ?? '', key, 'mission')
           }}
           onInputChange={setMissionFilter}
+          onOpenChange={(isOpen) => {
+            if (isOpen) {
+              setMissionFilter('')
+            }
+          }}
           defaultFilter={() => true}
           selectedKey={missionId}
           isDisabled={pending}
@@ -108,7 +118,7 @@ export function CreateDailyReportContentInputEntries({
       </div>
       <div className="col-span-2">
         <NumberField
-          step={0.25}
+          step={0.1}
           label="時間"
           value={Number(hoursInput.value)}
           onChange={(val) => handleChangeValue(id ?? '', val)}

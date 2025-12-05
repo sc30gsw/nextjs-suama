@@ -35,7 +35,7 @@ export function AppSidebarNavUserMenu() {
             <span className="font-normal text-muted-fg">{session?.user.email}</span>
           </Menu.Header>
         </Menu.Section>
-        <Menu.Item href={urls.href({ route: '/daily' })}>
+        <Menu.Item href={urls.href({ route: '/' })}>
           <IconReport stroke={1} size={20} />
           <Menu.Label>日報作成</Menu.Label>
         </Menu.Item>

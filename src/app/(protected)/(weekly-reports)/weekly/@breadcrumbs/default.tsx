@@ -6,7 +6,7 @@ import { urls } from '~/lib/urls'
 import type { NextjsSuamaRoute } from '../../../../../../typed-url'
 
 const ITEMS = {
-  daily: { path: urls.href({ route: '/daily' }), name: '日報作成' },
+  daily: { path: urls.href({ route: '/' }), name: '日報作成' },
   weekly: {
     path: urls.href({ route: '/weekly' }),
     name: '今年の週報',

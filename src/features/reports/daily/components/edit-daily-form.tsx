@@ -10,9 +10,9 @@ import {
 } from '@intentui/icons'
 import { parseDate } from '@internationalized/date'
 import type { Session } from 'better-auth'
-import { use } from 'react'
+import { type ComponentProps, use, useRef } from 'react'
 import type { DateValue } from 'react-aria-components'
-import { Button, buttonStyles } from '~/components/ui/intent-ui/button'
+import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Heading } from '~/components/ui/intent-ui/heading'
@@ -59,6 +59,27 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
   })
 
   const unResolvedTroubles = troubleCategoriesResponse.unResolvedTroubles ?? []
+
+  const draftButtonRef = useRef<HTMLButtonElement>(null)
+  const publishButtonRef = useRef<HTMLButtonElement>(null)
+
+  const handleKeyDown: ComponentProps<'div'>['onKeyDown'] = (e) => {
+    const target = e.target as HTMLElement
+
+    if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault()
+        draftButtonRef.current?.click()
+
+        return
+      }
+
+      if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault()
+        publishButtonRef.current?.click()
+      }
+    }
+  }
 
   const existingReportEntries = reportData.reportEntries.map((entry) => ({
     id: entry.id,
@@ -158,131 +179,103 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
         )}
       </div>
       <FormProvider context={form.context}>
-        <Form className="space-y-2" action={action} {...getFormProps(form)}>
-          <input {...getInputProps(fields.reportId, { type: 'hidden' })} />
-          {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
-          {/* // ? https://ja.conform.guide/integration/ui-libraries */}
-          <JapaneseDatePicker
-            isDisabled={isPending}
-            value={reportDate.value ? parseDate(reportDate.value) : null}
-            onChange={(newValue) => {
-              if (newValue) {
-                reportDate.change(newValue.toString())
-              }
-            }}
-            label="日付"
-            className="max-w-3xs"
-            isDateUnavailable={isDateUnavailable}
-            onFocusChange={(date) => {
-              if (date && typeof date !== 'boolean' && 'year' in date && 'month' in date) {
-                handleFocusChange((date as DateValue).year, (date as DateValue).month)
-              }
-            }}
-            isLoading={isLoading}
-          />
-          <input
-            ref={reportDate.register}
-            name={fields.reportDate.name}
-            type="hidden"
-            disabled={isPending}
-          />
-
-          <Tooltip delay={0}>
-            <Tooltip.Trigger
-              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
-              onPress={handleAdd}
+        <div onKeyDown={handleKeyDown} role="form" tabIndex={-1}>
+          <Form className="space-y-2" action={action} {...getFormProps(form)}>
+            <input {...getInputProps(fields.reportId, { type: 'hidden' })} />
+            {/* // ? useInputControlでは値が反映されない不具合のため、useControlを使用 */}
+            {/* // ? https://ja.conform.guide/integration/ui-libraries */}
+            <JapaneseDatePicker
               isDisabled={isPending}
-            >
-              <IconPlus />
-            </Tooltip.Trigger>
-            <Tooltip.Content>職務内容を追加</Tooltip.Content>
-          </Tooltip>
-
-          {dailyReports.map((dailyReport) => (
-            <EditDailyReportContentInputEntries
-              key={dailyReport.key}
-              id={dailyReport.value?.id}
-              formId={form.id}
-              name={dailyReport.name}
-              projects={projectsResponse.projects}
-              missions={missionsResponse.missions}
-              initialDailyInputCountSearchParamsParsers={editSearchParamsParsers}
-              removeButton={
-                <Tooltip delay={0}>
-                  <Tooltip.Trigger
-                    className={cn(
-                      buttonStyles({ size: 'sq-sm', intent: 'danger', isCircle: true }),
-                      'mt-6',
-                    )}
-                    onPress={() => {
-                      handleRemove(dailyReport.getFieldset().id.value ?? '')
-                    }}
-                    isDisabled={isPending}
-                  >
-                    <IconMinus />
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>職務内容を削除</Tooltip.Content>
-                </Tooltip>
-              }
+              value={reportDate.value ? parseDate(reportDate.value) : null}
+              onChange={(newValue) => {
+                if (newValue) {
+                  reportDate.change(newValue.toString())
+                }
+              }}
+              label="日付"
+              className="max-w-3xs"
+              isDateUnavailable={isDateUnavailable}
+              onFocusChange={(date) => {
+                if (date && typeof date !== 'boolean' && 'year' in date && 'month' in date) {
+                  handleFocusChange((date as DateValue).year, (date as DateValue).month)
+                }
+              }}
+              isLoading={isLoading}
             />
-          ))}
-
-          <Separator orientation="horizontal" />
-          <div className="my-4 space-y-2">
-            <Checkbox
-              {...getInputProps(fields.remote, { type: 'checkbox' })}
-              isDisabled={isPending}
-              size="lg"
-              className="mt-2 cursor-pointer"
-              isSelected={remoteInput.value === 'on'}
-              onChange={handleChangeRemote}
-            >
-              <span className="ml-2">リモート勤務</span>
-            </Checkbox>
-            <TotalHours totalHours={totalHours} />
-            <TextField
-              {...getInputProps(fields.impression, { type: 'text' })}
-              label="所感"
-              isDisabled={isPending}
-              value={impressionInput.value ?? ''}
-              onChange={handleChangeImpression}
+            <input
+              ref={reportDate.register}
+              name={fields.reportDate.name}
+              type="hidden"
+              disabled={isPending}
             />
-          </div>
 
-          <Separator orientation="horizontal" />
-          <div className="mt-4 flex items-center">
-            <Heading level={3}>困っていること</Heading>
-          </div>
+            <Tooltip delay={0}>
+              <Tooltip.Trigger
+                className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                onPress={handleAdd}
+                isDisabled={isPending}
+              >
+                <IconPlus />
+              </Tooltip.Trigger>
+              <Tooltip.Content>職務内容を追加</Tooltip.Content>
+            </Tooltip>
 
-          <Tooltip delay={0}>
-            <Tooltip.Trigger
-              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
-              onPress={handleAddTrouble}
-              isDisabled={isPending}
-            >
-              <IconPlus />
-            </Tooltip.Trigger>
-            <Tooltip.Content>困っていることを追加</Tooltip.Content>
-          </Tooltip>
-
-          {troubleEntries.map((trouble, index) => {
-            const isExisting = trouble.value?.isExisting === 'on'
-
-            return (
-              <TroubleInputEntries
-                key={trouble.key}
+            {dailyReports.map((dailyReport) => (
+              <EditDailyReportContentInputEntries
+                key={dailyReport.key}
+                id={dailyReport.value?.id}
                 formId={form.id}
-                name={trouble.name}
-                categories={troubleCategoriesResponse.troubleCategories}
-                isExisting={isExisting}
-                onRemove={isExisting ? undefined : () => handleRemoveTrouble(index)}
-                onChangeContent={handleChangeTroubleContent}
-                onChangeCategory={handleChangeTroubleCategory}
+                name={dailyReport.name}
+                projects={projectsResponse.projects}
+                missions={missionsResponse.missions}
+                initialDailyInputCountSearchParamsParsers={editSearchParamsParsers}
+                removeButton={
+                  <Tooltip delay={0}>
+                    <Tooltip.Trigger
+                      className={cn(
+                        buttonStyles({ size: 'sq-sm', intent: 'danger', isCircle: true }),
+                        'mt-6',
+                      )}
+                      onPress={() => {
+                        handleRemove(dailyReport.getFieldset().id.value ?? '')
+                      }}
+                      isDisabled={isPending}
+                    >
+                      <IconMinus />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>職務内容を削除</Tooltip.Content>
+                  </Tooltip>
+                }
               />
-            )
-          })}
+            ))}
 
-          {troubleEntries.length > 0 && (
+            <Separator orientation="horizontal" />
+            <div className="my-4 space-y-2">
+              <Checkbox
+                {...getInputProps(fields.remote, { type: 'checkbox' })}
+                isDisabled={isPending}
+                size="lg"
+                className="mt-2 cursor-pointer"
+                isSelected={remoteInput.value === 'on'}
+                onChange={handleChangeRemote}
+              >
+                <span className="ml-2">リモート勤務</span>
+              </Checkbox>
+              <TotalHours totalHours={totalHours} />
+              <TextField
+                {...getInputProps(fields.impression, { type: 'text' })}
+                label="所感"
+                isDisabled={isPending}
+                value={impressionInput.value ?? ''}
+                onChange={handleChangeImpression}
+              />
+            </div>
+
+            <Separator orientation="horizontal" />
+            <div className="mt-4 flex items-center">
+              <Heading level={3}>困っていること</Heading>
+            </div>
+
             <Tooltip delay={0}>
               <Tooltip.Trigger
                 className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
@@ -293,36 +286,41 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
               </Tooltip.Trigger>
               <Tooltip.Content>困っていることを追加</Tooltip.Content>
             </Tooltip>
-          )}
 
-          <Separator orientation="horizontal" />
-          <div className="mt-4 flex items-center">
-            <Heading level={3}>アピールポイント</Heading>
-          </div>
-          <Tooltip delay={0}>
-            <Tooltip.Trigger
-              className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
-              onPress={handleAddAppeal}
-              isDisabled={isPending}
-            >
-              <IconPlus />
-            </Tooltip.Trigger>
-            <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
-          </Tooltip>
+            {troubleEntries.map((trouble, index) => {
+              const isExisting = trouble.value?.isExisting === 'on'
 
-          {appealEntries.map((appeal, index) => (
-            <AppealInputEntries
-              key={appeal.key}
-              formId={form.id}
-              name={appeal.name}
-              categories={appealCategoriesResponse.appealCategories}
-              onRemove={() => handleRemoveAppeal(index)}
-              onChangeContent={handleChangeAppealContent}
-              onChangeCategory={handleChangeAppealCategory}
-            />
-          ))}
+              return (
+                <TroubleInputEntries
+                  key={trouble.key}
+                  formId={form.id}
+                  name={trouble.name}
+                  categories={troubleCategoriesResponse.troubleCategories}
+                  isExisting={isExisting}
+                  onRemove={isExisting ? undefined : () => handleRemoveTrouble(index)}
+                  onChangeContent={handleChangeTroubleContent}
+                  onChangeCategory={handleChangeTroubleCategory}
+                />
+              )
+            })}
 
-          {appealEntries.length > 0 && (
+            {troubleEntries.length > 0 && (
+              <Tooltip delay={0}>
+                <Tooltip.Trigger
+                  className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                  onPress={handleAddTrouble}
+                  isDisabled={isPending}
+                >
+                  <IconPlus />
+                </Tooltip.Trigger>
+                <Tooltip.Content>困っていることを追加</Tooltip.Content>
+              </Tooltip>
+            )}
+
+            <Separator orientation="horizontal" />
+            <div className="mt-4 flex items-center">
+              <Heading level={3}>アピールポイント</Heading>
+            </div>
             <Tooltip delay={0}>
               <Tooltip.Trigger
                 className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
@@ -333,26 +331,65 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
               </Tooltip.Trigger>
               <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
             </Tooltip>
-          )}
 
-          <Separator orientation="horizontal" />
-          <div className="my-4 flex items-center justify-end gap-x-2">
-            <Button
-              isDisabled={isPending}
-              type="submit"
-              intent="outline"
-              name="action"
-              value="draft"
-            >
-              {isPending ? '更新中...' : '下書き保存'}
-              {isPending ? <Loader /> : <IconPencilBox />}
-            </Button>
-            <Button isDisabled={isPending} type="submit" name="action" value="published">
-              {isPending ? '更新中...' : '公開'}
-              {isPending ? <Loader /> : <IconSend3 />}
-            </Button>
-          </div>
-        </Form>
+            {appealEntries.map((appeal, index) => (
+              <AppealInputEntries
+                key={appeal.key}
+                formId={form.id}
+                name={appeal.name}
+                categories={appealCategoriesResponse.appealCategories}
+                onRemove={() => handleRemoveAppeal(index)}
+                onChangeContent={handleChangeAppealContent}
+                onChangeCategory={handleChangeAppealCategory}
+              />
+            ))}
+
+            {appealEntries.length > 0 && (
+              <Tooltip delay={0}>
+                <Tooltip.Trigger
+                  className={cn(buttonStyles({ size: 'sq-sm', isCircle: true }), 'mt-4')}
+                  onPress={handleAddAppeal}
+                  isDisabled={isPending}
+                >
+                  <IconPlus />
+                </Tooltip.Trigger>
+                <Tooltip.Content>アピールポイントを追加</Tooltip.Content>
+              </Tooltip>
+            )}
+
+            <Separator orientation="horizontal" />
+            <div className="my-4 flex items-center justify-end gap-x-2">
+              <Tooltip delay={0}>
+                <Tooltip.Trigger
+                  ref={draftButtonRef}
+                  isDisabled={isPending}
+                  type="submit"
+                  className={cn(buttonStyles({ intent: 'outline' }))}
+                  name="action"
+                  value="draft"
+                >
+                  {isPending ? '更新中...' : '下書き保存'}
+                  {isPending ? <Loader /> : <IconPencilBox />}
+                </Tooltip.Trigger>
+                <Tooltip.Content>⌘+Enter または Ctrl+Enter</Tooltip.Content>
+              </Tooltip>
+              <Tooltip delay={0}>
+                <Tooltip.Trigger
+                  ref={publishButtonRef}
+                  isDisabled={isPending}
+                  type="submit"
+                  name="action"
+                  value="published"
+                  className={cn(buttonStyles({ intent: 'primary' }))}
+                >
+                  {isPending ? '更新中...' : '公開'}
+                  {isPending ? <Loader /> : <IconSend3 />}
+                </Tooltip.Trigger>
+                <Tooltip.Content>Enter</Tooltip.Content>
+              </Tooltip>
+            </div>
+          </Form>
+        </div>
       </FormProvider>
     </>
   )

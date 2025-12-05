@@ -45,8 +45,8 @@ function groupingReportMission<
 ) {
   return pipe(
     reportMissions,
-    sortBy([(m) => m.mission.name, 'asc']),
     sortBy([(m) => m.mission.project.name, 'asc']),
+    sortBy([(m) => m.mission.name, 'asc']),
   )
 }
 
@@ -109,6 +109,7 @@ export class WeeklyReportService {
         ),
         limit: QUERY_MAX_LIMIT_VALUES.WEEKLY_REPORTS,
         offset: Number(offset),
+        orderBy: (usersTable, { desc }) => [desc(usersTable.createdAt)],
         with: {
           weeklyReports: {
             where: and(

@@ -3,7 +3,7 @@
 import type { Session } from 'better-auth'
 import type { InferRequestType } from 'hono'
 import { notFound } from 'next/navigation'
-import { useRef } from 'react'
+import { type ReactNode, useRef } from 'react'
 import type { VirtuosoHandle } from 'react-virtuoso'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Note } from '~/components/ui/intent-ui/note'
@@ -15,9 +15,10 @@ import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queri
 import type { client } from '~/lib/rpc'
 
 type WeeklyReportsProps = Pick<Session, 'userId'> &
-  InferRequestType<(typeof client.api.weeklies)['last-week'][':year'][':week']['$get']>['param']
+  InferRequestType<(typeof client.api.weeklies)['last-week'][':year'][':week']['$get']>['param'] &
+  Record<'children', ReactNode>
 
-export function WeeklyReports({ userId, year, week }: WeeklyReportsProps) {
+export function WeeklyReports({ userId, year, week, children }: WeeklyReportsProps) {
   const { use: useWeeklyReports } = fetchWeeklyReportsInfiniteQuery(
     { year: Number(year), week: Number(week) },
     userId,
@@ -72,7 +73,10 @@ export function WeeklyReports({ userId, year, week }: WeeklyReportsProps) {
           hasNextPage={hasNextPage}
           isFetchingNextPage={isFetchingNextPage}
           loadMore={loadMore}
-        />
+          userId={userId}
+        >
+          {children}
+        </WeeklyReportsCards>
       </div>
 
       <aside className="sticky top-20 hidden h-fit w-64 pr-4 lg:block">

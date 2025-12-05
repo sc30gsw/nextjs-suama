@@ -20,7 +20,7 @@ export class MissionService {
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-    const shouldFilterArchived = isArchived === 'false'
+    const shouldFilterArchived = isArchived !== 'true'
 
     try {
       const nameConditions =

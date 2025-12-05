@@ -25,7 +25,12 @@ export class UserService {
     try {
       const whereClause =
         userNamesArray && userNamesArray.length > 0
-          ? or(...userNamesArray.flatMap((word) => [like(users.name, `%${word}%`)]))
+          ? or(
+              ...userNamesArray.flatMap((word) => [
+                like(users.name, `%${word}%`),
+                like(users.email, `%${word}%`),
+              ]),
+            )
           : undefined
 
       const userList = await db.query.users.findMany({

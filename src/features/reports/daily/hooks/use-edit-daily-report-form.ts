@@ -43,6 +43,8 @@ export function useEditDailyForm(
           : TOAST_MESSAGES.DAILY_REPORT.UPDATE_SUCCESS
 
         toast.success(message)
+
+        router.push(urls.href({ route: '/daily/mine' }))
       },
 
       onError(result) {
