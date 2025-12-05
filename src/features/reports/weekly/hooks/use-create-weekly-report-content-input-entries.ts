@@ -40,6 +40,18 @@ export function useCreateWeeklyReportContentInputEntries(
 
   const [projectFilter, setProjectFilter] = useState('')
   const [missionFilter, setMissionFilter] = useState('')
+  const [isProjectFiltering, setIsProjectFiltering] = useState(false)
+  const [isMissionFiltering, setIsMissionFiltering] = useState(false)
+
+  const projectInputValue =
+    isProjectFiltering || !projectId
+      ? projectFilter
+      : (projects.find((project) => project.id === projectId)?.name ?? '')
+
+  const missionInputValue =
+    isMissionFiltering || !missionId
+      ? missionFilter
+      : (missions.find((mission) => mission.id === missionId)?.name ?? '')
 
   const filteredProjects = projects.filter((project) => {
     const nameMatch = matchesJapaneseFilter(project.name, projectFilter)
@@ -100,6 +112,7 @@ export function useCreateWeeklyReportContentInputEntries(
       setMissionId(null)
       missionInput.change(undefined)
       setProjectFilter('')
+      setIsProjectFiltering(false)
 
       setWeeklyReportEntry((prev) => {
         if (!prev) {
@@ -121,7 +134,6 @@ export function useCreateWeeklyReportContentInputEntries(
     } else {
       setMissionId(newItem)
       missionInput.change(newItem.toString())
-      setMissionFilter('')
 
       const findProject = pipe(
         projects,
@@ -129,6 +141,8 @@ export function useCreateWeeklyReportContentInputEntries(
       )
 
       const selectedMission = missions.find((mission) => mission.id === newItem)
+      setMissionFilter('')
+      setIsMissionFiltering(false)
       if (selectedMission) {
         handleChangeValue(id, selectedMission.name)
         handleChangeValue(id, 0.5)
@@ -201,6 +215,16 @@ export function useCreateWeeklyReportContentInputEntries(
     }
   }
 
+  const handleProjectFilterChange = (value: string) => {
+    setProjectFilter(value)
+    setIsProjectFiltering(value !== '')
+  }
+
+  const handleMissionFilterChange = (value: string) => {
+    setMissionFilter(value)
+    setIsMissionFiltering(value !== '')
+  }
+
   return {
     field,
     contentInput,
@@ -211,9 +235,9 @@ export function useCreateWeeklyReportContentInputEntries(
     handleChangeValue,
     filteredProjects,
     filteredMissions,
-    projectFilter,
-    missionFilter,
-    setProjectFilter,
-    setMissionFilter,
+    projectFilter: projectInputValue,
+    missionFilter: missionInputValue,
+    setProjectFilter: handleProjectFilterChange,
+    setMissionFilter: handleMissionFilterChange,
   } as const
 }

@@ -78,7 +78,6 @@ export function CreateDailyReportContentInputEntries({
           }}
           onOpenChange={(isOpen) => {
             if (!isOpen) {
-              // 閉じたときにフィルタをクリア
               setProjectFilter('')
             }
           }}
@@ -113,7 +112,6 @@ export function CreateDailyReportContentInputEntries({
           }}
           onOpenChange={(isOpen) => {
             if (!isOpen) {
-              // 閉じたときにフィルタをクリア
               setMissionFilter('')
             }
           }}
