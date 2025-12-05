@@ -69,42 +69,45 @@ export class WeeklyReportService {
 
     try {
       const targetUsers = await db.query.users.findMany({
-        where: or(
-          exists(
-            db
-              .select()
-              .from(weeklyReports)
-              .where(
-                and(
-                  eq(weeklyReports.userId, users.id),
-                  eq(weeklyReports.year, Number(year)),
-                  eq(weeklyReports.week, currentWeek),
+        where: and(
+          eq(users.isRetired, false),
+          or(
+            exists(
+              db
+                .select()
+                .from(weeklyReports)
+                .where(
+                  and(
+                    eq(weeklyReports.userId, users.id),
+                    eq(weeklyReports.year, Number(year)),
+                    eq(weeklyReports.week, currentWeek),
+                  ),
                 ),
-              ),
-          ),
-          exists(
-            db
-              .select()
-              .from(dailyReports)
-              .where(
-                and(
-                  eq(dailyReports.userId, users.id),
-                  gte(dailyReports.reportDate, startDate),
-                  lte(dailyReports.reportDate, endDate),
+            ),
+            exists(
+              db
+                .select()
+                .from(dailyReports)
+                .where(
+                  and(
+                    eq(dailyReports.userId, users.id),
+                    gte(dailyReports.reportDate, startDate),
+                    lte(dailyReports.reportDate, endDate),
+                  ),
                 ),
-              ),
-          ),
-          exists(
-            db
-              .select()
-              .from(weeklyReports)
-              .where(
-                and(
-                  eq(weeklyReports.userId, users.id),
-                  eq(weeklyReports.year, Number(year)),
-                  eq(weeklyReports.week, nextWeek),
+            ),
+            exists(
+              db
+                .select()
+                .from(weeklyReports)
+                .where(
+                  and(
+                    eq(weeklyReports.userId, users.id),
+                    eq(weeklyReports.year, Number(year)),
+                    eq(weeklyReports.week, nextWeek),
+                  ),
                 ),
-              ),
+            ),
           ),
         ),
         limit: QUERY_MAX_LIMIT_VALUES.WEEKLY_REPORTS,
