@@ -99,6 +99,7 @@ export function useCreateWeeklyReportContentInputEntries(
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+      setProjectFilter('')
 
       setWeeklyReportEntry((prev) => {
         if (!prev) {
@@ -120,6 +121,7 @@ export function useCreateWeeklyReportContentInputEntries(
     } else {
       setMissionId(newItem)
       missionInput.change(newItem.toString())
+      setMissionFilter('')
 
       const findProject = pipe(
         projects,
@@ -209,6 +211,8 @@ export function useCreateWeeklyReportContentInputEntries(
     handleChangeValue,
     filteredProjects,
     filteredMissions,
+    projectFilter,
+    missionFilter,
     setProjectFilter,
     setMissionFilter,
   } as const

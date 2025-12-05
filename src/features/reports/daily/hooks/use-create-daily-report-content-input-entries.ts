@@ -96,6 +96,8 @@ export function useCreateDailyReportContentInputEntries(
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+      // プロジェクト選択時にフィルタをクリア
+      setProjectFilter('')
 
       setReportEntry((prev) => {
         if (!prev) {
@@ -123,6 +125,8 @@ export function useCreateDailyReportContentInputEntries(
         : projects
       setMissionId(newItem)
       missionInput.change(newItem.toString())
+      // ミッション選択時にフィルタをクリア
+      setMissionFilter('')
 
       const findProject = pipe(
         projects,
@@ -212,6 +216,8 @@ export function useCreateDailyReportContentInputEntries(
     handleChangeValue,
     filteredProjects,
     filteredMissions,
+    projectFilter,
+    missionFilter,
     setProjectFilter,
     setMissionFilter,
   } as const

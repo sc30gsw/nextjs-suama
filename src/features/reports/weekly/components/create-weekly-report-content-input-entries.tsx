@@ -65,6 +65,8 @@ export function CreateWeeklyReportContentInputEntries({
     handleChangeValue,
     filteredProjects,
     filteredMissions,
+    projectFilter,
+    missionFilter,
     setProjectFilter,
     setMissionFilter,
   } = useCreateWeeklyReportContentInputEntries(
@@ -84,13 +86,23 @@ export function CreateWeeklyReportContentInputEntries({
         {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
         {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
-          {...getInputProps(field.project, { type: 'text' })}
+          {...(() => {
+            const props = getInputProps(field.project, { type: 'text' })
+            const { inputValue: _, ...rest } = props
+            return rest
+          })()}
           label="プロジェクト"
           placeholder="プロジェクトを選択"
+          inputValue={projectFilter}
+          onInputChange={setProjectFilter}
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'project')
           }}
-          onInputChange={setProjectFilter}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setProjectFilter('')
+            }
+          }}
           defaultFilter={() => true}
           selectedKey={projectId}
           isDisabled={pending}
@@ -108,13 +120,23 @@ export function CreateWeeklyReportContentInputEntries({
         {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
         {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
-          {...getInputProps(field.mission, { type: 'text' })}
+          {...(() => {
+            const props = getInputProps(field.mission, { type: 'text' })
+            const { inputValue: _, ...rest } = props
+            return rest
+          })()}
           label="ミッション"
           placeholder="ミッションを選択"
+          inputValue={missionFilter}
+          onInputChange={setMissionFilter}
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'mission')
           }}
-          onInputChange={setMissionFilter}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setMissionFilter('')
+            }
+          }}
           defaultFilter={() => true}
           selectedKey={missionId}
           isDisabled={pending}

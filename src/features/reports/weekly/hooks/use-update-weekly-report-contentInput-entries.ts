@@ -3,6 +3,7 @@ import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
 import { filter, find, pipe } from 'remeda'
+import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type {
   UpdateWeeklyReportFormSchema,
@@ -13,7 +14,6 @@ import type {
   WeeklyReportEntry,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
-import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 
 export function useUpdatedWeeklyReportContentInputEntries(
   initialWeeklyInputCountSearchParamsParsers: UpdateWeeklyInputCountSearchParams,
@@ -81,6 +81,7 @@ export function useUpdatedWeeklyReportContentInputEntries(
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+      setProjectFilter('')
 
       setWeeklyReportEntry((prev) => {
         if (!prev) {
@@ -108,6 +109,7 @@ export function useUpdatedWeeklyReportContentInputEntries(
         : projects
       setMissionId(newItem)
       missionInput.change(newItem.toString())
+      setMissionFilter('')
 
       const findProject = pipe(
         projects,
@@ -196,6 +198,8 @@ export function useUpdatedWeeklyReportContentInputEntries(
     handleChangeValue,
     filteredProjects,
     filteredMissions,
+    projectFilter,
+    missionFilter,
     setProjectFilter,
     setMissionFilter,
   } as const

@@ -97,6 +97,7 @@ export function useEditDailyReportContentInputEntries(
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+      setProjectFilter('')
 
       setReportEntry((prev) => {
         if (!prev) {
@@ -124,6 +125,7 @@ export function useEditDailyReportContentInputEntries(
         : projects
       setMissionId(newItem)
       missionInput.change(newItem.toString())
+      setMissionFilter('')
 
       const findProject = pipe(
         projects,
@@ -213,6 +215,8 @@ export function useEditDailyReportContentInputEntries(
     handleChangeValue,
     filteredProjects,
     filteredMissions,
+    projectFilter,
+    missionFilter,
     setProjectFilter,
     setMissionFilter,
   } as const
