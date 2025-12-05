@@ -9,6 +9,7 @@ import { users } from '~/db/schema'
 import { settingUserInputSchema } from '~/features/users/types/schemas/setting-user-input-schema'
 import { db } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
+import { sendUserUpdateEmail } from '~/lib/resend'
 
 export async function settingUserAction(_: unknown, formData: FormData) {
   const submission = parseWithZod(formData, {
@@ -62,6 +63,13 @@ export async function settingUserAction(_: unknown, formData: FormData) {
 
       updateTag(GET_USERS_CACHE_KEY)
 
+      await sendUserUpdateEmail(
+        submission.value.email,
+        submission.value.name,
+        user.email,
+        submission.value.email,
+      )
+
       return submission.reply()
     }
 
@@ -74,6 +82,8 @@ export async function settingUserAction(_: unknown, formData: FormData) {
       .where(eq(users.id, submission.value.id))
 
     updateTag(GET_USERS_CACHE_KEY)
+
+    await sendUserUpdateEmail(user.email, submission.value.name)
 
     return submission.reply()
   } catch (_) {
