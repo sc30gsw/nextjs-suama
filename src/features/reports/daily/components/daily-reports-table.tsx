@@ -45,6 +45,7 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
       header: '所感',
       cell: (info) => {
         const impression = info.getValue()
+
         return (
           <Tooltip delay={0}>
             <Tooltip.Trigger className="line-clamp-1 max-w-xs cursor-default text-left">
