@@ -118,7 +118,7 @@ export function CreateDailyReportContentInputEntries({
       </div>
       <div className="col-span-2">
         <NumberField
-          step={0.1}
+          step={0.05}
           label="時間"
           value={Number(hoursInput.value)}
           onChange={(val) => handleChangeValue(id ?? '', val)}
