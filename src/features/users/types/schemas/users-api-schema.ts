@@ -58,6 +58,10 @@ export const UserSchema = z
       example: 'https://example.com/avatar.jpg',
       description: 'プロフィール画像URL',
     }),
+    isRetired: z.boolean().openapi({
+      example: false,
+      description: '退職済みかどうか',
+    }),
     createdAt: z.string().openapi({
       example: '2024-01-01T00:00:00.000Z',
       description: '作成日時',

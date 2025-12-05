@@ -37,7 +37,7 @@ export class UserService {
         where: whereClause,
         offset: skipNumber,
         limit: limitNumber,
-        orderBy: (usersTable, { asc }) => [asc(usersTable.createdAt)],
+        orderBy: (usersTable, { asc }) => [asc(usersTable.isRetired), asc(usersTable.createdAt)],
       })
 
       const total = await db.select({ count: count() }).from(users).where(whereClause)
