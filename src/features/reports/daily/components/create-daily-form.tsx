@@ -60,14 +60,14 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
     const target = e.target as HTMLElement
 
     if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable) {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'Enter') {
         e.preventDefault()
         draftButtonRef.current?.click()
 
         return
       }
 
-      if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault()
         publishButtonRef.current?.click()
       }
@@ -312,7 +312,7 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
                   {isPending ? '下書き中...' : '下書き'}
                   {isPending ? <Loader /> : <IconPencilBox />}
                 </Tooltip.Trigger>
-                <Tooltip.Content>⌘+Enter または Ctrl+Enter</Tooltip.Content>
+                <Tooltip.Content>⌘+Shift+Enter または Ctrl+Shift+Enter</Tooltip.Content>
               </Tooltip>
               <Tooltip delay={0}>
                 <Tooltip.Trigger
@@ -326,7 +326,7 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
                   {isPending ? '登録中...' : '登録'}
                   {isPending ? <Loader /> : <IconSend3 />}
                 </Tooltip.Trigger>
-                <Tooltip.Content>Enter</Tooltip.Content>
+                <Tooltip.Content>⌘+Enter または Ctrl+Enter</Tooltip.Content>
               </Tooltip>
             </div>
           </Form>
