@@ -57,6 +57,8 @@ const TagField = ({
 }: TagFieldProps) => {
   const [isInvalid, setIsInvalid] = useState(false)
   const [inputValue, setInputValue] = useState('')
+  const [isComposing, setIsComposing] = useState(false)
+  const [pendingEnterKey, setPendingEnterKey] = useState(false)
 
   const existingTagCount = list.items.length
   const maxTags = props.max !== undefined ? props.max : Number.POSITIVE_INFINITY
@@ -116,6 +118,14 @@ const TagField = ({
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ',') {
+      if (isComposing) {
+        if (e.key === 'Enter') {
+          setPendingEnterKey(true)
+        }
+
+        return
+      }
+
       e.preventDefault()
       insertTag()
     }
@@ -123,6 +133,23 @@ const TagField = ({
     if (e.key === 'Backspace' && inputValue === '') {
       popLast()
       clearInvalidFeedback()
+    }
+  }
+
+  const onCompositionStart = () => {
+    setIsComposing(true)
+    setPendingEnterKey(false)
+  }
+
+  const onCompositionEnd = () => {
+    setIsComposing(false)
+
+    if (pendingEnterKey) {
+      setPendingEnterKey(false)
+
+      setTimeout(() => {
+        insertTag()
+      }, 0)
     }
   }
 
@@ -157,6 +184,8 @@ const TagField = ({
               onKeyDown={onKeyDown}
               onChange={setInputValue}
               value={inputValue}
+              onCompositionStart={onCompositionStart}
+              onCompositionEnd={onCompositionEnd}
               className="flex-1"
               {...props}
             >
