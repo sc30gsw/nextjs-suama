@@ -3,12 +3,12 @@ import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
 import { filter, find, pipe } from 'remeda'
+import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import { useWeeklyReportSearchParams } from '~/features/reports/weekly/hooks/use-weekly-report-search-params'
 import type {
   CreateWeeklyReportFormSchema,
   CreateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
-
 import type {
   WeeklyInputCountSearchParams,
   WeeklyReportEntry,
@@ -40,10 +40,24 @@ export function useCreateWeeklyReportContentInputEntries(
 
   const [projectFilter, setProjectFilter] = useState('')
   const [missionFilter, setMissionFilter] = useState('')
+  const [isProjectFiltering, setIsProjectFiltering] = useState(false)
+  const [isMissionFiltering, setIsMissionFiltering] = useState(false)
+
+  const projectInputValue =
+    isProjectFiltering || !projectId
+      ? projectFilter
+      : (projects.find((project) => project.id === projectId)?.name ?? '')
+
+  const missionInputValue =
+    isMissionFiltering || !missionId
+      ? missionFilter
+      : (missions.find((mission) => mission.id === missionId)?.name ?? '')
 
   const filteredProjects = projects.filter((project) => {
-    const nameMatch = project.name.toLowerCase().includes(projectFilter.toLowerCase())
-    const keywordMatch = project.likeKeywords?.toLowerCase().includes(projectFilter.toLowerCase())
+    const nameMatch = matchesJapaneseFilter(project.name, projectFilter)
+    const keywordMatch = project.likeKeywords
+      ? matchesJapaneseFilter(project.likeKeywords, projectFilter)
+      : false
 
     return nameMatch || keywordMatch
   })
@@ -56,8 +70,10 @@ export function useCreateWeeklyReportContentInputEntries(
         )
       : missions,
     filter((mission) => {
-      const nameMatch = mission.name.toLowerCase().includes(missionFilter.toLowerCase())
-      const keywordMatch = mission.likeKeywords?.toLowerCase().includes(missionFilter.toLowerCase())
+      const nameMatch = matchesJapaneseFilter(mission.name, missionFilter)
+      const keywordMatch = mission.likeKeywords
+        ? matchesJapaneseFilter(mission.likeKeywords, missionFilter)
+        : false
 
       return nameMatch || keywordMatch
     }),
@@ -95,6 +111,8 @@ export function useCreateWeeklyReportContentInputEntries(
       projectInput.change(newItem.toString())
       setMissionId(null)
       missionInput.change(undefined)
+      setProjectFilter('')
+      setIsProjectFiltering(false)
 
       setWeeklyReportEntry((prev) => {
         if (!prev) {
@@ -122,6 +140,14 @@ export function useCreateWeeklyReportContentInputEntries(
         find((project) => project.missions.some((mission) => mission.id === newItem)),
       )
 
+      const selectedMission = missions.find((mission) => mission.id === newItem)
+      setMissionFilter('')
+      setIsMissionFiltering(false)
+      if (selectedMission) {
+        handleChangeValue(id, selectedMission.name)
+        handleChangeValue(id, 0.5)
+      }
+
       setWeeklyReportEntry((prev) => {
         if (!prev) {
           return prev
@@ -133,6 +159,8 @@ export function useCreateWeeklyReportContentInputEntries(
               ...e,
               mission: newItem.toString(),
               project: findProject?.id ?? '',
+              content: selectedMission?.name ?? e.content,
+              hours: selectedMission ? 0.5 : e.hours,
             }
           }
 
@@ -187,6 +215,16 @@ export function useCreateWeeklyReportContentInputEntries(
     }
   }
 
+  const handleProjectFilterChange = (value: string) => {
+    setProjectFilter(value)
+    setIsProjectFiltering(value !== '')
+  }
+
+  const handleMissionFilterChange = (value: string) => {
+    setMissionFilter(value)
+    setIsMissionFiltering(value !== '')
+  }
+
   return {
     field,
     contentInput,
@@ -197,7 +235,9 @@ export function useCreateWeeklyReportContentInputEntries(
     handleChangeValue,
     filteredProjects,
     filteredMissions,
-    setProjectFilter,
-    setMissionFilter,
+    projectFilter: projectInputValue,
+    missionFilter: missionInputValue,
+    setProjectFilter: handleProjectFilterChange,
+    setMissionFilter: handleMissionFilterChange,
   } as const
 }
