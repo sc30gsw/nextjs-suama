@@ -212,6 +212,7 @@ export function ReportContentInputEntries({ projects, missions }: ReportContentI
               </ComboBox.List>
             </ComboBox>
             <NumberField
+              step={0.05}
               label="時間"
               value={entry.hours}
               onChange={(val) => handleChangeValue(entry.id, val)}
