@@ -36,6 +36,8 @@ export class DailyReportListService {
 
     if (userId) {
       whereConditions.push(eq(dailyReports.userId, userId))
+    } else {
+      whereConditions.push(eq(dailyReports.release, true))
     }
 
     try {
