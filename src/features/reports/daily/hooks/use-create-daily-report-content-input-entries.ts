@@ -12,6 +12,7 @@ import type {
   DailyInputCountSearchParams,
   ReportEntry,
 } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
+import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import type { client } from '~/lib/rpc'
 
 export function useCreateDailyReportContentInputEntries(
@@ -39,8 +40,10 @@ export function useCreateDailyReportContentInputEntries(
   const [missionFilter, setMissionFilter] = useState('')
 
   const filteredProjects = projects.filter((project) => {
-    const nameMatch = project.name.toLowerCase().includes(projectFilter.toLowerCase())
-    const keywordMatch = project.likeKeywords?.toLowerCase().includes(projectFilter.toLowerCase())
+    const nameMatch = matchesJapaneseFilter(project.name, projectFilter)
+    const keywordMatch = project.likeKeywords
+      ? matchesJapaneseFilter(project.likeKeywords, projectFilter)
+      : false
     return nameMatch || keywordMatch
   })
 
@@ -52,8 +55,10 @@ export function useCreateDailyReportContentInputEntries(
         )
       : missions,
     filter((mission) => {
-      const nameMatch = mission.name.toLowerCase().includes(missionFilter.toLowerCase())
-      const keywordMatch = mission.likeKeywords?.toLowerCase().includes(missionFilter.toLowerCase())
+      const nameMatch = matchesJapaneseFilter(mission.name, missionFilter)
+      const keywordMatch = mission.likeKeywords
+        ? matchesJapaneseFilter(mission.likeKeywords, missionFilter)
+        : false
 
       return nameMatch || keywordMatch
     }),
@@ -124,6 +129,12 @@ export function useCreateDailyReportContentInputEntries(
         find((project) => project.missions.some((mission) => mission.id === newItem)),
       )
 
+      const selectedMission = missions.find((mission) => mission.id === newItem)
+      if (selectedMission) {
+        handleChangeValue(id, selectedMission.name)
+        handleChangeValue(id, 0.5)
+      }
+
       setReportEntry((prev) => {
         if (!prev) {
           return prev
@@ -135,6 +146,8 @@ export function useCreateDailyReportContentInputEntries(
               ...e,
               mission: newItem.toString(),
               project: findProject?.id ?? '',
+              content: selectedMission?.name ?? e.content,
+              hours: selectedMission ? 0.5 : e.hours,
             }
           }
           return e

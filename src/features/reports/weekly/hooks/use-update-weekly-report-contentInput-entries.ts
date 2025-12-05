@@ -13,6 +13,7 @@ import type {
   WeeklyReportEntry,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
+import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 
 export function useUpdatedWeeklyReportContentInputEntries(
   initialWeeklyInputCountSearchParamsParsers: UpdateWeeklyInputCountSearchParams,
@@ -37,8 +38,10 @@ export function useUpdatedWeeklyReportContentInputEntries(
   const [missionFilter, setMissionFilter] = useState('')
 
   const filteredProjects = projects.filter((project) => {
-    const nameMatch = project.name.toLowerCase().includes(projectFilter.toLowerCase())
-    const keywordMatch = project.likeKeywords?.toLowerCase().includes(projectFilter.toLowerCase())
+    const nameMatch = matchesJapaneseFilter(project.name, projectFilter)
+    const keywordMatch = project.likeKeywords
+      ? matchesJapaneseFilter(project.likeKeywords, projectFilter)
+      : false
 
     return nameMatch || keywordMatch
   })
@@ -51,8 +54,10 @@ export function useUpdatedWeeklyReportContentInputEntries(
         )
       : missions,
     filter((mission) => {
-      const nameMatch = mission.name.toLowerCase().includes(missionFilter.toLowerCase())
-      const keywordMatch = mission.likeKeywords?.toLowerCase().includes(missionFilter.toLowerCase())
+      const nameMatch = matchesJapaneseFilter(mission.name, missionFilter)
+      const keywordMatch = mission.likeKeywords
+        ? matchesJapaneseFilter(mission.likeKeywords, missionFilter)
+        : false
 
       return nameMatch || keywordMatch
     }),
@@ -109,6 +114,12 @@ export function useUpdatedWeeklyReportContentInputEntries(
         find((project) => project.missions.some((mission) => mission.id === newItem)),
       )
 
+      const selectedMission = missions.find((mission) => mission.id === newItem)
+      if (selectedMission) {
+        handleChangeValue(id, selectedMission.name)
+        handleChangeValue(id, 0.5)
+      }
+
       setWeeklyReportEntry((prev) => {
         if (!prev) {
           return prev
@@ -120,6 +131,8 @@ export function useUpdatedWeeklyReportContentInputEntries(
               ...e,
               mission: newItem.toString(),
               project: findProject?.id ?? '',
+              content: selectedMission?.name ?? e.content,
+              hours: selectedMission ? 0.5 : e.hours,
             }
           }
           return e
