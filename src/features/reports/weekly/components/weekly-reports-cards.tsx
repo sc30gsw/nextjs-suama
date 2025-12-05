@@ -1,4 +1,5 @@
-import type { RefObject } from 'react'
+import type { Session } from 'better-auth'
+import type { ReactNode, RefObject } from 'react'
 import type { VirtuosoHandle } from 'react-virtuoso'
 import { Virtuoso } from 'react-virtuoso'
 import { flatMap, pipe, reduce } from 'remeda'
@@ -21,6 +22,8 @@ type WeeklyReportsCardsProps = {
   hasNextPage: boolean
   isFetchingNextPage: boolean
   loadMore: () => void
+  userId: Session['userId']
+  children: ReactNode
 }
 
 export function WeeklyReportsCards({
@@ -29,6 +32,8 @@ export function WeeklyReportsCards({
   hasNextPage,
   isFetchingNextPage,
   loadMore,
+  userId,
+  children,
 }: WeeklyReportsCardsProps) {
   return (
     <Virtuoso
@@ -61,7 +66,7 @@ export function WeeklyReportsCards({
 
         return (
           <Card id={`user-${report.user.id}`} className="mt-2">
-            <Card.Header>
+            <Card.Header className="flex items-center justify-between">
               <Card.Title className="flex items-center gap-2">
                 <Avatar
                   initials={report.user.name.charAt(0)}
@@ -70,6 +75,7 @@ export function WeeklyReportsCards({
                 />
                 ユーザーID: {report.user.id.slice(0, 15)} ユーザー名: {report.user.name}
               </Card.Title>
+              {report.user.id === userId && <>{children}</>}
             </Card.Header>
             <Card.Content className="space-y-4">
               <div className="p-4">
