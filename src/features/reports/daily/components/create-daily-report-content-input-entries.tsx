@@ -65,7 +65,7 @@ export function CreateDailyReportContentInputEntries({
         {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
           {...(() => {
-            const props = getInputProps(field.project, { type: 'text' })
+            const props = getInputProps(field.project, { type: 'text' }) as Record<string, unknown>
             const { inputValue: _, ...rest } = props
             return rest
           })()}
@@ -99,7 +99,7 @@ export function CreateDailyReportContentInputEntries({
         {/* // ? https://ja.conform.guide/integration/ui-libraries */}
         <ComboBox
           {...(() => {
-            const props = getInputProps(field.mission, { type: 'text' })
+            const props = getInputProps(field.mission, { type: 'text' }) as Record<string, unknown>
             const { inputValue: _, ...rest } = props
             return rest
           })()}
