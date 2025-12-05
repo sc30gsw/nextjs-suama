@@ -110,9 +110,10 @@ export function JapaneseCalendar<T extends DateValue>({
 
 function JapaneseCalendarHeader({
   isRange,
+  hideNavigationButtons,
   className,
   ...props
-}: React.ComponentProps<'header'> & Partial<Record<'isRange', boolean>>) {
+}: React.ComponentProps<'header'> & Partial<Record<'isRange' | 'hideNavigationButtons', boolean>>) {
   const { direction } = useLocale()
   const state = use(CalendarStateContext)!
 
@@ -138,26 +139,28 @@ function JapaneseCalendarHeader({
           className,
         )}
       />
-      <div className="flex items-center gap-1">
-        <Button
-          size="sq-sm"
-          className="size-8 **:data-[slot=icon]:text-fg sm:size-7"
-          isCircle
-          intent="plain"
-          slot="previous"
-        >
-          {direction === 'rtl' ? <IconChevronLgRight /> : <IconChevronLgLeft />}
-        </Button>
-        <Button
-          size="sq-sm"
-          className="size-8 **:data-[slot=icon]:text-fg sm:size-7"
-          isCircle
-          intent="plain"
-          slot="next"
-        >
-          {direction === 'rtl' ? <IconChevronLgLeft /> : <IconChevronLgRight />}
-        </Button>
-      </div>
+      {!hideNavigationButtons && (
+        <div className="flex items-center gap-1">
+          <Button
+            size="sq-sm"
+            className="size-8 **:data-[slot=icon]:text-fg sm:size-7"
+            isCircle
+            intent="plain"
+            slot="previous"
+          >
+            {direction === 'rtl' ? <IconChevronLgRight /> : <IconChevronLgLeft />}
+          </Button>
+          <Button
+            size="sq-sm"
+            className="size-8 **:data-[slot=icon]:text-fg sm:size-7"
+            isCircle
+            intent="plain"
+            slot="next"
+          >
+            {direction === 'rtl' ? <IconChevronLgLeft /> : <IconChevronLgRight />}
+          </Button>
+        </div>
+      )}
     </header>
   )
 }
@@ -267,6 +270,7 @@ function JapaneseCalendarGridHeader() {
 type JapaneseRangeCalendarProps<T extends DateValue> = RangeCalendarPrimitiveProps<T> &
   Partial<Record<'errorMessage', string>> & {
     onCellClick?: (date: Date) => void
+    hideNavigationButtons?: boolean
   }
 
 export function JapaneseRangeCalendar<T extends DateValue>({
@@ -274,13 +278,14 @@ export function JapaneseRangeCalendar<T extends DateValue>({
   className,
   visibleDuration = { months: 1 },
   onCellClick,
+  hideNavigationButtons,
   ...props
 }: JapaneseRangeCalendarProps<T>) {
   const now = today(getLocalTimeZone())
 
   return (
     <RangeCalendarPrimitive visibleDuration={visibleDuration} {...props}>
-      <JapaneseCalendarHeader isRange={true} />
+      <JapaneseCalendarHeader isRange={true} hideNavigationButtons={hideNavigationButtons} />
       <div className="flex snap-x items-start justify-stretch gap-6 overflow-auto sm:gap-10">
         {Array.from({ length: visibleDuration?.months ?? 1 }).map((_, index) => {
           const id = index + 1

@@ -5,9 +5,15 @@ import { JapaneseRangeCalendar } from '~/components/ui/japanese-calendar'
 
 type WeekRangeCalendarProps = Record<'startDay' | 'endDay', Date> & {
   onSelectDate?: (date: Date) => void
+  hideNavigationButtons?: boolean
 }
 
-export function WeekRangeCalendar({ startDay, endDay, onSelectDate }: WeekRangeCalendarProps) {
+export function WeekRangeCalendar({
+  startDay,
+  endDay,
+  onSelectDate,
+  hideNavigationButtons,
+}: WeekRangeCalendarProps) {
   return (
     <JapaneseRangeCalendar
       className="**:data-[slot=calendar-header]:items-center"
@@ -18,6 +24,7 @@ export function WeekRangeCalendar({ startDay, endDay, onSelectDate }: WeekRangeC
       }}
       isReadOnly={true}
       onCellClick={onSelectDate}
+      hideNavigationButtons={hideNavigationButtons}
     />
   )
 }

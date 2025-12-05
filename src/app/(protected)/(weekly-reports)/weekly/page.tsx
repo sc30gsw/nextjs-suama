@@ -38,7 +38,7 @@ export default async function WeeklyPage({ searchParams }: NextPageProps<undefin
       <div className="gird-cols-1 mx-auto grid grid-rows-2 gap-8 py-2 md:grid-cols-2 lg:grid-cols-4">
         {selectedWeeksByMonth.weeks.map((week) => (
           <div key={week.weekNumber}>
-            <WeekRangeCalendar startDay={week.startDay} endDay={week.endDay} />
+            <WeekRangeCalendar startDay={week.startDay} endDay={week.endDay} hideNavigationButtons />
             <div className="flex items-center justify-end">
               <Button size="xs" className="mt-2">
                 <Link
