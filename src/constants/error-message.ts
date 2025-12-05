@@ -60,8 +60,8 @@ export const TOAST_MESSAGES = {
   PASSWORD: {
     RESET_SUCCESS: 'パスワードリセットに成功しました',
     RESET_FAILED: 'パスワードリセットに失敗しました',
-    RESET_REDIRECT: 'パスワードリセット画面にリダイレクトします',
-    RESET_REDIRECT_FAILED: 'パスワードリセット画面にリダイレクトできませんでした',
+    RESET_REDIRECT: 'パスワードリセットのメールを送信しました。メールをご確認ください。',
+    RESET_REDIRECT_FAILED: 'パスワードリセットのメールを送信できませんでした',
     CHANGE_SUCCESS: 'パスワードの変更に成功しました',
     CHANGE_FAILED: 'パスワードの変更に失敗しました',
   },

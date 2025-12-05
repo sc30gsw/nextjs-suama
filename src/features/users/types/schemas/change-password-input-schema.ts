@@ -3,6 +3,9 @@ import { PASSWORD_REGEX } from '~/constants/validation'
 
 export const changePasswordInputSchema = z
   .object({
+    token: z.string({
+      error: 'トークンは必須です',
+    }),
     id: z.string({ error: 'ユーザーIDを入力してください' }),
     password: z
       .string({ error: 'パスワードは必須です' })
