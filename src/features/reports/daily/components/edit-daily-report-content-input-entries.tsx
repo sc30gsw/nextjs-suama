@@ -75,11 +75,6 @@ export function EditDailyReportContentInputEntries({
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'project')
           }}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) {
-              setProjectFilter('')
-            }
-          }}
           defaultFilter={() => true}
           selectedKey={projectId}
           isDisabled={pending}
@@ -108,11 +103,6 @@ export function EditDailyReportContentInputEntries({
           onInputChange={setMissionFilter}
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'mission')
-          }}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) {
-              setMissionFilter('')
-            }
           }}
           defaultFilter={() => true}
           selectedKey={missionId}
