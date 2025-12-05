@@ -109,7 +109,7 @@ export class WeeklyReportService {
         ),
         limit: QUERY_MAX_LIMIT_VALUES.WEEKLY_REPORTS,
         offset: Number(offset),
-        orderBy: (usersTable, { desc }) => [desc(usersTable.id)],
+        orderBy: (usersTable, { desc }) => [desc(usersTable.createdAt)],
         with: {
           weeklyReports: {
             where: and(
