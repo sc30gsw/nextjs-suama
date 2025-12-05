@@ -43,7 +43,19 @@ export function DailyReportsTable({ reports, userId }: DailyReportsTableProps) {
     }),
     columnHelper.accessor('impression', {
       header: '所感',
-      cell: (info) => `${info.getValue()}`,
+      cell: (info) => {
+        const impression = info.getValue()
+        return (
+          <Tooltip delay={0}>
+            <Tooltip.Trigger className="line-clamp-1 max-w-xs cursor-default text-left">
+              {impression}
+            </Tooltip.Trigger>
+            <Tooltip.Content className="wrap-break-word max-w-md whitespace-normal">
+              {impression}
+            </Tooltip.Content>
+          </Tooltip>
+        )
+      },
     }),
     columnHelper.accessor('isRemote', {
       header: 'リモート勤務',
