@@ -2,10 +2,11 @@ import { passkey } from '@better-auth/passkey'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
-import { redirect } from 'next/navigation'
 
 import * as schema from '~/db/schema'
+import { env } from '~/env'
 import { db } from '~/index'
+import { sendPasswordResetEmail } from '~/lib/resend'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -15,9 +16,17 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    sendResetPassword: ({ url }) => {
-      // ! 本来はメール送信などをするが、今回はメールプロバイダーを使用しないためリダイレクトさせる
-      redirect(url.replace('/api/auth', ''))
+    sendResetPassword: async ({ url, user, token }) => {
+      const urlObj = new URL(url)
+      const callbackURL = urlObj.searchParams.get('callbackURL') ?? '/reset-password'
+
+      const isChange = callbackURL.includes('/change-password')
+      const type = isChange ? 'change' : 'reset'
+
+      const resetUrl = new URL(callbackURL, env.NEXT_PUBLIC_APP_URL)
+      resetUrl.searchParams.set('token', token)
+
+      await sendPasswordResetEmail(user.email, resetUrl.toString(), type)
     },
   },
   // ? social connectionが必要な場合は、以下のように設定

@@ -17,6 +17,11 @@ export const env = createEnv({
       message: 'BETTER_AUTH_SECRET is required',
     }),
     BETTER_AUTH_URL: z.url(),
+    RESEND_API_KEY: z.string({
+      message: 'RESEND_API_KEY is required',
+    }),
+    RESEND_FROM_EMAIL: z.string().optional(),
+    RESEND_TEST_EMAIL: z.string().optional(),
     SLACK_BOT_TOKEN: z.string({
       message: 'SLACK_BOT_TOKEN is required',
     }),
@@ -41,6 +46,9 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
+    RESEND_TEST_EMAIL: process.env.RESEND_TEST_EMAIL,
     SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
   },
 })
