@@ -16,6 +16,7 @@ import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Checkbox } from '~/components/ui/intent-ui/checkbox'
 import { Form } from '~/components/ui/intent-ui/form'
 import { Heading } from '~/components/ui/intent-ui/heading'
+import { Keyboard } from '~/components/ui/intent-ui/keyboard'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
@@ -67,6 +68,12 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
     const target = e.target as HTMLElement
 
     if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT' || target.isContentEditable) {
+      if (e.key === 'Enter' && target.tagName !== 'TEXTAREA' && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault()
+
+        return
+      }
+
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'Enter') {
         e.preventDefault()
         draftButtonRef.current?.click()
@@ -371,7 +378,19 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
                   {isPending ? '更新中...' : '下書き保存'}
                   {isPending ? <Loader /> : <IconPencilBox />}
                 </Tooltip.Trigger>
-                <Tooltip.Content>⌘+Shift+Enter または Ctrl+Shift+Enter</Tooltip.Content>
+                <Tooltip.Content>
+                  <div className="flex items-center gap-2">
+                    <Keyboard
+                      keys={['Command(⌘)', '+', 'Shift(Shift)', '+', 'Enter(Enter)']}
+                      classNames={{ base: 'inline-flex' }}
+                    />
+                    <p className="text-muted-fg">/</p>
+                    <Keyboard
+                      keys={['Ctrl(⌃)', '+', 'Shift(⇧)', '+', 'Enter(↵)']}
+                      classNames={{ base: 'inline-flex' }}
+                    />
+                  </div>
+                </Tooltip.Content>
               </Tooltip>
               <Tooltip delay={0}>
                 <Tooltip.Trigger
@@ -385,7 +404,19 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
                   {isPending ? '更新中...' : '公開'}
                   {isPending ? <Loader /> : <IconSend3 />}
                 </Tooltip.Trigger>
-                <Tooltip.Content>⌘+Enter または Ctrl+Enter</Tooltip.Content>
+                <Tooltip.Content>
+                  <div className="flex items-center gap-2">
+                    <Keyboard
+                      keys={['Command(⌘)', '+', 'Enter(↵)']}
+                      classNames={{ base: 'inline-flex' }}
+                    />
+                    <p className="text-muted-fg">/</p>
+                    <Keyboard
+                      keys={['Ctrl(⌃)', '+', 'Enter(↵)']}
+                      classNames={{ base: 'inline-flex' }}
+                    />
+                  </div>
+                </Tooltip.Content>
               </Tooltip>
             </div>
           </Form>
