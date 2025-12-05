@@ -9,13 +9,14 @@ import {
 const missionService = new MissionService()
 
 export async function getMissionsHandler(c: Parameters<RouteHandler<typeof getMissionsRoute>>[0]) {
-  const { skip, limit, names } = c.req.valid('query')
+  const { skip, limit, names, isArchived } = c.req.valid('query')
 
   try {
     const result = await missionService.getMissions({
       skip,
       limit,
       names,
+      isArchived,
     })
 
     return c.json(result, 200)

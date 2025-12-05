@@ -7,10 +7,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { Button } from '~/components/ui/intent-ui/button'
-import { Form } from '~/components/ui/intent-ui/form'
 import { GlowCard } from '~/components/ui/glow-card'
+import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
+import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
@@ -42,7 +42,7 @@ export function SignInForm({
     withCallbacks(signInAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
-        router.push(urls.href({ route: '/daily' }))
+        router.push(urls.href({ route: '/' }))
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]
@@ -172,7 +172,7 @@ export function SignInForm({
                 }
 
                 toast.success(TOAST_MESSAGES.AUTH.SIGN_IN_SUCCESS)
-                router.push(urls.href({ route: '/daily' }))
+                router.push(urls.href({ route: '/' }))
               })
             }}
             className="w-full"

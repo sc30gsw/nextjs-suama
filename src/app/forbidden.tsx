@@ -34,7 +34,7 @@ export default function Forbidden() {
           </Card.Header>
           <Card.Content className="flex flex-col items-center">
             <div className="mb-4 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href={urls.href({ route: '/daily' })}>
+              <Link href={urls.href({ route: '/' })}>
                 <Button intent="outline" className="flex items-center gap-2">
                   ホームに戻る
                   <LinkLoadingIndicator>

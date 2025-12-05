@@ -10,7 +10,7 @@ export default async function AuthLayout({ children }: NextLayoutProps) {
   const sessionData = await getServerSession()
 
   if (sessionData) {
-    redirect(urls.href({ route: '/daily' }))
+    redirect(urls.href({ route: '/' }))
   }
 
   return <main className="flex min-h-dvh min-w-dvw items-center justify-center">{children}</main>

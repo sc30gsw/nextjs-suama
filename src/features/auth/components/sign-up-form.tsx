@@ -6,10 +6,10 @@ import { IconTriangleExclamation } from '@intentui/icons'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
-import { Button } from '~/components/ui/intent-ui/button'
-import { Form } from '~/components/ui/intent-ui/form'
 import { GlowCard } from '~/components/ui/glow-card'
+import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
+import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
@@ -38,7 +38,7 @@ export function SignUpForm({
     withCallbacks(signUpAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.AUTH.SIGN_UP_SUCCESS)
-        router.push(urls.href({ route: '/daily' }))
+        router.push(urls.href({ route: '/' }))
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]

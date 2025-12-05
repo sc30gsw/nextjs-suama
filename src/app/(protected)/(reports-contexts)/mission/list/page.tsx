@@ -39,7 +39,7 @@ export default async function MissionListPage({
     names,
   })
 
-  const projectsPromise = getProjects(session.user.id)
+  const projectsPromise = getProjects(session.user.id, { isArchived: true })
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">

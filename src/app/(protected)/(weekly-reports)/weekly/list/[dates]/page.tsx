@@ -59,7 +59,7 @@ export default async function WeeklyReportsPage({
       </div>
       <div className="flex flex-col gap-6 lg:flex-row">
         <Suspense fallback={<WeeklyReportsCardLoading />}>
-          <WeeklyReportsContainer year={year.toString()} week={week.toString()} />
+          <WeeklyReportsContainer dates={dates} year={year.toString()} week={week.toString()} />
         </Suspense>
       </div>
     </div>

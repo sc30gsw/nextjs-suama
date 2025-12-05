@@ -3,10 +3,10 @@
 import { usePathname } from 'next/navigation'
 import { AppBreadcrumbs } from '~/components/ui/app-breadcrumbs'
 import { urls } from '~/lib/urls'
-import type { NextjsSuamaRoute } from '../../../../../../typed-url'
+import type { NextjsSuamaRoute } from '../../../../../typed-url'
 
 const ITEMS = [
-  { path: urls.href({ route: '/daily' }), name: '日報作成' },
+  { path: urls.href({ route: '/' }), name: '日報作成' },
   {
     path: urls.href({ route: '/daily/today' }),
     name: '本日の日報',
@@ -21,7 +21,7 @@ const ITEMS = [
 export default function DailyBreadcrumbsPage() {
   const pathname = usePathname()
 
-  const filteredItems = ITEMS.filter((item) => item.path === '/daily' || item.path === pathname)
+  const filteredItems = ITEMS.filter((item) => item.path === '/' || item.path === pathname)
 
   return <AppBreadcrumbs items={filteredItems} />
 }

@@ -22,8 +22,10 @@ export function UserSearchTagField() {
     <TagField
       name="userNames"
       appearance="outline"
-      label="ユーザー名"
-      placeholder={userNames.length > 0 ? '' : 'ユーザー名（複数選択可）で検索できます'}
+      label="ユーザー名・メールアドレス"
+      placeholder={
+        userNames.length > 0 ? '' : 'ユーザー名・メールアドレス（複数選択可）で検索できます'
+      }
       list={selectedItems}
       onItemInserted={(key) => {
         setQuery({ userNames: [...userNames, key.name] })
