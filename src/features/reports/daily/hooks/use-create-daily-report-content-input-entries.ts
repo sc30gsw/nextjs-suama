@@ -81,7 +81,24 @@ export function useCreateDailyReportContentInputEntries(
     newItem: Key | null,
     kind: 'project' | 'mission',
   ) => {
-    if (!(id && newItem)) {
+    if (!id) {
+      return
+    }
+
+    if (!newItem) {
+      if (kind === 'project') {
+        setProjectId(null)
+        projectInput.change(undefined)
+
+        setProjectFilter('')
+        setIsProjectFiltering(true)
+      } else {
+        setMissionId(null)
+        missionInput.change(undefined)
+
+        setMissionFilter('')
+        setIsMissionFiltering(true)
+      }
       return
     }
 
