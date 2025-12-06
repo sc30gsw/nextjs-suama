@@ -17,6 +17,9 @@ export const env = createEnv({
       message: 'BETTER_AUTH_SECRET is required',
     }),
     BETTER_AUTH_URL: z.url(),
+    SLACK_BOT_TOKEN: z.string({
+      message: 'SLACK_BOT_TOKEN is required',
+    }),
   },
   /*
    * Environment variables available on the client (and server).
@@ -38,5 +41,6 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    SLACK_BOT_TOKEN: process.env.SLACK_BOT_TOKEN,
   },
 })
