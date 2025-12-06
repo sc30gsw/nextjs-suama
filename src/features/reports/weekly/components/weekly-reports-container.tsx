@@ -32,7 +32,12 @@ export async function WeeklyReportsContainer({
     <HydrationBoundary state={dehydrate(queryClient)}>
       <WeeklyReports userId={session.user.id} year={year} week={week}>
         <Suspense fallback={<Skeleton className="h-10 w-41" />}>
-          <WeeklyRegisterLink dates={dates} userId={session.user.id} />
+          <WeeklyRegisterLink
+            dates={dates}
+            userId={session.user.id}
+            size="sm"
+            className="text-xs"
+          />
         </Suspense>
       </WeeklyReports>
     </HydrationBoundary>

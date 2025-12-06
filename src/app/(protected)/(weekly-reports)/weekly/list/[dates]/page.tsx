@@ -1,6 +1,9 @@
+import { IconChartLine } from '@tabler/icons-react'
 import { QueryClient } from '@tanstack/react-query'
+import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 import { Suspense } from 'react'
+import { Button } from '~/components/ui/intent-ui/button'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
@@ -53,9 +56,21 @@ export default async function WeeklyReportsPage({
           </p>
         </div>
 
-        <Suspense fallback={<Skeleton className="h-10 w-41" />}>
-          <WeeklyRegisterLink dates={dates} userId={session.user.id} />
-        </Suspense>
+        <div className="flex flex-col items-start gap-y-4 sm:flex-row sm:items-center sm:gap-x-4">
+          <Suspense fallback={<Skeleton className="h-10 w-41" />}>
+            <WeeklyRegisterLink dates={dates} userId={session.user.id} />
+          </Suspense>
+          <Link
+            href="https://ask-condition-app.claves-bigup-app.workers.dev/"
+            target="_blank"
+            className="flex items-center gap-x-2"
+          >
+            <Button className="bg-sky-600 text-white hover:bg-sky-600 hover:brightness-110">
+              チームの状態を確認する
+              <IconChartLine size={24} />
+            </Button>
+          </Link>
+        </div>
       </div>
       <div className="flex flex-col gap-6 lg:flex-row">
         <Suspense fallback={<WeeklyReportsCardLoading />}>

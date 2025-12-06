@@ -1,6 +1,7 @@
 import { IconPlus } from '@intentui/icons'
 import Link from 'next/link'
 import { forbidden } from 'next/navigation'
+import type { ComponentProps } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { getWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
@@ -11,7 +12,11 @@ import {
 } from '~/features/reports/weekly/utils/weekly-date-utils'
 import { urls } from '~/lib/urls'
 
-export async function WeeklyRegisterLink({ dates, userId }: Record<'dates' | 'userId', string>) {
+export async function WeeklyRegisterLink({
+  dates,
+  userId,
+  ...props
+}: Record<'dates' | 'userId', string> & ComponentProps<typeof Button>) {
   const { startDate, endDate } = splitDates(dates)
   const { year, week } = getYearAndWeek(getNextWeekDates(startDate, endDate).nextStartDate)
 
@@ -44,7 +49,7 @@ export async function WeeklyRegisterLink({ dates, userId }: Record<'dates' | 'us
 
   return (
     <Link href={href} prefetch={false} className="max-w-fit">
-      <Button>
+      <Button {...props}>
         次週の予定を{res.weeklyReport ? '編集' : '追加'}
         <LinkLoadingIndicator>
           <IconPlus />
