@@ -25,6 +25,8 @@
     "@libsql/client": "^0.15.15",
     "@react-aria/i18n": "^3.12.13",
     "@scalar/hono-api-reference": "^0.9.25",
+    "@slack/socket-mode": "^2.0.5",
+    "@slack/web-api": "^7.13.0",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tabler/icons-react": "^3.35.0",
     "@tanstack/react-query": "^5.90.11",
