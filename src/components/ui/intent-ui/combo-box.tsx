@@ -1,7 +1,7 @@
 'use client'
 
 import { IconChevronLgDown, IconX } from '@intentui/icons'
-import React from 'react'
+import React, { type ComponentProps } from 'react'
 import type {
   ComboBoxProps as ComboboxPrimitiveProps,
   InputProps,
@@ -86,9 +86,16 @@ const ComboBoxList = <T extends object>({
 
 const ComboBoxInput = (props: InputProps) => {
   const context = useSlottedContext(ComboBoxContext)!
+  const state = React.use(ComboBoxStateContext)
+
+  const handleFocus: ComponentProps<typeof Input>['onFocus'] = (e) => {
+    state?.open()
+    props.onFocus?.(e)
+  }
+
   return (
     <FieldGroup className="relative pl-0">
-      <Input {...props} placeholder={props?.placeholder} />
+      <Input {...props} placeholder={props?.placeholder} onFocus={handleFocus} />
       <Button
         square-petite="square-petite"
         intent="plain"

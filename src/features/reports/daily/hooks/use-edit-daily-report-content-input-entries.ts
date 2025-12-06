@@ -82,7 +82,23 @@ export function useEditDailyReportContentInputEntries(
     newItem: Key | null,
     kind: 'project' | 'mission',
   ) => {
-    if (!(id && newItem)) {
+    if (!id) {
+      return
+    }
+
+    if (!newItem) {
+      // 選択をクリアする場合
+      if (kind === 'project') {
+        setProjectId(null)
+        projectInput.change(undefined)
+        setProjectFilter('')
+        setIsProjectFiltering(true)
+      } else {
+        setMissionId(null)
+        missionInput.change(undefined)
+        setMissionFilter('')
+        setIsMissionFiltering(true)
+      }
       return
     }
 

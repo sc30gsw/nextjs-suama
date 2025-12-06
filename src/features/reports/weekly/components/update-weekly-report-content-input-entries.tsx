@@ -55,6 +55,7 @@ export function UpdateWeeklyReportContentInputEntries({
   )
 
   const { pending } = useFormStatus()
+
   return (
     <div className="mx-auto grid grid-cols-11 grid-rows-1 items-center gap-4 py-2">
       <input {...getInputProps(field.id, { type: 'hidden' })} />
@@ -71,9 +72,16 @@ export function UpdateWeeklyReportContentInputEntries({
           label="プロジェクト"
           placeholder="プロジェクトを選択"
           inputValue={projectFilter}
-          onInputChange={setProjectFilter}
+          onInputChange={(value) => {
+            setProjectFilter(value)
+
+            if (projectId && value !== (projects.find((p) => p.id === projectId)?.name ?? '')) {
+              handleChangeItem(id ?? '', null, 'project')
+            }
+          }}
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'project')
+            setProjectFilter('')
           }}
           defaultFilter={() => true}
           selectedKey={projectId}
@@ -101,9 +109,16 @@ export function UpdateWeeklyReportContentInputEntries({
           label="ミッション"
           placeholder="ミッションを選択"
           inputValue={missionFilter}
-          onInputChange={setMissionFilter}
+          onInputChange={(value) => {
+            setMissionFilter(value)
+
+            if (missionId && value !== (missions.find((m) => m.id === missionId)?.name ?? '')) {
+              handleChangeItem(id ?? '', null, 'mission')
+            }
+          }}
           onSelectionChange={(key) => {
             handleChangeItem(id ?? '', key, 'mission')
+            setMissionFilter('')
           }}
           defaultFilter={() => true}
           selectedKey={missionId}
