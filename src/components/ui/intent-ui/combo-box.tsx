@@ -93,9 +93,25 @@ const ComboBoxInput = (props: InputProps) => {
     props.onFocus?.(e)
   }
 
+  const handleCompositionStart: ComponentProps<typeof Input>['onCompositionStart'] = (e) => {
+    state?.open()
+    props.onCompositionStart?.(e)
+  }
+
+  const handleCompositionUpdate: ComponentProps<typeof Input>['onCompositionUpdate'] = (e) => {
+    state?.open()
+    props.onCompositionUpdate?.(e)
+  }
+
   return (
     <FieldGroup className="relative pl-0">
-      <Input {...props} placeholder={props?.placeholder} onFocus={handleFocus} />
+      <Input
+        {...props}
+        placeholder={props?.placeholder}
+        onFocus={handleFocus}
+        onCompositionStart={handleCompositionStart}
+        onCompositionUpdate={handleCompositionUpdate}
+      />
       <Button
         square-petite="square-petite"
         intent="plain"
