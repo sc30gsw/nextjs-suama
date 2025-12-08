@@ -10,6 +10,7 @@ import { getDailyReportsCount } from '~/features/reports/daily/server/fetcher'
 import { dailyReportPageSearchParamsCache } from '~/features/reports/daily/types/search-params/daily-report-search-params'
 import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
+import { paginationSearchParamsCache } from '~/types/search-params/pagination-search-params-cache'
 import { dateUtils } from '~/utils/date-utils'
 
 type DailyReportsTabContentProps = {
@@ -24,8 +25,8 @@ export async function DailyReportsTabContent({ children, kind }: DailyReportsTab
     unauthorized()
   }
 
-  const { page, rowsPerPage, tab, startDate, endDate, userNames } =
-    dailyReportPageSearchParamsCache.all()
+  const { tab, startDate, endDate, userNames } = dailyReportPageSearchParamsCache.all()
+  const { page, rowsPerPage } = paginationSearchParamsCache.all()
 
   const countDataPromise = getDailyReportsCount(
     {
