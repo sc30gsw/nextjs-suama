@@ -108,6 +108,7 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
     getError,
   } = useCreateDailyForm(inputCountSearchParamsParsers, {
     unResolvedTroubles: troubleCategoriesResponse.unResolvedTroubles,
+    userId,
   })
 
   return (

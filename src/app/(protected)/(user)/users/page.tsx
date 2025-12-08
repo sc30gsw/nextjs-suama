@@ -82,10 +82,10 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
             ))}
           </Suspense>
         </Card.Content>
-        <Suspense
-          fallback={
-            <Card.Footer>
-              <div className="flex items-center justify-center gap-x-1">
+        <Card.Footer>
+          <Suspense
+            fallback={
+              <div className="flex w-full items-center justify-center gap-x-1">
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
@@ -97,33 +97,30 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
               </div>
-            </Card.Footer>
-          }
-        >
-          {usersPromise.then((res) => {
-            if (res.total === 0) {
-              return null
             }
+          >
+            {usersPromise.then((res) => {
+              if (res.total === 0) {
+                return null
+              }
 
-            const pageCount = Math.ceil(res.total / rowsPerPage)
+              const pageCount = Math.ceil(res.total / rowsPerPage)
 
-            if (page > pageCount) {
-              redirect(
-                urls.build({
-                  route: '/users',
-                  searchParams: { page: pageCount, rowsPerPage, userNames },
-                } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> })
-                  .href,
-              )
-            }
+              if (page > pageCount) {
+                redirect(
+                  urls.build({
+                    route: '/users',
+                    searchParams: { page: pageCount, rowsPerPage, userNames },
+                  } as Parameters<typeof urls.build>[0] & {
+                    searchParams?: Record<string, unknown>
+                  }).href,
+                )
+              }
 
-            return (
-              <Card.Footer>
-                <TablePagination pageCount={pageCount} />
-              </Card.Footer>
-            )
-          })}
-        </Suspense>
+              return <TablePagination pageCount={pageCount} />
+            })}
+          </Suspense>
+        </Card.Footer>
       </Card>
     </div>
   )

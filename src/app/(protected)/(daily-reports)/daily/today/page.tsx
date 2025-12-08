@@ -6,6 +6,7 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
+import { DailyReportTableSkeleton } from '~/features/reports/daily/components/daily-report-table-skeleton'
 import { DailyReportsTable } from '~/features/reports/daily/components/daily-reports-table'
 import { getDailyReports } from '~/features/reports/daily/server/fetcher'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
@@ -53,50 +54,7 @@ export default async function DailyForTodayPage({
         <Card.Content>
           <Suspense
             key={JSON.stringify({ page, rowsPerPage, userNames })}
-            fallback={
-              <table className="w-full text-left font-normal text-sm">
-                <thead className="bg-muted">
-                  <tr>
-                    <th className="w-30.75 p-3">日付</th>
-                    <th className="w-28.25 p-3">ユーザー名</th>
-                    <th className="w-24.25 p-3">合計時間</th>
-                    <th className="w-87 p-3">所感</th>
-                    <th className="w-32.75 p-3">リモート勤務</th>
-                    <th className="w-24.25 p-3">提出</th>
-                    <th className="w-90 p-3">操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.from({ length: rowsPerPage }, () => (
-                    <tr key={crypto.randomUUID()} className="border-b">
-                      <th scope="row" className="p-4">
-                        <Skeleton className="h-4 w-20" />
-                      </th>
-                      <th scope="row" className="p-4">
-                        <Skeleton className="h-4 w-20" />
-                      </th>
-                      <th scope="row" className="p-4">
-                        <Skeleton className="h-4 w-15" />
-                      </th>
-                      <th scope="row" className="p-4">
-                        <Skeleton className="h-4 w-82" />
-                      </th>
-                      <th scope="row" className="p-4">
-                        <Skeleton className="h-4 w-20" />
-                      </th>
-                      <th scope="row" className="p-4">
-                        <Skeleton className="h-4 w-20" />
-                      </th>
-                      <th scope="row" className="flex items-center gap-x-2 p-4">
-                        <Skeleton className="h-9 w-26" />
-                        <Skeleton className="h-9 w-19" />
-                        <Skeleton className="h-9 w-19" />
-                      </th>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            }
+            fallback={<DailyReportTableSkeleton />}
           >
             {reportsPromise.then((res) => (
               <DailyReportsTable reports={res.dailyReports} userId={session.user.id} />
@@ -104,10 +62,10 @@ export default async function DailyForTodayPage({
           </Suspense>
         </Card.Content>
 
-        <Suspense
-          fallback={
-            <Card.Footer>
-              <div className="flex items-center justify-center gap-x-1">
+        <Card.Footer>
+          <Suspense
+            fallback={
+              <div className="flex w-full items-center justify-center gap-x-1">
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
@@ -119,33 +77,30 @@ export default async function DailyForTodayPage({
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
               </div>
-            </Card.Footer>
-          }
-        >
-          {reportsPromise.then((res) => {
-            if (res.total === 0) {
-              return null
             }
+          >
+            {reportsPromise.then((res) => {
+              if (res.total === 0) {
+                return null
+              }
 
-            const pageCount = Math.ceil(res.total / rowsPerPage)
+              const pageCount = Math.ceil(res.total / rowsPerPage)
 
-            if (page > pageCount) {
-              redirect(
-                urls.build({
-                  route: '/daily/today',
-                  searchParams: { page: pageCount, rowsPerPage, userNames },
-                } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> })
-                  .href,
-              )
-            }
+              if (page > pageCount) {
+                redirect(
+                  urls.build({
+                    route: '/daily/today',
+                    searchParams: { page: pageCount, rowsPerPage, userNames },
+                  } as Parameters<typeof urls.build>[0] & {
+                    searchParams?: Record<string, unknown>
+                  }).href,
+                )
+              }
 
-            return (
-              <Card.Footer>
-                <TablePagination pageCount={pageCount} />
-              </Card.Footer>
-            )
-          })}
-        </Suspense>
+              return <TablePagination pageCount={pageCount} />
+            })}
+          </Suspense>
+        </Card.Footer>
       </Card>
     </div>
   )

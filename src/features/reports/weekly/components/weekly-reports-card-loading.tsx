@@ -4,12 +4,15 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 
 export function WeeklyReportsCardLoading() {
   return (
-    <div className="flex max-w-screen-lg gap-2">
-      <div className="max-w-270 flex-1">
-        <Card>
-          <Card.Header className="flex items-center">
-            ユーザーID: <Skeleton className="h-4.5 w-60" /> ユーザー名:
-            <Skeleton className="h-4.5 w-30" />
+    <>
+      <div className="flex-1">
+        <Card className="mt-2">
+          <Card.Header className="flex items-center justify-between">
+            <Card.Title className="flex items-center gap-2">
+              <Skeleton className="size-8 rounded-full" />
+              ユーザーID: <Skeleton className="h-4.5 w-60" /> ユーザー名:
+              <Skeleton className="h-4.5 w-30" />
+            </Card.Title>
           </Card.Header>
           <Card.Content className="space-y-4">
             <div className="p-4">
@@ -44,83 +47,91 @@ export function WeeklyReportsCardLoading() {
           </Card.Content>
         </Card>
       </div>
+
       <aside className="sticky top-20 hidden h-fit w-64 pr-4 lg:block">
-        <nav className="flex flex-col gap-1 text-sm">
-          <Heading level={5} className="mb-2">
-            On this page
-          </Heading>
-          <div className="flex flex-col gap-y-3 px-2">
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-            <Skeleton className="h-4 w-40" />
-          </div>
-        </nav>
+        <div className="flex flex-col gap-1 text-sm">
+          <Heading level={5}>On this page</Heading>
+          <nav className="flex h-[calc(100vh-121px)] flex-col gap-1 overflow-y-auto">
+            <div className="flex flex-col gap-y-1 px-2">
+              {Array.from({ length: 10 }, (_, i) => (
+                <Skeleton key={i} className="my-1 h-4 w-25" />
+              ))}
+            </div>
+          </nav>
+        </div>
       </aside>
-    </div>
+    </>
   )
 }
 
 function WeeklyReportsTableLoading() {
   return (
-    <table className="w-full text-left text-sm">
-      <thead className="bg-muted">
-        <tr>
-          <th className="w-md p-3">プロジェクト名</th>
-          <th className="w-md p-3">ミッション名</th>
-          <th className="w-20 p-3">時間数</th>
-          <th className="w-md p-3">職務内容</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Array.from({ length: 10 }, () => (
-          <tr key={crypto.randomUUID()} className="border-b">
-            <th scope="row" className="p-4">
-              <Skeleton className="h-4 w-80" />
+    <div className="relative w-full">
+      <table className="table w-full table-fixed caption-bottom border-spacing-0 text-sm">
+        <thead className="border-b">
+          <tr>
+            <th className="relative w-25 whitespace-nowrap px-3 py-3 text-left font-medium">
+              プロジェクト名
             </th>
-            <th scope="row" className="p-4">
-              <Skeleton className="h-4 w-80" />
+            <th className="relative w-25 whitespace-nowrap px-3 py-3 text-left font-medium">
+              ミッション名
             </th>
-            <th scope="row" className="p-4">
-              <Skeleton className="h-4 w-15" />
+            <th className="relative w-10 whitespace-nowrap px-3 py-3 text-left font-medium">
+              時間数
             </th>
-            <th scope="row" className="p-4">
-              <Skeleton className="h-4 w-87" />
+            <th className="relative w-20 whitespace-nowrap px-3 py-3 text-left font-medium">
+              職務内容
             </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {Array.from({ length: 10 }, (_, i) => (
+            <tr key={i} className="border-b">
+              <td className="wrap-break-word whitespace-normal px-3 py-3">
+                <Skeleton className="h-4 w-full" />
+              </td>
+              <td className="wrap-break-word whitespace-normal px-3 py-3">
+                <Skeleton className="h-4 w-full" />
+              </td>
+              <td className="px-3 py-3">
+                <Skeleton className="h-4 w-1/3" />
+              </td>
+              <td className="wrap-break-word whitespace-normal px-3 py-3">
+                <Skeleton className="h-4 w-full" />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
 function WeeklyIssuesAndSolutionsTableLoading() {
   return (
-    <table className="w-full text-left text-sm">
-      <thead className="bg-muted">
-        <tr>
-          <th className="w-1/2 p-3">カテゴリー名</th>
-          <th className="p-3">内容</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Array.from({ length: 2 }, () => (
-          <tr key={crypto.randomUUID()} className="border-b">
-            <th scope="row" className="p-4">
-              <Skeleton className="h-4 w-4/5" />
+    <div className="relative w-full overflow-auto">
+      <table className="table w-full min-w-full caption-bottom border-spacing-0 text-sm">
+        <thead className="border-b">
+          <tr>
+            <th className="relative w-50 whitespace-nowrap px-3 py-3 text-left font-medium">
+              カテゴリー名
             </th>
-            <th scope="row" className="p-4">
-              <Skeleton className="h-4 w-4/5" />
-            </th>
+            <th className="relative whitespace-nowrap px-3 py-3 text-left font-medium">内容</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {Array.from({ length: 2 }, (_, i) => (
+            <tr key={i} className="border-b">
+              <td className="px-3 py-3">
+                <Skeleton className="h-4 w-4/5" />
+              </td>
+              <td className="px-3 py-3">
+                <Skeleton className="h-4 w-4/5" />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }

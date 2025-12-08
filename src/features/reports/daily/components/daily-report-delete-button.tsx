@@ -1,4 +1,5 @@
 import { IconTrashEmpty } from '@intentui/icons'
+import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
@@ -12,6 +13,7 @@ import { isErrorStatus } from '~/utils'
 
 export function DailyReportDeleteButton({ id }: Pick<typeof dailyReports.$inferSelect, 'id'>) {
   const [isPending, startTransition] = useTransition()
+  const _router = useRouter()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({

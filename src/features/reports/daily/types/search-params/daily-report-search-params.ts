@@ -6,7 +6,6 @@ import {
 } from 'nuqs/server'
 import { DAILY_REPORT_TABS, DAILY_REPORT_TABS_MAP } from '~/constants/tabs'
 import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
-import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 import { SEPARATOR } from '~/utils/date-utils'
 
 // ? nuqsのparseAsIsoDateは無効値の場合に「2001年」を返すため、作成
@@ -43,7 +42,5 @@ export const dailyReportSearchParamsParsers = {
 
 export const dailyReportPageSearchParamsCache = createSearchParamsCache({
   ...dailyReportSearchParamsParsers,
-  ...paginationSearchParamsParsers,
   ...userSearchParamsParsers,
 })
-

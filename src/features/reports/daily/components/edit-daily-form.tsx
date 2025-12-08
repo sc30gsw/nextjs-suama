@@ -165,6 +165,7 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
     getError,
   } = useEditDailyForm(reportData, editSearchParamsParsers, {
     unResolvedTroubles: troubleCategoriesResponse.unResolvedTroubles,
+    userId,
   })
 
   return (
