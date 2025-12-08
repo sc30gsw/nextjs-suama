@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { EmailVerificationEmail } from '~/components/ui/email/email-verification-email'
 import { PasswordResetEmail } from '~/components/ui/email/password-reset-email'
 import { UserUpdateEmail } from '~/components/ui/email/user-update-email'
 import type { users } from '~/db/schema'
@@ -18,6 +19,24 @@ export const sendPasswordResetEmail = async (
     to: email,
     subject,
     react: PasswordResetEmail({ email, resetUrl, type }),
+  })
+
+  if (error) {
+    return
+  }
+
+  return data
+}
+
+export const sendVerificationEmail = async (
+  email: (typeof users.$inferSelect)['email'],
+  verificationUrl: string,
+) => {
+  const { data, error } = await resend.emails.send({
+    from: env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev',
+    to: email,
+    subject: 'メールアドレスの認証',
+    react: EmailVerificationEmail({ email, verificationUrl }),
   })
 
   if (error) {

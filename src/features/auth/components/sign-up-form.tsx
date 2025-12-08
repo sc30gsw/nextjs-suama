@@ -38,7 +38,7 @@ export function SignUpForm({
     withCallbacks(signUpAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.AUTH.SIGN_UP_SUCCESS)
-        router.push(urls.href({ route: '/' }))
+        router.push(urls.href({ route: '/sign-in' }))
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]

@@ -6,7 +6,6 @@ export type NextjsSuamaRoute =
   | "/[userId]/settings"
   | "/appeal/list"
   | "/client/list"
-  | "/daily"
   | "/daily/edit/[id]"
   | "/daily/every"
   | "/daily/mine"
@@ -14,11 +13,12 @@ export type NextjsSuamaRoute =
   | "/forgot-password"
   | "/mission/list"
   | "/project/list"
-  | "/reset-password/[token]"
+  | "/reset-password"
   | "/sign-in"
   | "/sign-up"
   | "/trouble/list"
   | "/users"
+  | "/verify-email"
   | "/weekly"
   | "/weekly/list/[dates]"
   | "/weekly/list/[dates]/edit/[weeklyReportId]"
@@ -32,7 +32,6 @@ export type NextjsSuamaRouteInput =
   | { route: "/[userId]/settings"; params: { userId: RouteParamValue } }
   | { route: "/appeal/list" }
   | { route: "/client/list" }
-  | { route: "/daily" }
   | { route: "/daily/edit/[id]"; params: { id: RouteParamValue } }
   | { route: "/daily/every" }
   | { route: "/daily/mine" }
@@ -40,11 +39,12 @@ export type NextjsSuamaRouteInput =
   | { route: "/forgot-password" }
   | { route: "/mission/list" }
   | { route: "/project/list" }
-  | { route: "/reset-password/[token]"; params: { token: RouteParamValue } }
+  | { route: "/reset-password" }
   | { route: "/sign-in" }
   | { route: "/sign-up" }
   | { route: "/trouble/list" }
   | { route: "/users" }
+  | { route: "/verify-email" }
   | { route: "/weekly" }
   | { route: "/weekly/list/[dates]"; params: { dates: RouteParamValue } }
   | { route: "/weekly/list/[dates]/edit/[weeklyReportId]"; params: { dates: RouteParamValue; weeklyReportId: RouteParamValue } }
