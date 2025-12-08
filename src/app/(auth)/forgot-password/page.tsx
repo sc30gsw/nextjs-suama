@@ -7,7 +7,6 @@ import { ForgotPasswordForm } from '~/features/auth/components/forgot-password-f
 import { urls } from '~/lib/urls'
 
 export default function ForgotPasswordPage() {
-  redirect(urls.href({ route: '/sign-in' }))
 
   return (
     <ForgotPasswordForm
