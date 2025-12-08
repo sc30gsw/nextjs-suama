@@ -3,7 +3,6 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconKey, IconTriangleExclamation } from '@intentui/icons'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, useActionState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -119,12 +118,12 @@ export function SignInForm({
             <span id={fields.password.errorId} className="text-red-500 text-sm">
               {fields.password.errors}
             </span>
-            <Link
+            {/* <Link
               href={urls.href({ route: '/forgot-password' })}
               className="mt-2 text-blue-500 hover:text-blue-500/80"
             >
               パスワードをお忘れですか？
-            </Link>
+            </Link> */}
           </div>
         </Card.Content>
         <Card.Footer className="flex w-full flex-col items-start gap-y-4">

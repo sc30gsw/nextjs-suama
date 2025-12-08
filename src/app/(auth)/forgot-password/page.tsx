@@ -1,11 +1,14 @@
 import { IconArrowWallLeft } from '@intentui/icons'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { Button } from '~/components/ui/intent-ui/button'
 import { Card } from '~/components/ui/intent-ui/card'
 import { ForgotPasswordForm } from '~/features/auth/components/forgot-password-form'
 import { urls } from '~/lib/urls'
 
 export default function ForgotPasswordPage() {
+  redirect(urls.href({ route: '/sign-in' }))
+
   return (
     <ForgotPasswordForm
       backToSignIn={
