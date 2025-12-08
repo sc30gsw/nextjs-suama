@@ -1,5 +1,5 @@
 import type { Session } from 'better-auth'
-import { format, getMonth, getYear } from 'date-fns'
+import { addDays, format, getMonth, getYear } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 import type { InferRequestType } from 'hono'
 import { useMemo, useState } from 'react'
@@ -7,7 +7,9 @@ import type { DateValue } from 'react-aria-components'
 import { APP_TIMEZONE } from '~/constants/date'
 import { fetchDailyReportDatesQuery } from '~/features/reports/daily/queries/fetcher'
 import type { client } from '~/lib/rpc'
-import { DATE_FORMAT } from '~/utils/date-utils'
+import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
+
+const MAX_DAYS = 30
 
 type UseDisabledDatesOptions = {
   userId: Session['userId']
@@ -55,11 +57,43 @@ export function useDisabledDates({ userId, excludeReportId }: UseDisabledDatesOp
     setFocusedMonth(month)
   }
 
+  const defaultReportDate = useMemo(() => {
+    const today = new Date()
+    const todayDateStr = dateUtils.formatDateByJST(today)
+
+    if (!data?.dates) {
+      return todayDateStr
+    }
+
+    const registeredDatesSet = new Set(data.dates)
+    const hasTodayReport = registeredDatesSet.has(todayDateStr)
+
+    if (!hasTodayReport) {
+      return todayDateStr
+    }
+
+    let checkDate = today
+    let foundDate = null
+
+    for (let i = 0; i < MAX_DAYS; i++) {
+      checkDate = addDays(checkDate, 1)
+      const checkDateStr = dateUtils.formatDateByJST(checkDate)
+
+      if (!registeredDatesSet.has(checkDateStr)) {
+        foundDate = checkDateStr
+        break
+      }
+    }
+
+    return foundDate ?? todayDateStr
+  }, [data?.dates])
+
   return {
     isDateUnavailable,
     isLoading,
     handleFocusChange,
     focusedYear,
     focusedMonth,
+    defaultReportDate,
   } as const
 }

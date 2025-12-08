@@ -1,12 +1,14 @@
 import { useInputControl } from '@conform-to/react'
 import { useControl } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
+import type { Session } from 'better-auth'
 import { useRouter } from 'next/navigation'
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateReportAction } from '~/features/reports/daily/actions/update-report-action'
 import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
+import { useDisabledDates } from '~/features/reports/daily/hooks/use-disabled-dates'
 import type { getDailyReportById } from '~/features/reports/daily/server/fetcher'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import {
@@ -24,10 +26,16 @@ export function useEditDailyForm(
   initialData: Awaited<ReturnType<typeof getDailyReportById>>,
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
   options: Partial<
-    Record<'unResolvedTroubles', TroubleCategoriesResponse['unResolvedTroubles']>
+    Record<'unResolvedTroubles', TroubleCategoriesResponse['unResolvedTroubles']> &
+      Record<'userId', Session['userId']>
   > = {},
 ) {
-  const { unResolvedTroubles = [] } = options
+  const { unResolvedTroubles = [], userId } = options
+
+  const { defaultReportDate } = useDisabledDates({
+    userId: userId ?? '',
+    excludeReportId: initialData.id,
+  })
 
   const { reportEntry, appealsAndTroublesEntry, remote, impression, setReportEntry } =
     useDailyReportSearchParams(initialDailyInputCountSearchParamsParsers)
@@ -150,7 +158,7 @@ export function useEditDailyForm(
     },
     defaultValue: {
       reportId: initialData.id,
-      reportDate: initialData.reportDate,
+      reportDate: initialData.reportDate || defaultReportDate,
       remote,
       impression,
       reportEntries: initialReportEntries,
@@ -162,6 +170,16 @@ export function useEditDailyForm(
   const reportDate = useControl({
     defaultValue: fields.reportDate.initialValue,
   })
+
+  //? デフォルト日付が更新されたときにフォームの値を更新
+  //? form送信後に更新されなかったため
+  useEffect(() => {
+    if (!initialData.reportDate && defaultReportDate) {
+      if (!reportDate.value || reportDate.value !== defaultReportDate) {
+        reportDate.change(defaultReportDate)
+      }
+    }
+  }, [defaultReportDate, initialData.reportDate])
 
   const remoteInput = useInputControl(fields.remote)
   const impressionInput = useInputControl(fields.impression)

@@ -1,13 +1,14 @@
 import { useInputControl } from '@conform-to/react'
 import { useControl } from '@conform-to/react/future'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
-import { format } from 'date-fns'
+import type { Session } from 'better-auth'
 import { useRouter } from 'next/navigation'
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 import { createReportAction } from '~/features/reports/daily/actions/create-report-action'
 import { useDailyReportSearchParams } from '~/features/reports/daily/hooks/use-daily-report-search-params'
+import { useDisabledDates } from '~/features/reports/daily/hooks/use-disabled-dates'
 import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
 import {
   type CreateDailyReportFormSchema,
@@ -18,16 +19,18 @@ import type { DailyInputCountSearchParams } from '~/features/reports/daily/types
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
-import { DATE_FORMAT } from '~/utils/date-utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useCreateDailyForm(
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
   options: Partial<
-    Record<'unResolvedTroubles', TroubleCategoriesResponse['unResolvedTroubles']>
+    Record<'unResolvedTroubles', TroubleCategoriesResponse['unResolvedTroubles']> &
+      Record<'userId', Session['userId']>
   > = {},
 ) {
-  const { unResolvedTroubles = [] } = options
+  const { unResolvedTroubles = [], userId } = options
+
+  const { defaultReportDate } = useDisabledDates({ userId: userId ?? '' })
 
   const { reportEntry, appealsAndTroublesEntry, remote, impression, setReportEntry } =
     useDailyReportSearchParams(initialDailyInputCountSearchParamsParsers)
@@ -116,7 +119,7 @@ export function useCreateDailyForm(
       return parseWithZod(formData, { schema: createDailyReportFormSchema })
     },
     defaultValue: {
-      reportDate: format(new Date(), DATE_FORMAT),
+      reportDate: defaultReportDate,
       remote,
       impression,
       reportEntries: reportEntry.entries.map((entry) => ({
@@ -137,6 +140,14 @@ export function useCreateDailyForm(
   const reportDate = useControl({
     defaultValue: fields.reportDate.initialValue,
   })
+
+  //? デフォルト日付が更新されたときにフォームの値を更新
+  //? form送信後に更新されなかったため
+  useEffect(() => {
+    if (defaultReportDate && reportDate.value !== defaultReportDate) {
+      reportDate.change(defaultReportDate)
+    }
+  }, [defaultReportDate])
 
   // Conformによるformの増減等状態管理は以下を参照
   // ? https://zenn.dev/coji/articles/remix-conform-nested-array
