@@ -22,7 +22,6 @@ export default function DailyBreadcrumbsDefaultPage() {
   const pathname = usePathname()
 
   const filteredItems = ITEMS.filter((item) => item.path === '/' || item.path === pathname)
-  console.log('🚀 ~ DailyBreadcrumbsDefaultPage ~ filteredItems:', filteredItems)
 
   return <AppBreadcrumbs items={filteredItems} />
 }
