@@ -1,6 +1,7 @@
 'use client'
 
 import type { InferResponseType } from 'hono'
+import { entries, flatMap, groupBy, pipe, sortBy } from 'remeda'
 import { Table } from '~/components/ui/intent-ui/table'
 import type { client } from '~/lib/rpc'
 
@@ -14,6 +15,22 @@ type WeeklyReportsTableProps<Key extends 'lastWeekReports' | 'nextWeekReports'> 
 export function WeeklyReportsTable<Key extends 'lastWeekReports' | 'nextWeekReports'>({
   data,
 }: WeeklyReportsTableProps<Key>) {
+  const groupedByProject = pipe(
+    data,
+    groupBy((item) => item.mission.project.id),
+  )
+
+  const sortedProjects = pipe(
+    groupedByProject,
+    entries(),
+    sortBy([([, items]) => items[0]?.mission.project.name ?? '', 'desc']),
+  )
+
+  const sortedData = pipe(
+    sortedProjects,
+    flatMap(([, items]) => pipe(items, sortBy([(item) => item.mission.name, 'asc']))),
+  )
+
   return (
     <Table allowResize={true} className="w-full table-fixed">
       <Table.Header>
@@ -28,15 +45,19 @@ export function WeeklyReportsTable<Key extends 'lastWeekReports' | 'nextWeekRepo
         </Table.Column>
         <Table.Column className="w-md">職務内容</Table.Column>
       </Table.Header>
-      <Table.Body items={data}>
+      <Table.Body items={sortedData}>
         {(item) => (
           <Table.Row id={item.id}>
-            <Table.Cell className="whitespace-normal break-words ">
+            <Table.Cell className="wrap-break-word whitespace-normal ">
               {item.mission.project.name}
             </Table.Cell>
-            <Table.Cell className="whitespace-normal break-words ">{item.mission.name}</Table.Cell>
+            <Table.Cell className="wrap-break-word whitespace-normal ">
+              {item.mission.name}
+            </Table.Cell>
             <Table.Cell>{item.hours.toFixed(2)}</Table.Cell>
-            <Table.Cell className="whitespace-normal break-words ">{item.workContent}</Table.Cell>
+            <Table.Cell className="wrap-break-word whitespace-normal ">
+              {item.workContent}
+            </Table.Cell>
           </Table.Row>
         )}
       </Table.Body>
