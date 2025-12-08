@@ -15,7 +15,7 @@ export const sendPasswordResetEmail = async (
 
   const { data, error } = await resend.emails.send({
     from: env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev',
-    to: env.RESEND_TEST_EMAIL ?? email,
+    to: email,
     subject,
     react: PasswordResetEmail({ email, resetUrl, type }),
   })
@@ -38,7 +38,7 @@ export const sendUserUpdateEmail = async (
 
   const { data, error } = await resend.emails.send({
     from: env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev',
-    to: env.RESEND_TEST_EMAIL ?? email,
+    to: email,
     subject,
     react: UserUpdateEmail({ email, name, oldEmail, newEmail }),
   })
