@@ -5,6 +5,7 @@ import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconCirclePerson, IconTriangleExclamation, IconUnlocked } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
 import Link from 'next/link'
+import { useQueryStates } from 'nuqs'
 import { useActionState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -15,6 +16,7 @@ import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
+import { authSearchParamsParsers } from '~/features/auth/types/search-params/auth-search-params-cache'
 import { changePasswordAction } from '~/features/users/actions/change-password-action'
 import {
   type ChangePasswordInputSchema,
@@ -26,12 +28,11 @@ import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-type ChangePasswordFormProps = Pick<
-  InferResponseType<typeof client.api.users.$get, 200>['users'][number],
-  'id'
->
+export function ChangePasswordForm({
+  id,
+}: Pick<InferResponseType<typeof client.api.users.$get, 200>['users'][number], 'id'>) {
+  const [{ token }] = useQueryStates(authSearchParamsParsers)
 
-export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
   const [lastResult, action, isPending] = useActionState(
     withCallbacks(changePasswordAction, {
       onSuccess() {
@@ -69,6 +70,7 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
       })
     },
     defaultValue: {
+      token,
       id,
       password: '',
       confirmPassword: '',
@@ -94,6 +96,7 @@ export function ChangePasswordForm({ id }: ChangePasswordFormProps) {
             </p>
           </div>
         )}
+        <input {...getInputProps(fields.token, { type: 'hidden' })} />
         <input {...getInputProps(fields.id, { type: 'hidden' })} />
         <div>
           <TextField

@@ -4,6 +4,7 @@ import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconTriangleExclamation } from '@intentui/icons'
 import { useRouter } from 'next/navigation'
+import { useQueryStates } from 'nuqs'
 import { type ReactNode, useActionState } from 'react'
 import { toast } from 'sonner'
 import { GlowCard } from '~/components/ui/glow-card'
@@ -19,17 +20,14 @@ import {
   passwordResetInputSchema,
 } from '~/features/auth/types/schemas/reset-password-input-schema'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
+import { authSearchParamsParsers } from '~/features/auth/types/search-params/auth-search-params-cache'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-type ResetPasswordFormProps = {
-  children: ReactNode
-  token: string
-}
-
-export function ResetPasswordForm({ children, token }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ children }: Record<'children', ReactNode>) {
+  const [{ token }] = useQueryStates(authSearchParamsParsers)
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(

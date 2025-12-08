@@ -4,13 +4,11 @@ import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import {
   IconDocumentEdit,
-  IconLock,
   IconPersonPasskey,
   IconTriangleExclamation,
   IconX,
 } from '@intentui/icons'
 import type { InferResponseType } from 'hono'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useActionState, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -22,10 +20,10 @@ import { Form } from '~/components/ui/intent-ui/form'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Separator } from '~/components/ui/intent-ui/separator'
 import { TextField } from '~/components/ui/intent-ui/text-field'
-import { LinkLoadingIndicator } from '~/components/ui/link-loading-indicator'
 import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 import { settingUserAction } from '~/features/users/actions/setting-user-action'
+import { ChangePasswordButton } from '~/features/users/components/change-password-button'
 import {
   type SettingUserInputSchema,
   settingUserInputSchema,
@@ -247,17 +245,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
           {pending ? <Loader className="absolute top-3 right-2" /> : <IconPersonPasskey />}
         </Button>
         <Separator orientation="horizontal" />
-        <Button intent="outline" isDisabled={isPending || pending} className="w-full">
-          <Link
-            href={urls.build({ route: '/[userId]/change-password', params: { userId: id } }).href}
-            className="flex items-center gap-x-2"
-          >
-            パスワードを変更する
-            <LinkLoadingIndicator>
-              <IconLock />
-            </LinkLoadingIndicator>
-          </Link>
-        </Button>
+        <ChangePasswordButton isDisabled={pending} />
       </Card.Footer>
     </Form>
   )
