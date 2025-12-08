@@ -13,7 +13,7 @@ import { isErrorStatus } from '~/utils'
 
 export function DailyReportDeleteButton({ id }: Pick<typeof dailyReports.$inferSelect, 'id'>) {
   const [isPending, startTransition] = useTransition()
-  const router = useRouter()
+  const _router = useRouter()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
@@ -58,7 +58,6 @@ export function DailyReportDeleteButton({ id }: Pick<typeof dailyReports.$inferS
         }
 
         toast.success(TOAST_MESSAGES.DAILY_REPORT.DELETE_SUCCESS)
-        router.refresh()
       } catch (_) {
         toast.error(TOAST_MESSAGES.DAILY_REPORT.DELETE_FAILED)
       }
