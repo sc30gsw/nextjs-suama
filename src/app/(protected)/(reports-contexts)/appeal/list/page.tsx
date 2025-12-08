@@ -88,10 +88,10 @@ export default async function AppealListPage({
             ))}
           </Suspense>
         </Card.Content>
-        <Suspense
-          fallback={
-            <Card.Footer>
-              <div className="flex items-center justify-center gap-x-1">
+        <Card.Footer>
+          <Suspense
+            fallback={
+              <div className="flex w-full items-center justify-center gap-x-1">
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
@@ -103,33 +103,30 @@ export default async function AppealListPage({
                 <Skeleton className="h-9 w-10 rounded-md" />
                 <Skeleton className="h-9 w-10 rounded-md" />
               </div>
-            </Card.Footer>
-          }
-        >
-          {appealCategoriesPromise.then((res) => {
-            if (res.total === 0) {
-              return null
             }
+          >
+            {appealCategoriesPromise.then((res) => {
+              if (res.total === 0) {
+                return null
+              }
 
-            const pageCount = Math.ceil(res.total / rowsPerPage)
+              const pageCount = Math.ceil(res.total / rowsPerPage)
 
-            if (page > pageCount) {
-              redirect(
-                urls.build({
-                  route: '/appeal/list',
-                  searchParams: { page: pageCount, rowsPerPage, names },
-                } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> })
-                  .href,
-              )
-            }
+              if (page > pageCount) {
+                redirect(
+                  urls.build({
+                    route: '/appeal/list',
+                    searchParams: { page: pageCount, rowsPerPage, names },
+                  } as Parameters<typeof urls.build>[0] & {
+                    searchParams?: Record<string, unknown>
+                  }).href,
+                )
+              }
 
-            return (
-              <Card.Footer>
-                <ReportContextTablePagination page={page} pageCount={pageCount} />
-              </Card.Footer>
-            )
-          })}
-        </Suspense>
+              return <ReportContextTablePagination page={page} pageCount={pageCount} />
+            })}
+          </Suspense>
+        </Card.Footer>
       </Card>
     </div>
   )
