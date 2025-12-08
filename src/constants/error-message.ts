@@ -2,6 +2,8 @@ export const ERROR_STATUS = {
   UNAUTHORIZED: 'Unauthorized',
   NOT_FOUND: 'NotFound',
   FOR_BIDDEN: 'Forbidden',
+  EMAIL_NOT_VERIFIED: 'EmailNotVerified',
+  EMAIL_ALREADY_VERIFIED: 'EmailAlreadyVerified',
   ALREADY_EXISTS: 'AlreadyExists',
   SOMETHING_WENT_WRONG: 'SomethingWentWrong',
   EMAIL_NOT_FOUND: 'EmailNotFound',
@@ -28,7 +30,12 @@ export function getErrorMessage(
   const errorMessages = {
     [ERROR_STATUS.UNAUTHORIZED]: 'セッションが切れました。再度ログインしてください',
     [ERROR_STATUS.NOT_FOUND]: 'ページが見つかりません',
-    [ERROR_STATUS.FOR_BIDDEN]: 'アクセス権限がありません',
+    [ERROR_STATUS.FOR_BIDDEN]:
+      type === 'auth'
+        ? 'メールアドレスが認証されていません。メールをご確認ください。'
+        : 'アクセス権限がありません',
+    [ERROR_STATUS.EMAIL_NOT_VERIFIED]: 'メールアドレスが認証されていません。メールをご確認ください。',
+    [ERROR_STATUS.EMAIL_ALREADY_VERIFIED]: 'メールアドレスは既に認証されています。',
     [ERROR_STATUS.ALREADY_EXISTS]: alreadyExistMessage,
     [ERROR_STATUS.SOMETHING_WENT_WRONG]: '予期しないエラーが発生しました',
     [ERROR_STATUS.EMAIL_NOT_FOUND]: 'メールアドレスが見つかりません',
@@ -50,11 +57,15 @@ export const TOAST_MESSAGES = {
   AUTH: {
     SIGN_IN_SUCCESS: 'サインインしました',
     SIGN_IN_FAILED: 'サインインに失敗しました',
-    SIGN_UP_SUCCESS: 'サインアップしました',
+    SIGN_UP_SUCCESS: 'サインアップしました。メール認証が必要です。メールをご確認ください。',
     SIGN_UP_FAILED: 'サインアップに失敗しました',
     SIGN_OUT_SUCCESS: 'ログアウトしました',
     SIGN_OUT_FAILED: 'ログアウトに失敗しました',
     UNAUTHORIZED: 'セッションが切れました。再度ログインしてください',
+    EMAIL_NOT_VERIFIED: 'メールアドレスが認証されていません。メールをご確認ください。',
+    EMAIL_VERIFICATION_REQUIRED: 'メール認証が必要です。認証メールを送信しました。メールをご確認ください。',
+    SEND_VERIFICATION_EMAIL_SUCCESS: 'メール認証メールを送信しました。メールをご確認ください。',
+    SEND_VERIFICATION_EMAIL_FAILED: 'メール認証メールの送信に失敗しました。',
   },
 
   PASSWORD: {

@@ -6,7 +6,7 @@ import { nextCookies } from 'better-auth/next-js'
 import * as schema from '~/db/schema'
 import { env } from '~/env'
 import { db } from '~/index'
-import { sendPasswordResetEmail } from '~/lib/resend'
+import { sendPasswordResetEmail, sendVerificationEmail } from '~/lib/resend'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -14,8 +14,22 @@ export const auth = betterAuth({
     schema,
     usePlural: true,
   }),
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }) => {
+      const urlObj = new URL(url)
+
+      const verificationUrl = new URL('/verify-email', env.NEXT_PUBLIC_APP_URL)
+      verificationUrl.searchParams.set('token', token)
+
+      await sendVerificationEmail(user.email, verificationUrl.toString())
+    },
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+  },
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
     sendResetPassword: async ({ url, user, token }) => {
       const urlObj = new URL(url)
       const callbackURL = urlObj.searchParams.get('callbackURL') ?? '/reset-password'
