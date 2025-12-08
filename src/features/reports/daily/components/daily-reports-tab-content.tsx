@@ -1,6 +1,7 @@
 import { redirect, unauthorized } from 'next/navigation'
-import type { ReactNode } from 'react'
+import { type ReactNode, Suspense } from 'react'
 import { Card } from '~/components/ui/intent-ui/card'
+import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
 import { DAILY_REPORT_KIND } from '~/constants/daily-report-kind'
@@ -12,11 +13,11 @@ import { urls } from '~/lib/urls'
 import { dateUtils } from '~/utils/date-utils'
 
 type DailyReportsTabContentProps = {
-  reportsTable: ReactNode
+  children: ReactNode
   kind: (typeof DAILY_REPORT_KIND)[keyof typeof DAILY_REPORT_KIND]
 }
 
-export async function DailyReportsTabContent({ reportsTable, kind }: DailyReportsTabContentProps) {
+export async function DailyReportsTabContent({ children, kind }: DailyReportsTabContentProps) {
   const session = await getServerSession()
 
   if (!session) {
@@ -26,7 +27,7 @@ export async function DailyReportsTabContent({ reportsTable, kind }: DailyReport
   const { page, rowsPerPage, tab, startDate, endDate, userNames } =
     dailyReportPageSearchParamsCache.all()
 
-  const countData = await getDailyReportsCount(
+  const countDataPromise = getDailyReportsCount(
     {
       startDate: startDate ?? undefined,
       endDate: endDate ?? undefined,
@@ -36,54 +37,101 @@ export async function DailyReportsTabContent({ reportsTable, kind }: DailyReport
     session.user.id,
   )
 
-  const total =
-    tab === DAILY_REPORT_TABS_MAP.DATE.id ? countData.dailyReportsCount : countData.projectsCount
-
-  const pageCount = Math.ceil(total / rowsPerPage)
-
-  if (page > pageCount && pageCount > 0) {
-    const redirectKindPath =
-      kind === DAILY_REPORT_KIND.MINE ? DAILY_REPORT_KIND.MINE : DAILY_REPORT_KIND.EVERYONE
-
-    const route =
-      redirectKindPath === DAILY_REPORT_KIND.MINE
-        ? urls.href({ route: '/daily/mine' })
-        : urls.href({ route: '/daily/every' })
-
-    redirect(
-      urls.build({
-        route,
-        searchParams: {
-          tab,
-          page: pageCount,
-          rowsPerPage,
-          startDate: dateUtils.formatDateParamForUrl(startDate),
-          endDate: dateUtils.formatDateParamForUrl(endDate),
-          userNames: userNames.join(','),
-        },
-      } as Parameters<typeof urls.build>[0] & { searchParams?: Record<string, unknown> }).href,
-    )
-  }
-
   return (
     <div className="space-y-2">
       <RowsPerPageSelect />
 
       <div className="flex items-end justify-between">
-        <p className="text-sm">
-          全 {total} 件の{tab === DAILY_REPORT_TABS_MAP.DATE.id ? '日報' : 'プロジェクト'}
-        </p>
-        <div className="font-bold text-lg">総合計時間: {countData.totalHours} 時間</div>
+        <Suspense
+          fallback={
+            <>
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-7 w-48" />
+            </>
+          }
+        >
+          {countDataPromise.then((countData) => {
+            const total =
+              tab === DAILY_REPORT_TABS_MAP.DATE.id
+                ? countData.dailyReportsCount
+                : countData.projectsCount
+
+            return (
+              <>
+                <p className="text-sm">
+                  全 {total} 件の{tab === DAILY_REPORT_TABS_MAP.DATE.id ? '日報' : 'プロジェクト'}
+                </p>
+                <div className="font-bold text-lg">総合計時間: {countData.totalHours} 時間</div>
+              </>
+            )
+          })}
+        </Suspense>
       </div>
 
       <Card className="max-w-full border-t-0 pt-0">
-        <Card.Content>{reportsTable}</Card.Content>
+        <Card.Content>{children}</Card.Content>
 
-        {total > 0 && (
-          <Card.Footer>
-            <TablePagination pageCount={pageCount} />
-          </Card.Footer>
-        )}
+        <Card.Footer>
+          <Suspense
+            fallback={
+              <div className="flex w-full items-center justify-center gap-1">
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+                <Skeleton className="h-9 w-10 rounded-md" />
+              </div>
+            }
+          >
+            {countDataPromise.then((countData) => {
+              const total =
+                tab === DAILY_REPORT_TABS_MAP.DATE.id
+                  ? countData.dailyReportsCount
+                  : countData.projectsCount
+
+              if (total > 0) {
+                return null
+              }
+
+              const pageCount = Math.ceil(total / rowsPerPage)
+
+              if (page > pageCount && pageCount > 0) {
+                const redirectKindPath =
+                  kind === DAILY_REPORT_KIND.MINE
+                    ? DAILY_REPORT_KIND.MINE
+                    : DAILY_REPORT_KIND.EVERYONE
+
+                const route =
+                  redirectKindPath === DAILY_REPORT_KIND.MINE
+                    ? urls.href({ route: '/daily/mine' })
+                    : urls.href({ route: '/daily/every' })
+
+                redirect(
+                  urls.build({
+                    route,
+                    searchParams: {
+                      tab,
+                      page: pageCount,
+                      rowsPerPage,
+                      startDate: dateUtils.formatDateParamForUrl(startDate),
+                      endDate: dateUtils.formatDateParamForUrl(endDate),
+                      userNames: userNames.join(','),
+                    },
+                  } as Parameters<typeof urls.build>[0] & {
+                    searchParams?: Record<string, unknown>
+                  }).href,
+                )
+              }
+
+              return <TablePagination pageCount={pageCount} />
+            })}
+          </Suspense>
+        </Card.Footer>
       </Card>
     </div>
   )

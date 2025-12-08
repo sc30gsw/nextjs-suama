@@ -9,7 +9,7 @@ import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { WeeklyCalendarHint } from '~/features/reports/weekly/components/weekly-calendar-hint'
 import { WeeklyRegisterLink } from '~/features/reports/weekly/components/weekly-register-link'
 import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/weekly-reports-card-loading'
-import { WeeklyReportsContainer } from '~/features/reports/weekly/components/weekly-reports-container'
+// import { WeeklyReportsContainer } from '~/features/reports/weekly/components/weekly-reports-container'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
 import {
   formatDateRange,
@@ -74,7 +74,8 @@ export default async function WeeklyReportsPage({
       </div>
       <div className="flex flex-col gap-6 lg:flex-row">
         <Suspense fallback={<WeeklyReportsCardLoading />}>
-          <WeeklyReportsContainer dates={dates} year={year.toString()} week={week.toString()} />
+          <WeeklyReportsCardLoading />
+          {/* <WeeklyReportsContainer dates={dates} year={year.toString()} week={week.toString()} /> */}
         </Suspense>
       </div>
     </div>

@@ -43,6 +43,8 @@ export function useCreateDailyForm(
           : `${data?.reportDate}の${TOAST_MESSAGES.DAILY_REPORT.CREATE_SUCCESS}`
 
         toast.success(message)
+
+        router.push(urls.href({ route: data?.isDraft ? '/daily/mine' : '/daily/today' }))
       },
 
       onError(result) {
