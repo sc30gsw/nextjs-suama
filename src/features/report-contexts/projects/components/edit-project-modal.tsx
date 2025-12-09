@@ -110,6 +110,7 @@ export function EditProjectModal({
   })
 
   const clientIdInput = useInputControl(fields.clientId)
+  const isArchivedInput = useInputControl(fields.isArchived)
 
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
@@ -170,7 +171,10 @@ export function EditProjectModal({
                 }
                 errorMessage={''}
               />
-              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.likeKeywords.errorId}
+                className="wrap-break-words text-red-500 text-sm"
+              >
                 {fields.likeKeywords.errors}
               </span>
             </div>
@@ -215,14 +219,11 @@ export function EditProjectModal({
                     {...rest}
                     name={fields.isArchived.name}
                     isSelected={checked}
-                    onChange={(checked: boolean) => {
-                      setChecked(checked)
-                      form.update({
-                        name: fields.isArchived.name,
-                        value: checked ? 'on' : 'off',
-                      })
+                    onChange={(newChecked: boolean) => {
+                      setChecked(newChecked)
+
+                      isArchivedInput.change(newChecked ? 'on' : 'off')
                     }}
-                    value={checked ? 'on' : 'off'}
                     isDisabled={isPending}
                     size="lg"
                     className="mt-2"
@@ -231,7 +232,10 @@ export function EditProjectModal({
                   </Checkbox>
                 )
               })}
-              <span id={fields.isArchived.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.isArchived.errorId}
+                className="wrap-break-words text-red-500 text-sm"
+              >
                 {fields.isArchived.errors}
               </span>
             </div>
