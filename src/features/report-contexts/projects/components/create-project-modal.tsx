@@ -33,7 +33,7 @@ type CreateProjectModalProps = {
 
 export function CreateProjectModal({ clients }: CreateProjectModalProps) {
   const [open, toggle] = useToggle(false)
-  // form resetがConformのものでは反映されないため
+  //? form resetがConformのものでは反映されないため
   const [client, setClient] = useState<Key | null>(null)
   const [checked, setChecked] = useState(false)
 
@@ -84,6 +84,7 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
   })
 
   const clientId = useInputControl(fields.clientId)
+  const isArchiveInput = useInputControl(fields.isArchive)
 
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
@@ -137,7 +138,10 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                 isDisabled={isPending}
                 errorMessage={''}
               />
-              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.likeKeywords.errorId}
+                className="wrap-break-words text-red-500 text-sm"
+              >
                 {fields.likeKeywords.errors}
               </span>
             </div>
@@ -182,14 +186,11 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                     {...rest}
                     name={fields.isArchive.name}
                     isSelected={checked}
-                    onChange={(checked) => {
-                      setChecked(checked)
-                      form.update({
-                        name: fields.isArchive.name,
-                        value: checked ? 'on' : 'off',
-                      })
+                    onChange={(newChecked: boolean) => {
+                      setChecked(newChecked)
+
+                      isArchiveInput.change(newChecked ? 'on' : 'off')
                     }}
-                    value={checked ? 'on' : 'off'}
                     isDisabled={isPending}
                     size="lg"
                     className="mt-2"
@@ -198,7 +199,7 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                   </Checkbox>
                 )
               })}
-              <span id={fields.isArchive.errorId} className="break-words text-red-500 text-sm">
+              <span id={fields.isArchive.errorId} className="wrap-break-words text-red-500 text-sm">
                 {fields.isArchive.errors}
               </span>
             </div>
