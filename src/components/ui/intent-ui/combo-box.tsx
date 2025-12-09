@@ -135,7 +135,6 @@ const ComboBoxClearButton = () => {
       slot={null}
       aria-label="Clear"
       onPress={() => {
-        state?.setInputValue('')
         state?.setSelectedKey(null)
         state?.open()
       }}
