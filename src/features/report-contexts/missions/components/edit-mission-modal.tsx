@@ -15,12 +15,12 @@ import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
-
 import { updateMissionAction } from '~/features/report-contexts/missions/actions/update-mission-action'
 import {
   type EditMissionInputSchema,
   editMissionInputSchema,
 } from '~/features/report-contexts/missions/types/schemas/edit-mission-input-schema'
+import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
 import { urls } from '~/lib/urls'
@@ -42,6 +42,9 @@ export function EditMissionModal({
 }: EditMissionModalProps) {
   const [open, toggle] = useToggle(false)
   const [project, setProject] = useState<Key | null>(projectId)
+  const [projectFilter, setProjectFilter] = useState('')
+  const [isProjectFiltering, setIsProjectFiltering] = useState(false)
+
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
@@ -106,6 +109,20 @@ export function EditMissionModal({
 
   const projectIdInput = useInputControl(fields.projectId)
 
+  const projectInputValue =
+    isProjectFiltering || !project
+      ? projectFilter
+      : (projects.find((p) => p.id === project)?.name ?? '')
+
+  const filteredProjects = projects.filter((project) => {
+    const nameMatch = matchesJapaneseFilter(project.name, projectFilter)
+    const keywordMatch = project.likeKeywords
+      ? matchesJapaneseFilter(project.likeKeywords, projectFilter)
+      : false
+
+    return nameMatch || keywordMatch
+  })
+
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
       return lastResult.error.message.join(', ')
@@ -163,7 +180,10 @@ export function EditMissionModal({
                 defaultValue={lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords}
                 errorMessage={''}
               />
-              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.likeKeywords.errorId}
+                className="wrap-break-words text-red-500 text-sm"
+              >
                 {fields.likeKeywords.errors}
               </span>
             </div>
@@ -171,9 +191,27 @@ export function EditMissionModal({
               {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
               {/* // ? https://ja.conform.guide/integration/ui-libraries */}
               <ComboBox
-                {...getInputProps(fields.projectId, { type: 'text' })}
+                {...(() => {
+                  const props = getInputProps(fields.projectId, { type: 'text' }) as Record<
+                    string,
+                    unknown
+                  >
+                  const { inputValue: _, ...rest } = props
+
+                  return rest
+                })()}
                 label="プロジェクト"
                 placeholder="プロジェクトを選択"
+                inputValue={projectInputValue}
+                onInputChange={(value) => {
+                  setProjectFilter(value)
+                  setIsProjectFiltering(true)
+
+                  if (project && value !== (projects.find((p) => p.id === project)?.name ?? '')) {
+                    setProject(null)
+                    projectIdInput.change('')
+                  }
+                }}
                 isDisabled={isPending}
                 onSelectionChange={(key) => {
                   if (!key) {
@@ -182,12 +220,16 @@ export function EditMissionModal({
 
                   setProject(key)
                   projectIdInput.change(key.toString())
+
+                  setProjectFilter('')
+                  setIsProjectFiltering(false)
                 }}
+                defaultFilter={() => true}
                 selectedKey={project}
                 className="col-span-2"
               >
                 <ComboBox.Input />
-                <ComboBox.List items={projects}>
+                <ComboBox.List items={filteredProjects}>
                   {(project) => <ComboBox.Option id={project.id}>{project.name}</ComboBox.Option>}
                 </ComboBox.List>
               </ComboBox>
