@@ -54,6 +54,7 @@ const createColumns = (currentUserRole: 'admin' | 'user') => [
 
       return (
         <div className="flex items-center gap-2">
+          {/* ? layout.tsxでアクセス制限しているため、ここでのRole分岐は不要 */}
           <Tooltip delay={0}>
             <Link
               href={
@@ -90,6 +91,7 @@ const createColumns = (currentUserRole: 'admin' | 'user') => [
               />
             </div>
           )}
+          {/* ? 自身でも退職時に実行できるようにするため、自分の行にもボタンは表示するものとしている */}
           {currentUserRole === 'admin' && !row.original.isRetired && (
             <UserRetireButton id={row.original.id} />
           )}
