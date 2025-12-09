@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/intent-ui/button'
 import { Label } from '~/components/ui/intent-ui/field'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
+import { INVALID_INPUT_MESSAGE } from '~/constants/validation'
 import { confirmInputSchema } from '~/types/schemas/confirm-input-schema'
 
 export const { Root, ...Confirm } = createCallable<
@@ -69,7 +70,7 @@ function ConfirmInput({ expectedInput, placeholder, onConfirm }: ConfirmInputPro
       onConfirm(true)
     } else {
       const issue = result.error.issues[0]
-      setErrorMessage(issue?.message ?? '入力が正しくありません')
+      setErrorMessage(issue?.message ?? INVALID_INPUT_MESSAGE)
       onConfirm(false)
     }
   }
