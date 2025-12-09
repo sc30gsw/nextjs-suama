@@ -62,6 +62,10 @@ export const UserSchema = z
       example: false,
       description: '退職済みかどうか',
     }),
+    role: z.string().openapi({
+      example: 'user',
+      description: 'ユーザーのロール（adminまたはuser）',
+    }),
     createdAt: z.string().openapi({
       example: '2024-01-01T00:00:00.000Z',
       description: '作成日時',
