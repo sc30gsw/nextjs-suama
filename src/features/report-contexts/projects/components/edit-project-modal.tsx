@@ -47,7 +47,6 @@ export function EditProjectModal({
   const [checked, setChecked] = useState(isArchived)
   const [clientFilter, setClientFilter] = useState('')
   const [isClientFiltering, setIsClientFiltering] = useState(false)
-
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
@@ -221,7 +220,6 @@ export function EditProjectModal({
 
                   setClient(key)
                   clientIdInput.change(key.toString())
-
                   setClientFilter('')
                   setIsClientFiltering(false)
                 }}

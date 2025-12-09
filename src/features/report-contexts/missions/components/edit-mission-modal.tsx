@@ -44,7 +44,6 @@ export function EditMissionModal({
   const [project, setProject] = useState<Key | null>(projectId)
   const [projectFilter, setProjectFilter] = useState('')
   const [isProjectFiltering, setIsProjectFiltering] = useState(false)
-
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
@@ -119,7 +118,6 @@ export function EditMissionModal({
     const keywordMatch = project.likeKeywords
       ? matchesJapaneseFilter(project.likeKeywords, projectFilter)
       : false
-
     return nameMatch || keywordMatch
   })
 
@@ -220,7 +218,6 @@ export function EditMissionModal({
 
                   setProject(key)
                   projectIdInput.change(key.toString())
-
                   setProjectFilter('')
                   setIsProjectFiltering(false)
                 }}
