@@ -37,9 +37,13 @@ import {
   SidebarSectionGroup,
 } from '~/components/ui/intent-ui/sidebar'
 import { AppSidebarUserMenu } from '~/components/ui/sidebar/app-sidebar-user-menu'
+import { authClient } from '~/lib/auth-client'
 import { urls } from '~/lib/urls'
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
+  const { data: session } = authClient.useSession()
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === 'admin'
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -70,11 +74,12 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                   <SidebarLabel>自分の日報</SidebarLabel>
                 </SidebarItem>
 
-                {/* TODO: ユーザーの role が admin のみ表示されるように修正する。データ移行のタスクと連携して修正 */}
-                <SidebarItem href={urls.href({ route: '/daily/every' })} tooltip="みんなの日報">
-                  <IconCalendarStats stroke={1} size={20} />
-                  <SidebarLabel>みんなの日報</SidebarLabel>
-                </SidebarItem>
+                {isAdmin && (
+                  <SidebarItem href={urls.href({ route: '/daily/every' })} tooltip="みんなの日報">
+                    <IconCalendarStats stroke={1} size={20} />
+                    <SidebarLabel>みんなの日報</SidebarLabel>
+                  </SidebarItem>
+                )}
               </SidebarDisclosurePanel>
             </SidebarDisclosure>
 
@@ -91,83 +96,89 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               </SidebarDisclosurePanel>
             </SidebarDisclosure>
 
-            <SidebarDisclosure id={3} className="py-3">
-              <SidebarDisclosureTrigger>
-                <IconUser stroke={1} size={20} />
-                <SidebarLabel>ユーザー</SidebarLabel>
-              </SidebarDisclosureTrigger>
-              <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
-                <SidebarItem href="/users" tooltip="ユーザー一覧">
-                  <IconUsers stroke={1} size={20} />
-                  <SidebarLabel>ユーザー一覧</SidebarLabel>
-                </SidebarItem>
-              </SidebarDisclosurePanel>
-            </SidebarDisclosure>
+            {isAdmin && (
+              <SidebarDisclosure id={3} className="py-3">
+                <SidebarDisclosureTrigger>
+                  <IconUser stroke={1} size={20} />
+                  <SidebarLabel>ユーザー</SidebarLabel>
+                </SidebarDisclosureTrigger>
+                <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+                  <SidebarItem href="/users" tooltip="ユーザー一覧">
+                    <IconUsers stroke={1} size={20} />
+                    <SidebarLabel>ユーザー一覧</SidebarLabel>
+                  </SidebarItem>
+                </SidebarDisclosurePanel>
+              </SidebarDisclosure>
+            )}
 
-            <SidebarDisclosure id={4} className="py-3">
-              <SidebarDisclosureTrigger>
-                <IconBuilding stroke={1} size={20} />
-                <SidebarLabel>クライアント</SidebarLabel>
-              </SidebarDisclosureTrigger>
-              <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
-                <SidebarItem href="/client/list" tooltip="クライアント一覧">
-                  <IconBuildings stroke={1} size={20} />
-                  <SidebarLabel>クライアント一覧</SidebarLabel>
-                </SidebarItem>
-              </SidebarDisclosurePanel>
-            </SidebarDisclosure>
+            {isAdmin && (
+              <>
+                <SidebarDisclosure id={4} className="py-3">
+                  <SidebarDisclosureTrigger>
+                    <IconBuilding stroke={1} size={20} />
+                    <SidebarLabel>クライアント</SidebarLabel>
+                  </SidebarDisclosureTrigger>
+                  <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+                    <SidebarItem href="/client/list" tooltip="クライアント一覧">
+                      <IconBuildings stroke={1} size={20} />
+                      <SidebarLabel>クライアント一覧</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarDisclosurePanel>
+                </SidebarDisclosure>
 
-            <SidebarDisclosure id={5} className="py-3">
-              <SidebarDisclosureTrigger>
-                <IconBrandProducthunt stroke={1} size={20} />
-                <SidebarLabel>プロジェクト</SidebarLabel>
-              </SidebarDisclosureTrigger>
-              <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
-                <SidebarItem href="/project/list" tooltip="プロジェクト一覧">
-                  <IconFolder stroke={1} size={20} />
-                  <SidebarLabel>プロジェクト一覧</SidebarLabel>
-                </SidebarItem>
-              </SidebarDisclosurePanel>
-            </SidebarDisclosure>
+                <SidebarDisclosure id={5} className="py-3">
+                  <SidebarDisclosureTrigger>
+                    <IconBrandProducthunt stroke={1} size={20} />
+                    <SidebarLabel>プロジェクト</SidebarLabel>
+                  </SidebarDisclosureTrigger>
+                  <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+                    <SidebarItem href="/project/list" tooltip="プロジェクト一覧">
+                      <IconFolder stroke={1} size={20} />
+                      <SidebarLabel>プロジェクト一覧</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarDisclosurePanel>
+                </SidebarDisclosure>
 
-            <SidebarDisclosure id={6} className="py-3">
-              <SidebarDisclosureTrigger>
-                <IconList stroke={1} size={20} />
-                <SidebarLabel>ミッション</SidebarLabel>
-              </SidebarDisclosureTrigger>
-              <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
-                <SidebarItem href="/mission/list" tooltip="ミッション一覧">
-                  <IconListCheck stroke={1} size={20} />
-                  <SidebarLabel>ミッション一覧</SidebarLabel>
-                </SidebarItem>
-              </SidebarDisclosurePanel>
-            </SidebarDisclosure>
+                <SidebarDisclosure id={6} className="py-3">
+                  <SidebarDisclosureTrigger>
+                    <IconList stroke={1} size={20} />
+                    <SidebarLabel>ミッション</SidebarLabel>
+                  </SidebarDisclosureTrigger>
+                  <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+                    <SidebarItem href="/mission/list" tooltip="ミッション一覧">
+                      <IconListCheck stroke={1} size={20} />
+                      <SidebarLabel>ミッション一覧</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarDisclosurePanel>
+                </SidebarDisclosure>
 
-            <SidebarDisclosure id={7} className="py-3">
-              <SidebarDisclosureTrigger>
-                <IconHelpTriangle stroke={1} size={20} />
-                <SidebarLabel>困っていることカテゴリー</SidebarLabel>
-              </SidebarDisclosureTrigger>
-              <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
-                <SidebarItem href="/trouble/list" tooltip="カテゴリー一覧">
-                  <IconCategory stroke={1} size={20} />
-                  <SidebarLabel>カテゴリー一覧</SidebarLabel>
-                </SidebarItem>
-              </SidebarDisclosurePanel>
-            </SidebarDisclosure>
+                <SidebarDisclosure id={7} className="py-3">
+                  <SidebarDisclosureTrigger>
+                    <IconHelpTriangle stroke={1} size={20} />
+                    <SidebarLabel>困っていることカテゴリー</SidebarLabel>
+                  </SidebarDisclosureTrigger>
+                  <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+                    <SidebarItem href="/trouble/list" tooltip="カテゴリー一覧">
+                      <IconCategory stroke={1} size={20} />
+                      <SidebarLabel>カテゴリー一覧</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarDisclosurePanel>
+                </SidebarDisclosure>
 
-            <SidebarDisclosure id={8} className="py-3">
-              <SidebarDisclosureTrigger>
-                <IconBulb stroke={1} size={20} />
-                <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
-              </SidebarDisclosureTrigger>
-              <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
-                <SidebarItem href="/appeal/list" tooltip="カテゴリー一覧">
-                  <IconCategory stroke={1} size={20} />
-                  <SidebarLabel>カテゴリー一覧</SidebarLabel>
-                </SidebarItem>
-              </SidebarDisclosurePanel>
-            </SidebarDisclosure>
+                <SidebarDisclosure id={8} className="py-3">
+                  <SidebarDisclosureTrigger>
+                    <IconBulb stroke={1} size={20} />
+                    <SidebarLabel>アピールポイントカテゴリー</SidebarLabel>
+                  </SidebarDisclosureTrigger>
+                  <SidebarDisclosurePanel className="ml-7 group-data-[state=collapsed]:ml-0">
+                    <SidebarItem href="/appeal/list" tooltip="カテゴリー一覧">
+                      <IconCategory stroke={1} size={20} />
+                      <SidebarLabel>カテゴリー一覧</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarDisclosurePanel>
+                </SidebarDisclosure>
+              </>
+            )}
           </SidebarDisclosureGroup>
         </SidebarSectionGroup>
       </SidebarContent>
