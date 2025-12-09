@@ -14,17 +14,24 @@ import { isErrorStatus } from '~/utils'
 
 type ClientDeleteButtonProps = Pick<
   InferResponseType<typeof client.api.clients.$get, 200>['clients'][number],
-  'id'
+  'id' | 'name'
 >
 
-export function ClientDeleteButton({ id }: ClientDeleteButtonProps) {
+export function ClientDeleteButton({ id, name }: ClientDeleteButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
-      title: 'クライアントを削除しますか?',
-      message:
-        'この操作は取り消せません。クライアントを削除すると、関連するプロジェクト・ミッションも削除されます。',
+      title: `クライアント "${name}"を削除しますか?`,
+      message: (
+        <>
+          この操作は取り消せません。
+          <br />
+          クライアント<b>"{name}"</b>
+          を削除すると、関連するプロジェクト・ミッションも削除されます。
+        </>
+      ),
+      expectedInput: name,
     })
 
     if (!ok) {

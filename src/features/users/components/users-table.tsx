@@ -93,7 +93,7 @@ const createColumns = (currentUserRole: 'admin' | 'user') => [
           )}
           {/* ? 自身でも退職時に実行できるようにするため、自分の行にもボタンは表示するものとしている */}
           {currentUserRole === 'admin' && !row.original.isRetired && (
-            <UserRetireButton id={row.original.id} />
+            <UserRetireButton id={row.original.id} name={row.original.name} />
           )}
         </div>
       )

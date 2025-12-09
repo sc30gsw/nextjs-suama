@@ -38,7 +38,7 @@ const COLUMNS = [
         <div className="flex items-center gap-2">
           <div className="flex gap-2">
             <EditTroubleCategoryModal id={row.original.id} name={row.original.name} />
-            <TroubleCategoryDeleteButton id={row.original.id} />
+            <TroubleCategoryDeleteButton id={row.original.id} name={row.original.name} />
           </div>
         </div>
       )

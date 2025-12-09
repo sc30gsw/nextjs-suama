@@ -15,16 +15,24 @@ import { isErrorStatus } from '~/utils'
 
 type UserRetireButtonProps = Pick<
   InferResponseType<typeof client.api.users.$get, 200>['users'][number],
-  'id'
+  'id' | 'name'
 >
 
-export function UserRetireButton({ id }: UserRetireButtonProps) {
+export function UserRetireButton({ id, name }: UserRetireButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleRetire = async () => {
     const ok = await Confirm.call({
       title: 'ユーザーを退職済みにしますか?',
-      message: 'この操作は取り消せません。選択したユーザーが退職済みになります。',
+      message: (
+        <>
+          この操作は取り消せません。
+          <br />
+          選択したユーザー<b>"{name}"</b>が退職済みになります。
+        </>
+      ),
+      expectedInput: name,
+      placeholder: '退職者名',
     })
 
     if (!ok) {
