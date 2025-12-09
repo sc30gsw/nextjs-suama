@@ -114,7 +114,10 @@ export function CreateClientModal() {
                 isDisabled={isPending}
                 errorMessage={''}
               />
-              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.likeKeywords.errorId}
+                className="wrap-break-words text-red-500 text-sm"
+              >
                 {fields.likeKeywords.errors}
               </span>
             </div>

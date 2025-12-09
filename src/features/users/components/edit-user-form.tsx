@@ -185,7 +185,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
               画像をアップロード
             </FileTrigger>
             {imageError && (
-              <span className="wrap-break-words text-red-500 text-sm">{imageError}</span>
+              <span className="wrap-wrap-break-words text-red-500 text-sm">{imageError}</span>
             )}
           </div>
           {imageInput.value ? (

@@ -15,7 +15,7 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
-import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB, } from '~/constants'
+import { ACCEPTED_TYPES, MAX_IMAGE_SIZE_MB } from '~/constants'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
 import { updateUserAction } from '~/features/users/actions/update-user-action'
 import {
@@ -163,7 +163,7 @@ export function EditUserModal({ id, name, image }: EditUserModalProps) {
                   画像をアップロード
                 </FileTrigger>
                 {imageError && (
-                  <span className="wrap-break-words text-red-500 text-sm">{imageError}</span>
+                  <span className="wrap-wrap-break-words text-red-500 text-sm">{imageError}</span>
                 )}
               </div>
               {imageInput.value ? (

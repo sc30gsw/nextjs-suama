@@ -140,7 +140,7 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
               />
               <span
                 id={fields.likeKeywords.errorId}
-                className="wrap-break-words text-red-500 text-sm"
+                className="wrap-wrap-break-words text-red-500 text-sm"
               >
                 {fields.likeKeywords.errors}
               </span>
@@ -199,7 +199,10 @@ export function CreateProjectModal({ clients }: CreateProjectModalProps) {
                   </Checkbox>
                 )
               })}
-              <span id={fields.isArchive.errorId} className="wrap-break-words text-red-500 text-sm">
+              <span
+                id={fields.isArchive.errorId}
+                className="wrap-wrap-break-words text-red-500 text-sm"
+              >
                 {fields.isArchive.errors}
               </span>
             </div>
