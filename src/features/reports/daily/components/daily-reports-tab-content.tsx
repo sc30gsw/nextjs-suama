@@ -95,7 +95,7 @@ export async function DailyReportsTabContent({ children, kind }: DailyReportsTab
                   ? countData.dailyReportsCount
                   : countData.projectsCount
 
-              if (total > 0) {
+              if (total === 0) {
                 return null
               }
 
