@@ -92,19 +92,26 @@ function ConfirmInput({ expectedInput, placeholder, onConfirm }: ConfirmInputPro
         <Label>
           確認のため、<b>"{expectedInput}"</b>と入力してください
         </Label>
-        <TextField
-          placeholder={placeholder}
-          value={inputValue}
-          onChange={(value) => {
-            setInputValue(value)
+        <div>
+          <TextField
+            placeholder={placeholder}
+            value={inputValue}
+            onChange={(value) => {
+              setInputValue(value)
 
-            if (errorMessage) {
-              setErrorMessage('')
-            }
-          }}
-          errorMessage={errorMessage}
-          autoFocus
-        />
+              if (errorMessage) {
+                setErrorMessage('')
+              }
+            }}
+            errorMessage={errorMessage}
+            autoFocus
+          />
+          {errorMessage && (
+            <span className="text-base/6 text-danger group-disabled:opacity-50 sm:text-sm/6 forced-colors:text-[Mark]">
+              {errorMessage}
+            </span>
+          )}
+        </div>
       </div>
       <Modal.Footer className="pt-2">
         <Modal.Close>閉じる</Modal.Close>
