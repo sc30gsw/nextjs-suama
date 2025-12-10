@@ -42,7 +42,7 @@ const COLUMNS = [
               name={row.original.name}
               likeKeywords={row.original.likeKeywords}
             />
-            <ClientDeleteButton id={row.original.id} />
+            <ClientDeleteButton id={row.original.id} name={row.original.name} />
           </div>
         </div>
       )

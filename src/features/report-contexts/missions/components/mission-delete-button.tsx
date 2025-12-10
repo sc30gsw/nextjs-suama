@@ -14,16 +14,23 @@ import { isErrorStatus } from '~/utils'
 
 type MissionDeleteButtonProps = Pick<
   InferResponseType<typeof client.api.missions.$get, 200>['missions'][number],
-  'id'
+  'id' | 'name'
 >
 
-export function MissionDeleteButton({ id }: MissionDeleteButtonProps) {
+export function MissionDeleteButton({ id, name }: MissionDeleteButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
-      title: 'ミッションを削除しますか?',
-      message: 'この操作は取り消せません。',
+      title: `ミッション "${name}"を削除しますか?`,
+      message: (
+        <>
+          この操作は取り消せません。
+          <br />
+          <b>"{name}"</b>を削除します。
+        </>
+      ),
+      expectedInput: name,
     })
 
     if (!ok) {

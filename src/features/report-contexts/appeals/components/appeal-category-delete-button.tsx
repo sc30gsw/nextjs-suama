@@ -13,16 +13,24 @@ import { isErrorStatus } from '~/utils'
 
 type AppealCategoryDeleteButtonProps = Pick<
   AppealCategoriesResponse['appealCategories'][number],
-  'id'
+  'id' | 'name'
 >
 
-export function AppealCategoryDeleteButton({ id }: AppealCategoryDeleteButtonProps) {
+export function AppealCategoryDeleteButton({ id, name }: AppealCategoryDeleteButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
-      title: 'アピールポイントカテゴリーを削除しますか?',
-      message: 'この操作は取り消せません。',
+      title: `アピールポイントカテゴリー "${name}"を削除しますか?`,
+      message: (
+        <>
+          この操作は取り消せません。
+          <br />
+          アピールポイントカテゴリー<b>"{name}"</b>
+          を削除します。
+        </>
+      ),
+      expectedInput: name,
     })
 
     if (!ok) {

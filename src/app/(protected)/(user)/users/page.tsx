@@ -78,7 +78,11 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
             }
           >
             {usersPromise.then((res) => (
-              <UsersTable users={res} currentUserId={session.user.id} />
+              <UsersTable
+                users={res}
+                currentUserId={session.user.id}
+                currentUserRole={session.user.role}
+              />
             ))}
           </Suspense>
         </Card.Content>

@@ -1,0 +1,1 @@
+CREATE INDEX `index_users_on_role` ON `users` (`role`);

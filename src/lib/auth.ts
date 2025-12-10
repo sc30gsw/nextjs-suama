@@ -2,8 +2,10 @@ import { passkey } from '@better-auth/passkey'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
-
+import { customSession } from 'better-auth/plugins'
+import { eq } from 'drizzle-orm'
 import * as schema from '~/db/schema'
+import { users } from '~/db/schema'
 import { env } from '~/env'
 import { db } from '~/index'
 import { sendPasswordResetEmail, sendVerificationEmail } from '~/lib/resend'
@@ -15,9 +17,7 @@ export const auth = betterAuth({
     usePlural: true,
   }),
   emailVerification: {
-    sendVerificationEmail: async ({ user, url, token }) => {
-      const urlObj = new URL(url)
-
+    sendVerificationEmail: async ({ user, token }) => {
       const verificationUrl = new URL('/verify-email', env.NEXT_PUBLIC_APP_URL)
       verificationUrl.searchParams.set('token', token)
 
@@ -50,5 +50,28 @@ export const auth = betterAuth({
   //     clientSecret: env.GOOGLE_CLIENT_SECRET,
   //   },
   // },
-  plugins: [nextCookies(), passkey()],
+  plugins: [
+    nextCookies(),
+    passkey(),
+    customSession(async ({ user, session }) => {
+      if (!user) {
+        return { user, session }
+      }
+
+      const userWithRole = await db.query.users.findFirst({
+        where: eq(users.id, user.id),
+        columns: {
+          role: true,
+        },
+      })
+
+      return {
+        user: {
+          ...user,
+          role: userWithRole?.role ?? 'user',
+        },
+        session,
+      }
+    }),
+  ],
 })

@@ -19,7 +19,7 @@ export default function Forbidden() {
               <IconShieldOff className="size-8 text-red-600 dark:text-red-500" />{' '}
             </div>
             <Card.Title className="text-xl">403 Forbidden</Card.Title>
-            <Card.Description className="wrap-break-words text-center">
+            <Card.Description className="wrap-wrap-break-words text-center">
               このページのアクセスが拒否されました。
               <br />
               アクセス権限がないか、

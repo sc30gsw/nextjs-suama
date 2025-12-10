@@ -16,12 +16,12 @@ import { Modal } from '~/components/ui/intent-ui/modal'
 import { TextField } from '~/components/ui/intent-ui/text-field'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { ERROR_STATUS, getErrorMessage, TOAST_MESSAGES } from '~/constants/error-message'
-
 import { updateProjectAction } from '~/features/report-contexts/projects/actions/update-project-action'
 import {
   type EditProjectInputSchema,
   editProjectInputSchema,
 } from '~/features/report-contexts/projects/types/schemas/edit-project-input-schema'
+import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import type { client } from '~/lib/rpc'
 import { urls } from '~/lib/urls'
@@ -45,6 +45,9 @@ export function EditProjectModal({
   const [open, toggle] = useToggle(false)
   const [client, setClient] = useState<Key | null>(clientId)
   const [checked, setChecked] = useState(isArchived)
+  const [clientFilter, setClientFilter] = useState('')
+  const [isClientFiltering, setIsClientFiltering] = useState(false)
+
   const router = useRouter()
 
   const [lastResult, action, isPending] = useActionState(
@@ -110,6 +113,14 @@ export function EditProjectModal({
   })
 
   const clientIdInput = useInputControl(fields.clientId)
+  const isArchivedInput = useInputControl(fields.isArchived)
+
+  const clientInputValue =
+    isClientFiltering || !client ? clientFilter : (clients.find((c) => c.id === client)?.name ?? '')
+
+  const filteredClients = clients.filter((client) => {
+    return matchesJapaneseFilter(client.name, clientFilter)
+  })
 
   const getError = () => {
     if (lastResult?.error && Array.isArray(lastResult.error.message)) {
@@ -170,7 +181,10 @@ export function EditProjectModal({
                 }
                 errorMessage={''}
               />
-              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.likeKeywords.errorId}
+                className="wrap-break-words text-red-500 text-sm"
+              >
                 {fields.likeKeywords.errors}
               </span>
             </div>
@@ -178,9 +192,27 @@ export function EditProjectModal({
               {/* // TODO useInputControl を使用して不具合が発生する場合、useControl を使用してみてください。 */}
               {/* // ? https://ja.conform.guide/integration/ui-libraries */}
               <ComboBox
-                {...getInputProps(fields.clientId, { type: 'text' })}
+                {...(() => {
+                  const props = getInputProps(fields.clientId, { type: 'text' }) as Record<
+                    string,
+                    unknown
+                  >
+                  const { inputValue: _, ...rest } = props
+
+                  return rest
+                })()}
                 label="クライアント"
                 placeholder="クライアントを選択"
+                inputValue={clientInputValue}
+                onInputChange={(value) => {
+                  setClientFilter(value)
+                  setIsClientFiltering(true)
+
+                  if (client && value !== (clients.find((c) => c.id === client)?.name ?? '')) {
+                    setClient(null)
+                    clientIdInput.change('')
+                  }
+                }}
                 isDisabled={isPending}
                 onSelectionChange={(key) => {
                   if (!key) {
@@ -189,12 +221,15 @@ export function EditProjectModal({
 
                   setClient(key)
                   clientIdInput.change(key.toString())
+                  setClientFilter('')
+                  setIsClientFiltering(false)
                 }}
+                defaultFilter={() => true}
                 selectedKey={client}
                 className="col-span-2"
               >
                 <ComboBox.Input />
-                <ComboBox.List items={clients}>
+                <ComboBox.List items={filteredClients}>
                   {(client) => <ComboBox.Option id={client.id}>{client.name}</ComboBox.Option>}
                 </ComboBox.List>
               </ComboBox>
@@ -215,14 +250,11 @@ export function EditProjectModal({
                     {...rest}
                     name={fields.isArchived.name}
                     isSelected={checked}
-                    onChange={(checked: boolean) => {
-                      setChecked(checked)
-                      form.update({
-                        name: fields.isArchived.name,
-                        value: checked ? 'on' : 'off',
-                      })
+                    onChange={(newChecked: boolean) => {
+                      setChecked(newChecked)
+
+                      isArchivedInput.change(newChecked ? 'on' : 'off')
                     }}
-                    value={checked ? 'on' : 'off'}
                     isDisabled={isPending}
                     size="lg"
                     className="mt-2"
@@ -231,7 +263,10 @@ export function EditProjectModal({
                   </Checkbox>
                 )
               })}
-              <span id={fields.isArchived.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.isArchived.errorId}
+                className="wrap-break-words text-red-500 text-sm"
+              >
                 {fields.isArchived.errors}
               </span>
             </div>

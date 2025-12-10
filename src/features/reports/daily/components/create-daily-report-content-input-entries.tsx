@@ -67,6 +67,7 @@ export function CreateDailyReportContentInputEntries({
           {...(() => {
             const props = getInputProps(field.project, { type: 'text' }) as Record<string, unknown>
             const { inputValue: _, ...rest } = props
+
             return rest
           })()}
           label="プロジェクト"
@@ -103,6 +104,7 @@ export function CreateDailyReportContentInputEntries({
           {...(() => {
             const props = getInputProps(field.mission, { type: 'text' }) as Record<string, unknown>
             const { inputValue: _, ...rest } = props
+
             return rest
           })()}
           label="ミッション"

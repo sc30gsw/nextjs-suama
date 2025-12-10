@@ -53,7 +53,7 @@ const COLUMNS = [
               projectId={row.original.projectId}
               projects={row.original.projects}
             />
-            <MissionDeleteButton id={row.original.id} />
+            <MissionDeleteButton id={row.original.id} name={row.original.name} />
           </div>
         </div>
       )

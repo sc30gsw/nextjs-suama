@@ -70,7 +70,7 @@ const COLUMNS = [
               clientId={row.original.clientId}
               clients={row.original.clients}
             />
-            <ProjectDeleteButton id={row.original.id} />
+            <ProjectDeleteButton id={row.original.id} name={row.original.name} />
           </div>
         </div>
       )

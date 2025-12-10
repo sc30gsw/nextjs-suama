@@ -13,16 +13,23 @@ import { isErrorStatus } from '~/utils'
 
 type TroubleCategoryDeleteButtonProps = Pick<
   TroubleCategoriesResponse['troubleCategories'][number],
-  'id'
+  'id' | 'name'
 >
 
-export function TroubleCategoryDeleteButton({ id }: TroubleCategoryDeleteButtonProps) {
+export function TroubleCategoryDeleteButton({ id, name }: TroubleCategoryDeleteButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
-      title: '困っていることカテゴリーを削除しますか?',
-      message: 'この操作は取り消せません。',
+      title: `困っていることカテゴリー "${name}"を削除しますか?`,
+      message: (
+        <>
+          この操作は取り消せません。
+          <br />
+          困っていることカテゴリー<b>"{name}"</b>を削除します。
+        </>
+      ),
+      expectedInput: name,
     })
 
     if (!ok) {

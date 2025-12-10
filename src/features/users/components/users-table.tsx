@@ -17,7 +17,7 @@ import { Table } from '~/components/ui/intent-ui/table'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import type { users } from '~/db/schema'
 import { EditUserModal } from '~/features/users/components/edit-user-modal'
-import { UserDeleteButton } from '~/features/users/components/user-delete-button'
+import { UserRetireButton } from '~/features/users/components/user-retire-button'
 import type { client } from '~/lib/rpc'
 import { urls } from '~/lib/urls'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
@@ -30,7 +30,7 @@ type UserTableData = Pick<
 
 const columnHelper = createColumnHelper<UserTableData>()
 
-const COLUMNS = [
+const createColumns = (currentUserRole: 'admin' | 'user') => [
   columnHelper.accessor('image', {
     header: 'アイコン',
     cell: ({ row }) => <Avatar initials={row.original.name.charAt(0)} src={row.original.image} />,
@@ -54,6 +54,7 @@ const COLUMNS = [
 
       return (
         <div className="flex items-center gap-2">
+          {/* ? layout.tsxでアクセス制限しているため、ここでのRole分岐は不要 */}
           <Tooltip delay={0}>
             <Link
               href={
@@ -88,8 +89,11 @@ const COLUMNS = [
                 name={row.original.name}
                 image={row.original.image ?? null}
               />
-              <UserDeleteButton id={row.original.id} />
             </div>
+          )}
+          {/* ? 自身でも退職時に実行できるようにするため、自分の行にもボタンは表示するものとしている */}
+          {currentUserRole === 'admin' && !row.original.isRetired && (
+            <UserRetireButton id={row.original.id} name={row.original.name} />
           )}
         </div>
       )
@@ -100,9 +104,10 @@ const COLUMNS = [
 type UsersTableProps = {
   users: InferResponseType<typeof client.api.users.$get, 200>
   currentUserId: InferSelectModel<typeof users>['id']
+  currentUserRole: 'admin' | 'user'
 }
 
-export function UsersTable({ users, currentUserId }: UsersTableProps) {
+export function UsersTable({ users, currentUserId, currentUserRole }: UsersTableProps) {
   const initialData: UserTableData[] = users.users.map((user) => ({
     id: user.id,
     email: user.email,
@@ -120,7 +125,7 @@ export function UsersTable({ users, currentUserId }: UsersTableProps) {
 
   const table = useReactTable({
     data: initialData,
-    columns: COLUMNS,
+    columns: createColumns(currentUserRole),
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     pageCount: Math.ceil(users.total / rowsPerPage),

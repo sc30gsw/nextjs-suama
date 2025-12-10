@@ -1,7 +1,9 @@
+import { forbidden, unauthorized } from 'next/navigation'
 import { AppBreadcrumbs } from '~/components/ui/app-breadcrumbs'
 import { SidebarInset, SidebarProvider } from '~/components/ui/intent-ui/sidebar'
 import { AppSidebar } from '~/components/ui/sidebar/app-sidebar'
 import { AppSidebarNav } from '~/components/ui/sidebar/app-sidebar-nav'
+import { getServerSession } from '~/lib/get-server-session'
 import type { NextLayoutProps } from '~/types'
 
 const ITEMS = [
@@ -12,7 +14,17 @@ const ITEMS = [
   },
 ] as const satisfies readonly Record<'path' | 'name', string>[]
 
-export default function UsersLayout({ children }: NextLayoutProps) {
+export default async function UsersLayout({ children }: NextLayoutProps) {
+  const session = await getServerSession()
+
+  if (!session) {
+    unauthorized()
+  }
+
+  if (session.user.role !== 'admin') {
+    forbidden()
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar collapsible="dock" />
