@@ -42,7 +42,7 @@ import { urls } from '~/lib/urls'
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   const { data: session } = authClient.useSession()
-  const isAdmin = (session?.user as { role?: string } | undefined)?.role === 'admin'
+  const isAdmin = session?.user.role === 'admin'
 
   return (
     <Sidebar {...props}>
