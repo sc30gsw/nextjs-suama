@@ -1,20 +1,28 @@
-import { IconChevronLgDown, IconCirclePerson, IconLogout, IconMoon, IconSun } from '@intentui/icons'
+import { IconCirclePerson, IconLogout, IconMoon, IconSun } from '@intentui/icons'
 import { IconCalendarEvent, IconCalendarUser, IconReport } from '@tabler/icons-react'
 import { useTheme } from 'next-themes'
 import { useToggle } from 'react-use'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
+import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { ThemeSwitch } from '~/components/ui/theme-switch'
 import { useSignOut } from '~/hooks/use-sign-out'
 import { authClient } from '~/lib/auth-client'
 import { urls } from '~/lib/urls'
-import { cn } from '~/utils/classes'
 
 export function AppSidebarNavUserMenu() {
-  const { data: session } = authClient.useSession()
+  const { data: session, isPending: isSessionPending } = authClient.useSession()
   const { logout, isPending } = useSignOut()
   const { theme } = useTheme()
   const [isOpen, toggle] = useToggle(false)
+
+  if (isSessionPending) {
+    return (
+      <div className="ml-auto flex items-center gap-x-2 md:hidden">
+        <Skeleton className="size-10 rounded-full dark:bg-input/80" />
+      </div>
+    )
+  }
 
   return (
     <Menu isOpen={isOpen} onOpenChange={toggle}>
@@ -23,9 +31,6 @@ export function AppSidebarNavUserMenu() {
           alt={session?.user.name}
           src={session?.user?.image}
           initials={session?.user.name.charAt(0)}
-        />
-        <IconChevronLgDown
-          className={cn('invisible ml-2 transition-transform md:visible', isOpen && 'rotate-180')}
         />
       </Menu.Trigger>
       <Menu.Content popover={{ placement: 'bottom end' }} className="sm:min-w-64">

@@ -6,6 +6,7 @@ import { twMerge } from 'tailwind-merge'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
 import { Menu } from '~/components/ui/intent-ui/menu'
 import { SidebarLabel, useSidebar } from '~/components/ui/intent-ui/sidebar'
+import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { ThemeSwitch } from '~/components/ui/theme-switch'
 import { useSignOut } from '~/hooks/use-sign-out'
 import { authClient } from '~/lib/auth-client'
@@ -14,10 +15,25 @@ import { cn } from '~/utils/classes'
 
 export function AppSidebarUserMenu() {
   const { state } = useSidebar()
-  const { data: session } = authClient.useSession()
+  const { data: session, isPending: isSessionPending } = authClient.useSession()
   const { logout, isPending } = useSignOut()
   const { theme } = useTheme()
   const [isOpen, toggle] = useToggle(false)
+
+  if (isSessionPending) {
+    return (
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-x-2">
+          <Skeleton className="size-10 rounded-full dark:bg-input/80" />
+          <div className="in-data-[collapsible=dock]:hidden text-sm">
+            <Skeleton className="mb-1 h-4 w-24 dark:bg-input/80" />
+            <Skeleton className="h-3 w-32 dark:bg-input/80" />
+          </div>
+        </div>
+        <Skeleton className="ml-2 size-5 group-data-[state=collapsed]:invisible dark:bg-input/80" />
+      </div>
+    )
+  }
 
   return (
     <Menu isOpen={isOpen} onOpenChange={toggle}>
