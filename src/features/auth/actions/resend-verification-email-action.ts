@@ -1,6 +1,6 @@
 'use server'
 
-import { SubmissionResult } from '@conform-to/react'
+import type { SubmissionResult } from '@conform-to/react'
 import { APIError } from 'better-auth/api'
 import { headers } from 'next/headers'
 import { ERROR_STATUS } from '~/constants/error-message'
@@ -40,15 +40,11 @@ export async function resendVerificationEmailAction() {
         status: 'error',
         error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
       } as const satisfies SubmissionResult
-      }
     }
-
-    return {
-      status: 'error',
-      error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
-    } as const satisfies SubmissionResult
   }
 
-  
-
-
+  return {
+    status: 'error',
+    error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
+  } as const satisfies SubmissionResult
+}

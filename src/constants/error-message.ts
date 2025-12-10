@@ -7,6 +7,7 @@ export const ERROR_STATUS = {
   ALREADY_EXISTS: 'AlreadyExists',
   SOMETHING_WENT_WRONG: 'SomethingWentWrong',
   EMAIL_NOT_FOUND: 'EmailNotFound',
+  INVALID_EMAIL_DOMAIN: 'InvalidEmailDomain',
   INVALID_PROJECT_RELATION: 'InvalidProjectRelation',
   INVALID_MISSION_RELATION: 'InvalidMissionRelation',
   INVALID_CLIENT_RELATION: 'InvalidClientRelation',
@@ -34,11 +35,13 @@ export function getErrorMessage(
       type === 'auth'
         ? 'メールアドレスが認証されていません。メールをご確認ください。'
         : 'アクセス権限がありません',
-    [ERROR_STATUS.EMAIL_NOT_VERIFIED]: 'メールアドレスが認証されていません。メールをご確認ください。',
+    [ERROR_STATUS.EMAIL_NOT_VERIFIED]:
+      'メールアドレスが認証されていません。メールをご確認ください。',
     [ERROR_STATUS.EMAIL_ALREADY_VERIFIED]: 'メールアドレスは既に認証されています。',
     [ERROR_STATUS.ALREADY_EXISTS]: alreadyExistMessage,
     [ERROR_STATUS.SOMETHING_WENT_WRONG]: '予期しないエラーが発生しました',
     [ERROR_STATUS.EMAIL_NOT_FOUND]: 'メールアドレスが見つかりません',
+    [ERROR_STATUS.INVALID_EMAIL_DOMAIN]: 'このメールアドレスは使用できません',
     [ERROR_STATUS.INVALID_PROJECT_RELATION]: 'プロジェクトが見つかりません',
     [ERROR_STATUS.INVALID_MISSION_RELATION]: 'ミッションが見つかりません',
     [ERROR_STATUS.INVALID_CLIENT_RELATION]: 'クライアントが見つかりません',
@@ -62,8 +65,10 @@ export const TOAST_MESSAGES = {
     SIGN_OUT_SUCCESS: 'ログアウトしました',
     SIGN_OUT_FAILED: 'ログアウトに失敗しました',
     UNAUTHORIZED: 'セッションが切れました。再度ログインしてください',
+    FOR_BIDDEN: 'アクセス権限がありません',
     EMAIL_NOT_VERIFIED: 'メールアドレスが認証されていません。メールをご確認ください。',
-    EMAIL_VERIFICATION_REQUIRED: 'メール認証が必要です。認証メールを送信しました。メールをご確認ください。',
+    EMAIL_VERIFICATION_REQUIRED:
+      'メール認証が必要です。認証メールを送信しました。メールをご確認ください。',
     SEND_VERIFICATION_EMAIL_SUCCESS: 'メール認証メールを送信しました。メールをご確認ください。',
     SEND_VERIFICATION_EMAIL_FAILED: 'メール認証メールの送信に失敗しました。',
   },
@@ -82,6 +87,8 @@ export const TOAST_MESSAGES = {
     UPDATE_FAILED: 'ユーザーの更新に失敗しました',
     DELETE_SUCCESS: 'ユーザーの削除に成功しました',
     DELETE_FAILED: 'ユーザーの削除に失敗しました',
+    RETIRE_SUCCESS: 'ユーザーを退職済みにしました',
+    RETIRE_FAILED: 'ユーザーの退職処理に失敗しました',
     NOT_FOUND: 'ユーザーが見つかりません',
     EMAIL_ALREADY_EXISTS: '入力されたメールアドレスは既に使用されています',
     PASSKEY_ADD_SUCCESS: 'Passkeyの追加に成功しました',

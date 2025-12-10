@@ -1,7 +1,7 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { and, count, eq, like, or } from 'drizzle-orm'
+import { and, asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
-import { projects } from '~/db/schema'
+import { clients, projects } from '~/db/schema'
 import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
 import { db } from '~/index'
 
@@ -45,30 +45,64 @@ export class ProjectService {
 
       const limitNumber = Number(limit) || total
 
-      const projectList = await db.query.projects.findMany({
-        where: whereClause,
-        offset: skipNumber,
-        limit: limitNumber,
-        orderBy: (projectsTable, { asc }) => [asc(projectsTable.createdAt)],
-        with: {
-          client: true,
-          missions: {
-            columns: {
-              id: true,
-            },
-          },
+      const projectList = await db
+        .select({
+          id: projects.id,
+          name: projects.name,
+          likeKeywords: projects.likeKeywords,
+          isArchived: projects.isArchived,
+          clientId: projects.clientId,
+          createdAt: projects.createdAt,
+          updatedAt: projects.updatedAt,
+          clientName: clients.name,
+          clientLikeKeywords: clients.likeKeywords,
+          clientCreatedAt: clients.createdAt,
+          clientUpdatedAt: clients.updatedAt,
+        })
+        .from(projects)
+        .innerJoin(clients, eq(projects.clientId, clients.id))
+        .where(whereClause)
+        .orderBy(asc(clients.name), asc(projects.name))
+        .limit(limitNumber)
+        .offset(skipNumber)
+
+      const projectIds = projectList.map((p) => p.id)
+
+      const missionsCount = await db.query.missions.findMany({
+        where: (missionsTable, { inArray }) => inArray(missionsTable.projectId, projectIds),
+        columns: {
+          id: true,
+          projectId: true,
         },
       })
 
+      const missionsByProjectId = missionsCount.reduce(
+        (acc, mission) => {
+          if (!acc[mission.projectId]) {
+            acc[mission.projectId] = []
+          }
+          acc[mission.projectId].push({ id: mission.id })
+          return acc
+        },
+        {} as Record<string, Array<{ id: string }>>,
+      )
+
       const formattedProjects = projectList.map((project) => ({
-        ...project,
+        id: project.id,
+        name: project.name,
+        likeKeywords: project.likeKeywords,
+        isArchived: project.isArchived,
+        clientId: project.clientId,
         createdAt: project.createdAt.toISOString(),
         updatedAt: project.updatedAt?.toISOString() ?? null,
         client: {
-          ...project.client,
-          createdAt: project.client.createdAt.toISOString(),
-          updatedAt: project.client.updatedAt?.toISOString() ?? null,
+          id: project.clientId,
+          name: project.clientName,
+          likeKeywords: project.clientLikeKeywords,
+          createdAt: project.clientCreatedAt.toISOString(),
+          updatedAt: project.clientUpdatedAt?.toISOString() ?? null,
         },
+        missions: missionsByProjectId[project.id] ?? [],
       }))
 
       return {

@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { and, count, eq, like, or } from 'drizzle-orm'
+import { and, asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { missions, projects } from '~/db/schema'
 import type { getMissionsRoute } from '~/features/report-contexts/missions/api/route'
@@ -61,7 +61,7 @@ export class MissionService {
         .from(missions)
         .innerJoin(projects, eq(missions.projectId, projects.id))
         .where(whereClause)
-        .orderBy(missions.createdAt)
+        .orderBy(asc(projects.name), asc(missions.name))
         .limit(limitNumber)
         .offset(skipNumber)
 

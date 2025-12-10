@@ -38,7 +38,7 @@ const COLUMNS = [
         <div className="flex items-center gap-2">
           <div className="flex gap-2">
             <EditAppealCategoryModal id={row.original.id} name={row.original.name} />
-            <AppealCategoryDeleteButton id={row.original.id} />
+            <AppealCategoryDeleteButton id={row.original.id} name={row.original.name} />
           </div>
         </div>
       )

@@ -14,17 +14,23 @@ import { isErrorStatus } from '~/utils'
 
 type ProjectDeleteButtonProps = Pick<
   InferResponseType<typeof client.api.projects.$get, 200>['projects'][number],
-  'id'
+  'id' | 'name'
 >
 
-export function ProjectDeleteButton({ id }: ProjectDeleteButtonProps) {
+export function ProjectDeleteButton({ id, name }: ProjectDeleteButtonProps) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = async () => {
     const ok = await Confirm.call({
-      title: 'プロジェクトを削除しますか?',
-      message:
-        'この操作は取り消せません。プロジェクトを削除すると、関連するミッションも削除されます。',
+      title: `プロジェクト "${name}"を削除しますか?`,
+      message: (
+        <>
+          この操作は取り消せません。
+          <br />
+          プロジェクト<b>"{name}"</b>を削除すると、関連するミッションも削除されます。
+        </>
+      ),
+      expectedInput: name,
     })
 
     if (!ok) {

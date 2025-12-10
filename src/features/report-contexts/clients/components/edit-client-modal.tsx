@@ -146,7 +146,10 @@ export function EditClientModal({ id, name, likeKeywords }: EditClientModalProps
                 defaultValue={lastResult?.initialValue?.likeKeywords.toString() ?? likeKeywords}
                 errorMessage={''}
               />
-              <span id={fields.likeKeywords.errorId} className="break-words text-red-500 text-sm">
+              <span
+                id={fields.likeKeywords.errorId}
+                className="wrap-wrap-break-words text-red-500 text-sm"
+              >
                 {fields.likeKeywords.errors}
               </span>
             </div>

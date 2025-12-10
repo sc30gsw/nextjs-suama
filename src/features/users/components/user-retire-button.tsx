@@ -1,6 +1,6 @@
-import { IconTrashEmpty } from '@intentui/icons'
+import { IconPersonRemove } from '@intentui/icons'
+
 import type { InferResponseType } from 'hono'
-import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
@@ -8,26 +8,31 @@ import { Loader } from '~/components/ui/intent-ui/loader'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
-import { deleteUserAction } from '~/features/users/actions/delete-user-action'
+import { retireUserAction } from '~/features/users/actions/retire-user-action'
 import { Confirm } from '~/hooks/use-confirm'
 import type { client } from '~/lib/rpc'
-import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 
-type UserDeleteButtonProps = Pick<
+type UserRetireButtonProps = Pick<
   InferResponseType<typeof client.api.users.$get, 200>['users'][number],
-  'id'
+  'id' | 'name'
 >
 
-export function UserDeleteButton({ id }: UserDeleteButtonProps) {
+export function UserRetireButton({ id, name }: UserRetireButtonProps) {
   const [isPending, startTransition] = useTransition()
-  const router = useRouter()
 
-  const handleDelete = async () => {
+  const handleRetire = async () => {
     const ok = await Confirm.call({
-      title: 'ユーザーを削除しますか?',
-      message:
-        'この操作は取り消せません。ユーザーを削除すると、関連する日報・週報も削除され、ログイン画面にリダイレクトされます。',
+      title: 'ユーザーを退職済みにしますか?',
+      message: (
+        <>
+          この操作は取り消せません。
+          <br />
+          選択したユーザー<b>"{name}"</b>が退職済みになります。
+        </>
+      ),
+      expectedInput: name,
+      placeholder: '退職者名',
     })
 
     if (!ok) {
@@ -36,7 +41,7 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
 
     startTransition(async () => {
       try {
-        const result = await deleteUserAction(id)
+        const result = await retireUserAction(id)
 
         if (result.status === 'error') {
           const errorMessage = result?.error?.message?.[0]
@@ -44,7 +49,7 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
           if (isErrorStatus(errorMessage)) {
             switch (errorMessage) {
               case ERROR_STATUS.SOMETHING_WENT_WRONG:
-                toast.error(TOAST_MESSAGES.USER.DELETE_FAILED)
+                toast.error(TOAST_MESSAGES.USER.RETIRE_FAILED)
 
                 return
 
@@ -52,17 +57,21 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
                 toast.error(TOAST_MESSAGES.AUTH.UNAUTHORIZED)
 
                 return
+
+              case ERROR_STATUS.FOR_BIDDEN:
+                toast.error(TOAST_MESSAGES.AUTH.FOR_BIDDEN)
+
+                return
             }
           }
 
-          toast.error(TOAST_MESSAGES.USER.DELETE_FAILED)
+          toast.error(TOAST_MESSAGES.USER.RETIRE_FAILED)
           return
         }
 
-        toast.success(TOAST_MESSAGES.USER.DELETE_SUCCESS)
-        router.push(urls.href({ route: '/sign-in' }))
+        toast.success(TOAST_MESSAGES.USER.RETIRE_SUCCESS)
       } catch (_) {
-        toast.error(TOAST_MESSAGES.USER.DELETE_FAILED)
+        toast.error(TOAST_MESSAGES.USER.RETIRE_FAILED)
       }
     })
   }
@@ -72,11 +81,11 @@ export function UserDeleteButton({ id }: UserDeleteButtonProps) {
       <Tooltip.Trigger
         className={buttonStyles({ size: 'sm', intent: 'danger' })}
         isDisabled={isPending}
-        onPress={handleDelete}
+        onPress={handleRetire}
       >
-        {isPending ? <Loader /> : <IconTrashEmpty />}
+        {isPending ? <Loader /> : <IconPersonRemove />}
       </Tooltip.Trigger>
-      <Tooltip.Content>削除</Tooltip.Content>
+      <Tooltip.Content>退職済みにする</Tooltip.Content>
     </Tooltip>
   )
 }

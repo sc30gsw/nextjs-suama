@@ -1,10 +1,9 @@
 import * as z from 'zod/v4'
 import { PASSWORD_REGEX } from '~/constants/validation'
+import { allowedEmailSchema } from '~/types/schemas/allwoed-email-schema'
 
 export const signInInputSchema = z.object({
-  email: z
-    .email('有効なメールアドレスを入力してください')
-    .max(128, { error: 'メールアドレスが長すぎます(最大128文字)' }),
+  email: allowedEmailSchema.max(128, { error: 'メールアドレスが長すぎます(最大128文字)' }),
   password: z
     .string({ error: 'パスワードは必須です' })
     .min(8, { error: 'パスワードは8文字以上で入力してください' })

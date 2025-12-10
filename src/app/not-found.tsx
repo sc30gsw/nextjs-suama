@@ -19,7 +19,7 @@ export default function NotFound() {
               <IconQuestionMark className="size-8 text-blue-600 dark:text-blue-500" />
             </div>
             <Card.Title className="text-xl">404 Not Found</Card.Title>
-            <Card.Description className="wrap-break-words text-center">
+            <Card.Description className="wrap-wrap-break-words text-center">
               お探しのページは見つかりませんでした。
               <br />
               URLが誤っているか、ページが削除された可能性があります。

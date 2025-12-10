@@ -101,7 +101,7 @@ export function ForgotPasswordForm({ children, backToSignIn }: ForgotPasswordFor
         </Card.Content>
         <Card.Footer className="flex w-full flex-col items-start gap-y-4">
           <Button type="submit" className="relative w-full" isDisabled={isPending}>
-            パスワードリセット画面へ
+            パスワードリセット用メールを送信
             {isPending && <Loader className="absolute top-3 right-2" />}
           </Button>
           {backToSignIn}
