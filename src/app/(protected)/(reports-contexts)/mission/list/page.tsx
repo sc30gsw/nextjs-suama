@@ -68,7 +68,12 @@ export default async function MissionListPage({
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, rowsPerPage, names })}
+            key={JSON.stringify({
+              page,
+              rowsPerPage,
+              names,
+              archiveStatus: archiveStatus ?? 'all',
+            })}
             fallback={
               <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
