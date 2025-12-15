@@ -15,10 +15,7 @@ const searchParamsParsers = {
 
 type ArchiveStatusType = 'project' | 'mission'
 
-const ARCHIVE_STATUS_DESCRIPTIONS: Record<
-  ArchiveStatusType,
-  Record<'all' | 'active' | 'archived' | 'default', string>
-> = {
+const ARCHIVE_STATUS_DESCRIPTIONS= {
   project: {
     all: 'すべてのプロジェクトを表示します',
     active: 'アクティブなプロジェクトのみを表示します',
