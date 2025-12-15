@@ -45,6 +45,28 @@ export const TroublesQuerySchema = z.object({
       example: 'true',
       description: '未解決のトラブルデータも取得する場合はtrue',
     }),
+  sortBy: z
+    .enum(['name'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortBy',
+        in: 'query',
+      },
+      example: 'name',
+      description: 'ソート対象の列 (name: カテゴリー名)',
+    }),
+  sortOrder: z
+    .enum(['asc', 'desc'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortOrder',
+        in: 'query',
+      },
+      example: 'asc',
+      description: 'ソート順 (asc: 昇順, desc: 降順)',
+    }),
 })
 
 export const TroubleCategorySchema = z.object({

@@ -14,6 +14,8 @@ export async function getUsers(
     limit?: number
     userNames?: string[]
     retirementStatus?: 'all' | 'active' | 'retired'
+    sortBy?: 'name' | 'status' | null
+    sortOrder?: 'asc' | 'desc' | null
   },
 ) {
   'use cache'
@@ -31,6 +33,8 @@ export async function getUsers(
       limit: params?.limit?.toString(),
       userNames: params?.userNames?.join(','),
       retirementStatus: params?.retirementStatus,
+      sortBy: params?.sortBy ?? undefined,
+      sortOrder: params?.sortOrder ?? undefined,
     },
   })
 

@@ -13,6 +13,8 @@ export async function getMissions(
     limit?: number
     names?: string[]
     archiveStatus?: 'all' | 'active' | 'archived'
+    sortBy?: 'name' | 'status' | 'projectName' | null
+    sortOrder?: 'asc' | 'desc' | null
   },
 ) {
   'use cache'
@@ -30,6 +32,8 @@ export async function getMissions(
       limit: params?.limit?.toString(),
       names: params?.names?.join(','),
       archiveStatus: params?.archiveStatus,
+      sortBy: params?.sortBy ?? undefined,
+      sortOrder: params?.sortOrder ?? undefined,
     },
   })
 

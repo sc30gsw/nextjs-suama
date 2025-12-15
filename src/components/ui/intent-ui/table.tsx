@@ -1,6 +1,6 @@
 'use client'
 
-import { IconChevronLgDown, IconHamburger } from '@intentui/icons'
+import { IconChevronLgDown, IconChevronsY, IconHamburger } from '@intentui/icons'
 import React from 'react'
 import type {
   CellProps,
@@ -125,9 +125,17 @@ const columnStyles = tv({
 interface TableColumnProps extends ColumnProps {
   className?: string
   isResizable?: boolean
+  onSortClick?: () => void
+  sortDirectionOverride?: 'ascending' | 'descending' | null
 }
 
-const TableColumn = ({ isResizable = false, className, ...props }: TableColumnProps) => {
+const TableColumn = ({
+  isResizable = false,
+  className,
+  onSortClick,
+  sortDirectionOverride,
+  ...props
+}: TableColumnProps) => {
   return (
     <Column
       data-slot="table-column"
@@ -137,23 +145,49 @@ const TableColumn = ({ isResizable = false, className, ...props }: TableColumnPr
         className,
       })}
     >
-      {({ allowsSorting, sortDirection, isHovered }) => (
-        <div className="flex items-center gap-2 **:data-[slot=icon]:shrink-0">
-          {props.children as React.ReactNode}
-          {allowsSorting && (
-            <span
-              className={twMerge(
-                'grid size-[1.15rem] flex-none shrink-0 place-content-center rounded bg-secondary text-fg *:data-[slot=icon]:size-3.5 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:transition-transform *:data-[slot=icon]:duration-200',
-                isHovered ? 'bg-secondary-fg/10' : '',
-                className,
-              )}
-            >
-              <IconChevronLgDown className={sortDirection === 'ascending' ? 'rotate-180' : ''} />
-            </span>
-          )}
-          {isResizable && <ColumnResizer />}
-        </div>
-      )}
+      {({ allowsSorting, sortDirection, isHovered }) => {
+        const effectiveSortDirection =
+          sortDirectionOverride !== undefined ? sortDirectionOverride : sortDirection
+
+        return (
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 border-none bg-transparent p-0 text-left disabled:cursor-default disabled:opacity-100 **:data-[slot=icon]:shrink-0"
+            onClick={
+              onSortClick && allowsSorting
+                ? (e) => {
+                    e.stopPropagation()
+                    onSortClick()
+                  }
+                : undefined
+            }
+            disabled={!onSortClick || !allowsSorting}
+          >
+            {props.children as React.ReactNode}
+            {allowsSorting && (
+              <span
+                className={twMerge(
+                  'grid size-[1.15rem] flex-none shrink-0 place-content-center rounded bg-secondary text-fg *:data-[slot=icon]:size-3.5 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:transition-transform *:data-[slot=icon]:duration-200',
+                  isHovered ? 'bg-secondary-fg/10' : '',
+                  className,
+                )}
+              >
+                {effectiveSortDirection === null ? (
+                  <IconChevronsY className="size-3.5" />
+                ) : (
+                  <IconChevronLgDown
+                    className={twMerge(
+                      'size-3.5 transition-transform duration-200',
+                      effectiveSortDirection === 'ascending' ? 'rotate-180' : '',
+                    )}
+                  />
+                )}
+              </span>
+            )}
+            {isResizable && <ColumnResizer />}
+          </button>
+        )
+      }}
     </Column>
   )
 }

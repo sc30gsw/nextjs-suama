@@ -6,7 +6,7 @@ import { UserService, UserServiceError } from '~/features/users/api/service'
 const userService = new UserService()
 
 export async function getUsersHandler(c: Parameters<RouteHandler<typeof getUsersRoute>>[0]) {
-  const { skip, limit, userNames, retirementStatus } = c.req.valid('query')
+  const { skip, limit, userNames, retirementStatus, sortBy, sortOrder } = c.req.valid('query')
 
   try {
     const result = await userService.getUsers({
@@ -14,6 +14,8 @@ export async function getUsersHandler(c: Parameters<RouteHandler<typeof getUsers
       limit,
       userNames,
       retirementStatus,
+      sortBy,
+      sortOrder,
     })
 
     return c.json(result, 200)

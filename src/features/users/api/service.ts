@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { and, count, eq, like, or } from 'drizzle-orm'
+import { and, type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { users } from '~/db/schema'
 import type { getUsersRoute } from '~/features/users/api/route'
@@ -16,7 +16,7 @@ export class UserService {
   async getUsers(
     params: ReturnType<Parameters<RouteHandler<typeof getUsersRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, userNames, retirementStatus } = params
+    const { skip, limit, userNames, retirementStatus, sortBy, sortOrder } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
@@ -51,7 +51,28 @@ export class UserService {
         where: whereClause,
         offset: skipNumber,
         limit: limitNumber,
-        orderBy: (usersTable, { asc }) => [asc(usersTable.isRetired), asc(usersTable.createdAt)],
+        orderBy: (usersTable, { asc: ascFn, desc: descFn }) => {
+          const orderByArray: ReturnType<typeof asc>[] = []
+
+          if (sortBy && sortOrder) {
+            if (sortBy === 'name') {
+              orderByArray.push(
+                sortOrder === 'asc' ? ascFn(usersTable.name) : descFn(usersTable.name),
+              )
+            } else if (sortBy === 'status') {
+              orderByArray.push(
+                sortOrder === 'asc' ? ascFn(usersTable.isRetired) : descFn(usersTable.isRetired),
+              )
+            }
+            orderByArray.push(ascFn(usersTable.isRetired))
+          } else {
+            orderByArray.push(ascFn(usersTable.isRetired))
+          }
+
+          orderByArray.push(ascFn(usersTable.createdAt))
+
+          return orderByArray
+        },
       })
 
       const total = await db.select({ count: count() }).from(users).where(whereClause)

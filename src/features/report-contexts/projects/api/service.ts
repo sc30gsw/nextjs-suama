@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { and, asc, count, eq, like, or } from 'drizzle-orm'
+import { and, asc, count, desc, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { clients, projects } from '~/db/schema'
 import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
@@ -16,7 +16,7 @@ export class ProjectService {
   async getProjects(
     params: ReturnType<Parameters<RouteHandler<typeof getProjectsRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, names, archiveStatus } = params
+    const { skip, limit, names, archiveStatus, sortBy, sortOrder } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
@@ -74,7 +74,31 @@ export class ProjectService {
         .from(projects)
         .innerJoin(clients, eq(projects.clientId, clients.id))
         .where(whereClause)
-        .orderBy(asc(clients.name), asc(projects.name))
+        .orderBy(
+          ...(() => {
+            const orderByArray: ReturnType<typeof asc>[] = []
+
+            if (sortBy && sortOrder) {
+              if (sortBy === 'name') {
+                orderByArray.push(sortOrder === 'asc' ? asc(projects.name) : desc(projects.name))
+              } else if (sortBy === 'status') {
+                orderByArray.push(
+                  sortOrder === 'asc' ? asc(projects.isArchived) : desc(projects.isArchived),
+                )
+              } else if (sortBy === 'clientName') {
+                orderByArray.push(sortOrder === 'asc' ? asc(clients.name) : desc(clients.name))
+              }
+              orderByArray.push(asc(projects.isArchived))
+            } else {
+              orderByArray.push(asc(projects.isArchived))
+            }
+
+            orderByArray.push(asc(clients.name))
+            orderByArray.push(asc(projects.name))
+
+            return orderByArray
+          })(),
+        )
         .limit(limitNumber)
         .offset(skipNumber)
 

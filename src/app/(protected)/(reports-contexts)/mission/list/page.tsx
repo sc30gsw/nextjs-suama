@@ -12,9 +12,9 @@ import { ReportContextTablePagination } from '~/features/report-contexts/compone
 import { CreateMissionModal } from '~/features/report-contexts/missions/components/create-mission-modal'
 import { MissionsTable } from '~/features/report-contexts/missions/components/missions-table'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
+import { missionSearchParamsCache } from '~/features/report-contexts/missions/types/search-params/mission-search-params-cache'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import { archiveStatusSearchParamsCache } from '~/features/report-contexts/types/search-params/archive-status-search-params-cache'
-import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
@@ -32,17 +32,20 @@ export default async function MissionListPage({
 
   const resolvedSearchParams = await searchParams
 
-  const [{ names }, { archiveStatus }, { page, rowsPerPage }] = await Promise.all([
-    nameSearchParamsCache.parse(resolvedSearchParams),
-    archiveStatusSearchParamsCache.parse(resolvedSearchParams),
-    paginationSearchParamsCache.parse(resolvedSearchParams),
-  ])
+  const [{ names, sortBy, sortOrder }, { archiveStatus }, { page, rowsPerPage }] =
+    await Promise.all([
+      missionSearchParamsCache.parse(resolvedSearchParams),
+      archiveStatusSearchParamsCache.parse(resolvedSearchParams),
+      paginationSearchParamsCache.parse(resolvedSearchParams),
+    ])
 
   const missionsPromise = getMissions(session.user.id, {
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
     archiveStatus: archiveStatus ?? 'all',
+    sortBy: sortBy ?? null,
+    sortOrder: sortOrder ?? null,
   })
 
   const projectsPromise = getProjects(session.user.id, { archiveStatus: 'all' })
@@ -73,6 +76,8 @@ export default async function MissionListPage({
               rowsPerPage,
               names,
               archiveStatus: archiveStatus ?? 'all',
+              sortBy,
+              sortOrder,
             })}
             fallback={
               <table className="w-full text-left font-normal text-sm">

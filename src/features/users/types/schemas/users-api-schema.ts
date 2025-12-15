@@ -46,6 +46,28 @@ export const UsersQuerySchema = z.object({
       description:
         '在籍状態でフィルタリング (all: すべて表示, active: 在職中のみ, retired: 退職済みのみ)',
     }),
+  sortBy: z
+    .enum(['name', 'status'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortBy',
+        in: 'query',
+      },
+      example: 'name',
+      description: 'ソート対象の列 (name: ユーザー名, status: 在籍状態)',
+    }),
+  sortOrder: z
+    .enum(['asc', 'desc'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortOrder',
+        in: 'query',
+      },
+      example: 'asc',
+      description: 'ソート順 (asc: 昇順, desc: 降順)',
+    }),
 })
 
 export const UserSchema = z

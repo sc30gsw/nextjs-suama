@@ -56,6 +56,28 @@ export const AppealsQuerySchema = z.object({
       example: 'report_123',
       description: '日報ID（withData=trueの場合に指定）',
     }),
+  sortBy: z
+    .enum(['name'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortBy',
+        in: 'query',
+      },
+      example: 'name',
+      description: 'ソート対象の列 (name: カテゴリー名)',
+    }),
+  sortOrder: z
+    .enum(['asc', 'desc'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortOrder',
+        in: 'query',
+      },
+      example: 'asc',
+      description: 'ソート順 (asc: 昇順, desc: 降順)',
+    }),
 })
 
 export const AppealCategorySchema = z.object({

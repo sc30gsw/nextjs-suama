@@ -24,16 +24,19 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
     unauthorized()
   }
 
-  const [{ userNames, retirementStatus }, { page, rowsPerPage }] = await Promise.all([
-    userSearchParamsCache.parse(searchParams),
-    paginationSearchParamsCache.parse(searchParams),
-  ])
+  const [{ userNames, retirementStatus, sortBy, sortOrder }, { page, rowsPerPage }] =
+    await Promise.all([
+      userSearchParamsCache.parse(searchParams),
+      paginationSearchParamsCache.parse(searchParams),
+    ])
 
   const usersPromise = getUsers(session.user.id, {
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     userNames,
     retirementStatus: retirementStatus ?? 'all',
+    sortBy: sortBy ?? null,
+    sortOrder: sortOrder ?? null,
   })
 
   return (
@@ -47,7 +50,14 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, rowsPerPage, userNames, retirementStatus })}
+            key={JSON.stringify({
+              page,
+              rowsPerPage,
+              userNames,
+              retirementStatus,
+              sortBy,
+              sortOrder,
+            })}
             fallback={
               <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
@@ -117,7 +127,14 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
                 redirect(
                   urls.build({
                     route: '/users',
-                    searchParams: { page: pageCount, rowsPerPage, userNames, retirementStatus },
+                    searchParams: {
+                      page: pageCount,
+                      rowsPerPage,
+                      userNames,
+                      retirementStatus,
+                      sortBy,
+                      sortOrder,
+                    },
                   } as Parameters<typeof urls.build>[0] & {
                     searchParams?: Record<string, unknown>
                   }).href,

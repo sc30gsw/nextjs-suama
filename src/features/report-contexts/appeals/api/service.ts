@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { count, eq, like, or } from 'drizzle-orm'
+import { type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { appeals, categoryOfAppeals } from '~/db/schema'
 import type { getAppealCategoriesRoute } from '~/features/report-contexts/appeals/api/route'
@@ -18,7 +18,7 @@ export class AppealService {
       Parameters<RouteHandler<typeof getAppealCategoriesRoute>>[0]['req']['valid']
     >,
   ) {
-    const { skip, limit, names, withData, reportId } = params
+    const { skip, limit, names, withData, reportId, sortBy, sortOrder } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
@@ -34,16 +34,29 @@ export class AppealService {
         where: whereClause,
         offset: skipNumber,
         limit: limitNumber,
-        orderBy: (categoryOfAppealsTable, { asc }) => [asc(categoryOfAppealsTable.createdAt)],
+        orderBy: (categoryOfAppealsTable, { asc: ascFn, desc: descFn }) => {
+          const orderByArray: ReturnType<typeof asc>[] = []
+
+          if (sortBy && sortOrder && sortBy === 'name') {
+            orderByArray.push(
+              sortOrder === 'asc'
+                ? ascFn(categoryOfAppealsTable.name)
+                : descFn(categoryOfAppealsTable.name),
+            )
+          }
+
+          orderByArray.push(ascFn(categoryOfAppealsTable.createdAt))
+
+          return orderByArray
+        },
       })
 
       const total = await db.select({ count: count() }).from(categoryOfAppeals).where(whereClause)
 
-      let existingAppeals: {
-        id: string
-        categoryOfAppealId: string
-        appeal: string
-      }[] = []
+      let existingAppeals: Pick<
+        typeof appeals.$inferSelect,
+        'id' | 'categoryOfAppealId' | 'appeal'
+      >[] = []
 
       if (withData === 'true' && reportId) {
         const appealsData = await db.query.appeals.findMany({

@@ -6,13 +6,15 @@ import { ClientService, ClientServiceError } from '~/features/report-contexts/cl
 const clientService = new ClientService()
 
 export async function getClientsHandler(c: Parameters<RouteHandler<typeof getClientsRoute>>[0]) {
-  const { skip, limit, names } = c.req.valid('query')
+  const { skip, limit, names, sortBy, sortOrder } = c.req.valid('query')
 
   try {
     const result = await clientService.getClients({
       skip,
       limit,
       names,
+      sortBy,
+      sortOrder,
     })
 
     return c.json(result, 200)
