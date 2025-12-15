@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { asc, count, desc, like, or } from 'drizzle-orm'
+import { count, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { clients } from '~/db/schema'
 import type { getClientsRoute } from '~/features/report-contexts/clients/api/route'
@@ -38,15 +38,15 @@ export class ClientService {
         limit: limitNumber,
         orderBy: (clientsTable, { asc: ascFn, desc: descFn }) => {
           const orderByArray = []
-          
-          // sortパラメータがある場合
+
           if (sortBy && sortOrder && sortBy === 'name') {
-            orderByArray.push(sortOrder === 'asc' ? ascFn(clientsTable.name) : descFn(clientsTable.name))
+            orderByArray.push(
+              sortOrder === 'asc' ? ascFn(clientsTable.name) : descFn(clientsTable.name),
+            )
           }
-          
-          // 常にcreatedAtでソート（セカンダリソート）
+
           orderByArray.push(ascFn(clientsTable.createdAt))
-          
+
           return orderByArray
         },
       })
