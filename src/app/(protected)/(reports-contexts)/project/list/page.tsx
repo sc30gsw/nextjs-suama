@@ -13,8 +13,8 @@ import { ReportContextTablePagination } from '~/features/report-contexts/compone
 import { CreateProjectModal } from '~/features/report-contexts/projects/components/create-project-modal'
 import { ProjectsTable } from '~/features/report-contexts/projects/components/projects-table'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
+import { projectSearchParamsCache } from '~/features/report-contexts/projects/types/search-params/project-search-params-cache'
 import { archiveStatusSearchParamsCache } from '~/features/report-contexts/types/search-params/archive-status-search-params-cache'
-import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
@@ -34,7 +34,7 @@ export default async function ProjectListPage({
 
   const [{ names, sortBy, sortOrder }, { archiveStatus }, { page, rowsPerPage }] =
     await Promise.all([
-      nameSearchParamsCache.parse(resolvedSearchParams),
+      projectSearchParamsCache.parse(resolvedSearchParams),
       archiveStatusSearchParamsCache.parse(resolvedSearchParams),
       paginationSearchParamsCache.parse(resolvedSearchParams),
     ])

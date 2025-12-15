@@ -13,7 +13,7 @@ export async function getMissions(
     limit?: number
     names?: string[]
     archiveStatus?: 'all' | 'active' | 'archived'
-    sortBy?: 'name' | 'status' | null
+    sortBy?: 'name' | 'status' | 'projectName' | null
     sortOrder?: 'asc' | 'desc' | null
   },
 ) {

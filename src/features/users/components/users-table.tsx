@@ -18,6 +18,7 @@ import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import type { users } from '~/db/schema'
 import { EditUserModal } from '~/features/users/components/edit-user-modal'
 import { UserRetireButton } from '~/features/users/components/user-retire-button'
+import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
 import type { client } from '~/lib/rpc'
 import { urls } from '~/lib/urls'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
@@ -34,21 +35,27 @@ const createColumns = (currentUserRole: 'admin' | 'user') => [
   columnHelper.accessor('image', {
     header: 'アイコン',
     cell: ({ row }) => <Avatar initials={row.original.name.charAt(0)} src={row.original.image} />,
+    enableSorting: false,
   }),
   columnHelper.accessor('email', {
     header: 'メールアドレス',
     cell: (info) => info.getValue(),
+    enableSorting: false,
   }),
   columnHelper.accessor('name', {
     header: 'ユーザー名',
     cell: (info) => info.getValue(),
+    enableSorting: true,
   }),
   columnHelper.accessor('isRetired', {
+    id: 'status',
     header: '在籍状態',
     cell: (info) => (info.getValue() ? '退職済み' : '在籍中'),
+    enableSorting: true,
   }),
   columnHelper.accessor('operate', {
     header: '操作',
+    enableSorting: false,
     cell: ({ row }) => {
       const isCurrentUser = row.original.id === row.original.currentUserId
 
@@ -118,17 +125,53 @@ export function UsersTable({ users, currentUserId, currentUserRole }: UsersTable
     currentUserId,
   }))
 
-  const [{ rowsPerPage }] = useQueryStates(paginationSearchParamsParsers, {
-    history: 'push',
-    shallow: false,
-  })
+  const [{ rowsPerPage, sortBy, sortOrder }, setQueryStates] = useQueryStates(
+    {
+      ...paginationSearchParamsParsers,
+      ...userSearchParamsParsers,
+    },
+    {
+      history: 'push',
+      shallow: false,
+    },
+  )
+
+  const sortingState = sortBy
+    ? [
+        {
+          id: sortBy,
+          desc: sortOrder === 'desc',
+        },
+      ]
+    : []
 
   const table = useReactTable({
     data: initialData,
     columns: createColumns(currentUserRole),
     getCoreRowModel: getCoreRowModel(),
+    enableSorting: true,
+    manualSorting: true,
     manualPagination: true,
     pageCount: Math.ceil(users.total / rowsPerPage),
+    state: {
+      sorting: sortingState,
+    },
+    onSortingChange: (updater) => {
+      const newSorting = typeof updater === 'function' ? updater(sortingState) : updater
+      const firstSort = newSorting[0]
+
+      if (firstSort) {
+        setQueryStates({
+          sortBy: firstSort.id === 'name' ? 'name' : firstSort.id === 'status' ? 'status' : null,
+          sortOrder: firstSort.desc ? 'desc' : 'asc',
+        })
+      } else {
+        setQueryStates({
+          sortBy: null,
+          sortOrder: null,
+        })
+      }
+    },
   })
 
   return (
@@ -136,13 +179,40 @@ export function UsersTable({ users, currentUserId, currentUserRole }: UsersTable
       <Table.Header>
         {table.getHeaderGroups().map((headerGroup) => (
           <Table.Row key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <Table.Column key={header.id} isRowHeader={true}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(header.column.columnDef.header, header.getContext())}
-              </Table.Column>
-            ))}
+            {headerGroup.headers.map((header) => {
+              const canSort = header.column.getCanSort()
+              const toggleSortingHandler = canSort
+                ? header.column.getToggleSortingHandler()
+                : undefined
+              const sortedState = header.column.getIsSorted()
+              return (
+                <Table.Column
+                  key={header.id}
+                  isRowHeader={true}
+                  allowsSorting={canSort}
+                  sortDirectionOverride={
+                    sortedState === false
+                      ? null
+                      : sortedState === 'asc'
+                        ? 'ascending'
+                        : sortedState === 'desc'
+                          ? 'descending'
+                          : null
+                  }
+                  onSortClick={
+                    toggleSortingHandler
+                      ? () => {
+                          toggleSortingHandler({} as React.MouseEvent)
+                        }
+                      : undefined
+                  }
+                >
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </Table.Column>
+              )
+            })}
           </Table.Row>
         ))}
       </Table.Header>

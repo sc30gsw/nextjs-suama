@@ -13,7 +13,7 @@ export async function getProjects(
     limit?: number
     names?: string[]
     archiveStatus?: 'all' | 'active' | 'archived'
-    sortBy?: 'name' | 'status' | null
+    sortBy?: 'name' | 'status' | 'clientName' | null
     sortOrder?: 'asc' | 'desc' | null
   },
 ) {

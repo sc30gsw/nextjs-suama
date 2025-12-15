@@ -43,10 +43,11 @@ export const MissionsQuerySchema = z.object({
         in: 'query',
       },
       example: 'all',
-      description: 'アーカイブ状態でフィルタリング (all: すべて表示, active: アクティブのみ, archived: アーカイブ済みのみ)',
+      description:
+        'アーカイブ状態でフィルタリング (all: すべて表示, active: アクティブのみ, archived: アーカイブ済みのみ)',
     }),
   sortBy: z
-    .enum(['name', 'status'])
+    .enum(['name', 'status', 'projectName'])
     .optional()
     .openapi({
       param: {
@@ -54,7 +55,8 @@ export const MissionsQuerySchema = z.object({
         in: 'query',
       },
       example: 'name',
-      description: 'ソート対象の列 (name: ミッション名, status: プロジェクトアーカイブ状態)',
+      description:
+        'ソート対象の列 (name: ミッション名, status: プロジェクトアーカイブ状態, projectName: プロジェクト名)',
     }),
   sortOrder: z
     .enum(['asc', 'desc'])

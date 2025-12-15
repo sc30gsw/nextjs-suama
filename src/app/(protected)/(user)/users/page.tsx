@@ -50,7 +50,14 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, rowsPerPage, userNames, retirementStatus, sortBy, sortOrder })}
+            key={JSON.stringify({
+              page,
+              rowsPerPage,
+              userNames,
+              retirementStatus,
+              sortBy,
+              sortOrder,
+            })}
             fallback={
               <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">

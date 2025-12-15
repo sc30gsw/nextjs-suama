@@ -82,8 +82,9 @@ export class MissionService {
                 orderByArray.push(
                   sortOrder === 'asc' ? asc(projects.isArchived) : desc(projects.isArchived),
                 )
+              } else if (sortBy === 'projectName') {
+                orderByArray.push(sortOrder === 'asc' ? asc(projects.name) : desc(projects.name))
               }
-
               orderByArray.push(asc(projects.isArchived))
             } else {
               orderByArray.push(asc(projects.isArchived))

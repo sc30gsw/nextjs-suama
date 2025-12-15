@@ -85,8 +85,9 @@ export class ProjectService {
                 orderByArray.push(
                   sortOrder === 'asc' ? asc(projects.isArchived) : desc(projects.isArchived),
                 )
+              } else if (sortBy === 'clientName') {
+                orderByArray.push(sortOrder === 'asc' ? asc(clients.name) : desc(clients.name))
               }
-
               orderByArray.push(asc(projects.isArchived))
             } else {
               orderByArray.push(asc(projects.isArchived))

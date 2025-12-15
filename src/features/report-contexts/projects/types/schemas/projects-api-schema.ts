@@ -43,10 +43,11 @@ export const ProjectsQuerySchema = z.object({
         in: 'query',
       },
       example: 'all',
-      description: 'アーカイブ状態でフィルタリング (all: すべて表示, active: アクティブのみ, archived: アーカイブ済みのみ)',
+      description:
+        'アーカイブ状態でフィルタリング (all: すべて表示, active: アクティブのみ, archived: アーカイブ済みのみ)',
     }),
   sortBy: z
-    .enum(['name', 'status'])
+    .enum(['name', 'status', 'clientName'])
     .optional()
     .openapi({
       param: {
@@ -54,7 +55,8 @@ export const ProjectsQuerySchema = z.object({
         in: 'query',
       },
       example: 'name',
-      description: 'ソート対象の列 (name: プロジェクト名, status: アーカイブ状態)',
+      description:
+        'ソート対象の列 (name: プロジェクト名, status: アーカイブ状態, clientName: クライアント名)',
     }),
   sortOrder: z
     .enum(['asc', 'desc'])
