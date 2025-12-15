@@ -9,14 +9,14 @@ import {
 const projectService = new ProjectService()
 
 export async function getProjectsHandler(c: Parameters<RouteHandler<typeof getProjectsRoute>>[0]) {
-  const { skip, limit, names, isArchived } = c.req.valid('query')
+  const { skip, limit, names, archiveStatus } = c.req.valid('query')
 
   try {
     const result = await projectService.getProjects({
       skip,
       limit,
       names,
-      isArchived,
+      archiveStatus,
     })
 
     return c.json(result, 200)

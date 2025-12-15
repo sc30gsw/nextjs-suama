@@ -34,16 +34,16 @@ export const ProjectsQuerySchema = z.object({
       example: 'ProjectA,ProjectB',
       description: 'カンマ区切りのプロジェクト名フィルター',
     }),
-  isArchived: z
-    .enum(['true', 'false'])
+  archiveStatus: z
+    .enum(['all', 'active', 'archived'])
     .optional()
     .openapi({
       param: {
-        name: 'isArchived',
+        name: 'archiveStatus',
         in: 'query',
       },
-      example: 'false',
-      description: 'アーカイブ済みプロジェクトを含めるかどうか (true/false)',
+      example: 'all',
+      description: 'アーカイブ状態でフィルタリング (all: すべて表示, active: アクティブのみ, archived: アーカイブ済みのみ)',
     }),
 })
 

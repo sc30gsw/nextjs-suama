@@ -6,6 +6,7 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { TablePagination } from '~/components/ui/pagination/table-pagination'
+import { RetiredFilterRadioGroup } from '~/features/users/components/retired-filter-radio-group'
 import { UserSearchTagField } from '~/features/users/components/user-search-tag-field'
 import { UsersTable } from '~/features/users/components/users-table'
 import { getUsers } from '~/features/users/server/fetcher'
@@ -23,7 +24,7 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
     unauthorized()
   }
 
-  const [{ userNames }, { page, rowsPerPage }] = await Promise.all([
+  const [{ userNames, retirementStatus }, { page, rowsPerPage }] = await Promise.all([
     userSearchParamsCache.parse(searchParams),
     paginationSearchParamsCache.parse(searchParams),
   ])
@@ -32,19 +33,21 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     userNames,
+    retirementStatus: retirementStatus ?? 'all',
   })
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
       <Heading>ユーザー一覧</Heading>
-      <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">
+      <div className="flex flex-col gap-y-4">
         <UserSearchTagField />
+        <RetiredFilterRadioGroup />
         <RowsPerPageSelect />
       </div>
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, rowsPerPage, userNames })}
+            key={JSON.stringify({ page, rowsPerPage, userNames, retirementStatus })}
             fallback={
               <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
@@ -114,7 +117,7 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
                 redirect(
                   urls.build({
                     route: '/users',
-                    searchParams: { page: pageCount, rowsPerPage, userNames },
+                    searchParams: { page: pageCount, rowsPerPage, userNames, retirementStatus },
                   } as Parameters<typeof urls.build>[0] & {
                     searchParams?: Record<string, unknown>
                   }).href,

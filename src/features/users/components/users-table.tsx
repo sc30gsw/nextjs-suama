@@ -44,7 +44,7 @@ const createColumns = (currentUserRole: 'admin' | 'user') => [
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('isRetired', {
-    header: '退職済み',
+    header: '在籍状態',
     cell: (info) => (info.getValue() ? '退職済み' : '在籍中'),
   }),
   columnHelper.accessor('operate', {

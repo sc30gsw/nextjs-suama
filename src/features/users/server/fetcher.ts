@@ -9,7 +9,12 @@ import { client } from '~/lib/rpc'
 
 export async function getUsers(
   userId: Session['userId'],
-  params?: { skip: number; limit: number; userNames: string[] },
+  params?: {
+    skip?: number
+    limit?: number
+    userNames?: string[]
+    retirementStatus?: 'all' | 'active' | 'retired'
+  },
 ) {
   'use cache'
   cacheTag(GET_USERS_CACHE_KEY)
@@ -22,7 +27,10 @@ export async function getUsers(
       Authorization: userId,
     },
     params: {
-      ...params,
+      skip: params?.skip?.toString(),
+      limit: params?.limit?.toString(),
+      userNames: params?.userNames?.join(','),
+      retirementStatus: params?.retirementStatus,
     },
   })
 

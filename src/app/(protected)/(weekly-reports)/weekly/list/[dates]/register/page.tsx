@@ -69,7 +69,7 @@ export default async function WeeklyReportRegisterPage({
 
   const count = weeklyReportEntry.count
 
-  const projectPromise = getProjects(session.user.id, { isArchived: false })
+  const projectPromise = getProjects(session.user.id, { archiveStatus: 'active' })
   const missionPromise = getMissions(session.user.id, { isArchived: false })
 
   const promises = Promise.all([projectPromise, missionPromise])

@@ -37,9 +37,10 @@ export default async function MissionListPage({
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
+    isArchived: true,
   })
 
-  const projectsPromise = getProjects(session.user.id, { isArchived: true })
+  const projectsPromise = getProjects(session.user.id, { archiveStatus: 'all' })
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
