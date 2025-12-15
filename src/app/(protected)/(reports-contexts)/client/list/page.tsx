@@ -27,7 +27,7 @@ export default async function ClientListPage({
     unauthorized()
   }
 
-  const [{ names }, { page, rowsPerPage }] = await Promise.all([
+  const [{ names, sortBy, sortOrder }, { page, rowsPerPage }] = await Promise.all([
     nameSearchParamsCache.parse(searchParams),
     paginationSearchParamsCache.parse(searchParams),
   ])
@@ -36,6 +36,8 @@ export default async function ClientListPage({
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
+    sortBy: sortBy ?? null,
+    sortOrder: sortOrder ?? null,
   })
 
   return (
@@ -54,7 +56,7 @@ export default async function ClientListPage({
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, rowsPerPage, names })}
+            key={JSON.stringify({ page, rowsPerPage, names, sortBy, sortOrder })}
             fallback={
               <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">
@@ -116,7 +118,7 @@ export default async function ClientListPage({
                 redirect(
                   urls.build({
                     route: '/client/list',
-                    searchParams: { page: pageCount, rowsPerPage, names },
+                    searchParams: { page: pageCount, rowsPerPage, names, sortBy, sortOrder },
                   } as Parameters<typeof urls.build>[0] & {
                     searchParams?: Record<string, unknown>
                   }).href,

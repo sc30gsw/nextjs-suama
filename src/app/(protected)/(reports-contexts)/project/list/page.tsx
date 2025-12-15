@@ -32,17 +32,20 @@ export default async function ProjectListPage({
 
   const resolvedSearchParams = await searchParams
 
-  const [{ names }, { archiveStatus }, { page, rowsPerPage }] = await Promise.all([
-    nameSearchParamsCache.parse(resolvedSearchParams),
-    archiveStatusSearchParamsCache.parse(resolvedSearchParams),
-    paginationSearchParamsCache.parse(resolvedSearchParams),
-  ])
+  const [{ names, sortBy, sortOrder }, { archiveStatus }, { page, rowsPerPage }] =
+    await Promise.all([
+      nameSearchParamsCache.parse(resolvedSearchParams),
+      archiveStatusSearchParamsCache.parse(resolvedSearchParams),
+      paginationSearchParamsCache.parse(resolvedSearchParams),
+    ])
 
   const projectsPromise = getProjects(session.user.id, {
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
     archiveStatus: archiveStatus ?? 'all',
+    sortBy: sortBy ?? null,
+    sortOrder: sortOrder ?? null,
   })
   const clientsPromise = getClients(session.user.id, undefined)
 
@@ -73,6 +76,8 @@ export default async function ProjectListPage({
               rowsPerPage,
               names,
               archiveStatus: archiveStatus ?? 'all',
+              sortBy,
+              sortOrder,
             })}
             fallback={
               <table className="w-full text-left font-normal text-sm">
@@ -150,6 +155,8 @@ export default async function ProjectListPage({
                       rowsPerPage,
                       names,
                       archiveStatus: archiveStatus ?? 'all',
+                      sortBy,
+                      sortOrder,
                     },
                   } as Parameters<typeof urls.build>[0] & {
                     searchParams?: Record<string, unknown>

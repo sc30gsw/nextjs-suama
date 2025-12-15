@@ -13,6 +13,8 @@ export async function getTroubleCategories(
     limit?: number
     names?: string[]
     withData?: boolean
+    sortBy?: 'name' | 'status' | null
+    sortOrder?: 'asc' | 'desc' | null
   },
 ) {
   'use cache'
@@ -30,6 +32,8 @@ export async function getTroubleCategories(
     },
     params: {
       ...params,
+      sortBy: params?.sortBy ?? undefined,
+      sortOrder: params?.sortOrder ?? undefined,
     },
   })
 

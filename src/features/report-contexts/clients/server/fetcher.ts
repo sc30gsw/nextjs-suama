@@ -8,7 +8,13 @@ import { client } from '~/lib/rpc'
 
 export async function getClients(
   userId: Session['userId'],
-  params?: { skip: number; limit: number; names: string[] },
+  params?: {
+    skip: number
+    limit: number
+    names: string[]
+    sortBy?: 'name' | 'status' | null
+    sortOrder?: 'asc' | 'desc' | null
+  },
 ) {
   'use cache'
   cacheTag(GET_CLIENTS_CACHE_KEY)
@@ -22,6 +28,8 @@ export async function getClients(
     },
     params: {
       ...params,
+      sortBy: params?.sortBy ?? undefined,
+      sortOrder: params?.sortOrder ?? undefined,
     },
   })
 

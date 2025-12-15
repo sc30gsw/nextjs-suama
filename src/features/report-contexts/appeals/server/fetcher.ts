@@ -16,6 +16,8 @@ export async function getAppealCategories(
     names?: string[]
     withData?: boolean
     reportId?: InferSelectModel<typeof dailyReports>['id']
+    sortBy?: 'name' | 'status' | null
+    sortOrder?: 'asc' | 'desc' | null
   },
 ) {
   'use cache'
@@ -33,6 +35,8 @@ export async function getAppealCategories(
     },
     params: {
       ...params,
+      sortBy: params?.sortBy ?? undefined,
+      sortOrder: params?.sortOrder ?? undefined,
     },
   })
 

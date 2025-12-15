@@ -1,6 +1,6 @@
 import type { RouteHandler } from '@hono/zod-openapi'
 import type { Session } from 'better-auth'
-import { and, count, eq, like, or } from 'drizzle-orm'
+import { and, type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { categoryOfTroubles, troubles } from '~/db/schema'
 import type { getTroubleCategoriesRoute } from '~/features/report-contexts/troubles/api/route'
@@ -20,7 +20,7 @@ export class TroubleService {
     >,
     userId: Session['userId'],
   ) {
-    const { skip, limit, names, withData } = params
+    const { skip, limit, names, withData, sortBy, sortOrder } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
@@ -36,17 +36,29 @@ export class TroubleService {
         where: whereClause,
         offset: skipNumber,
         limit: limitNumber,
-        orderBy: (categoryOfTroublesTable, { asc }) => [asc(categoryOfTroublesTable.createdAt)],
+        orderBy: (categoryOfTroublesTable, { asc: ascFn, desc: descFn }) => {
+          const orderByArray: ReturnType<typeof asc>[] = []
+
+          if (sortBy && sortOrder && sortBy === 'name') {
+            orderByArray.push(
+              sortOrder === 'asc'
+                ? ascFn(categoryOfTroublesTable.name)
+                : descFn(categoryOfTroublesTable.name),
+            )
+          }
+
+          orderByArray.push(ascFn(categoryOfTroublesTable.createdAt))
+
+          return orderByArray
+        },
       })
 
       const total = await db.select({ count: count() }).from(categoryOfTroubles).where(whereClause)
 
-      let unResolvedTroubles: {
-        id: string
-        categoryOfTroubleId: string
-        trouble: string
-        resolved: boolean
-      }[] = []
+      let unResolvedTroubles: Pick<
+        typeof troubles.$inferSelect,
+        'id' | 'categoryOfTroubleId' | 'trouble' | 'resolved'
+      >[] = []
 
       if (withData === 'true') {
         unResolvedTroubles = await db.query.troubles.findMany({

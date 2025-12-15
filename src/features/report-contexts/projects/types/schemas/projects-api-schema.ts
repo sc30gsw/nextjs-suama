@@ -45,6 +45,28 @@ export const ProjectsQuerySchema = z.object({
       example: 'all',
       description: 'アーカイブ状態でフィルタリング (all: すべて表示, active: アクティブのみ, archived: アーカイブ済みのみ)',
     }),
+  sortBy: z
+    .enum(['name', 'status'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortBy',
+        in: 'query',
+      },
+      example: 'name',
+      description: 'ソート対象の列 (name: プロジェクト名, status: アーカイブ状態)',
+    }),
+  sortOrder: z
+    .enum(['asc', 'desc'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'sortOrder',
+        in: 'query',
+      },
+      example: 'asc',
+      description: 'ソート順 (asc: 昇順, desc: 降順)',
+    }),
 })
 
 export const MissionRefSchema = z.object({

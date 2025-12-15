@@ -32,17 +32,20 @@ export default async function MissionListPage({
 
   const resolvedSearchParams = await searchParams
 
-  const [{ names }, { archiveStatus }, { page, rowsPerPage }] = await Promise.all([
-    nameSearchParamsCache.parse(resolvedSearchParams),
-    archiveStatusSearchParamsCache.parse(resolvedSearchParams),
-    paginationSearchParamsCache.parse(resolvedSearchParams),
-  ])
+  const [{ names, sortBy, sortOrder }, { archiveStatus }, { page, rowsPerPage }] =
+    await Promise.all([
+      nameSearchParamsCache.parse(resolvedSearchParams),
+      archiveStatusSearchParamsCache.parse(resolvedSearchParams),
+      paginationSearchParamsCache.parse(resolvedSearchParams),
+    ])
 
   const missionsPromise = getMissions(session.user.id, {
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
     archiveStatus: archiveStatus ?? 'all',
+    sortBy: sortBy ?? null,
+    sortOrder: sortOrder ?? null,
   })
 
   const projectsPromise = getProjects(session.user.id, { archiveStatus: 'all' })
@@ -73,6 +76,8 @@ export default async function MissionListPage({
               rowsPerPage,
               names,
               archiveStatus: archiveStatus ?? 'all',
+              sortBy,
+              sortOrder,
             })}
             fallback={
               <table className="w-full text-left font-normal text-sm">

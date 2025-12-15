@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { count, like, or } from 'drizzle-orm'
+import { asc, count, desc, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { clients } from '~/db/schema'
 import type { getClientsRoute } from '~/features/report-contexts/clients/api/route'
@@ -16,7 +16,7 @@ export class ClientService {
   async getClients(
     params: ReturnType<Parameters<RouteHandler<typeof getClientsRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, names } = params
+    const { skip, limit, names, sortBy, sortOrder } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
@@ -36,7 +36,19 @@ export class ClientService {
         where: whereClause,
         offset: skipNumber,
         limit: limitNumber,
-        orderBy: (clientsTable, { asc }) => [asc(clientsTable.createdAt)],
+        orderBy: (clientsTable, { asc: ascFn, desc: descFn }) => {
+          const orderByArray = []
+          
+          // sortパラメータがある場合
+          if (sortBy && sortOrder && sortBy === 'name') {
+            orderByArray.push(sortOrder === 'asc' ? ascFn(clientsTable.name) : descFn(clientsTable.name))
+          }
+          
+          // 常にcreatedAtでソート（セカンダリソート）
+          orderByArray.push(ascFn(clientsTable.createdAt))
+          
+          return orderByArray
+        },
       })
 
       const total = await db.select({ count: count() }).from(clients).where(whereClause)
