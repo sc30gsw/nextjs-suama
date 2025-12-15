@@ -29,6 +29,8 @@ export class MissionService {
               ...namesArray.flatMap((word) => [
                 like(missions.name, `%${word}%`),
                 like(missions.likeKeywords, `%${word}%`),
+                like(projects.name, `%${word}%`),
+                like(projects.likeKeywords, `%${word}%`),
               ]),
             )
           : undefined
