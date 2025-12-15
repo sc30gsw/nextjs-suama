@@ -6,14 +6,15 @@ import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
 import { getClients } from '~/features/report-contexts/clients/server/fetcher'
+import { ArchiveStatusFilterRadioGroup } from '~/features/report-contexts/components/archive-status-filter-radio-group'
 import { NameSearchTagField } from '~/features/report-contexts/components/name-search-tag-field'
 import { ReportContextMenu } from '~/features/report-contexts/components/report-context-menu'
 import { ReportContextTablePagination } from '~/features/report-contexts/components/report-context-table-pagination'
-import { ArchivedFilterRadioGroup } from '~/features/report-contexts/projects/components/archived-filter-radio-group'
 import { CreateProjectModal } from '~/features/report-contexts/projects/components/create-project-modal'
 import { ProjectsTable } from '~/features/report-contexts/projects/components/projects-table'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
-import { projectSearchParamsCache } from '~/features/report-contexts/projects/types/search-params/project-search-params-cache'
+import { archiveStatusSearchParamsCache } from '~/features/report-contexts/types/search-params/archive-status-search-params-cache'
+import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
 import type { NextPageProps } from '~/types'
@@ -29,9 +30,12 @@ export default async function ProjectListPage({
     unauthorized()
   }
 
-  const [{ names, archiveStatus }, { page, rowsPerPage }] = await Promise.all([
-    projectSearchParamsCache.parse(searchParams),
-    paginationSearchParamsCache.parse(searchParams),
+  const resolvedSearchParams = await searchParams
+
+  const [{ names }, { archiveStatus }, { page, rowsPerPage }] = await Promise.all([
+    nameSearchParamsCache.parse(resolvedSearchParams),
+    archiveStatusSearchParamsCache.parse(resolvedSearchParams),
+    paginationSearchParamsCache.parse(resolvedSearchParams),
   ])
 
   const projectsPromise = getProjects(session.user.id, {
@@ -57,8 +61,8 @@ export default async function ProjectListPage({
         </div>
       </div>
       <div className="flex flex-col gap-y-4">
-        <NameSearchTagField type="project" label="プロジェクト名・クライアント名" />
-        <ArchivedFilterRadioGroup />
+        <NameSearchTagField label="プロジェクト名・クライアント名" />
+        <ArchiveStatusFilterRadioGroup type="project" />
         <RowsPerPageSelect />
       </div>
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">

@@ -16,11 +16,11 @@ export class MissionService {
   async getMissions(
     params: ReturnType<Parameters<RouteHandler<typeof getMissionsRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, names, isArchived } = params
+    const { skip, limit, names, archiveStatus } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-    const shouldFilterArchived = isArchived !== 'true'
+    const shouldFilterArchived = archiveStatus !== 'all'
 
     try {
       const nameConditions =
@@ -34,7 +34,6 @@ export class MissionService {
               ]),
             )
           : undefined
-
       const whereClause = shouldFilterArchived
         ? nameConditions
           ? and(eq(projects.isArchived, false), nameConditions)
@@ -56,6 +55,7 @@ export class MissionService {
           name: missions.name,
           projectId: missions.projectId,
           likeKeywords: missions.likeKeywords,
+          isArchived: projects.isArchived,
           createdAt: missions.createdAt,
           updatedAt: missions.updatedAt,
           projectName: projects.name,

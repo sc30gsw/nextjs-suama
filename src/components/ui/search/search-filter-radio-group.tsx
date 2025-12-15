@@ -2,7 +2,7 @@ import { useQueryStates } from 'nuqs'
 import { Description, Label } from '~/components/ui/intent-ui/field'
 import { Radio, RadioGroup } from '~/components/ui/intent-ui/radio'
 
-type SearchParamsParsers = Parameters<typeof useQueryStates>[0]
+export type SearchParamsParsers = Parameters<typeof useQueryStates>[0]
 
 type UseQueryStatesReturn<T extends SearchParamsParsers> = ReturnType<typeof useQueryStates<T>>[0]
 

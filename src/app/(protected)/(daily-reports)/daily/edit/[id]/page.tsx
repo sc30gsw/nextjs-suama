@@ -46,7 +46,7 @@ export default async function EditDailyReportPage({
   ).prefetch(queryClient)
 
   const projectPromise = getProjects(session.user.id, { archiveStatus: 'active' })
-  const missionPromise = getMissions(session.user.id, { isArchived: false })
+  const missionPromise = getMissions(session.user.id, { archiveStatus: 'active' })
   const appealCategoriesPromise = getAppealCategories(session.user.id, {
     withData: true,
     reportId,

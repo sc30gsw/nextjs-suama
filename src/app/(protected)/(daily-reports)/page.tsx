@@ -25,7 +25,7 @@ export default async function Home() {
   ).prefetch(queryClient)
 
   const projectPromise = getProjects(session.user.id, { archiveStatus: 'active' })
-  const missionPromise = getMissions(session.user.id, { isArchived: false })
+  const missionPromise = getMissions(session.user.id, { archiveStatus: 'active' })
   const appealCategoriesPromise = getAppealCategories(session.user.id)
   const troubleCategoriesPromise = getTroubleCategories(session.user.id, { withData: true })
 

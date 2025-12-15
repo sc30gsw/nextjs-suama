@@ -1,5 +1,6 @@
 'use client'
 
+import { IconArchive, IconArchiveOff } from '@tabler/icons-react'
 import {
   createColumnHelper,
   flexRender,
@@ -16,7 +17,7 @@ import { paginationSearchParamsParsers } from '~/types/search-params/pagination-
 
 type MissionTableData = Pick<
   InferResponseType<typeof client.api.missions.$get, 200>['missions'][number],
-  'id' | 'name' | 'likeKeywords' | 'projectId'
+  'id' | 'name' | 'likeKeywords' | 'projectId' | 'isArchived'
 > &
   Record<
     'projectName',
@@ -39,6 +40,21 @@ const COLUMNS = [
   columnHelper.accessor('projectName', {
     header: 'プロジェクト名',
     cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor('isArchived', {
+    header: 'プロジェクトアーカイブ',
+    cell: (info) =>
+      info.getValue() ? (
+        <div className="flex items-center gap-x-1">
+          アーカイブ済み
+          <IconArchive stroke={1} />
+        </div>
+      ) : (
+        <div className="flex items-center gap-x-1">
+          アーカイブなし
+          <IconArchiveOff stroke={1} />
+        </div>
+      ),
   }),
   columnHelper.accessor('operate', {
     header: '操作',
@@ -71,6 +87,7 @@ export function MissionsTable({ data, projects }: MissionsTableProps) {
     id: mission.id,
     name: mission.name,
     likeKeywords: mission.likeKeywords,
+    isArchived: mission.isArchived,
     projectId: mission.projectId,
     projectName: mission.project.name,
     operate: '',
