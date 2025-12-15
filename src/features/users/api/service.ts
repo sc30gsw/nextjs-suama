@@ -1,5 +1,5 @@
 import type { RouteHandler } from '@hono/zod-openapi'
-import { count, like, or } from 'drizzle-orm'
+import { and, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { users } from '~/db/schema'
 import type { getUsersRoute } from '~/features/users/api/route'
@@ -16,14 +16,14 @@ export class UserService {
   async getUsers(
     params: ReturnType<Parameters<RouteHandler<typeof getUsersRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, userNames } = params
+    const { skip, limit, userNames, retirementStatus } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
     const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : undefined
 
     try {
-      const whereClause =
+      const nameConditions =
         userNamesArray && userNamesArray.length > 0
           ? or(
               ...userNamesArray.flatMap((word) => [
@@ -32,6 +32,20 @@ export class UserService {
               ]),
             )
           : undefined
+
+      const retireCondition =
+        retirementStatus === 'active'
+          ? eq(users.isRetired, false)
+          : retirementStatus === 'retired'
+            ? eq(users.isRetired, true)
+            : undefined
+
+      const whereClause =
+        retireCondition && nameConditions
+          ? and(retireCondition, nameConditions)
+          : retireCondition
+            ? retireCondition
+            : nameConditions
 
       const userList = await db.query.users.findMany({
         where: whereClause,

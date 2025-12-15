@@ -34,16 +34,16 @@ export const MissionsQuerySchema = z.object({
       example: 'MissionA,MissionB',
       description: 'カンマ区切りのミッション名フィルター',
     }),
-  isArchived: z
-    .enum(['true', 'false'])
+  archiveStatus: z
+    .enum(['all', 'active', 'archived'])
     .optional()
     .openapi({
       param: {
-        name: 'isArchived',
+        name: 'archiveStatus',
         in: 'query',
       },
-      example: 'false',
-      description: 'アーカイブ済みプロジェクトのミッションを含めるかどうか (true/false)',
+      example: 'all',
+      description: 'アーカイブ状態でフィルタリング (all: すべて表示, active: アクティブのみ, archived: アーカイブ済みのみ)',
     }),
 })
 
@@ -67,6 +67,10 @@ export const MissionSchema = z
     likeKeywords: z.string().openapi({
       example: 'frontend,react,ui',
       description: 'Like検索用キーワード',
+    }),
+    isArchived: z.boolean().openapi({
+      example: false,
+      description: 'アーカイブ済みかどうか',
     }),
     projectId: z.string().openapi({
       example: 'project_123',

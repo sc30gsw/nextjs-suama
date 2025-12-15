@@ -16,11 +16,10 @@ export class ProjectService {
   async getProjects(
     params: ReturnType<Parameters<RouteHandler<typeof getProjectsRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, names, isArchived } = params
+    const { skip, limit, names, archiveStatus } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-    const shouldFilterArchived = isArchived !== 'true'
 
     try {
       const nameConditions =
@@ -29,18 +28,31 @@ export class ProjectService {
               ...namesArray.flatMap((word) => [
                 like(projects.name, `%${word}%`),
                 like(projects.likeKeywords, `%${word}%`),
+                like(clients.name, `%${word}%`),
+                like(clients.likeKeywords, `%${word}%`),
               ]),
             )
           : undefined
 
+      const archiveCondition =
+        archiveStatus === 'active'
+          ? eq(projects.isArchived, false)
+          : archiveStatus === 'archived'
+            ? eq(projects.isArchived, true)
+            : undefined
+
       const whereClause =
-        shouldFilterArchived && nameConditions
-          ? and(eq(projects.isArchived, false), nameConditions)
-          : shouldFilterArchived
-            ? eq(projects.isArchived, false)
+        archiveCondition && nameConditions
+          ? and(archiveCondition, nameConditions)
+          : archiveCondition
+            ? archiveCondition
             : nameConditions
 
-      const totalResult = await db.select({ count: count() }).from(projects).where(whereClause)
+      const totalResult = await db
+        .select({ count: count() })
+        .from(projects)
+        .innerJoin(clients, eq(projects.clientId, clients.id))
+        .where(whereClause)
       const total = totalResult[0].count
 
       const limitNumber = Number(limit) || total
