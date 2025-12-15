@@ -71,7 +71,7 @@ export class MissionService {
         .from(missions)
         .innerJoin(projects, eq(missions.projectId, projects.id))
         .where(whereClause)
-        .orderBy(asc(projects.name), asc(missions.name))
+        .orderBy(asc(projects.isArchived), asc(projects.name), asc(missions.name))
         .limit(limitNumber)
         .offset(skipNumber)
 

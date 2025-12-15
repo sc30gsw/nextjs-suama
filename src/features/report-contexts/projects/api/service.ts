@@ -74,7 +74,7 @@ export class ProjectService {
         .from(projects)
         .innerJoin(clients, eq(projects.clientId, clients.id))
         .where(whereClause)
-        .orderBy(asc(clients.name), asc(projects.name))
+        .orderBy(asc(projects.isArchived), asc(clients.name), asc(projects.name))
         .limit(limitNumber)
         .offset(skipNumber)
 
