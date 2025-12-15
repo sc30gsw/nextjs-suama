@@ -34,6 +34,18 @@ export const UsersQuerySchema = z.object({
       example: 'John,Jane',
       description: 'カンマ区切りのユーザー名フィルター',
     }),
+  retirementStatus: z
+    .enum(['all', 'active', 'retired'])
+    .optional()
+    .openapi({
+      param: {
+        name: 'retirementStatus',
+        in: 'query',
+      },
+      example: 'all',
+      description:
+        '在籍状態でフィルタリング (all: すべて表示, active: 在職中のみ, retired: 退職済みのみ)',
+    }),
 })
 
 export const UserSchema = z

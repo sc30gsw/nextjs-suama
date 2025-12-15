@@ -5,6 +5,7 @@ import { Card } from '~/components/ui/intent-ui/card'
 import { Heading } from '~/components/ui/intent-ui/heading'
 import { Skeleton } from '~/components/ui/intent-ui/skeleton'
 import { RowsPerPageSelect } from '~/components/ui/pagination/rows-per-page-select'
+import { ArchiveStatusFilterRadioGroup } from '~/features/report-contexts/components/archive-status-filter-radio-group'
 import { NameSearchTagField } from '~/features/report-contexts/components/name-search-tag-field'
 import { ReportContextMenu } from '~/features/report-contexts/components/report-context-menu'
 import { ReportContextTablePagination } from '~/features/report-contexts/components/report-context-table-pagination'
@@ -12,6 +13,7 @@ import { CreateMissionModal } from '~/features/report-contexts/missions/componen
 import { MissionsTable } from '~/features/report-contexts/missions/components/missions-table'
 import { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import { getProjects } from '~/features/report-contexts/projects/server/fetcher'
+import { archiveStatusSearchParamsCache } from '~/features/report-contexts/types/search-params/archive-status-search-params-cache'
 import { nameSearchParamsCache } from '~/features/report-contexts/types/search-params/name-search-params-cache'
 import { getServerSession } from '~/lib/get-server-session'
 import { urls } from '~/lib/urls'
@@ -28,18 +30,22 @@ export default async function MissionListPage({
     unauthorized()
   }
 
-  const [{ names }, { page, rowsPerPage }] = await Promise.all([
-    nameSearchParamsCache.parse(searchParams),
-    paginationSearchParamsCache.parse(searchParams),
+  const resolvedSearchParams = await searchParams
+
+  const [{ names }, { archiveStatus }, { page, rowsPerPage }] = await Promise.all([
+    nameSearchParamsCache.parse(resolvedSearchParams),
+    archiveStatusSearchParamsCache.parse(resolvedSearchParams),
+    paginationSearchParamsCache.parse(resolvedSearchParams),
   ])
 
   const missionsPromise = getMissions(session.user.id, {
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
+    archiveStatus: archiveStatus ?? 'all',
   })
 
-  const projectsPromise = getProjects(session.user.id, { isArchived: true })
+  const projectsPromise = getProjects(session.user.id, { archiveStatus: 'all' })
 
   return (
     <div className="flex flex-col gap-y-2 p-4 lg:p-6">
@@ -54,14 +60,20 @@ export default async function MissionListPage({
           <ReportContextMenu label="ミッション" />
         </div>
       </div>
-      <div className="flex flex-row items-center gap-x-4 md:flex-col md:items-start md:gap-y-4">
-        <NameSearchTagField label="ミッション名" />
+      <div className="flex flex-col gap-y-4">
+        <NameSearchTagField label="ミッション名・プロジェクト名" />
+        <ArchiveStatusFilterRadioGroup type="mission" />
         <RowsPerPageSelect />
       </div>
       <Card className="mt-4 max-w-full border-t-0 pt-0 ">
         <Card.Content>
           <Suspense
-            key={JSON.stringify({ page, rowsPerPage, names })}
+            key={JSON.stringify({
+              page,
+              rowsPerPage,
+              names,
+              archiveStatus: archiveStatus ?? 'all',
+            })}
             fallback={
               <table className="w-full text-left font-normal text-sm">
                 <thead className="bg-muted">

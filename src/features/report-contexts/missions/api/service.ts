@@ -16,11 +16,10 @@ export class MissionService {
   async getMissions(
     params: ReturnType<Parameters<RouteHandler<typeof getMissionsRoute>>[0]['req']['valid']>,
   ) {
-    const { skip, limit, names, isArchived } = params
+    const { skip, limit, names, archiveStatus } = params
 
     const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
     const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-    const shouldFilterArchived = isArchived !== 'true'
 
     try {
       const nameConditions =
@@ -29,15 +28,25 @@ export class MissionService {
               ...namesArray.flatMap((word) => [
                 like(missions.name, `%${word}%`),
                 like(missions.likeKeywords, `%${word}%`),
+                like(projects.name, `%${word}%`),
+                like(projects.likeKeywords, `%${word}%`),
               ]),
             )
           : undefined
 
-      const whereClause = shouldFilterArchived
-        ? nameConditions
-          ? and(eq(projects.isArchived, false), nameConditions)
-          : eq(projects.isArchived, false)
-        : nameConditions
+      const archiveCondition =
+        archiveStatus === 'active'
+          ? eq(projects.isArchived, false)
+          : archiveStatus === 'archived'
+            ? eq(projects.isArchived, true)
+            : undefined
+
+      const whereClause =
+        archiveCondition && nameConditions
+          ? and(archiveCondition, nameConditions)
+          : archiveCondition
+            ? archiveCondition
+            : nameConditions
 
       const totalResult = await db
         .select({ count: count() })
@@ -54,6 +63,7 @@ export class MissionService {
           name: missions.name,
           projectId: missions.projectId,
           likeKeywords: missions.likeKeywords,
+          isArchived: projects.isArchived,
           createdAt: missions.createdAt,
           updatedAt: missions.updatedAt,
           projectName: projects.name,
