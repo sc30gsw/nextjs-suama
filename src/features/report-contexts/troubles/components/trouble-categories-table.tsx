@@ -116,12 +116,21 @@ export function TroubleCategoriesTable({ data }: Record<'data', TroubleCategorie
               const toggleSortingHandler = canSort
                 ? header.column.getToggleSortingHandler()
                 : undefined
-
+              const sortedState = header.column.getIsSorted()
               return (
                 <Table.Column
                   key={header.id}
                   isRowHeader={true}
                   allowsSorting={canSort}
+                  sortDirectionOverride={
+                    sortedState === false
+                      ? null
+                      : sortedState === 'asc'
+                        ? 'ascending'
+                        : sortedState === 'desc'
+                          ? 'descending'
+                          : null
+                  }
                   onSortClick={
                     toggleSortingHandler
                       ? () => {
