@@ -15,6 +15,8 @@ import type {
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
 import type { client } from '~/lib/rpc'
 
+const DEFAULT_MISSION_HOURS = 0.5
+
 export function useUpdatedWeeklyReportContentInputEntries(
   initialWeeklyInputCountSearchParamsParsers: UpdateWeeklyInputCountSearchParams,
   formId: string,
@@ -61,9 +63,9 @@ export function useUpdatedWeeklyReportContentInputEntries(
   const filteredMissions = pipe(
     projectId
       ? pipe(
-          missions,
-          filter((mission) => mission.projectId === projectId),
-        )
+        missions,
+        filter((mission) => mission.projectId === projectId),
+      )
       : missions,
     filter((mission) => {
       const nameMatch = matchesJapaneseFilter(mission.name, missionFilter)
@@ -131,12 +133,6 @@ export function useUpdatedWeeklyReportContentInputEntries(
         }
       })
     } else {
-      missionId
-        ? pipe(
-            projects,
-            filter((project) => project.missions.some((mission) => mission.id === missionId)),
-          )
-        : projects
       setMissionId(newItem)
       missionInput.change(newItem.toString())
 
@@ -148,9 +144,14 @@ export function useUpdatedWeeklyReportContentInputEntries(
       const selectedMission = missions.find((mission) => mission.id === newItem)
       setMissionFilter('')
       setIsMissionFiltering(false)
-      if (selectedMission) {
+      const hasContentValue = (contentInput.value ?? '').trim().length > 0
+      const hasHoursValue = Number(hoursInput.value ?? 0) > 0
+
+      if (selectedMission && !hasContentValue) {
         handleChangeValue(id, selectedMission.name)
-        handleChangeValue(id, 0.5)
+      }
+      if (selectedMission && !hasHoursValue) {
+        handleChangeValue(id, DEFAULT_MISSION_HOURS)
       }
 
       setWeeklyReportEntry((prev) => {
@@ -164,8 +165,14 @@ export function useUpdatedWeeklyReportContentInputEntries(
               ...e,
               mission: newItem.toString(),
               project: findProject?.id ?? '',
-              content: selectedMission?.name ?? e.content,
-              hours: selectedMission ? 0.5 : e.hours,
+              content:
+                selectedMission && (e.content?.trim()?.length ?? 0) === 0
+                  ? selectedMission.name
+                  : e.content,
+              hours:
+                selectedMission && (e.hours <= 0) && !Number.isNaN(e.hours)
+                  ? DEFAULT_MISSION_HOURS
+                  : e.hours,
             }
           }
           return e
