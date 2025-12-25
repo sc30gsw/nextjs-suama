@@ -57,7 +57,7 @@ export default async function VerifyEmailPage({
 
   return (
     <ResendVerificationEmailForm>
-      <Card.Header className='space-y-4'>
+      <Card.Header className="space-y-4">
         <Card.Title>メール認証が必要です</Card.Title>
         <Card.Description>
           メールアドレスを認証する必要があります。登録されたメールアドレスに認証メールを送信しました。
@@ -68,4 +68,3 @@ export default async function VerifyEmailPage({
     </ResendVerificationEmailForm>
   )
 }
-

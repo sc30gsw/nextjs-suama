@@ -119,7 +119,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
     updateTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${weeklyReport.id}`)
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

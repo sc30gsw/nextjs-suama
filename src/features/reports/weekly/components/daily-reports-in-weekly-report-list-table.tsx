@@ -1,15 +1,11 @@
 'use client'
 
-import type { InferResponseType } from 'hono'
 import { entries, flatMap, groupBy, pipe, sortBy } from 'remeda'
 import { Table } from '~/components/ui/intent-ui/table'
-import type { client } from '~/lib/rpc'
+import { WeeklyReportModel } from '~/features/reports/weekly/api/model'
 
 type DailyReportsInWeeklyReportListTableProps = {
-  data: InferResponseType<
-    typeof client.api.weeklies.$get,
-    200
-  >['reports'][number]['dailyReports'][number]['dailyReportMissions']
+  data: WeeklyReportModel.getWeeklyReportsResponse['reports'][number]['dailyReports'][number]['dailyReportMissions']
 }
 
 export function DailyReportsInWeeklyReportListTable({

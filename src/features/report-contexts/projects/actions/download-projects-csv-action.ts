@@ -35,7 +35,7 @@ export async function downloadProjectsCsvAction() {
       success: true,
       csv: csvString,
     }
-  } catch (_) {
+  } catch {
     return {
       error: {
         message: [ERROR_STATUS.SOMETHING_WENT_WRONG],

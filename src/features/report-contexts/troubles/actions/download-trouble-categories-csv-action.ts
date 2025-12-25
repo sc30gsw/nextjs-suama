@@ -28,7 +28,7 @@ export async function downloadTroubleCategoriesCsvAction() {
       success: true,
       csv: csvString,
     }
-  } catch (_) {
+  } catch {
     return {
       error: {
         message: [ERROR_STATUS.SOMETHING_WENT_WRONG],

@@ -44,8 +44,8 @@ export default async function ProjectListPage({
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
     archiveStatus: archiveStatus ?? 'all',
-    sortBy: sortBy ?? null,
-    sortOrder: sortOrder ?? null,
+    sortBy: sortBy ?? undefined,
+    sortOrder: sortOrder ?? undefined,
   })
   const clientsPromise = getClients(session.user.id, undefined)
 

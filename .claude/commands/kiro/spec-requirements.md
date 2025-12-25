@@ -11,12 +11,14 @@ Generate comprehensive requirements for feature: **$1**
 ## Context Validation
 
 ### Steering Context
+
 - Architecture context: @.kiro/steering/structure.md
 - Technical constraints: @.kiro/steering/tech.md
 - Product context: @.kiro/steering/product.md
 - Custom steering: Load all "Always" mode custom steering files from .kiro/steering/
 
 ### Existing Spec Context
+
 - Current spec directory: !`ls -la .kiro/specs/$1/`
 - Current requirements: `.kiro/specs/$1/requirements.md`
 - Spec metadata: `.kiro/specs/$1/spec.json`
@@ -24,14 +26,17 @@ Generate comprehensive requirements for feature: **$1**
 ## Task: Generate Initial Requirements
 
 ### 1. Read Existing Requirements Template
+
 Read the existing requirements.md file created by spec-init to extract the project description.
 
 ### 2. Generate Complete Requirements
+
 Generate an initial set of requirements in EARS format based on the project description, then iterate with the user to refine them until they are complete and accurate.
 
 Don't focus on implementation details in this phase. Instead, just focus on writing requirements which will later be turned into a design.
 
 ### Requirements Generation Guidelines
+
 1. **Focus on Core Functionality**: Start with the essential features from the user's idea
 2. **Use EARS Format**: All acceptance criteria must use proper EARS syntax
 3. **No Sequential Questions**: Generate initial version first, then iterate based on user feedback
@@ -43,16 +48,19 @@ Don't focus on implementation details in this phase. Instead, just focus on writ
 **EARS (Easy Approach to Requirements Syntax)** is the recommended format for acceptance criteria:
 
 **Primary EARS Patterns:**
+
 - WHEN [event/condition] THEN [system/subject] SHALL [response]
 - IF [precondition/state] THEN [system/subject] SHALL [response]
 - WHILE [ongoing condition] THE [system/subject] SHALL [continuous behavior]
 - WHERE [location/context/trigger] THE [system/subject] SHALL [contextual behavior]
 
 **Combined Patterns:**
+
 - WHEN [event] AND [additional condition] THEN [system/subject] SHALL [response]
 - IF [condition] AND [additional condition] THEN [system/subject] SHALL [response]
 
 ### 4. Requirements Document Structure
+
 Update requirements.md with complete content in the language specified in spec.json (check `.kiro/specs/$1/spec.json` for "language" field):
 
 ```markdown
@@ -85,7 +93,9 @@ This section should have EARS requirements
 ```
 
 ### 5. Update Metadata
+
 Update spec.json with:
+
 ```json
 {
   "phase": "requirements-generated",
@@ -100,6 +110,7 @@ Update spec.json with:
 ```
 
 ### 6. Document Generation Only
+
 Generate the requirements document content ONLY. Do not include any review or approval instructions in the actual document file.
 
 ---

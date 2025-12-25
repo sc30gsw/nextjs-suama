@@ -50,7 +50,7 @@ export async function updateClientAction(_: unknown, formData: FormData) {
     updateTag(GET_CLIENTS_CACHE_KEY)
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

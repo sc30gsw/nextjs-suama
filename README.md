@@ -1,17 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## コーディング規約
+
 [CODING-STANDARDS.md](CODING-STANDARDS.md)を参照すること
 
 ## 環境構築
+
 以下の手順にしたがい、環境構築を行ってください
+
 ### 1. envファイルの作成
+
 ```bash
 # you can pick out any env file's name you like.
 touch .env
 ```
 
 ### 2. envファイルに以下の内容を記述
+
 ```txt: .env
 NEXT_PUBLIC_APP_URL = http://localhost:3000
 TURSO_DATABASE_URLL = {NotePMにて共有}
@@ -21,22 +26,27 @@ BETTER_AUTH_URL = http://localhost:3000
 ```
 
 ### 3. 依存関係のインストール
+
 ```bash
 bun i
 ```
 
 ### 4. 開発サーバーの起動
+
 ```bash
 bun dev
 ```
 
 ### 5. 各種Schema生成について
+
 ## Better Auth CLIによるSchema生成
+
 ```sh
 bunx @better-auth/cli generate
 ```
 
 ## drizzle-kitによるTurso migration
+
 ```sh
 bunx drizzle-kit push
 ```
@@ -49,6 +59,7 @@ bunx drizzle-kit migrate
 ```
 
 ## Tursoによるブランチング
+
 ```sh
 # 既存データベース old-db から新しいブランチ new-db を作成
 turso db create new-db --from-db old-db

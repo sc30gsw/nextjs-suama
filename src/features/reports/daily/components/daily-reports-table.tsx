@@ -7,7 +7,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { InferResponseType } from 'hono'
 import Link from 'next/link'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Note } from '~/components/ui/intent-ui/note'
@@ -15,10 +14,10 @@ import { Table } from '~/components/ui/intent-ui/table'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { DailyReportDeleteButton } from '~/features/reports/daily/components/daily-report-delete-button'
 import { DailyReportWorkContentPopover } from '~/features/reports/daily/components/daily-report-work-content-popover'
-import type { client } from '~/lib/rpc'
+import { DailyReportModel } from '~/features/reports/daily/api/model'
 import { urls } from '~/lib/urls'
 
-type DailyReport = InferResponseType<typeof client.api.dailies.$get, 200>['dailyReports'][number]
+type DailyReport = DailyReportModel.getDailyReportsResponse['dailyReports'][number]
 
 const columnHelper = createColumnHelper<DailyReport>()
 

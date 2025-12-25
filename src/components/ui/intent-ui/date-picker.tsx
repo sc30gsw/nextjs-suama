@@ -78,7 +78,8 @@ const DatePickerIcon = () => (
 )
 
 interface DatePickerProps<T extends DateValue>
-  extends DatePickerPrimitiveProps<T>,
+  extends
+    DatePickerPrimitiveProps<T>,
     Pick<DatePickerOverlayProps, 'placement'>,
     Omit<FieldProps, 'placeholder'> {}
 

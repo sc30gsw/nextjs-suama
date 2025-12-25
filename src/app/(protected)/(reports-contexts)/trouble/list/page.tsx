@@ -36,8 +36,8 @@ export default async function TroubleListPage({
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
-    sortBy: sortBy ?? null,
-    sortOrder: sortOrder ?? null,
+    sortBy: sortBy ?? undefined,
+    sortOrder: sortOrder ?? undefined,
   })
 
   return (

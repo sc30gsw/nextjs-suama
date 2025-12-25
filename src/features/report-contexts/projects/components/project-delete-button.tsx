@@ -1,5 +1,4 @@
 import { IconTrashEmpty } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
@@ -9,11 +8,11 @@ import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteProjectAction } from '~/features/report-contexts/projects/actions/delete-project-action'
 import { Confirm } from '~/hooks/use-confirm'
-import type { client } from '~/lib/rpc'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
 import { isErrorStatus } from '~/utils'
 
 type ProjectDeleteButtonProps = Pick<
-  InferResponseType<typeof client.api.projects.$get, 200>['projects'][number],
+  ProjectModel.getProjectsResponse['projects'][number],
   'id' | 'name'
 >
 
@@ -63,7 +62,7 @@ export function ProjectDeleteButton({ id, name }: ProjectDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.PROJECT.DELETE_SUCCESS)
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES.PROJECT.DELETE_FAILED)
       }
     })

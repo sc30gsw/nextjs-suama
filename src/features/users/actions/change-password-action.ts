@@ -47,7 +47,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
       .where(eq(accounts.userId, user.id))
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

@@ -24,9 +24,8 @@ type UpdateWeeklyReportFormProps = {
   promises: Promise<
     [Awaited<ReturnType<typeof getProjects>>, Awaited<ReturnType<typeof getMissions>>]
   >
-  weeklyReport: Exclude<
-    Awaited<ReturnType<typeof getWeeklyReportMissionsById>>['weeklyReport'],
-    undefined
+  weeklyReport: NonNullable<
+    NonNullable<Awaited<ReturnType<typeof getWeeklyReportMissionsById>>>['weeklyReport']
   >
   dates: string
 }
@@ -37,6 +36,10 @@ export function UpdateWeeklyReportForm({
   dates,
 }: UpdateWeeklyReportFormProps) {
   const [projectsResponse, missionsResponse] = use(promises)
+
+  if (!projectsResponse || !missionsResponse) {
+    return null
+  }
 
   const initialWeeklyInputCountSearchParamsParsers = {
     weeklyReportEntry: parseAsJson(weeklyReportStateSchema.parse).withDefault({

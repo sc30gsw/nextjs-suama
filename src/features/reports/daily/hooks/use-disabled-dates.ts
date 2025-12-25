@@ -1,21 +1,20 @@
 import type { Session } from 'better-auth'
 import { addDays, format, getMonth, getYear } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
-import type { InferRequestType } from 'hono'
 import { useMemo, useState } from 'react'
 import type { DateValue } from 'react-aria-components'
 import { APP_TIMEZONE } from '~/constants/date'
 import { fetchDailyReportDatesQuery } from '~/features/reports/daily/queries/fetcher'
-import type { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 
 const MAX_DAYS = 30
 
 type UseDisabledDatesOptions = {
   userId: Session['userId']
-  excludeReportId?: InferRequestType<
-    typeof client.api.dailies.dates.$get
-  >['query']['excludeReportId']
+  excludeReportId?: NonNullable<
+    NonNullable<Parameters<typeof api.dailies.dates.get>[0]>['query']
+  >['excludeReportId']
 }
 
 export function useDisabledDates({ userId, excludeReportId }: UseDisabledDatesOptions) {

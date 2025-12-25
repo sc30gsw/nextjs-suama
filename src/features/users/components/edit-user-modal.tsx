@@ -3,7 +3,6 @@
 import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconDocumentEdit, IconTriangleExclamation, IconX } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useActionState, useRef, useState } from 'react'
 import { useToggle } from 'react-use'
 import { toast } from 'sonner'
@@ -24,14 +23,11 @@ import {
 } from '~/features/users/types/schemas/setting-user-input-schema'
 import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
+import { UserModel } from '~/features/users/api/model'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
-type EditUserModalProps = Pick<
-  InferResponseType<typeof client.api.users.$get, 200>['users'][number],
-  'id' | 'name' | 'image'
->
+type EditUserModalProps = Pick<UserModel.getUsersResponse['users'][number], 'id' | 'name' | 'image'>
 
 export function EditUserModal({ id, name, image }: EditUserModalProps) {
   const [open, toggle] = useToggle(false)

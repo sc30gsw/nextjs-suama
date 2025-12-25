@@ -35,8 +35,8 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     userNames,
     retirementStatus: retirementStatus ?? 'all',
-    sortBy: sortBy ?? null,
-    sortOrder: sortOrder ?? null,
+    sortBy: sortBy ?? undefined,
+    sortOrder: sortOrder ?? undefined,
   })
 
   return (

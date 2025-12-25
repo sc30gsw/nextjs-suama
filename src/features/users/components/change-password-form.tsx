@@ -3,7 +3,6 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconCirclePerson, IconTriangleExclamation, IconUnlocked } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import Link from 'next/link'
 import { useQueryStates } from 'nuqs'
 import { useActionState } from 'react'
@@ -23,14 +22,14 @@ import {
   changePasswordInputSchema,
 } from '~/features/users/types/schemas/change-password-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
+import { UserModel } from '~/features/users/api/model'
 import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function ChangePasswordForm({
   id,
-}: Pick<InferResponseType<typeof client.api.users.$get, 200>['users'][number], 'id'>) {
+}: Pick<UserModel.getUsersResponse['users'][number], 'id'>) {
   const [{ token }] = useQueryStates(authSearchParamsParsers)
 
   const [lastResult, action, isPending] = useActionState(

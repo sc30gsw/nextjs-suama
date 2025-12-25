@@ -34,7 +34,9 @@ export function useCreateWeeklyForm(
     withCallbacks(createWeeklyReportAction, {
       onSuccess() {
         toast.success(TOAST_MESSAGES.WEEKLY_REPORT.CREATE_SUCCESS)
-        router.push(urls.build({ route: '/weekly/list/[dates]', params: { dates: date.dates } }).href)
+        router.push(
+          urls.build({ route: '/weekly/list/[dates]', params: { dates: date.dates } }).href,
+        )
       },
       onError(result) {
         const errorMessage = result?.error?.message?.[0]

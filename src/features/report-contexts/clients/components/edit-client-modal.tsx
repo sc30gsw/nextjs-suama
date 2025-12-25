@@ -3,7 +3,6 @@
 import { getFormProps, getInputProps } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useRouter } from 'next/navigation'
 import { useActionState } from 'react'
 import { useToggle } from 'react-use'
@@ -22,13 +21,13 @@ import {
   editClientInputSchema,
 } from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
+import { ClientModel } from '~/features/report-contexts/clients/api/model'
 import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditClientModalProps = Pick<
-  InferResponseType<typeof client.api.clients.$get, 200>['clients'][number],
+  ClientModel.getClientsResponse['clients'][number],
   'id' | 'name' | 'likeKeywords'
 >
 

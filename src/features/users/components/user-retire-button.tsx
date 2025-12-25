@@ -1,6 +1,5 @@
 import { IconPersonRemove } from '@intentui/icons'
 
-import type { InferResponseType } from 'hono'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
@@ -10,13 +9,10 @@ import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { retireUserAction } from '~/features/users/actions/retire-user-action'
 import { Confirm } from '~/hooks/use-confirm'
-import type { client } from '~/lib/rpc'
+import { UserModel } from '~/features/users/api/model'
 import { isErrorStatus } from '~/utils'
 
-type UserRetireButtonProps = Pick<
-  InferResponseType<typeof client.api.users.$get, 200>['users'][number],
-  'id' | 'name'
->
+type UserRetireButtonProps = Pick<UserModel.getUsersResponse['users'][number], 'id' | 'name'>
 
 export function UserRetireButton({ id, name }: UserRetireButtonProps) {
   const [isPending, startTransition] = useTransition()
@@ -70,7 +66,7 @@ export function UserRetireButton({ id, name }: UserRetireButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.USER.RETIRE_SUCCESS)
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES.USER.RETIRE_FAILED)
       }
     })

@@ -1,5 +1,4 @@
 import { IconTrashEmpty } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
@@ -9,11 +8,11 @@ import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteMissionAction } from '~/features/report-contexts/missions/actions/delete-mission-action'
 import { Confirm } from '~/hooks/use-confirm'
-import type { client } from '~/lib/rpc'
+import { MissionModel } from '~/features/report-contexts/missions/api/model'
 import { isErrorStatus } from '~/utils'
 
 type MissionDeleteButtonProps = Pick<
-  InferResponseType<typeof client.api.missions.$get, 200>['missions'][number],
+  MissionModel.getMissionsResponse['missions'][number],
   'id' | 'name'
 >
 
@@ -64,7 +63,7 @@ export function MissionDeleteButton({ id, name }: MissionDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.MISSION.DELETE_SUCCESS)
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES.MISSION.DELETE_FAILED)
       }
     })

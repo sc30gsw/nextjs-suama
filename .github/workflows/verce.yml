@@ -15,26 +15,26 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      
+
       # https://bun.sh/guides/runtime/cicd
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      
+
       - name: Install dependencies
         run: bun i
-        
+
       - name: Install Vercel CLI
         run: |
-            bun add --global vercel@latest
-            echo "$HOME/.bun/bin" >> $GITHUB_PATH
+          bun add --global vercel@latest
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
 
       - name: Pull Vercel Environment Variables
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        
+
       - name: Deploy to Vercel
         run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}

@@ -47,7 +47,7 @@ interface TagFieldProps extends FieldProps {
 
 const TagField = ({
   appearance = 'outline',
-  isCircle = false,
+  isCircle: _isCircle = false,
   name,
   className,
   list,

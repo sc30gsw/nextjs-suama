@@ -44,8 +44,8 @@ export default async function MissionListPage({
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
     archiveStatus: archiveStatus ?? 'all',
-    sortBy: sortBy ?? null,
-    sortOrder: sortOrder ?? null,
+    sortBy: sortBy ?? undefined,
+    sortOrder: sortOrder ?? undefined,
   })
 
   const projectsPromise = getProjects(session.user.id, { archiveStatus: 'all' })

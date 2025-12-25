@@ -40,7 +40,7 @@ export async function deleteClientAction(id: CommonDeleteIdSchema['id']) {
     return {
       status: 'success',
     } as const satisfies SubmissionResult
-  } catch (_) {
+  } catch {
     return {
       status: 'error',
       error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },

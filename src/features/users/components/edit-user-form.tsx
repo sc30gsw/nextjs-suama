@@ -8,7 +8,6 @@ import {
   IconTriangleExclamation,
   IconX,
 } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useRouter } from 'next/navigation'
 import { useActionState, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -31,13 +30,13 @@ import {
 import { fileToBase64 } from '~/features/users/utils/file-to-base64'
 import { useSafeForm } from '~/hooks/use-safe-form'
 import { authClient } from '~/lib/auth-client'
-import type { client } from '~/lib/rpc'
+import { UserModel } from '~/features/users/api/model'
 import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditUserFormProps = Pick<
-  InferResponseType<typeof client.api.users.$get, 200>['users'][number],
+  UserModel.getUsersResponse['users'][number],
   'id' | 'name' | 'email' | 'image'
 >
 
@@ -149,7 +148,7 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
             label="ユーザー名"
             placeholder="ユーザー名を入力"
             isRequired={true}
-            autoFocus={true}
+            
             isDisabled={isPending || pending}
             defaultValue={lastResult?.initialValue?.name.toString() ?? name}
             errorMessage={''}

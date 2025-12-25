@@ -52,8 +52,7 @@ const ComboBox = <T extends object>({
 }
 
 interface ComboBoxListProps<T extends object>
-  extends Omit<ListBoxProps<T>, 'layout' | 'orientation'>,
-    Pick<PopoverContentProps, 'placement'> {
+  extends Omit<ListBoxProps<T>, 'layout' | 'orientation'>, Pick<PopoverContentProps, 'placement'> {
   popoverClassName?: PopoverContentProps['className']
 }
 

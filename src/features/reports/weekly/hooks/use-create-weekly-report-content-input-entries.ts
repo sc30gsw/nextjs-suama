@@ -1,5 +1,4 @@
 import { type FieldName, useField, useInputControl } from '@conform-to/react'
-import type { InferResponseType } from 'hono'
 import { useState } from 'react'
 import type { Key } from 'react-stately'
 import { filter, find, pipe } from 'remeda'
@@ -13,7 +12,8 @@ import type {
   WeeklyInputCountSearchParams,
   WeeklyReportEntry,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
-import type { client } from '~/lib/rpc'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
+import { MissionModel } from '~/features/report-contexts/missions/api/model'
 
 const DEFAULT_MISSION_HOURS = 0.5
 
@@ -21,8 +21,8 @@ export function useCreateWeeklyReportContentInputEntries(
   initialWeeklyInputCountSearchParamsParsers: WeeklyInputCountSearchParams,
   formId: string,
   name: FieldName<CreateWeeklyReportSchema, CreateWeeklyReportFormSchema>,
-  projects: InferResponseType<typeof client.api.projects.$get, 200>['projects'],
-  missions: InferResponseType<typeof client.api.missions.$get, 200>['missions'],
+  projects: ProjectModel.getProjectsResponse['projects'],
+  missions: MissionModel.getMissionsResponse['missions'],
 ) {
   const [meta] = useField(name, { formId })
   const field = meta.getFieldset()
@@ -67,9 +67,9 @@ export function useCreateWeeklyReportContentInputEntries(
   const filteredMissions = pipe(
     projectId
       ? pipe(
-        missions,
-        filter((mission) => mission.projectId === projectId),
-      )
+          missions,
+          filter((mission) => mission.projectId === projectId),
+        )
       : missions,
     filter((mission) => {
       const nameMatch = matchesJapaneseFilter(mission.name, missionFilter)
@@ -188,7 +188,7 @@ export function useCreateWeeklyReportContentInputEntries(
                   ? selectedMission.name
                   : e.content,
               hours:
-                selectedMission && (e.hours <= 0) && !Number.isNaN(e.hours)
+                selectedMission && e.hours <= 0 && !Number.isNaN(e.hours)
                   ? DEFAULT_MISSION_HOURS
                   : e.hours,
             }

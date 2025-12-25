@@ -37,11 +37,10 @@ export const uploadProjectCsvRowSchema = z.object({
       if (typeof val === 'boolean') {
         return val
       }
-      
+
       return val === 'true' || val === 'on' || val === '1'
     })
     .default(false),
 })
 
 export type UploadProjectCsvRowSchema = z.infer<typeof uploadProjectCsvRowSchema>
-

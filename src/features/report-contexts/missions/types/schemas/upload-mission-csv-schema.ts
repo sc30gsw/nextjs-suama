@@ -29,4 +29,3 @@ export const uploadMissionCsvRowSchema = z.object({
 })
 
 export type UploadMissionCsvRowSchema = z.infer<typeof uploadMissionCsvRowSchema>
-

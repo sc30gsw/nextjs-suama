@@ -62,7 +62,7 @@ export function TroubleCategoryDeleteButton({ id, name }: TroubleCategoryDeleteB
         }
 
         toast.success(TOAST_MESSAGES.TROUBLE.DELETE_SUCCESS)
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES.TROUBLE.DELETE_FAILED)
       }
     })

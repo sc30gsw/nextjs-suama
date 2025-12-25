@@ -58,7 +58,7 @@ export function DailyReportDeleteButton({ id }: Pick<typeof dailyReports.$inferS
         }
 
         toast.success(TOAST_MESSAGES.DAILY_REPORT.DELETE_SUCCESS)
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES.DAILY_REPORT.DELETE_FAILED)
       }
     })

@@ -21,7 +21,7 @@ interface RangeCalendarProps<T extends DateValue> extends RangeCalendarPrimitive
 
 const RangeCalendar = <T extends DateValue>({
   errorMessage,
-  className,
+  className: _className,
   visibleDuration = { months: 1 },
   ...props
 }: RangeCalendarProps<T>) => {

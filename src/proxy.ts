@@ -15,7 +15,7 @@ export async function proxy(request: NextRequest) {
   if (!session.user.emailVerified) {
     const verifyEmailUrl = new URL('/verify-email', request.url)
     verifyEmailUrl.searchParams.set('from', 'proxy')
-    
+
     return NextResponse.redirect(verifyEmailUrl)
   }
 

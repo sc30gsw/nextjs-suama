@@ -86,7 +86,7 @@ export async function settingUserAction(_: unknown, formData: FormData) {
     await sendUserUpdateEmail(user.email, submission.value.name)
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

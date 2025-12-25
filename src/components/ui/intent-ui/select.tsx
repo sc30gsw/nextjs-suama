@@ -20,8 +20,7 @@ import { PopoverContent } from '~/components/ui/intent-ui/popover'
 import { cx } from '~/lib/primitive'
 
 interface SelectProps<T extends object, M extends 'single' | 'multiple' = 'single'>
-  extends SelectPrimitiveProps<T, M>,
-    FieldProps {
+  extends SelectPrimitiveProps<T, M>, FieldProps {
   items?: Iterable<T, M>
 }
 
@@ -54,8 +53,10 @@ const Select = <T extends object, M extends 'single' | 'multiple' = 'single'>({
   )
 }
 
-interface SelectContentProps<T extends object>
-  extends Omit<ListBoxProps<T>, 'layout' | 'orientation'> {
+interface SelectContentProps<T extends object> extends Omit<
+  ListBoxProps<T>,
+  'layout' | 'orientation'
+> {
   items?: Iterable<T>
   popover?: Omit<PopoverProps, 'children'>
 }

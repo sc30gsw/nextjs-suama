@@ -1,21 +1,21 @@
 'use client'
+
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { Table } from '~/components/ui/intent-ui/table'
 import { ClientDeleteButton } from '~/features/report-contexts/clients/components/client-delete-button'
 import { EditClientModal } from '~/features/report-contexts/clients/components/edit-client-modal'
+import { ClientModel } from '~/features/report-contexts/clients/api/model'
 import { nameSearchParamsParsers } from '~/features/report-contexts/types/search-params/name-search-params-cache'
-import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type ClientTableData = Pick<
-  InferResponseType<typeof client.api.clients.$get, 200>['clients'][number],
+  ClientModel.getClientsResponse['clients'][number],
   'id' | 'name' | 'likeKeywords'
 > &
   Record<'operate', string>
@@ -55,7 +55,7 @@ const COLUMNS = [
 ]
 
 type ClientsTableProps = {
-  data: InferResponseType<typeof client.api.clients.$get, 200>
+  data: ClientModel.getClientsResponse
 }
 
 export function ClientsTable({ data }: ClientsTableProps) {

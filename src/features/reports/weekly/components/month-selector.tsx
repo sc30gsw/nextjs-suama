@@ -16,10 +16,13 @@ export function MonthSelector({ months }: Record<'months', MonthItem[]>) {
   })
 
   // 同じ月名が複数あるかチェック
-  const monthCounts = months.reduce((acc, item) => {
-    acc[item.name] = (acc[item.name] || 0) + 1
-    return acc
-  }, {} as Record<number, number>)
+  const monthCounts = months.reduce(
+    (acc, item) => {
+      acc[item.name] = (acc[item.name] || 0) + 1
+      return acc
+    },
+    {} as Record<number, number>,
+  )
 
   const getMonthDisplayText = (item: MonthItem) => {
     const hasDuplicate = (monthCounts[item.name] ?? 0) > 1

@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "react-perf", "import", "jsx-a11y", "promise"],
+  "env": {
+    "node": true,
+    "browser": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-default-export": "error"
+  },
+  "overrides": [
+    {
+      "files": ["next.config.ts", "drizzle.config.ts", "postcss.config.mjs"],
+      "rules": {
+        "no-default-export": "off"
+      }
+    },
+    {
+      "files": ["typed-url/index.ts"],
+      "rules": {
+        "no-useless-rename": "off"
+      }
+    }
+  ]
+}

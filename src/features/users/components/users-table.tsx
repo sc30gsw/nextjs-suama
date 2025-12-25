@@ -8,7 +8,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import type { InferSelectModel } from 'drizzle-orm'
-import type { InferResponseType } from 'hono'
 import Link from 'next/link'
 import { useQueryStates } from 'nuqs'
 import { Avatar } from '~/components/ui/intent-ui/avatar'
@@ -18,13 +17,13 @@ import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import type { users } from '~/db/schema'
 import { EditUserModal } from '~/features/users/components/edit-user-modal'
 import { UserRetireButton } from '~/features/users/components/user-retire-button'
+import { UserModel } from '~/features/users/api/model'
 import { userSearchParamsParsers } from '~/features/users/types/search-params/user-search-params-cache'
-import type { client } from '~/lib/rpc'
 import { urls } from '~/lib/urls'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type UserTableData = Pick<
-  InferResponseType<typeof client.api.users.$get, 200>['users'][number],
+  UserModel.getUsersResponse['users'][number],
   'id' | 'email' | 'name' | 'image' | 'isRetired'
 > &
   Record<'operate' | 'currentUserId', string>
@@ -109,7 +108,7 @@ const createColumns = (currentUserRole: 'admin' | 'user') => [
 ]
 
 type UsersTableProps = {
-  users: InferResponseType<typeof client.api.users.$get, 200>
+  users: UserModel.getUsersResponse
   currentUserId: InferSelectModel<typeof users>['id']
   currentUserRole: 'admin' | 'user'
 }
@@ -185,6 +184,7 @@ export function UsersTable({ users, currentUserId, currentUserRole }: UsersTable
                 ? header.column.getToggleSortingHandler()
                 : undefined
               const sortedState = header.column.getIsSorted()
+
               return (
                 <Table.Column
                   key={header.id}
