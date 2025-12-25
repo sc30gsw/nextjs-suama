@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "react-perf", "import", "jsx-a11y", "promise"],
+  "ignorePatterns": ["src/components/ui/intent-ui/*.tsx"],
   "env": {
     "node": true,
     "browser": true
@@ -13,7 +14,19 @@
   },
   "overrides": [
     {
-      "files": ["next.config.ts", "drizzle.config.ts", "postcss.config.mjs"],
+      "files": [
+        "next.config.ts",
+        "drizzle.config.ts",
+        "postcss.config.mjs",
+        "layout.tsx",
+        "page.tsx",
+        "loading.tsx",
+        "error.tsx",
+        "default.tsx",
+        "not-found.tsx",
+        "unauthorized.tsx",
+        "forbidden.tsx"
+      ],
       "rules": {
         "no-default-export": "off"
       }
@@ -22,6 +35,16 @@
       "files": ["typed-url/index.ts"],
       "rules": {
         "no-useless-rename": "off"
+      }
+    },
+    {
+      "files": [
+        "src/features/users/components/edit-user-modal.tsx",
+        "src/features/report-contexts/*/components/*-modal.tsx",
+        "use-confirm.tsx"
+      ],
+      "rules": {
+        "no-autofocus": "off"
       }
     }
   ]
