@@ -55,9 +55,13 @@ export default async function ProjectListPage({
         <Heading>プロジェクト一覧</Heading>
         <div className="flex flex-col gap-2">
           <Suspense fallback={<Skeleton className="h-8 w-44.5" />}>
-            {clientsPromise.then((res) => (
-              <CreateProjectModal clients={res.clients} />
-            ))}
+            {clientsPromise.then((res) => {
+              if (!res) {
+                return null
+              }
+
+              return <CreateProjectModal clients={res.clients} />
+            })}
           </Suspense>
 
           <ReportContextMenu label="プロジェクト" />
@@ -116,9 +120,15 @@ export default async function ProjectListPage({
             }
           >
             {Promise.all([projectsPromise, clientsPromise]).then(
-              ([projectResponse, clientsResponse]) => (
-                <ProjectsTable data={projectResponse} clients={clientsResponse.clients} />
-              ),
+              ([projectResponse, clientsResponse]) => {
+                if (!projectResponse || !clientsResponse) {
+                  return null
+                }
+
+                return (
+                  <ProjectsTable data={projectResponse} clients={clientsResponse.clients} />
+                )
+              },
             )}
           </Suspense>
         </Card.Content>
@@ -140,7 +150,7 @@ export default async function ProjectListPage({
             }
           >
             {projectsPromise.then((res) => {
-              if (res.total === 0) {
+              if (!res || res.total === 0) {
                 return null
               }
 

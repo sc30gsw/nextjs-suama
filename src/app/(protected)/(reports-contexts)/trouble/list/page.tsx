@@ -36,7 +36,7 @@ export default async function TroubleListPage({
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
-    sortBy: sortBy ?? undefined,
+    sortBy: sortBy === 'name' ? sortBy : undefined,
     sortOrder: sortOrder ?? undefined,
   })
 
@@ -85,9 +85,13 @@ export default async function TroubleListPage({
               </table>
             }
           >
-            {troubleCategoriesPromise.then((res) => (
-              <TroubleCategoriesTable data={res} />
-            ))}
+            {troubleCategoriesPromise.then((res) => {
+              if (!res) {
+                return null
+              }
+
+              return <TroubleCategoriesTable data={res} />
+            })}
           </Suspense>
         </Card.Content>
         <Card.Footer>
@@ -108,7 +112,7 @@ export default async function TroubleListPage({
             }
           >
             {troubleCategoriesPromise.then((res) => {
-              if (res.total === 0) {
+              if (!res || res.total === 0) {
                 return null
               }
 
