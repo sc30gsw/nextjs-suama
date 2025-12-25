@@ -28,6 +28,10 @@ export async function WeeklyRegisterLink({
     userId,
   )
 
+  if (!res) {
+    return null
+  }
+
   if (res.weeklyReport && res.weeklyReport.userId !== userId) {
     forbidden()
   }

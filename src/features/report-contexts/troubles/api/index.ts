@@ -17,16 +17,20 @@ export const troublePlugin = new Elysia({ prefix: '/troubles', name: 'trouble' }
     switch (code) {
       case 'TroubleServiceError':
         set.status = error.status || 500
+
         return {
           error: error.message,
           code: 'TROUBLE_SERVICE_ERROR',
         }
+
       case 'TroubleNotFoundError':
         set.status = error.status || 404
+
         return {
           error: error.message,
           code: 'TROUBLE_NOT_FOUND',
         }
+
       default:
         throw error
     }
@@ -45,6 +49,7 @@ export const troublePlugin = new Elysia({ prefix: '/troubles', name: 'trouble' }
         },
         user.id,
       )
+
       return result
     },
     {

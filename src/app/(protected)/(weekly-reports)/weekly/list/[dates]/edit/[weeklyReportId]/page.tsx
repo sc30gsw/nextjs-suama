@@ -30,7 +30,7 @@ export default async function WeeklyReportIdPage({
 
   const res = await getWeeklyReportMissionsById({ weeklyReportId }, session.user.id)
 
-  if (!res.weeklyReport) {
+  if (!res || !res.weeklyReport) {
     notFound()
   }
 

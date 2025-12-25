@@ -90,13 +90,19 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
               </table>
             }
           >
-            {usersPromise.then((res) => (
-              <UsersTable
-                users={res}
-                currentUserId={session.user.id}
-                currentUserRole={session.user.role}
-              />
-            ))}
+            {usersPromise.then((res) => {
+              if (!res) {
+                return null
+              }
+
+              return (
+                <UsersTable
+                  users={res}
+                  currentUserId={session.user.id}
+                  currentUserRole={session.user.role}
+                />
+              )
+            })}
           </Suspense>
         </Card.Content>
         <Card.Footer>
@@ -117,7 +123,7 @@ export default async function UsersPage({ searchParams }: NextPageProps<undefine
             }
           >
             {usersPromise.then((res) => {
-              if (res.total === 0) {
+              if (!res || res.total === 0) {
                 return null
               }
 

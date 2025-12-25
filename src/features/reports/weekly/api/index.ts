@@ -123,6 +123,7 @@ export const weeklyReportPlugin = new Elysia({ prefix: '/weeklies', name: 'weekl
         },
         user.id,
       )
+
       return result
     },
     {

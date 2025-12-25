@@ -112,7 +112,7 @@ export default async function AppealListPage({
             }
           >
             {appealCategoriesPromise.then((res) => {
-              if (res.total === 0) {
+              if (!res || res.total === 0) {
                 return null
               }
 

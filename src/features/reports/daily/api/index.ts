@@ -21,16 +21,20 @@ export const dailyReportPlugin = new Elysia({ prefix: '/dailies', name: 'dailyRe
     switch (code) {
       case 'DailyReportServiceError':
         set.status = error.status || 500
+
         return {
           error: error.message,
           code: 'DAILY_REPORT_SERVICE_ERROR',
         }
+
       case 'DailyReportNotFoundError':
         set.status = error.status || 404
+
         return {
           error: error.message,
           code: 'DAILY_REPORT_NOT_FOUND',
         }
+
       default:
         throw error
     }
@@ -46,6 +50,7 @@ export const dailyReportPlugin = new Elysia({ prefix: '/dailies', name: 'dailyRe
         startDate: query.startDate,
         endDate: query.endDate,
       })
+
       return result
     },
     {
@@ -72,6 +77,7 @@ export const dailyReportPlugin = new Elysia({ prefix: '/dailies', name: 'dailyRe
         startDate: query.startDate,
         endDate: query.endDate,
       })
+
       return result
     },
     {
@@ -100,6 +106,7 @@ export const dailyReportPlugin = new Elysia({ prefix: '/dailies', name: 'dailyRe
         startDate: query.startDate,
         endDate: query.endDate,
       })
+
       return result
     },
     {
@@ -125,6 +132,7 @@ export const dailyReportPlugin = new Elysia({ prefix: '/dailies', name: 'dailyRe
         month: query.month,
         excludeReportId: query.excludeReportId,
       })
+
       return result
     },
     {
@@ -146,6 +154,7 @@ export const dailyReportPlugin = new Elysia({ prefix: '/dailies', name: 'dailyRe
     '/:id',
     async ({ params, user }) => {
       const result = await DailyReportDetailService.getDailyReportDetail(params.id, user.id)
+
       return result
     },
     {

@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { getMonth, getYear, parseISO } from 'date-fns'
 import Link from 'next/link'
-import { unauthorized } from 'next/navigation'
+import { notFound, unauthorized } from 'next/navigation'
 import type { SearchParams } from 'nuqs'
 import { Suspense } from 'react'
 import { Button } from '~/components/ui/intent-ui/button'
@@ -32,6 +32,10 @@ export default async function EditDailyReportPage({
   const reportId = (await params).id
 
   const reportData = await getDailyReportById(reportId, session.user.id)
+
+  if (!reportData) {
+    notFound()
+  }
 
   const reportDate = parseISO(reportData.reportDate)
   await fetchDailyReportDatesQuery(

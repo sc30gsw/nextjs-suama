@@ -56,9 +56,13 @@ export default async function DailyForTodayPage({
             key={JSON.stringify({ page, rowsPerPage, userNames })}
             fallback={<DailyReportTableSkeleton />}
           >
-            {reportsPromise.then((res) => (
-              <DailyReportsTable reports={res.dailyReports} userId={session.user.id} />
-            ))}
+            {reportsPromise.then((res) => {
+              if (!res) {
+                return null
+              }
+
+              return <DailyReportsTable reports={res.dailyReports} userId={session.user.id} />
+            })}
           </Suspense>
         </Card.Content>
 
@@ -80,7 +84,7 @@ export default async function DailyForTodayPage({
             }
           >
             {reportsPromise.then((res) => {
-              if (res.total === 0) {
+              if (!res || res.total === 0) {
                 return null
               }
 

@@ -1,21 +1,21 @@
-# # Lefthook configuration
-# # https://github.com/evilmartians/lefthook
+# Lefthook configuration
+# https://github.com/evilmartians/lefthook
 
-# pre-commit:
-#   parallel: true
-#   commands:
-#     lint:
-#       glob: '*.{js,jsx,ts,tsx}'
-#       exclude:
-#         - '**/routeTree.gen.ts'
-#       run: bun run lint -- {staged_files}
-#     format:
-#       glob: '*.{js,jsx,ts,tsx,json,css}'
-#       exclude:
-#         - '**/routeTree.gen.ts'
-#       run: bun run fmt -- {staged_files}
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: '*.{js,jsx,ts,tsx}'
+      exclude:
+        - '**/routeTree.gen.ts'
+      run: bun run lint -- {staged_files}
+    format:
+      glob: '*.{js,jsx,ts,tsx,json,css}'
+      exclude:
+        - '**/routeTree.gen.ts'
+      run: bun run fmt -- {staged_files}
 
-# pre-push:
-#   commands:
-#     check:
-#       run: bun run check
+pre-push:
+  commands:
+    check:
+      run: bun run check
