@@ -1,4 +1,3 @@
-import type { RouteHandler } from '@hono/zod-openapi'
 import {
   and,
   countDistinct,
@@ -15,37 +14,32 @@ import {
 } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { dailyReportMissions, dailyReports, missions, projects, users } from '~/db/schema'
-import type { getDailyReportSummaryRoute } from '~/features/reports/daily/api/route'
 import { db } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
-import { DailyReportServiceError } from './list-service'
+import type { DailyReportModel } from '~/features/reports/daily/api/model'
+import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
 
-export class DailyReportSummaryService {
-  async getDailyReportSummary(
-    params: ReturnType<
-      Parameters<RouteHandler<typeof getDailyReportSummaryRoute>>[0]['req']['valid']
-    >,
-  ) {
-    const { userId, userNames, startDate, endDate, limit, skip } = params
-
-    const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const limitNumber = Number(limit) || QUERY_DEFAULT_PARAMS.LIMIT
-
-    const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
-
-    const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
-    const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
-
-    const whereConditions = [
-      gte(dailyReports.reportDate, startDateUtc),
-      lte(dailyReports.reportDate, endDateUtc),
-    ]
-
-    if (userId) {
-      whereConditions.push(eq(dailyReports.userId, userId))
-    }
-
+export abstract class DailyReportSummaryService {
+  static async getDailyReportSummary(params: DailyReportModel.getDailyReportSummaryQuery) {
     try {
+      const { userId, userNames, startDate, endDate, limit, skip } = params
+
+      const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
+      const limitNumber = Number(limit) || QUERY_DEFAULT_PARAMS.LIMIT
+
+      const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
+
+      const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
+      const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
+
+      const whereConditions = [
+        gte(dailyReports.reportDate, startDateUtc),
+        lte(dailyReports.reportDate, endDateUtc),
+      ]
+
+      if (userId) {
+        whereConditions.push(eq(dailyReports.userId, userId))
+      }
       if (userNames) {
         const selectedUserNames = userNames.split(',').map((name) => name.trim())
         const targetUsers = await db.query.users.findMany({
@@ -92,6 +86,9 @@ export class DailyReportSummaryService {
 
       return { summaries: formattedProjectSummaries }
     } catch (error) {
+      if (error instanceof DailyReportServiceError) {
+        throw error
+      }
       throw new DailyReportServiceError(
         `Failed to get daily report summary: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

@@ -1,30 +1,21 @@
-import type { RouteHandler } from '@hono/zod-openapi'
 import { type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { appeals, categoryOfAppeals } from '~/db/schema'
-import type { getAppealCategoriesRoute } from '~/features/report-contexts/appeals/api/route'
 import { db } from '~/index'
+import type { AppealModel } from '~/features/report-contexts/appeals/api/model'
+import {
+  AppealServiceError,
+  AppealNotFoundError,
+} from '~/features/report-contexts/appeals/api/errors'
 
-export class AppealServiceError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'AppealServiceError'
-  }
-}
-
-export class AppealService {
-  async getAppealCategories(
-    params: ReturnType<
-      Parameters<RouteHandler<typeof getAppealCategoriesRoute>>[0]['req']['valid']
-    >,
-  ) {
-    const { skip, limit, names, withData, reportId, sortBy, sortOrder } = params
-
-    const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
-    const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-
+export abstract class AppealService {
+  static async getAppealCategories(params: AppealModel.getAppealCategoriesQuery) {
     try {
+      const { skip, limit, names, withData, reportId, sortBy, sortOrder } = params
+
+      const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
+      const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
+      const namesArray = names ? names.split(',').map((name) => name.trim()) : []
       const whereClause =
         namesArray.length > 0
           ? or(...namesArray.flatMap((word) => [like(categoryOfAppeals.name, `%${word}%`)]))
@@ -86,6 +77,10 @@ export class AppealService {
         existingAppeals,
       }
     } catch (error) {
+      if (error instanceof AppealServiceError || error instanceof AppealNotFoundError) {
+        throw error
+      }
+
       throw new AppealServiceError(
         `Failed to get appeal categories: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

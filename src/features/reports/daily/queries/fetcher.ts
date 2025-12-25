@@ -1,44 +1,53 @@
 import type { Session } from 'better-auth'
-import type { InferRequestType, InferResponseType } from 'hono'
 import { GET_DAILY_REPORT_DATES_CACHE_KEY } from '~/constants/cache-keys'
-import { upfetch } from '~/lib/fetcher'
 import { createQueryFactory } from '~/lib/query-factories'
-import { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
+import { DailyReportModel } from '~/features/reports/daily/api/model'
 
-type ResType = InferResponseType<(typeof client.api.dailies.dates)['$get'], 200>
+type ResType = DailyReportModel.getDailyReportDatesResponse
+
+type DatesQueryParams = {
+  query: {
+    year: string
+    month: string
+    excludeReportId?: string
+  }
+}
 
 async function getDailyReportDates(
   userId: Session['userId'],
-  params: InferRequestType<typeof client.api.dailies.dates.$get>,
+  params: DatesQueryParams,
 ) {
-  const url = client.api.dailies.dates.$url()
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.dailies.dates.get({
     headers: {
       Authorization: userId,
     },
-    params: {
+    query: {
       year: params.query.year.toString(),
       month: params.query.month.toString(),
-      ...(params.query.excludeReportId && { excludeReportId: params.query.excludeReportId }),
+      excludeReportId: params.query.excludeReportId,
     },
   })
 
-  return res
+  if (!res.data) {
+    throw new Error('Failed to fetch daily report dates')
+  }
+
+  return res.data
 }
 
 export const fetchDailyReportDatesQuery = createQueryFactory<
   ResType,
   unknown,
-  [InferRequestType<typeof client.api.dailies.dates.$get>, Session['userId']]
+  [DatesQueryParams, Session['userId']]
 >(
-  (params: InferRequestType<typeof client.api.dailies.dates.$get>, userId: Session['userId']) => [
+  (params: DatesQueryParams, userId: Session['userId']) => [
     GET_DAILY_REPORT_DATES_CACHE_KEY,
     params.query.year,
     params.query.month,
     userId,
     params.query.excludeReportId ?? null,
   ],
-  (params: InferRequestType<typeof client.api.dailies.dates.$get>, userId: Session['userId']) =>
+  (params: DatesQueryParams, userId: Session['userId']) =>
     getDailyReportDates(userId, params),
 )

@@ -23,7 +23,7 @@ export async function getWeeklyReportMissionsById(
     },
   })
 
-  return res.data!
+  return res.data
 }
 
 export async function getWeeklyReportMissions(
@@ -39,7 +39,7 @@ export async function getWeeklyReportMissions(
     },
   })
 
-  return res.data!
+  return res.data
 }
 
 export async function getLastWeeklyReportMissions(
@@ -55,5 +55,5 @@ export async function getLastWeeklyReportMissions(
     },
   })
 
-  return res.data!
+  return res.data
 }

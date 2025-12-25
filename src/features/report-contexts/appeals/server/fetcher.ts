@@ -4,9 +4,7 @@ import { cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import type { dailyReports } from '~/db/schema'
-import type { AppealCategoriesResponse } from '~/features/reports/daily/types/api-response'
-import { upfetch } from '~/lib/fetcher'
-import { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
 
 export async function getAppealCategories(
   userId: Session['userId'],
@@ -16,8 +14,8 @@ export async function getAppealCategories(
     names?: string[]
     withData?: boolean
     reportId?: InferSelectModel<typeof dailyReports>['id']
-    sortBy?: 'name' | 'status' | null
-    sortOrder?: 'asc' | 'desc' | null
+    sortBy?: 'name'
+    sortOrder?: 'asc' | 'desc'
   },
 ) {
   'use cache'
@@ -27,18 +25,20 @@ export async function getAppealCategories(
       : GET_APPEAL_CATEGORIES_CACHE_KEY
   cacheTag(cacheKey)
 
-  const url = client.api.appeals.categories.$url()
-
-  const res = await upfetch<AppealCategoriesResponse>(url, {
+  const res = await api.appeals.categories.get({
     headers: {
       Authorization: userId,
     },
-    params: {
-      ...params,
-      sortBy: params?.sortBy ?? undefined,
-      sortOrder: params?.sortOrder ?? undefined,
+    query: {
+      skip: params?.skip?.toString(),
+      limit: params?.limit?.toString(),
+      names: params?.names?.join(','),
+      withData: params?.withData?.toString(),
+      reportId: params?.reportId,
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
     },
   })
 
-  return res
+  return res.data
 }

@@ -2,7 +2,6 @@ import 'server-only'
 
 import type { Session } from 'better-auth'
 import type { InferSelectModel } from 'drizzle-orm'
-import type { InferResponseType } from 'hono'
 import { cacheTag } from 'next/dist/server/use-cache/cache-tag'
 
 import {
@@ -12,8 +11,7 @@ import {
   GET_DAILY_REPORTS_COUNT_CACHE_KEY,
 } from '~/constants/cache-keys'
 import type { dailyReports, users } from '~/db/schema'
-import { upfetch } from '~/lib/fetcher'
-import { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
 import { dateUtils } from '~/utils/date-utils'
 
 export async function getDailyReportById(
@@ -23,18 +21,13 @@ export async function getDailyReportById(
   'use cache'
   cacheTag(`${GET_DAILY_REPORT_BY_ID_CACHE_KEY}-${reportId}`)
 
-  const url = client.api.dailies[':id'].$url({
-    param: { id: reportId },
-  })
-  type ResType = InferResponseType<(typeof client.api.dailies)[':id']['$get'], 200>
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.dailies({ id: reportId }).get({
     headers: {
       Authorization: userId,
     },
   })
 
-  return res
+  return res.data
 }
 
 export async function getDailyReports(
@@ -52,21 +45,21 @@ export async function getDailyReports(
   const targetUserId = params.userId || 'every'
   cacheTag(`${GET_DAILY_REPORTS_CACHE_KEY}-${targetUserId}`)
 
-  const url = client.api.dailies.$url()
-  type ResType = InferResponseType<typeof client.api.dailies.$get, 200>
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.dailies.get({
     headers: {
       Authorization: userId,
     },
-    params: {
-      ...params,
+    query: {
+      userId: params.userId,
+      userNames: params.userNames?.join(','),
+      skip: params.skip.toString(),
+      limit: params.limit.toString(),
       startDate: params.startDate ? dateUtils.formatDateByJST(params.startDate) : undefined,
       endDate: params.endDate ? dateUtils.formatDateByJST(params.endDate) : undefined,
     },
   })
 
-  return res
+  return res.data
 }
 
 export async function getDailyReportsCount(
@@ -77,21 +70,19 @@ export async function getDailyReportsCount(
   const targetUserId = params.userId || 'every'
   cacheTag(`${GET_DAILY_REPORTS_COUNT_CACHE_KEY}-${targetUserId}`)
 
-  const url = client.api.dailies.count.$url()
-  type ResType = InferResponseType<typeof client.api.dailies.count.$get, 200>
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.dailies.count.get({
     headers: {
       Authorization: userId,
     },
-    params: {
-      ...params,
+    query: {
+      userId: params.userId,
+      userNames: params.userNames?.join(','),
       startDate: params.startDate ? dateUtils.formatDateByJST(params.startDate) : undefined,
       endDate: params.endDate ? dateUtils.formatDateByJST(params.endDate) : undefined,
     },
   })
 
-  return res
+  return res.data
 }
 
 export async function getProjectSummary(
@@ -109,19 +100,19 @@ export async function getProjectSummary(
   const targetUserId = params.userId || 'every'
   cacheTag(`${GET_DAILY_PROJECT_SUMMARY_CACHE_KEY}-${targetUserId}`)
 
-  const url = client.api.dailies.summary.$url()
-  type ResType = InferResponseType<(typeof client.api.dailies)['summary']['$get'], 200>
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.dailies.summary.get({
     headers: {
       Authorization: userId,
     },
-    params: {
-      ...params,
+    query: {
+      userId: params.userId,
+      userNames: params.userNames?.join(','),
+      skip: params.skip.toString(),
+      limit: params.limit.toString(),
       startDate: params.startDate ? dateUtils.formatDateByJST(params.startDate) : undefined,
       endDate: params.endDate ? dateUtils.formatDateByJST(params.endDate) : undefined,
     },
   })
 
-  return res
+  return res.data
 }

@@ -1,10 +1,8 @@
 import type { Session } from 'better-auth'
-import type { InferResponseType } from 'hono'
 import { cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_PROJECTS_CACHE_KEY } from '~/constants/cache-keys'
-import { upfetch } from '~/lib/fetcher'
-import { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
 
 export async function getProjects(
   userId: Session['userId'],
@@ -20,14 +18,11 @@ export async function getProjects(
   'use cache'
   cacheTag(GET_PROJECTS_CACHE_KEY)
 
-  const url = client.api.projects.$url()
-  type ResType = InferResponseType<typeof client.api.projects.$get, 200>
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.projects.get({
     headers: {
       Authorization: userId,
     },
-    params: {
+    query: {
       skip: params?.skip?.toString(),
       limit: params?.limit?.toString(),
       names: params?.names?.join(','),
@@ -37,5 +32,5 @@ export async function getProjects(
     },
   })
 
-  return res
+  return res.data
 }

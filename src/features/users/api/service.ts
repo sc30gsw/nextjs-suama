@@ -1,28 +1,19 @@
-import type { RouteHandler } from '@hono/zod-openapi'
 import { and, type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { users } from '~/db/schema'
-import type { getUsersRoute } from '~/features/users/api/route'
 import { db } from '~/index'
+import { UserNotFoundError, UserServiceError } from '~/features/users/api/errors'
+import type { UserModel } from '~/features/users/api/model'
 
-export class UserServiceError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'UserServiceError'
-  }
-}
-
-export class UserService {
-  async getUsers(
-    params: ReturnType<Parameters<RouteHandler<typeof getUsersRoute>>[0]['req']['valid']>,
-  ) {
-    const { skip, limit, userNames, retirementStatus, sortBy, sortOrder } = params
-
-    const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
-    const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : undefined
-
+export abstract class UserService {
+  static async getUsers(params: UserModel.getUsersQuery) {
     try {
+      const { skip, limit, userNames, retirementStatus, sortBy, sortOrder } = params
+
+      const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
+      const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
+      const userNamesArray = userNames ? userNames.split(',').map((name) => name.trim()) : undefined
+
       const nameConditions =
         userNamesArray && userNamesArray.length > 0
           ? or(
@@ -90,6 +81,9 @@ export class UserService {
         limit: limitNumber,
       }
     } catch (error) {
+      if (error instanceof UserServiceError || error instanceof UserNotFoundError) {
+        throw error
+      }
       throw new UserServiceError(
         `Failed to get users: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
