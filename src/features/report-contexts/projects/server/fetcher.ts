@@ -11,8 +11,8 @@ export async function getProjects(
     limit?: number
     names?: string[]
     archiveStatus?: 'all' | 'active' | 'archived'
-    sortBy?: 'name' | 'status' | 'clientName' | null
-    sortOrder?: 'asc' | 'desc' | null
+    sortBy?: 'name' | 'status' | 'clientName'
+    sortOrder?: 'asc' | 'desc'
   },
 ) {
   'use cache'
@@ -27,8 +27,8 @@ export async function getProjects(
       limit: params?.limit?.toString(),
       names: params?.names?.join(','),
       archiveStatus: params?.archiveStatus,
-      sortBy: params?.sortBy ?? undefined,
-      sortOrder: params?.sortOrder ?? undefined,
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
     },
   })
 
