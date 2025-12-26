@@ -71,7 +71,7 @@ interface PaginationItemProps
 const PaginationItem = ({
   segment = 'default',
   size = 'sm',
-  intent: _intent = 'plain',
+  intent = 'plain',
   className,
   isCurrent,
   children,

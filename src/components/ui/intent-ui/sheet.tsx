@@ -89,7 +89,7 @@ const SheetContent = ({
   role = 'dialog',
   closeButton = true,
   isFloat = true,
-  overlay: _overlay,
+  overlay,
   children,
   ...props
 }: SheetContentProps) => {
