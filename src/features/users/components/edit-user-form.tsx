@@ -148,7 +148,6 @@ export function EditUserForm({ id, name, email, image }: EditUserFormProps) {
             label="ユーザー名"
             placeholder="ユーザー名を入力"
             isRequired={true}
-            
             isDisabled={isPending || pending}
             defaultValue={lastResult?.initialValue?.name.toString() ?? name}
             errorMessage={''}

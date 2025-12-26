@@ -14,10 +14,7 @@ type DatesQueryParams = {
   }
 }
 
-async function getDailyReportDates(
-  userId: Session['userId'],
-  params: DatesQueryParams,
-) {
+async function getDailyReportDates(userId: Session['userId'], params: DatesQueryParams) {
   const res = await api.dailies.dates.get({
     headers: {
       Authorization: userId,
@@ -48,6 +45,5 @@ export const fetchDailyReportDatesQuery = createQueryFactory<
     userId,
     params.query.excludeReportId ?? null,
   ],
-  (params: DatesQueryParams, userId: Session['userId']) =>
-    getDailyReportDates(userId, params),
+  (params: DatesQueryParams, userId: Session['userId']) => getDailyReportDates(userId, params),
 )

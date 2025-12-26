@@ -54,7 +54,13 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
   const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
     use(promises)
 
-  if (!projectsResponse || !missionsResponse || !appealCategoriesResponse || !troubleCategoriesResponse || !reportData) {
+  if (
+    !projectsResponse ||
+    !missionsResponse ||
+    !appealCategoriesResponse ||
+    !troubleCategoriesResponse ||
+    !reportData
+  ) {
     return null
   }
 

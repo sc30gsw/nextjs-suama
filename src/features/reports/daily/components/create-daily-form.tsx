@@ -54,7 +54,12 @@ export function CreateDailyForm({ userId, promises }: CreateDailyFormProps) {
 
   const { isDateUnavailable, handleFocusChange, isLoading } = useDisabledDates({ userId })
 
-  if (!projectsResponse || !missionsResponse || !appealCategoriesResponse || !troubleCategoriesResponse) {
+  if (
+    !projectsResponse ||
+    !missionsResponse ||
+    !appealCategoriesResponse ||
+    !troubleCategoriesResponse
+  ) {
     return null
   }
 
