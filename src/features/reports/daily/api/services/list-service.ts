@@ -130,6 +130,7 @@ export abstract class DailyReportListService {
       if (error instanceof DailyReportServiceError) {
         throw error
       }
+
       throw new DailyReportServiceError(
         `Failed to get daily reports list: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

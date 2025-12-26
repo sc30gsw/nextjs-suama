@@ -82,6 +82,7 @@ export abstract class DailyReportCountService {
       if (error instanceof DailyReportServiceError) {
         throw error
       }
+
       throw new DailyReportServiceError(
         `Failed to get count: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

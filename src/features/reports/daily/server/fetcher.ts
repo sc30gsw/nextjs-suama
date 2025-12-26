@@ -14,6 +14,14 @@ import type { dailyReports, users } from '~/db/schema'
 import { api } from '~/lib/rpc'
 import { dateUtils } from '~/utils/date-utils'
 
+function normalizeDateToString(value: unknown) {
+  if (value instanceof Date) {
+    return dateUtils.formatDateByJST(value)
+  }
+
+  return String(value)
+}
+
 export async function getDailyReportById(
   reportId: InferSelectModel<typeof dailyReports>['id'],
   userId: Session['userId'],
@@ -27,7 +35,14 @@ export async function getDailyReportById(
     },
   })
 
-  return res.data
+  if (!res.data) {
+    return null
+  }
+
+  return {
+    ...res.data,
+    reportDate: normalizeDateToString(res.data.reportDate),
+  }
 }
 
 export async function getDailyReports(
@@ -59,7 +74,19 @@ export async function getDailyReports(
     },
   })
 
-  return res.data
+  if (!res.data) {
+    return null
+  }
+
+  return {
+    ...res.data,
+    dailyReports: res.data.dailyReports.map((report) => ({
+      ...report,
+      date: normalizeDateToString(report.date),
+    })),
+    startDate: normalizeDateToString(res.data.startDate),
+    endDate: normalizeDateToString(res.data.endDate),
+  }
 }
 
 export async function getDailyReportsCount(

@@ -56,6 +56,7 @@ export abstract class DailyReportDatesService {
       if (error instanceof DailyReportServiceError) {
         throw error
       }
+
       throw new DailyReportServiceError(
         `Failed to get daily report dates: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
