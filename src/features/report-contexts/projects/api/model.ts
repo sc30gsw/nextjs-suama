@@ -1,7 +1,6 @@
 import { t } from 'elysia'
 
 export namespace ProjectModel {
-  // Queryスキーマ
   export const getProjectsQuery = t.Object({
     skip: t.Optional(t.String()),
     limit: t.Optional(t.String()),
@@ -15,7 +14,6 @@ export namespace ProjectModel {
 
   export type getProjectsQuery = typeof getProjectsQuery.static
 
-  // Responseスキーマ
   export const missionRef = t.Object({
     id: t.String(),
   })
@@ -55,7 +53,6 @@ export namespace ProjectModel {
 
   export type getProjectsResponse = typeof getProjectsResponse.static
 
-  // Errorスキーマ
   export const errorResponse = t.Object({
     error: t.String(),
     code: t.String(),

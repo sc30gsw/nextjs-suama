@@ -1,7 +1,6 @@
 import { t } from 'elysia'
 
 export namespace WeeklyReportModel {
-  // Queryスキーマ
   export const getWeeklyReportsQuery = t.Object({
     year: t.String(),
     week: t.String(),
@@ -30,7 +29,6 @@ export namespace WeeklyReportModel {
 
   export type getLastWeekReportParams = typeof getLastWeekReportParams.static
 
-  // Responseスキーマ
   export const mission = t.Object({
     id: t.String(),
     name: t.String(),
@@ -214,7 +212,6 @@ export namespace WeeklyReportModel {
 
   export type getLastWeekReportResponse = typeof getLastWeekReportResponse.static
 
-  // Errorスキーマ
   export const errorResponse = t.Object({
     error: t.String(),
     code: t.String(),

@@ -1,7 +1,6 @@
 import { t } from 'elysia'
 
 export namespace DailyReportModel {
-  // Queryスキーマ
   export const getDailyReportsQuery = t.Object({
     userId: t.Optional(t.String()),
     userNames: t.Optional(t.String()),
@@ -47,7 +46,6 @@ export namespace DailyReportModel {
 
   export type getDailyReportDetailParams = typeof getDailyReportDetailParams.static
 
-  // Responseスキーマ
   export const workContent = t.Object({
     id: t.String(),
     project: t.String(),
@@ -156,7 +154,6 @@ export namespace DailyReportModel {
 
   export type getDailyReportDatesResponse = typeof getDailyReportDatesResponse.static
 
-  // Errorスキーマ
   export const errorResponse = t.Object({
     error: t.String(),
     code: t.String(),

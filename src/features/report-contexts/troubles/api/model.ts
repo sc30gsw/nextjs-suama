@@ -1,7 +1,6 @@
 import { t } from 'elysia'
 
 export namespace TroubleModel {
-  // Queryスキーマ
   export const getTroubleCategoriesQuery = t.Object({
     skip: t.Optional(t.String()),
     limit: t.Optional(t.String()),
@@ -13,7 +12,6 @@ export namespace TroubleModel {
 
   export type getTroubleCategoriesQuery = typeof getTroubleCategoriesQuery.static
 
-  // Responseスキーマ
   export const troubleCategory = t.Object({
     id: t.String(),
     name: t.String(),
@@ -42,7 +40,6 @@ export namespace TroubleModel {
 
   export type getTroubleCategoriesResponse = typeof getTroubleCategoriesResponse.static
 
-  // Errorスキーマ
   export const errorResponse = t.Object({
     error: t.String(),
     code: t.String(),
