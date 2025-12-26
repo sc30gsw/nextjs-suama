@@ -51,8 +51,11 @@ export async function retireUserAction(id: CommonDeleteIdSchema['id']) {
 
     updateTag(GET_USERS_CACHE_KEY)
 
+    const isSelf = session.user.id === parseResult.data.id
+
     return {
       status: 'success',
+      fields: [isSelf ? 'isSelf' : ''],
     } as const satisfies SubmissionResult
   } catch {
     return {

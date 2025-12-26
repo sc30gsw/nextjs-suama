@@ -1,21 +1,22 @@
 import { IconPersonRemove } from '@intentui/icons'
-
+import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
 import { Loader } from '~/components/ui/intent-ui/loader'
 import { Tooltip } from '~/components/ui/intent-ui/tooltip'
 import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
-
 import { retireUserAction } from '~/features/users/actions/retire-user-action'
 import { Confirm } from '~/hooks/use-confirm'
 import { UserModel } from '~/features/users/api/model'
+import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 
 type UserRetireButtonProps = Pick<UserModel.getUsersResponse['users'][number], 'id' | 'name'>
 
 export function UserRetireButton({ id, name }: UserRetireButtonProps) {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const handleRetire = async () => {
     const ok = await Confirm.call({
@@ -66,6 +67,10 @@ export function UserRetireButton({ id, name }: UserRetireButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.USER.RETIRE_SUCCESS)
+        
+        if (result.fields.includes('isSelf')) {
+          router.push(urls.href({ route: '/' }))
+        }
       } catch {
         toast.error(TOAST_MESSAGES.USER.RETIRE_FAILED)
       }
