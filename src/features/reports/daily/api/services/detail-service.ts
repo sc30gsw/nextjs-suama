@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { dailyReports, troubles } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
 import {
   DailyReportServiceError,
@@ -10,6 +10,7 @@ import {
 export abstract class DailyReportDetailService {
   static async getDailyReportDetail(reportId: string, userId: string) {
     try {
+      const db = getDb()
       const dailyReportDetailQuery = db.query.dailyReports.findFirst({
         where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
         with: {

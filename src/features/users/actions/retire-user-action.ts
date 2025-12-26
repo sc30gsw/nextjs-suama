@@ -6,7 +6,7 @@ import { updateTag } from 'next/cache'
 import { GET_USERS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import {
   type CommonDeleteIdSchema,
@@ -40,6 +40,7 @@ export async function retireUserAction(id: CommonDeleteIdSchema['id']) {
   }
 
   try {
+    const db = getDb()
     await db
       .update(users)
       .set({

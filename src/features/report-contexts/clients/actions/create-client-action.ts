@@ -7,7 +7,7 @@ import { ERROR_STATUS } from '~/constants/error-message'
 import { clients } from '~/db/schema'
 import { createClientInputSchema } from '~/features/report-contexts/clients/types/schemas/create-client-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function createClientAction(_: unknown, formData: FormData) {
@@ -28,6 +28,7 @@ export async function createClientAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     await db.insert(clients).values({
       name: submission.value.name,
       likeKeywords: sanitizeKeywords(submission.value.likeKeywords),

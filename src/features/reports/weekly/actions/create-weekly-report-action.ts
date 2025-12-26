@@ -10,7 +10,7 @@ import {
 import { ERROR_STATUS } from '~/constants/error-message'
 import { missions, weeklyReportMissions, weeklyReports } from '~/db/schema'
 import { createWeeklyReportFormSchema } from '~/features/reports/weekly/types/schemas/create-weekly-report-form-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function createWeeklyReportAction(_: unknown, formData: FormData) {
@@ -31,6 +31,7 @@ export async function createWeeklyReportAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     const [newWeeklyReport] = await db
       .insert(weeklyReports)
       .values({

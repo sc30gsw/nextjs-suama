@@ -2,7 +2,7 @@
 
 import { ERROR_STATUS } from '~/constants/error-message'
 import { generateCsv } from '~/features/report-contexts/utils/csv-utils'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function downloadMissionsCsvAction() {
@@ -17,6 +17,7 @@ export async function downloadMissionsCsvAction() {
   }
 
   try {
+    const db = getDb()
     const allMissions = await db.query.missions.findMany({
       orderBy: (missionsTable, { asc }) => [asc(missionsTable.createdAt)],
     })

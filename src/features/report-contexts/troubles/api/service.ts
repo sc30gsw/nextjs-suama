@@ -2,7 +2,7 @@ import type { Session } from 'better-auth'
 import { and, type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { categoryOfTroubles, troubles } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import type { TroubleModel } from '~/features/report-contexts/troubles/api/model'
 import {
   TroubleServiceError,
@@ -15,6 +15,7 @@ export abstract class TroubleService {
     userId: Session['userId'],
   ) {
     try {
+      const db = getDb()
       const { skip, limit, names, withData, sortBy, sortOrder } = params
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP

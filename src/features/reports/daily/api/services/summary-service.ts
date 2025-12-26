@@ -14,7 +14,7 @@ import {
 } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { dailyReportMissions, dailyReports, missions, projects, users } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
 import type { DailyReportModel } from '~/features/reports/daily/api/model'
 import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
@@ -22,6 +22,7 @@ import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
 export abstract class DailyReportSummaryService {
   static async getDailyReportSummary(params: DailyReportModel.getDailyReportSummaryQuery) {
     try {
+      const db = getDb()
       const { userId, userNames, startDate, endDate, limit, skip } = params
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP

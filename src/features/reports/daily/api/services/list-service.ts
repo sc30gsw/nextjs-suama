@@ -1,7 +1,7 @@
 import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { dailyReports, users } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
 import type { DailyReportModel } from '~/features/reports/daily/api/model'
 import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
@@ -9,6 +9,7 @@ import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
 export abstract class DailyReportListService {
   static async getDailyReportsList(params: DailyReportModel.getDailyReportsQuery) {
     try {
+      const db = getDb()
       const { userId, userNames, skip, limit, startDate, endDate } = params
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP

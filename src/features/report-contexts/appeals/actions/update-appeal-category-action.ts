@@ -7,7 +7,7 @@ import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
 import { editAppealCategoryInputSchema } from '~/features/report-contexts/appeals/types/schemas/edit-appeal-category-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function updateAppealCategoryAction(_: unknown, formData: FormData) {
@@ -28,6 +28,7 @@ export async function updateAppealCategoryAction(_: unknown, formData: FormData)
   }
 
   try {
+    const db = getDb()
     const category = await db.query.categoryOfAppeals.findFirst({
       where: eq(categoryOfAppeals.id, submission.value.id),
     })

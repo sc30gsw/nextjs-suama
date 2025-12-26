@@ -6,7 +6,7 @@ import { updateTag } from 'next/cache'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfTroubles } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import {
   type CommonDeleteIdSchema,
@@ -33,6 +33,7 @@ export async function deleteTroubleCategoryAction(id: CommonDeleteIdSchema['id']
   }
 
   try {
+    const db = getDb()
     await db.delete(categoryOfTroubles).where(eq(categoryOfTroubles.id, parseResult.data.id))
 
     updateTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)

@@ -13,7 +13,7 @@ import {
   type weeklyReportMissions,
   weeklyReports,
 } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 import type { WeeklyReportModel } from '~/features/reports/weekly/api/model'
 import {
@@ -44,6 +44,7 @@ function groupingReportMission<
 export abstract class WeeklyReportService {
   static async getWeeklyReports(params: WeeklyReportModel.getWeeklyReportsQuery) {
     try {
+      const db = getDb()
       const { year, week, offset } = params
 
       const weekStartDate = startOfWeek(setWeek(setYear(new Date(), Number(year)), Number(week)), {
@@ -279,6 +280,7 @@ export abstract class WeeklyReportService {
       if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
         throw error
       }
+
       throw new WeeklyReportServiceError(
         `Failed to get weekly reports: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
@@ -287,6 +289,7 @@ export abstract class WeeklyReportService {
 
   static async getWeeklyReportById(params: WeeklyReportModel.getWeeklyReportByIdParams) {
     try {
+      const db = getDb()
       const { weeklyReportId } = params
       const weeklyReport = await db.query.weeklyReports.findFirst({
         where: eq(weeklyReports.id, weeklyReportId),
@@ -317,6 +320,7 @@ export abstract class WeeklyReportService {
       if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
         throw error
       }
+
       throw new WeeklyReportServiceError(
         `Failed to get weekly report by id: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
@@ -328,7 +332,9 @@ export abstract class WeeklyReportService {
     userId: Session['userId'],
   ) {
     try {
+      const db = getDb()
       const { year, week } = params
+
       const weeklyReport = await db.query.weeklyReports.findFirst({
         where: and(
           eq(weeklyReports.userId, userId),
@@ -362,6 +368,7 @@ export abstract class WeeklyReportService {
       if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
         throw error
       }
+
       throw new WeeklyReportServiceError(
         `Failed to get current user weekly report: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
@@ -373,6 +380,7 @@ export abstract class WeeklyReportService {
     userId: Session['userId'],
   ) {
     try {
+      const db = getDb()
       const { year, week } = params
       const weeklyReport = await db.query.weeklyReports.findFirst({
         where: and(
@@ -429,6 +437,7 @@ export abstract class WeeklyReportService {
       if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
         throw error
       }
+
       throw new WeeklyReportServiceError(
         `Failed to get last week report: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

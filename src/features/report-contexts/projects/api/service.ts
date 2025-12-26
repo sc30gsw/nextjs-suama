@@ -1,7 +1,7 @@
 import { and, asc, count, desc, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { clients, projects } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import type { ProjectModel } from '~/features/report-contexts/projects/api/model'
 import {
   ProjectServiceError,
@@ -11,6 +11,7 @@ import {
 export abstract class ProjectService {
   static async getProjects(params: ProjectModel.getProjectsQuery) {
     try {
+      const db = getDb()
       const { skip, limit, names, archiveStatus, sortBy, sortOrder } = params
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP

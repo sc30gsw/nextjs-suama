@@ -1,10 +1,8 @@
-import 'server-only'
-
 import { eq } from 'drizzle-orm'
 import { Elysia } from 'elysia'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 
 class UnauthorizedError extends Error {
   status = 401
@@ -58,7 +56,7 @@ export const sessionMiddleware = new Elysia({ name: 'session' })
       throw new UnauthorizedError()
     }
 
-    const user = await db.query.users.findFirst({
+    const user = await getDb().query.users.findFirst({
       where: eq(users.id, userId),
     })
 

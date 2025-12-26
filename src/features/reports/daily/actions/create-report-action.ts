@@ -14,7 +14,7 @@ import {
 import { ERROR_STATUS } from '~/constants/error-message'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
 import { createDailyReportFormSchema } from '~/features/reports/daily/types/schemas/create-daily-report-form-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import { dateUtils } from '~/utils/date-utils'
 
@@ -37,6 +37,7 @@ export async function createReportAction(_: unknown, formData: FormData) {
 
   const actionType = formData.get('action')
 
+  const db = getDb()
   const reportDateString = submission.value.reportDate
   const reportDate = dateUtils.convertJstDateToUtc(reportDateString, 'start')
 

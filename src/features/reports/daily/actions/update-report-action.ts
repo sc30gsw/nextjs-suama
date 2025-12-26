@@ -15,7 +15,7 @@ import {
 import { ERROR_STATUS } from '~/constants/error-message'
 import { appeals, dailyReportMissions, dailyReports, missions, troubles } from '~/db/schema'
 import { updateDailyReportFormSchema } from '~/features/reports/daily/types/schemas/edit-daily-report-form-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import { dateUtils } from '~/utils/date-utils'
 
@@ -36,6 +36,7 @@ export async function updateReportAction(_: unknown, formData: FormData) {
     })
   }
 
+  const db = getDb()
   const reportId = submission.value.reportId
   const actionType = formData.get('action')
 

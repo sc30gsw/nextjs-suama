@@ -1,7 +1,7 @@
 import { and, type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { users } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { UserNotFoundError, UserServiceError } from '~/features/users/api/errors'
 import type { UserModel } from '~/features/users/api/model'
 
@@ -9,6 +9,8 @@ export abstract class UserService {
   static async getUsers(params: UserModel.getUsersQuery) {
     try {
       const { skip, limit, userNames, retirementStatus, sortBy, sortOrder } = params
+
+      const db = getDb()
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
       const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
@@ -84,6 +86,7 @@ export abstract class UserService {
       if (error instanceof UserServiceError || error instanceof UserNotFoundError) {
         throw error
       }
+
       throw new UserServiceError(
         `Failed to get users: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

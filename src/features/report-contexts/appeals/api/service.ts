@@ -1,7 +1,7 @@
 import { type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { appeals, categoryOfAppeals } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import type { AppealModel } from '~/features/report-contexts/appeals/api/model'
 import {
   AppealServiceError,
@@ -11,6 +11,7 @@ import {
 export abstract class AppealService {
   static async getAppealCategories(params: AppealModel.getAppealCategoriesQuery) {
     try {
+      const db = getDb()
       const { skip, limit, names, withData, reportId, sortBy, sortOrder } = params
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP

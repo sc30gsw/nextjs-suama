@@ -11,7 +11,7 @@ import { uploadClientCsvRowSchema } from '~/features/report-contexts/clients/typ
 import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/constants/csv-error-messages'
 import { csvFileSchema } from '~/features/report-contexts/types/schemas/csv-file-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 const REQUIRED_COLUMNS = ['name', 'likeKeywords'] as const
@@ -108,6 +108,7 @@ export async function uploadClientsCsvAction(
           }
 
           try {
+            const db = getDb()
             await db.transaction(async (tx) => {
               for (let i = 0; i < rows.length; i++) {
                 const row = rows[i]

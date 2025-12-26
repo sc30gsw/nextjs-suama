@@ -10,7 +10,7 @@ import { categoryOfTroubles } from '~/db/schema'
 import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/constants/csv-error-messages'
 import { uploadTroubleCategoryCsvRowSchema } from '~/features/report-contexts/troubles/types/schemas/upload-trouble-category-csv-schema'
 import { csvFileSchema } from '~/features/report-contexts/types/schemas/csv-file-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 type CategoryOfTroublesInsert = typeof categoryOfTroubles.$inferInsert
@@ -111,6 +111,7 @@ export async function uploadTroubleCategoriesCsvAction(
           }
 
           try {
+            const db = getDb()
             await db.transaction(async (tx) => {
               for (let i = 0; i < rows.length; i++) {
                 const row = rows[i]

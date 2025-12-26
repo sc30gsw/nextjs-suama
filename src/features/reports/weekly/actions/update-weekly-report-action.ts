@@ -8,7 +8,7 @@ import { GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY } from '~/constants/cache-ke
 import { ERROR_STATUS } from '~/constants/error-message'
 import { missions, weeklyReportMissions, weeklyReports } from '~/db/schema'
 import { updateWeeklyReportFormSchema } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
@@ -29,6 +29,7 @@ export async function updateWeeklyReportAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     const weeklyReport = await db.query.weeklyReports.findFirst({
       where: eq(weeklyReports.id, submission.value.weeklyReportId),
     })

@@ -6,7 +6,7 @@ import { updateTag } from 'next/cache'
 import { GET_CLIENTS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { clients } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import {
   type CommonDeleteIdSchema,
@@ -33,6 +33,7 @@ export async function deleteClientAction(id: CommonDeleteIdSchema['id']) {
   }
 
   try {
+    const db = getDb()
     await db.delete(clients).where(eq(clients.id, parseResult.data.id))
 
     updateTag(GET_CLIENTS_CACHE_KEY)

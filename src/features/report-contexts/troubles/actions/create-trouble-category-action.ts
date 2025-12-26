@@ -6,7 +6,7 @@ import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfTroubles } from '~/db/schema'
 import { createTroubleCategoryInputSchema } from '~/features/report-contexts/troubles/types/schemas/create-trouble-category-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function createTroubleCategoryAction(_: unknown, formData: FormData) {
@@ -27,6 +27,7 @@ export async function createTroubleCategoryAction(_: unknown, formData: FormData
   }
 
   try {
+    const db = getDb()
     await db.insert(categoryOfTroubles).values({
       name: submission.value.name,
     })

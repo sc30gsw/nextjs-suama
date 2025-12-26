@@ -1,7 +1,7 @@
 import { and, asc, count, desc, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { missions, projects } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import type { MissionModel } from '~/features/report-contexts/missions/api/model'
 import {
   MissionServiceError,
@@ -11,6 +11,7 @@ import {
 export abstract class MissionService {
   static async getMissions(params: MissionModel.getMissionsQuery) {
     try {
+      const db = getDb()
       const { skip, limit, names, archiveStatus, sortBy, sortOrder } = params
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP

@@ -6,7 +6,7 @@ import { GET_APPEAL_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfAppeals } from '~/db/schema'
 import { createAppealCategoryInputSchema } from '~/features/report-contexts/appeals/types/schemas/create-appeal-category-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function createAppealCategoryAction(_: unknown, formData: FormData) {
@@ -27,6 +27,7 @@ export async function createAppealCategoryAction(_: unknown, formData: FormData)
   }
 
   try {
+    const db = getDb()
     await db.insert(categoryOfAppeals).values({
       name: submission.value.name,
     })

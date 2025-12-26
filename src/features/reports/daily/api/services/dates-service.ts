@@ -1,7 +1,7 @@
 import { endOfMonth, format, startOfMonth } from 'date-fns'
 import { and, eq, gte, lte, ne } from 'drizzle-orm'
 import { dailyReports } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
 import type { DailyReportModel } from '~/features/reports/daily/api/model'
 import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
@@ -12,6 +12,7 @@ export abstract class DailyReportDatesService {
     params: DailyReportModel.getDailyReportDatesQuery,
   ) {
     try {
+      const db = getDb()
       const { year, month, excludeReportId } = params
 
       if (!year || !month) {

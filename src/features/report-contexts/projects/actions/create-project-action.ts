@@ -8,7 +8,7 @@ import { ERROR_STATUS } from '~/constants/error-message'
 import { clients, projects } from '~/db/schema'
 import { createProjectInputSchema } from '~/features/report-contexts/projects/types/schemas/create-project-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function createProjectAction(_: unknown, formData: FormData) {
@@ -29,6 +29,7 @@ export async function createProjectAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     const client = await db.query.clients.findFirst({
       where: eq(clients.id, submission.value.clientId),
     })

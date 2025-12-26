@@ -4,7 +4,7 @@ import { parseWithZod } from '@conform-to/zod/v4'
 import { or } from 'drizzle-orm'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { signUpInputSchema } from '~/features/auth/types/schemas/sign-up-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { auth } from '~/lib/auth'
 
 export async function signUpAction(_: unknown, formData: FormData) {
@@ -15,7 +15,7 @@ export async function signUpAction(_: unknown, formData: FormData) {
   }
 
   try {
-    const existingUser = await db.query.users.findFirst({
+    const existingUser = await getDb().query.users.findFirst({
       where: (users, { eq }) =>
         or(eq(users.email, submission.value.email), eq(users.name, submission.value.name)),
     })

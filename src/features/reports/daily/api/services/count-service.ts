@@ -1,6 +1,6 @@
 import { and, count, countDistinct, eq, gte, inArray, like, lte, or, sql } from 'drizzle-orm'
 import { dailyReportMissions, dailyReports, missions, projects, users } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
 import type { DailyReportModel } from '~/features/reports/daily/api/model'
 import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
@@ -8,6 +8,7 @@ import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
 export abstract class DailyReportCountService {
   static async getCount(params: DailyReportModel.getDailyReportCountQuery) {
     try {
+      const db = getDb()
       const { userId, userNames, startDate, endDate } = params
 
       const { start, end } = dateUtils.getOneMonthAgoRangeByJST()

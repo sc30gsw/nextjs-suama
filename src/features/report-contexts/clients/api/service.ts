@@ -1,7 +1,7 @@
 import { count, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { clients } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import {
   ClientNotFoundError,
   ClientServiceError,
@@ -11,6 +11,7 @@ import type { ClientModel } from '~/features/report-contexts/clients/api/model'
 export abstract class ClientService {
   static async getClients(params: ClientModel.getClientsQuery) {
     try {
+      const db = getDb()
       const { skip, limit, names, sortBy, sortOrder } = params
 
       const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
