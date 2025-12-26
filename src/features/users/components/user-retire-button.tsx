@@ -67,7 +67,7 @@ export function UserRetireButton({ id, name }: UserRetireButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.USER.RETIRE_SUCCESS)
-        
+
         if (result.fields.includes('isSelf')) {
           router.push(urls.href({ route: '/' }))
         }
