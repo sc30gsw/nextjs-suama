@@ -1,8 +1,8 @@
 import { Elysia, t } from 'elysia'
 import { sessionMiddleware } from '~/lib/session-middleware'
-import { UserNotFoundError, UserServiceError } from './errors'
-import { UserModel } from './model'
-import { UserService } from './service'
+import { UserNotFoundError, UserServiceError } from '~/features/users/api/errors'
+import { UserService } from '~/features/users/api/service'
+import { UserModel } from '~/features/users/api/model'
 
 export const userPlugin = new Elysia({ prefix: '/users', name: 'user' })
   .use(sessionMiddleware)
