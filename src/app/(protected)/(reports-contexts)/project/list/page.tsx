@@ -125,9 +125,7 @@ export default async function ProjectListPage({
                   return null
                 }
 
-                return (
-                  <ProjectsTable data={projectResponse} clients={clientsResponse.clients} />
-                )
+                return <ProjectsTable data={projectResponse} clients={clientsResponse.clients} />
               },
             )}
           </Suspense>
