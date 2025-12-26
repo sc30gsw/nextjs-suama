@@ -61,7 +61,6 @@
     "server-only": "^0.0.1",
     "sonner": "^2.0.7",
     "tailwindcss-react-aria-components": "^2.0.1",
-    "up-fetch": "^2.5.0",
     "vercel": "^46.1.1",
     "zod": "^4.1.13"
   },

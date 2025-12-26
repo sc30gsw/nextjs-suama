@@ -49,7 +49,6 @@
         "server-only": "^0.0.1",
         "sonner": "^2.0.7",
         "tailwindcss-react-aria-components": "^2.0.1",
-        "up-fetch": "^2.5.0",
         "vercel": "^46.1.1",
         "zod": "^4.1.13",
       },
@@ -1590,8 +1589,6 @@
     "unpipe": ["unpipe@1.0.0", "", {}, "sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ=="],
 
     "unplugin": ["unplugin@2.1.0", "", { "dependencies": { "acorn": "^8.14.0", "webpack-virtual-modules": "^0.6.2" } }, "sha512-us4j03/499KhbGP8BU7Hrzrgseo+KdfJYWcbcajCOqsAyb8Gk0Yn2kiUIcZISYCb1JFaZfIuG3b42HmguVOKCQ=="],
-
-    "up-fetch": ["up-fetch@2.5.0", "", {}, "sha512-rzNLKEQqU49+QqPhwcwhYuPL5yZHdJu6UE4gKH5LL+XR0ny8u8UKKHYlePj7973pLb6SWF8ngA+nJsnAvS9iEg=="],
 
     "update-browserslist-db": ["update-browserslist-db@1.2.3", "", { "dependencies": { "escalade": "^3.2.0", "picocolors": "^1.1.1" }, "peerDependencies": { "browserslist": ">= 4.21.0" }, "bin": { "update-browserslist-db": "cli.js" } }, "sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w=="],
 

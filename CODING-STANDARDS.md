@@ -25,7 +25,7 @@
 
 **前提**
 
-1. 今回はAPI層ではHono RPCによるBFFを提供している
+1. 今回はAPI層ではElysia RPCによるBFFを提供している
 2. DB層ではDrizzleによるSchemaを提供している
 
 - 上記のため、大元となる型が存在する場合、上記の型から型を生成・使用すること
@@ -33,17 +33,13 @@
 以下のように大元となる型を
 
 ```ts
-import type { InferResponseType } from 'hono'
-import type { client } from '~/lib/rpc'
+import type { api } from '~/lib/rpc'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import type { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 
 type DailyReportsInWeeklyReportListTableProps = {
-  data: InferResponseType<
-    typeof client.api.weeklies.$get,
-    200
-  >['reports'][number]['dailyReports'][number]['dailyReportMissions']
+  data: Awaited<ReturnType<typeof api.weeklies.get>>['reports'][number]['dailyReports'][number]['dailyReportMissions']
 }
 
 type CreateWeeklyReportFormProps = {
@@ -69,7 +65,7 @@ type CreateWeeklyReportFormProps = {
 - RequestMemorizationおよび、並列フェッチ・preloadを活用しデータフェッチのウォーターフォールを避けること
 - データフェッチはデータフェッチ コロケーションに従い、末端のリーフコンポーネントで行うこと
 - fetchには`src/lib/fetcher.ts`にてfetch関数を拡張した関数を使用すること
-  - 使用時は、HonoのPRCによる機能を使用し、urlと`InferResponseType`などで型安全なfetchを実現すること
+  - 使用時は、ElysiaのRPCによる機能を使用し、urlと`Awaited<ReturnType<typeof api.*>>`などで型安全なfetchを実現すること
 
 ### cacheについて
 
@@ -92,7 +88,7 @@ type CreateWeeklyReportFormProps = {
   |  ├ app: ルーティング定義
   |  |  ├ api: Route Handler
   |  |  |  └[[...route]] : optional catch-all segmentsによるAPIルート
-  |  |  |     └ route.ts: HonoのAPI Route定義
+  |  |  |     └ route.ts: ElysiaのAPI Route定義
   |  |  ├ layout.tsx: ルートレイアウト
   |  |  ├ page.tsx : ルートページコンポーネント
   |  |  ├ loading.tsx: ルートローディングUI
@@ -157,14 +153,13 @@ type CreateWeeklyReportFormProps = {
   ├ tailwind.config.ts : tailwind cssの設定ファイル
   ├ postcss.config.mjs : postcssの設定ファイル（主にtailwind cssのプラグイン設定を記述）
   ├ package.json : パッケージマネージャーの設定ファイル
-  ├ biome.json : Linter・Formatterの設定ファイル
+  ├ oxc.json : Linter・Formatterの設定ファイル
   └ tsconfig.json : typescriptの設定ファイル
 ```
 
 ## 主要ライブラリ
 
-- [Hono](https://hono.dev/): バックエンドフレームワーク
-- [up-fetch](https://github.com/L-Blondy/up-fetch): fetch拡張ライブラリ
+- [Elysia](https://elysiajs.com/): バックエンドフレームワーク
 - [Tailwind CSS](https://tailwindcss.com/): スタイリングソリューション
 - [Intent UI](https://intentui.com/): コンポーネントライブラリ
 - [Drizzle](https://orm.drizzle.team/): ORM
