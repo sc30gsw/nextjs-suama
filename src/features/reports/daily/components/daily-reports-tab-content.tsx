@@ -52,6 +52,10 @@ export async function DailyReportsTabContent({ children, kind }: DailyReportsTab
           }
         >
           {countDataPromise.then((countData) => {
+            if (!countData) {
+              return null
+            }
+
             const total =
               tab === DAILY_REPORT_TABS_MAP.DATE.id
                 ? countData.dailyReportsCount
@@ -90,6 +94,10 @@ export async function DailyReportsTabContent({ children, kind }: DailyReportsTab
             }
           >
             {countDataPromise.then((countData) => {
+              if (!countData) {
+                return null
+              }
+
               const total =
                 tab === DAILY_REPORT_TABS_MAP.DATE.id
                   ? countData.dailyReportsCount

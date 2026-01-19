@@ -7,7 +7,7 @@ import { GET_USERS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { settingUserInputSchema } from '~/features/users/types/schemas/setting-user-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import { sendUserUpdateEmail } from '~/lib/resend'
 
@@ -29,6 +29,7 @@ export async function settingUserAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     const user = await db.query.users.findFirst({
       where: eq(users.id, submission.value.id),
     })
@@ -86,7 +87,7 @@ export async function settingUserAction(_: unknown, formData: FormData) {
     await sendUserUpdateEmail(user.email, submission.value.name)
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

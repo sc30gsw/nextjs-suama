@@ -7,11 +7,11 @@ import { eq } from 'drizzle-orm'
 import * as schema from '~/db/schema'
 import { users } from '~/db/schema'
 import { env } from '~/env'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { sendPasswordResetEmail, sendVerificationEmail } from '~/lib/resend'
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(getDb(), {
     provider: 'sqlite',
     schema,
     usePlural: true,
@@ -58,7 +58,7 @@ export const auth = betterAuth({
         return { user, session }
       }
 
-      const userWithRole = await db.query.users.findFirst({
+      const userWithRole = await getDb().query.users.findFirst({
         where: eq(users.id, user.id),
         columns: {
           role: true,

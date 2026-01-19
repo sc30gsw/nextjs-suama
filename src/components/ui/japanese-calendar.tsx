@@ -275,7 +275,7 @@ type JapaneseRangeCalendarProps<T extends DateValue> = RangeCalendarPrimitivePro
 
 export function JapaneseRangeCalendar<T extends DateValue>({
   errorMessage,
-  className,
+  className: _className,
   visibleDuration = { months: 1 },
   onCellClick,
   hideNavigationButtons,

@@ -1,15 +1,16 @@
 import { and, eq } from 'drizzle-orm'
 import { dailyReports, troubles } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
-import { DailyReportServiceError } from './list-service'
+import {
+  DailyReportServiceError,
+  DailyReportNotFoundError,
+} from '~/features/reports/daily/api/errors'
 
-export class DailyReportDetailService {
-  async getDailyReportDetail(
-    reportId: (typeof dailyReports)['$inferSelect']['id'],
-    userId: (typeof dailyReports)['$inferSelect']['userId'],
-  ) {
+export abstract class DailyReportDetailService {
+  static async getDailyReportDetail(reportId: string, userId: string) {
     try {
+      const db = getDb()
       const dailyReportDetailQuery = db.query.dailyReports.findFirst({
         where: and(eq(dailyReports.id, reportId), eq(dailyReports.userId, userId)),
         with: {
@@ -43,7 +44,7 @@ export class DailyReportDetailService {
       ])
 
       if (!dailyReportDetail) {
-        return null
+        throw new DailyReportNotFoundError(reportId)
       }
 
       const reportDate = dailyReportDetail.reportDate
@@ -82,6 +83,10 @@ export class DailyReportDetailService {
         troubleEntries,
       }
     } catch (error) {
+      if (error instanceof DailyReportServiceError || error instanceof DailyReportNotFoundError) {
+        throw error
+      }
+
       throw new DailyReportServiceError(
         `Failed to get daily report detail: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

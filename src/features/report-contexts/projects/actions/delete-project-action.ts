@@ -6,7 +6,7 @@ import { updateTag } from 'next/cache'
 import { GET_PROJECTS_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { projects } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import {
   type CommonDeleteIdSchema,
@@ -33,6 +33,7 @@ export async function deleteProjectAction(id: CommonDeleteIdSchema['id']) {
   }
 
   try {
+    const db = getDb()
     await db.delete(projects).where(eq(projects.id, parseResult.data.id))
 
     updateTag(GET_PROJECTS_CACHE_KEY)
@@ -40,7 +41,7 @@ export async function deleteProjectAction(id: CommonDeleteIdSchema['id']) {
     return {
       status: 'success',
     } as const satisfies SubmissionResult
-  } catch (_) {
+  } catch {
     return {
       status: 'error',
       error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },

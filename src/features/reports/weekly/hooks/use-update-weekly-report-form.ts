@@ -21,7 +21,7 @@ export function useUpdateWeeklyReportForm(
   initialWeeklyInputCountSearchParamsParsers: UpdateWeeklyInputCountSearchParams,
   dates: string,
   weeklyReportId?: NonNullable<
-    Awaited<ReturnType<typeof getWeeklyReportMissionsById>>['weeklyReport']
+    NonNullable<Awaited<ReturnType<typeof getWeeklyReportMissionsById>>>['weeklyReport']
   >['id'],
 ) {
   const { weeklyReportEntry, setWeeklyReportEntry } = useWeeklyReportSearchParams(
@@ -55,7 +55,10 @@ export function useUpdateWeeklyReportForm(
               toast.error(TOAST_MESSAGES.WEEKLY_REPORT.NOT_FOUND, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push(urls.build({ route: '/weekly/list/[dates]', params: { dates } }).href),
+                  onClick: () =>
+                    router.push(
+                      urls.build({ route: '/weekly/list/[dates]', params: { dates } }).href,
+                    ),
                 },
               })
 
@@ -65,7 +68,10 @@ export function useUpdateWeeklyReportForm(
               toast.error(TOAST_MESSAGES.WEEKLY_REPORT.FORBIDDEN, {
                 cancel: {
                   label: '一覧に戻る',
-                  onClick: () => router.push(urls.build({ route: '/weekly/list/[dates]', params: { dates } }).href),
+                  onClick: () =>
+                    router.push(
+                      urls.build({ route: '/weekly/list/[dates]', params: { dates } }).href,
+                    ),
                 },
               })
 

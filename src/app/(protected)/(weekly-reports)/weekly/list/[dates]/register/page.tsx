@@ -46,7 +46,7 @@ export default async function WeeklyReportRegisterPage({
     session.user.id,
   )
 
-  if (res.weeklyReport) {
+  if (res?.weeklyReport) {
     redirect(
       urls.build({
         route: '/weekly/list/[dates]/edit/[weeklyReportId]',

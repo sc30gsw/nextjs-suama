@@ -36,8 +36,8 @@ export default async function AppealListPage({
     skip: paginationUtils.getOffset(page, rowsPerPage),
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
-    sortBy: sortBy ?? null,
-    sortOrder: sortOrder ?? null,
+    sortBy: sortBy as 'name' | undefined,
+    sortOrder: sortOrder as 'asc' | 'desc' | undefined,
   })
 
   return (
@@ -85,9 +85,13 @@ export default async function AppealListPage({
               </table>
             }
           >
-            {appealCategoriesPromise.then((res) => (
-              <AppealCategoriesTable data={res} />
-            ))}
+            {appealCategoriesPromise.then((res) => {
+              if (!res) {
+                return null
+              }
+
+              return <AppealCategoriesTable data={res} />
+            })}
           </Suspense>
         </Card.Content>
         <Card.Footer>
@@ -108,7 +112,7 @@ export default async function AppealListPage({
             }
           >
             {appealCategoriesPromise.then((res) => {
-              if (res.total === 0) {
+              if (!res || res.total === 0) {
                 return null
               }
 

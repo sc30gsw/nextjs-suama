@@ -11,7 +11,7 @@ import {
 } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { dailyReports } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 import {
   type CommonDeleteIdSchema,
@@ -37,6 +37,7 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
     } as const satisfies SubmissionResult
   }
 
+  const db = getDb()
   const existingReport = await db.query.dailyReports.findFirst({
     where: eq(dailyReports.id, parseResult.data.id),
   })
@@ -70,7 +71,7 @@ export async function deleteReportAction(id: CommonDeleteIdSchema['id']) {
     return {
       status: 'success',
     } as const satisfies SubmissionResult
-  } catch (_) {
+  } catch {
     return {
       status: 'error',
       error: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },

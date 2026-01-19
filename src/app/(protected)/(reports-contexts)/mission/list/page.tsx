@@ -44,8 +44,8 @@ export default async function MissionListPage({
     limit: paginationUtils.getMaxRowsLimit(rowsPerPage),
     names,
     archiveStatus: archiveStatus ?? 'all',
-    sortBy: sortBy ?? null,
-    sortOrder: sortOrder ?? null,
+    sortBy: sortBy ?? undefined,
+    sortOrder: sortOrder ?? undefined,
   })
 
   const projectsPromise = getProjects(session.user.id, { archiveStatus: 'all' })
@@ -56,9 +56,13 @@ export default async function MissionListPage({
         <Heading>ミッション一覧</Heading>
         <div className="flex flex-col gap-2">
           <Suspense fallback={<Skeleton className="h-8 w-44.5" />}>
-            {projectsPromise.then((res) => (
-              <CreateMissionModal projects={res.projects} />
-            ))}
+            {projectsPromise.then((res) => {
+              if (!res) {
+                return null
+              }
+
+              return <CreateMissionModal projects={res.projects} />
+            })}
           </Suspense>
           <ReportContextMenu label="ミッション" />
         </div>
@@ -112,9 +116,15 @@ export default async function MissionListPage({
             }
           >
             {Promise.all([missionsPromise, projectsPromise]).then(
-              ([missionsResponse, projectsResponse]) => (
-                <MissionsTable data={missionsResponse} projects={projectsResponse.projects} />
-              ),
+              ([missionsResponse, projectsResponse]) => {
+                if (!missionsResponse || !projectsResponse) {
+                  return null
+                }
+
+                return (
+                  <MissionsTable data={missionsResponse} projects={projectsResponse.projects} />
+                )
+              },
             )}
           </Suspense>
         </Card.Content>
@@ -136,7 +146,7 @@ export default async function MissionListPage({
             }
           >
             {missionsPromise.then((res) => {
-              if (res.total === 0) {
+              if (!res || res.total === 0) {
                 return null
               }
 

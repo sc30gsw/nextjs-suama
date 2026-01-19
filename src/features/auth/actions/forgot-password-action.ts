@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
 import { signInInputSchema } from '~/features/auth/types/schemas/sing-in-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { auth } from '~/lib/auth'
 
 export async function forgotPasswordAction(_: unknown, formData: FormData) {
@@ -17,7 +17,7 @@ export async function forgotPasswordAction(_: unknown, formData: FormData) {
     return submission.reply()
   }
 
-  const existingUser = await db.query.users.findFirst({
+  const existingUser = await getDb().query.users.findFirst({
     where: eq(users.email, submission.value.email),
   })
 

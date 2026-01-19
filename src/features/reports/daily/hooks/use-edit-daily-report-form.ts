@@ -23,7 +23,7 @@ import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 export function useEditDailyForm(
-  initialData: Awaited<ReturnType<typeof getDailyReportById>>,
+  initialData: NonNullable<Awaited<ReturnType<typeof getDailyReportById>>>,
   initialDailyInputCountSearchParamsParsers: DailyInputCountSearchParams,
   options: Partial<
     Record<'unResolvedTroubles', TroubleCategoriesResponse['unResolvedTroubles']> &
@@ -179,6 +179,7 @@ export function useEditDailyForm(
         reportDate.change(defaultReportDate)
       }
     }
+    // oxlint-disable-next-line exhaustive-deps
   }, [defaultReportDate, initialData.reportDate])
 
   const remoteInput = useInputControl(fields.remote)

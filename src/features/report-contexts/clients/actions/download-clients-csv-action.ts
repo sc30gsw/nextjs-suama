@@ -2,7 +2,7 @@
 
 import { ERROR_STATUS } from '~/constants/error-message'
 import { generateCsv } from '~/features/report-contexts/utils/csv-utils'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function downloadClientsCsvAction() {
@@ -17,6 +17,7 @@ export async function downloadClientsCsvAction() {
   }
 
   try {
+    const db = getDb()
     const allClients = await db.query.clients.findMany({
       orderBy: (clientsTable, { asc }) => [asc(clientsTable.createdAt)],
     })
@@ -32,7 +33,7 @@ export async function downloadClientsCsvAction() {
       success: true,
       csv: csvString,
     }
-  } catch (_) {
+  } catch {
     return {
       error: {
         message: [ERROR_STATUS.SOMETHING_WENT_WRONG],

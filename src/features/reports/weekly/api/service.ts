@@ -1,4 +1,3 @@
-import type { RouteHandler } from '@hono/zod-openapi'
 import type { Session } from 'better-auth'
 import { addDays, format, setWeek, setYear, startOfWeek } from 'date-fns'
 import { and, eq, exists, gte, inArray, lte, or } from 'drizzle-orm'
@@ -14,21 +13,13 @@ import {
   type weeklyReportMissions,
   weeklyReports,
 } from '~/db/schema'
-import type {
-  getCurrentUserWeeklyReportRoute,
-  getLastWeekReportRoute,
-  getWeeklyReportByIdRoute,
-  getWeeklyReportsRoute,
-} from '~/features/reports/weekly/api/route'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { DATE_FORMAT, dateUtils } from '~/utils/date-utils'
-
-export class WeeklyReportServiceError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'WeeklyReportServiceError'
-  }
-}
+import type { WeeklyReportModel } from '~/features/reports/weekly/api/model'
+import {
+  WeeklyReportServiceError,
+  WeeklyReportNotFoundError,
+} from '~/features/reports/weekly/api/errors'
 
 function groupingReportMission<
   T extends typeof weeklyReportMissions.$inferSelect | typeof dailyReportMissions.$inferSelect,
@@ -50,24 +41,22 @@ function groupingReportMission<
   )
 }
 
-export class WeeklyReportService {
-  async getWeeklyReports(
-    params: ReturnType<Parameters<RouteHandler<typeof getWeeklyReportsRoute>>[0]['req']['valid']>,
-  ) {
-    const { year, week, offset } = params
-
-    const weekStartDate = startOfWeek(setWeek(setYear(new Date(), Number(year)), Number(week)), {
-      weekStartsOn: 1,
-    })
-    const weekEndDate = addDays(weekStartDate, 6)
-    const nextWeek = Number(week) + 1
-
-    const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
-    const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
-
-    const currentWeek = Number(week)
-
+export abstract class WeeklyReportService {
+  static async getWeeklyReports(params: WeeklyReportModel.getWeeklyReportsQuery) {
     try {
+      const db = getDb()
+      const { year, week, offset } = params
+
+      const weekStartDate = startOfWeek(setWeek(setYear(new Date(), Number(year)), Number(week)), {
+        weekStartsOn: 1,
+      })
+      const weekEndDate = addDays(weekStartDate, 6)
+      const nextWeek = Number(week) + 1
+
+      const startDate = dateUtils.convertJstDateToUtc(format(weekStartDate, DATE_FORMAT), 'start')
+      const endDate = dateUtils.convertJstDateToUtc(format(weekEndDate, DATE_FORMAT), 'end')
+
+      const currentWeek = Number(week)
       const targetUsers = await db.query.users.findMany({
         where: and(
           eq(users.isRetired, false),
@@ -175,45 +164,133 @@ export class WeeklyReportService {
         const nextWeekReports = user.weeklyReports.filter((r) => r.week === nextWeek)
 
         return {
-          user,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            image: user.image,
+            createdAt: dateUtils.formatDateByJST(user.createdAt),
+            updatedAt: user.updatedAt ? dateUtils.formatDateByJST(user.updatedAt) : null,
+          },
           lastWeekReports: lastWeekReports.map((report) => ({
             ...report,
+            createdAt: dateUtils.formatDateByJST(report.createdAt),
+            updatedAt: report.updatedAt ? dateUtils.formatDateByJST(report.updatedAt) : null,
             weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
               report.weeklyReportMissions,
-            ),
+            ).map((reportMission) => ({
+              ...reportMission,
+              createdAt: dateUtils.formatDateByJST(reportMission.createdAt),
+              updatedAt: reportMission.updatedAt
+                ? dateUtils.formatDateByJST(reportMission.updatedAt)
+                : null,
+              mission: {
+                ...reportMission.mission,
+                createdAt: dateUtils.formatDateByJST(reportMission.mission.createdAt),
+                updatedAt: reportMission.mission.updatedAt
+                  ? dateUtils.formatDateByJST(reportMission.mission.updatedAt)
+                  : null,
+                project: {
+                  ...reportMission.mission.project,
+                  createdAt: dateUtils.formatDateByJST(reportMission.mission.project.createdAt),
+                  updatedAt: reportMission.mission.project.updatedAt
+                    ? dateUtils.formatDateByJST(reportMission.mission.project.updatedAt)
+                    : null,
+                },
+              },
+            })),
           })),
           dailyReports: user.dailyReports.map((report) => ({
             ...report,
+            reportDate: report.reportDate ? dateUtils.formatDateByJST(report.reportDate) : null,
+            createdAt: dateUtils.formatDateByJST(report.createdAt),
+            updatedAt: report.updatedAt ? dateUtils.formatDateByJST(report.updatedAt) : null,
             dailyReportMissions: groupingReportMission<typeof dailyReportMissions.$inferSelect>(
               report.dailyReportMissions,
-            ),
+            ).map((reportMission) => ({
+              ...reportMission,
+              createdAt: dateUtils.formatDateByJST(reportMission.createdAt),
+              updatedAt: reportMission.updatedAt
+                ? dateUtils.formatDateByJST(reportMission.updatedAt)
+                : null,
+              mission: {
+                ...reportMission.mission,
+                createdAt: dateUtils.formatDateByJST(reportMission.mission.createdAt),
+                updatedAt: reportMission.mission.updatedAt
+                  ? dateUtils.formatDateByJST(reportMission.mission.updatedAt)
+                  : null,
+                project: {
+                  ...reportMission.mission.project,
+                  createdAt: dateUtils.formatDateByJST(reportMission.mission.project.createdAt),
+                  updatedAt: reportMission.mission.project.updatedAt
+                    ? dateUtils.formatDateByJST(reportMission.mission.project.updatedAt)
+                    : null,
+                },
+              },
+            })),
+            appeals: report.appeals.map((appeal) => ({
+              ...appeal,
+              createdAt: dateUtils.formatDateByJST(appeal.createdAt),
+              updatedAt: appeal.updatedAt ? dateUtils.formatDateByJST(appeal.updatedAt) : null,
+            })),
           })),
           nextWeekReports: nextWeekReports.map((report) => ({
             ...report,
+            createdAt: dateUtils.formatDateByJST(report.createdAt),
+            updatedAt: report.updatedAt ? dateUtils.formatDateByJST(report.updatedAt) : null,
             weeklyReportMissions: groupingReportMission<typeof weeklyReportMissions.$inferSelect>(
               report.weeklyReportMissions,
-            ),
+            ).map((reportMission) => ({
+              ...reportMission,
+              createdAt: dateUtils.formatDateByJST(reportMission.createdAt),
+              updatedAt: reportMission.updatedAt
+                ? dateUtils.formatDateByJST(reportMission.updatedAt)
+                : null,
+              mission: {
+                ...reportMission.mission,
+                createdAt: dateUtils.formatDateByJST(reportMission.mission.createdAt),
+                updatedAt: reportMission.mission.updatedAt
+                  ? dateUtils.formatDateByJST(reportMission.mission.updatedAt)
+                  : null,
+                project: {
+                  ...reportMission.mission.project,
+                  createdAt: dateUtils.formatDateByJST(reportMission.mission.project.createdAt),
+                  updatedAt: reportMission.mission.project.updatedAt
+                    ? dateUtils.formatDateByJST(reportMission.mission.project.updatedAt)
+                    : null,
+                },
+              },
+            })),
           })),
-          troubles: user.troubles,
+          troubles: user.troubles.map((trouble) => ({
+            ...trouble,
+            createdAt: dateUtils.formatDateByJST(trouble.createdAt),
+            updatedAt: trouble.updatedAt ? dateUtils.formatDateByJST(trouble.updatedAt) : null,
+          })),
         }
       })
 
-      return { reports, startDate, endDate }
+      return {
+        reports,
+        startDate: dateUtils.formatDateByJST(startDate),
+        endDate: dateUtils.formatDateByJST(endDate),
+      }
     } catch (error) {
+      if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
+        throw error
+      }
+
       throw new WeeklyReportServiceError(
         `Failed to get weekly reports: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
     }
   }
 
-  async getWeeklyReportById(
-    params: ReturnType<
-      Parameters<RouteHandler<typeof getWeeklyReportByIdRoute>>[0]['req']['valid']
-    >,
-  ) {
-    const { weeklyReportId } = params
-
+  static async getWeeklyReportById(params: WeeklyReportModel.getWeeklyReportByIdParams) {
     try {
+      const db = getDb()
+      const { weeklyReportId } = params
       const weeklyReport = await db.query.weeklyReports.findFirst({
         where: eq(weeklyReports.id, weeklyReportId),
         with: {
@@ -221,23 +298,43 @@ export class WeeklyReportService {
         },
       })
 
-      return { weeklyReport: weeklyReport || null }
+      if (!weeklyReport) {
+        return { weeklyReport: null }
+      }
+
+      return {
+        weeklyReport: {
+          ...weeklyReport,
+          createdAt: dateUtils.formatDateByJST(weeklyReport.createdAt),
+          updatedAt: weeklyReport.updatedAt
+            ? dateUtils.formatDateByJST(weeklyReport.updatedAt)
+            : null,
+          weeklyReportMissions: weeklyReport.weeklyReportMissions.map((mission) => ({
+            ...mission,
+            createdAt: dateUtils.formatDateByJST(mission.createdAt),
+            updatedAt: mission.updatedAt ? dateUtils.formatDateByJST(mission.updatedAt) : null,
+          })),
+        },
+      }
     } catch (error) {
+      if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
+        throw error
+      }
+
       throw new WeeklyReportServiceError(
         `Failed to get weekly report by id: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
     }
   }
 
-  async getCurrentUserWeeklyReport(
-    params: ReturnType<
-      Parameters<RouteHandler<typeof getCurrentUserWeeklyReportRoute>>[0]['req']['valid']
-    >,
+  static async getCurrentUserWeeklyReport(
+    params: WeeklyReportModel.getCurrentUserWeeklyReportParams,
     userId: Session['userId'],
   ) {
-    const { year, week } = params
-
     try {
+      const db = getDb()
+      const { year, week } = params
+
       const weeklyReport = await db.query.weeklyReports.findFirst({
         where: and(
           eq(weeklyReports.userId, userId),
@@ -249,21 +346,42 @@ export class WeeklyReportService {
         },
       })
 
-      return { weeklyReport: weeklyReport || null }
+      if (!weeklyReport) {
+        return { weeklyReport: null }
+      }
+
+      return {
+        weeklyReport: {
+          ...weeklyReport,
+          createdAt: dateUtils.formatDateByJST(weeklyReport.createdAt),
+          updatedAt: weeklyReport.updatedAt
+            ? dateUtils.formatDateByJST(weeklyReport.updatedAt)
+            : null,
+          weeklyReportMissions: weeklyReport.weeklyReportMissions.map((mission) => ({
+            ...mission,
+            createdAt: dateUtils.formatDateByJST(mission.createdAt),
+            updatedAt: mission.updatedAt ? dateUtils.formatDateByJST(mission.updatedAt) : null,
+          })),
+        },
+      }
     } catch (error) {
+      if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
+        throw error
+      }
+
       throw new WeeklyReportServiceError(
         `Failed to get current user weekly report: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
     }
   }
 
-  async getLastWeekReport(
-    params: ReturnType<Parameters<RouteHandler<typeof getLastWeekReportRoute>>[0]['req']['valid']>,
+  static async getLastWeekReport(
+    params: WeeklyReportModel.getLastWeekReportParams,
     userId: Session['userId'],
   ) {
-    const { year, week } = params
-
     try {
+      const db = getDb()
+      const { year, week } = params
       const weeklyReport = await db.query.weeklyReports.findFirst({
         where: and(
           eq(weeklyReports.userId, userId),
@@ -283,8 +401,43 @@ export class WeeklyReportService {
         },
       })
 
-      return { weeklyReport: weeklyReport || null }
+      if (!weeklyReport) {
+        return { weeklyReport: null }
+      }
+
+      return {
+        weeklyReport: {
+          ...weeklyReport,
+          createdAt: dateUtils.formatDateByJST(weeklyReport.createdAt),
+          updatedAt: weeklyReport.updatedAt
+            ? dateUtils.formatDateByJST(weeklyReport.updatedAt)
+            : null,
+          weeklyReportMissions: weeklyReport.weeklyReportMissions.map((mission) => ({
+            ...mission,
+            createdAt: dateUtils.formatDateByJST(mission.createdAt),
+            updatedAt: mission.updatedAt ? dateUtils.formatDateByJST(mission.updatedAt) : null,
+            mission: {
+              ...mission.mission,
+              createdAt: dateUtils.formatDateByJST(mission.mission.createdAt),
+              updatedAt: mission.mission.updatedAt
+                ? dateUtils.formatDateByJST(mission.mission.updatedAt)
+                : null,
+              project: {
+                ...mission.mission.project,
+                createdAt: dateUtils.formatDateByJST(mission.mission.project.createdAt),
+                updatedAt: mission.mission.project.updatedAt
+                  ? dateUtils.formatDateByJST(mission.mission.project.updatedAt)
+                  : null,
+              },
+            },
+          })),
+        },
+      }
     } catch (error) {
+      if (error instanceof WeeklyReportServiceError || error instanceof WeeklyReportNotFoundError) {
+        throw error
+      }
+
       throw new WeeklyReportServiceError(
         `Failed to get last week report: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

@@ -7,7 +7,4 @@ export const uploadAppealCategoryCsvRowSchema = z.object({
   }),
 })
 
-export type UploadAppealCategoryCsvRowSchema = z.infer<
-  typeof uploadAppealCategoryCsvRowSchema
->
-
+export type UploadAppealCategoryCsvRowSchema = z.infer<typeof uploadAppealCategoryCsvRowSchema>

@@ -147,6 +147,7 @@ export function useCreateDailyForm(
     if (defaultReportDate && reportDate.value !== defaultReportDate) {
       reportDate.change(defaultReportDate)
     }
+    // oxlint-disable-next-line exhaustive-deps
   }, [defaultReportDate])
 
   // Conformによるformの増減等状態管理は以下を参照

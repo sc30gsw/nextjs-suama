@@ -1,32 +1,26 @@
-import type { RouteHandler } from '@hono/zod-openapi'
 import type { Session } from 'better-auth'
 import { and, type asc, count, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS, QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { categoryOfTroubles, troubles } from '~/db/schema'
-import type { getTroubleCategoriesRoute } from '~/features/report-contexts/troubles/api/route'
-import { db } from '~/index'
+import { getDb } from '~/index'
+import type { TroubleModel } from '~/features/report-contexts/troubles/api/model'
+import {
+  TroubleServiceError,
+  TroubleNotFoundError,
+} from '~/features/report-contexts/troubles/api/errors'
 
-export class TroubleServiceError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'TroubleServiceError'
-  }
-}
-
-export class TroubleService {
-  async getTroubleCategories(
-    params: ReturnType<
-      Parameters<RouteHandler<typeof getTroubleCategoriesRoute>>[0]['req']['valid']
-    >,
+export abstract class TroubleService {
+  static async getTroubleCategories(
+    params: TroubleModel.getTroubleCategoriesQuery,
     userId: Session['userId'],
   ) {
-    const { skip, limit, names, withData, sortBy, sortOrder } = params
-
-    const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
-    const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-
     try {
+      const db = getDb()
+      const { skip, limit, names, withData, sortBy, sortOrder } = params
+
+      const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
+      const limitNumber = Number(limit) || QUERY_MAX_LIMIT_VALUES.GENERAL
+      const namesArray = names ? names.split(',').map((name) => name.trim()) : []
       const whereClause =
         namesArray.length > 0
           ? or(...namesArray.flatMap((word) => [like(categoryOfTroubles.name, `%${word}%`)]))
@@ -87,6 +81,9 @@ export class TroubleService {
         unResolvedTroubles,
       }
     } catch (error) {
+      if (error instanceof TroubleServiceError || error instanceof TroubleNotFoundError) {
+        throw error
+      }
       throw new TroubleServiceError(
         `Failed to get trouble categories: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

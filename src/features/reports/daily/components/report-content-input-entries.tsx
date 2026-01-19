@@ -1,6 +1,5 @@
 'use client'
 import { IconMinus, IconPlus } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import type { Key } from 'react-aria-components'
 import { filter, pipe } from 'remeda'
@@ -15,12 +14,13 @@ import {
   inputCountSearchParamsParsers,
   type ReportEntry,
 } from '~/features/reports/daily/types/search-params/input-count-search-params-cache'
-import type { client } from '~/lib/rpc'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
+import { MissionModel } from '~/features/report-contexts/missions/api/model'
 import { cn } from '~/utils/classes'
 
 type ReportContentInputEntriesProps = {
-  projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
-  missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
+  projects: ProjectModel.getProjectsResponse['projects']
+  missions: MissionModel.getMissionsResponse['missions']
 }
 
 export function ReportContentInputEntries({ projects, missions }: ReportContentInputEntriesProps) {

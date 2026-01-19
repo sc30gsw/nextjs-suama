@@ -89,7 +89,7 @@ export function CsvDownloadButton({ label, categoryType, onClose }: CsvDownloadB
 
           onClose()
         }
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES[toastKey].CSV_DOWNLOAD_FAILED)
       }
     })

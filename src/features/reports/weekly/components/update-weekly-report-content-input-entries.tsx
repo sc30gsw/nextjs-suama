@@ -1,5 +1,4 @@
 import { type FieldName, getInputProps } from '@conform-to/react'
-import type { InferResponseType } from 'hono'
 import type { JSX } from 'react'
 import { useFormStatus } from 'react-dom'
 import { ComboBox } from '~/components/ui/intent-ui/combo-box'
@@ -11,12 +10,13 @@ import type {
   UpdateWeeklyReportSchema,
 } from '~/features/reports/weekly/types/schemas/update-weekly-report-form-schema'
 import type { UpdateWeeklyInputCountSearchParams } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
-import type { client } from '~/lib/rpc'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
+import { MissionModel } from '~/features/report-contexts/missions/api/model'
 
 type UpdateWeeklyReportContentInputEntriesProps = {
   id?: string
-  projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
-  missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
+  projects: ProjectModel.getProjectsResponse['projects']
+  missions: MissionModel.getMissionsResponse['missions']
   formId: string
   name: FieldName<UpdateWeeklyReportSchema, UpdateWeeklyReportFormSchema>
   removeButton: JSX.Element

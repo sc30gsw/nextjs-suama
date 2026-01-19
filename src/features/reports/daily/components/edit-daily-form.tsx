@@ -54,6 +54,16 @@ export function EditDailyForm({ userId, reportData, promises }: EditDailyFormPro
   const [projectsResponse, missionsResponse, appealCategoriesResponse, troubleCategoriesResponse] =
     use(promises)
 
+  if (
+    !projectsResponse ||
+    !missionsResponse ||
+    !appealCategoriesResponse ||
+    !troubleCategoriesResponse ||
+    !reportData
+  ) {
+    return null
+  }
+
   const { isDateUnavailable, handleFocusChange, isLoading } = useDisabledDates({
     userId,
     excludeReportId: reportData.id,

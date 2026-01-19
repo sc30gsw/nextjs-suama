@@ -1,7 +1,6 @@
 import { getCollectionProps, getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useRouter } from 'next/navigation'
 import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
@@ -23,16 +22,17 @@ import {
 } from '~/features/report-contexts/projects/types/schemas/edit-project-input-schema'
 import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
+import { ClientModel } from '~/features/report-contexts/clients/api/model'
 import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditProjectModalProps = Pick<
-  InferResponseType<typeof client.api.projects.$get, 200>['projects'][number],
+  ProjectModel.getProjectsResponse['projects'][number],
   'id' | 'name' | 'likeKeywords' | 'clientId' | 'isArchived'
 > &
-  Record<'clients', InferResponseType<typeof client.api.clients.$get, 200>['clients']>
+  Record<'clients', ClientModel.getClientsResponse['clients']>
 
 export function EditProjectModal({
   id,

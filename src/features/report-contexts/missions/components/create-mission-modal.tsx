@@ -3,7 +3,6 @@
 import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconPlus, IconTriangleExclamation } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
 import { useToggle } from 'react-use'
@@ -22,12 +21,12 @@ import {
   createMissionInputSchema,
 } from '~/features/report-contexts/missions/types/schemas/create-mission-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type CreateMissionModalProps = {
-  projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
+  projects: ProjectModel.getProjectsResponse['projects']
 }
 
 export function CreateMissionModal({ projects }: CreateMissionModalProps) {

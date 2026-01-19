@@ -7,25 +7,22 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { Table } from '~/components/ui/intent-ui/table'
 import { EditProjectModal } from '~/features/report-contexts/projects/components/edit-project-modal'
 import { ProjectDeleteButton } from '~/features/report-contexts/projects/components/project-delete-button'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
+import { ClientModel } from '~/features/report-contexts/clients/api/model'
 import { projectSearchParamsParsers } from '~/features/report-contexts/projects/types/search-params/project-search-params-cache'
-import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type ProjectTableData = Pick<
-  InferResponseType<typeof client.api.projects.$get, 200>['projects'][number],
+  ProjectModel.getProjectsResponse['projects'][number],
   'id' | 'name' | 'isArchived' | 'likeKeywords' | 'clientId'
 > &
-  Record<
-    'clientName',
-    InferResponseType<typeof client.api.projects.$get, 200>['projects'][number]['client']['name']
-  > &
+  Record<'clientName', ProjectModel.getProjectsResponse['projects'][number]['client']['name']> &
   Record<'operate', string> &
-  Record<'clients', InferResponseType<typeof client.api.clients.$get, 200>['clients']>
+  Record<'clients', ClientModel.getClientsResponse['clients']>
 
 const columnHelper = createColumnHelper<ProjectTableData>()
 
@@ -87,8 +84,8 @@ const COLUMNS = [
 ]
 
 type ProjectsTableProps = {
-  data: InferResponseType<typeof client.api.projects.$get, 200>
-  clients: InferResponseType<typeof client.api.clients.$get, 200>['clients']
+  data: ProjectModel.getProjectsResponse
+  clients: ClientModel.getClientsResponse['clients']
 }
 
 export function ProjectsTable({ data, clients }: ProjectsTableProps) {

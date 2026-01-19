@@ -1,27 +1,21 @@
-import type { RouteHandler } from '@hono/zod-openapi'
 import { and, asc, count, desc, eq, like, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { clients, projects } from '~/db/schema'
-import type { getProjectsRoute } from '~/features/report-contexts/projects/api/route'
-import { db } from '~/index'
+import { getDb } from '~/index'
+import type { ProjectModel } from '~/features/report-contexts/projects/api/model'
+import {
+  ProjectServiceError,
+  ProjectNotFoundError,
+} from '~/features/report-contexts/projects/api/errors'
 
-export class ProjectServiceError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'ProjectServiceError'
-  }
-}
-
-export class ProjectService {
-  async getProjects(
-    params: ReturnType<Parameters<RouteHandler<typeof getProjectsRoute>>[0]['req']['valid']>,
-  ) {
-    const { skip, limit, names, archiveStatus, sortBy, sortOrder } = params
-
-    const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const namesArray = names ? names.split(',').map((name) => name.trim()) : []
-
+export abstract class ProjectService {
+  static async getProjects(params: ProjectModel.getProjectsQuery) {
     try {
+      const db = getDb()
+      const { skip, limit, names, archiveStatus, sortBy, sortOrder } = params
+
+      const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
+      const namesArray = names ? names.split(',').map((name) => name.trim()) : []
       const nameConditions =
         namesArray.length > 0
           ? or(
@@ -148,6 +142,9 @@ export class ProjectService {
         limit: limitNumber,
       }
     } catch (error) {
+      if (error instanceof ProjectServiceError || error instanceof ProjectNotFoundError) {
+        throw error
+      }
       throw new ProjectServiceError(
         `Failed to get projects: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

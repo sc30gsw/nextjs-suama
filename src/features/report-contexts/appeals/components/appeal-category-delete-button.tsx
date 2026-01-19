@@ -64,7 +64,7 @@ export function AppealCategoryDeleteButton({ id, name }: AppealCategoryDeleteBut
         }
 
         toast.success(TOAST_MESSAGES.APPEAL.DELETE_SUCCESS)
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES.APPEAL.DELETE_FAILED)
       }
     })

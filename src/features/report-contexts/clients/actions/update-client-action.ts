@@ -8,7 +8,7 @@ import { ERROR_STATUS } from '~/constants/error-message'
 import { clients } from '~/db/schema'
 import { editClientInputSchema } from '~/features/report-contexts/clients/types/schemas/edit-client-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function updateClientAction(_: unknown, formData: FormData) {
@@ -29,6 +29,7 @@ export async function updateClientAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     const client = await db.query.clients.findFirst({
       where: eq(clients.id, submission.value.id),
     })
@@ -50,7 +51,7 @@ export async function updateClientAction(_: unknown, formData: FormData) {
     updateTag(GET_CLIENTS_CACHE_KEY)
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

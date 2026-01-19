@@ -61,8 +61,7 @@ const renderListItem = (
 ) => <ListBoxItem {...props}>{children}</ListBoxItem>
 
 interface PaginationItemProps
-  extends ListBoxItemProps,
-    Pick<ButtonProps, 'isCircle' | 'size' | 'intent'> {
+  extends ListBoxItemProps, Pick<ButtonProps, 'isCircle' | 'size' | 'intent'> {
   children?: React.ReactNode
   className?: string
   isCurrent?: boolean

@@ -77,9 +77,13 @@ export default async function EveryDailyReportPage({
                     userNames,
                   },
                   session.user.id,
-                ).then((data) => (
-                  <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
-                ))}
+                ).then((data) => {
+                  if (!data) {
+                    return null
+                  }
+
+                  return <DailyReportsTable reports={data.dailyReports} userId={session.user.id} />
+                })}
               </Suspense>
             </DailyReportsTabContent>
           </Suspense>
@@ -100,9 +104,13 @@ export default async function EveryDailyReportPage({
                     userNames,
                   },
                   session.user.id,
-                ).then((data) => (
-                  <DailyReportsProjectSummaryTable summaries={data.summaries} />
-                ))}
+                ).then((data) => {
+                  if (!data) {
+                    return null
+                  }
+
+                  return <DailyReportsProjectSummaryTable summaries={data.summaries} />
+                })}
               </Suspense>
             </DailyReportsTabContent>
           </Suspense>

@@ -11,12 +11,14 @@ Generate detailed implementation tasks for feature: **$1**
 ## Task: Generate Implementation Tasks
 
 ### Prerequisites & Context Loading
+
 - If invoked with `-y` flag ($2 == "-y"): Auto-approve requirements and design in `spec.json`
 - Otherwise: Stop if requirements/design missing or unapproved with message:
   "Run `/kiro:spec-requirements` and `/kiro:spec-design` first, or use `-y` flag to auto-approve"
 - If tasks.md exists: Prompt [o]verwrite/[m]erge/[c]ancel
 
 **Context Loading (Full Paths)**:
+
 1. `.kiro/specs/$1/requirements.md` - Feature requirements (EARS format)
 2. `.kiro/specs/$1/design.md` - Technical design document
 3. `.kiro/steering/` - Project-wide guidelines and constraints:
@@ -33,10 +35,12 @@ Generate detailed implementation tasks for feature: **$1**
 ### CRITICAL Task Numbering Rules (MUST FOLLOW)
 
 **⚠️ MANDATORY: Sequential major task numbering & hierarchy limits**
+
 - Major tasks: 1, 2, 3, 4, 5... (MUST increment sequentially)
 - Sub-tasks: 1.1, 1.2, 2.1, 2.2... (reset per major task)
 - **Maximum 2 levels of hierarchy** (no 1.1.1 or deeper)
 - Format exactly as:
+
 ```markdown
 - [ ] 1. Major task description
 - [ ] 1.1 Sub-task description
@@ -105,23 +109,25 @@ Generate detailed implementation tasks for feature: **$1**
 ```
 
 ### Requirements Coverage Check
+
 - **MANDATORY**: Ensure ALL requirements from requirements.md are covered
 - Cross-reference every requirement ID with task mappings
 - If gaps found: Return to requirements or design phase
 - No requirement should be left without corresponding tasks
 
 ### Document Generation
+
 - Generate `.kiro/specs/$1/tasks.md` using the exact numbering format above
 - **Language**: Use language from `spec.json.language` field, default to English
 - **Task descriptions**: Use natural language for "what to do" (implementation details in design.md)
- - Update `.kiro/specs/$1/spec.json`:
-  - Set `phase: "tasks-generated"`
-  - Set approvals map exactly as:
-    - `approvals.tasks = { "generated": true, "approved": false }`
-  - Preserve existing metadata (e.g., `language`), do not remove unrelated fields
-  - If invoked with `-y` flag: ensure the above approval booleans are applied even if previously unset/false
-  - Set `updated_at` to current ISO8601 timestamp
-  - Use file tools only (no shell commands)
+- Update `.kiro/specs/$1/spec.json`:
+- Set `phase: "tasks-generated"`
+- Set approvals map exactly as:
+  - `approvals.tasks = { "generated": true, "approved": false }`
+- Preserve existing metadata (e.g., `language`), do not remove unrelated fields
+- If invoked with `-y` flag: ensure the above approval booleans are applied even if previously unset/false
+- Set `updated_at` to current ISO8601 timestamp
+- Use file tools only (no shell commands)
 
 ---
 
@@ -142,6 +148,7 @@ Request changes and re-run this command after modifications
 Tasks represent the final planning phase - implementation can begin once tasks are approved.
 
 **Final approval process for implementation**:
+
 ```
 📋 Tasks review completed. Ready for implementation.
 📄 Generated: .kiro/specs/$1/tasks.md
@@ -149,7 +156,9 @@ Tasks represent the final planning phase - implementation can begin once tasks a
 ```
 
 ### Next Steps: Implementation
+
 Once tasks are approved, start implementation:
+
 ```bash
 /kiro:spec-impl $1          # Execute all pending tasks
 /kiro:spec-impl $1 1.1      # Execute specific task
@@ -157,10 +166,12 @@ Once tasks are approved, start implementation:
 ```
 
 **Implementation Tips**:
+
 - Use `/clear` if conversation becomes too long, then continue with spec commands
 - All spec files (.kiro/specs/) are preserved and will be reloaded as needed
 
 ### Review Checklist (for user reference):
+
 - [ ] Tasks are properly sized (1-3 hours each)
 - [ ] All requirements are covered by tasks
 - [ ] Task dependencies are correct
@@ -168,7 +179,9 @@ Once tasks are approved, start implementation:
 - [ ] Testing tasks are included
 
 ### Implementation Instructions
+
 When tasks are approved, the implementation phase begins:
+
 1. Work through tasks sequentially
 2. Mark tasks as completed in tasks.md
 3. Each task should produce working, tested code

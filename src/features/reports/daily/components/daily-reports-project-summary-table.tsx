@@ -6,16 +6,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { InferResponseType } from 'hono'
 import { Note } from '~/components/ui/intent-ui/note'
 import { Table } from '~/components/ui/intent-ui/table'
-import type { client } from '~/lib/rpc'
+import { DailyReportModel } from '~/features/reports/daily/api/model'
 import { dateUtils } from '~/utils/date-utils'
 
-type ProjectSummary = InferResponseType<
-  typeof client.api.dailies.summary.$get,
-  200
->['summaries'][number]
+type ProjectSummary = DailyReportModel.getDailyReportSummaryResponse['summaries'][number]
 
 const columnHelper = createColumnHelper<ProjectSummary>()
 

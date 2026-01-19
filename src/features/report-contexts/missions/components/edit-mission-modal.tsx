@@ -1,7 +1,6 @@
 import { getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconDocumentEdit, IconTriangleExclamation } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useRouter } from 'next/navigation'
 import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
@@ -22,16 +21,17 @@ import {
 } from '~/features/report-contexts/missions/types/schemas/edit-mission-input-schema'
 import { matchesJapaneseFilter } from '~/features/reports/utils/japanese-filter'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
+import { MissionModel } from '~/features/report-contexts/missions/api/model'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
 import { urls } from '~/lib/urls'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type EditMissionModalProps = Pick<
-  InferResponseType<typeof client.api.missions.$get, 200>['missions'][number],
+  MissionModel.getMissionsResponse['missions'][number],
   'id' | 'name' | 'likeKeywords' | 'projectId'
 > &
-  Record<'projects', InferResponseType<typeof client.api.projects.$get, 200>['projects']>
+  Record<'projects', ProjectModel.getProjectsResponse['projects']>
 
 export function EditMissionModal({
   id,

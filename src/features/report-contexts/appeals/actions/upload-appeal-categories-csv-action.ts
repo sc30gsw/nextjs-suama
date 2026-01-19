@@ -10,7 +10,7 @@ import { categoryOfAppeals } from '~/db/schema'
 import { uploadAppealCategoryCsvRowSchema } from '~/features/report-contexts/appeals/types/schemas/upload-appeal-category-csv-schema'
 import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/constants/csv-error-messages'
 import { csvFileSchema } from '~/features/report-contexts/types/schemas/csv-file-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 type CategoryOfAppealsInsert = typeof categoryOfAppeals.$inferInsert
@@ -111,6 +111,7 @@ export async function uploadAppealCategoriesCsvAction(
           }
 
           try {
+            const db = getDb()
             await db.transaction(async (tx) => {
               for (let i = 0; i < rows.length; i++) {
                 const row = rows[i]

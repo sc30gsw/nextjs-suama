@@ -32,14 +32,10 @@ const emailVerificationEmailStyles = tv({
   },
 })
 
-type EmailVerificationEmailProps = Pick<typeof users.$inferSelect, 'email'> & {
-  verificationUrl: string
-}
+type EmailVerificationEmailProps = Pick<typeof users.$inferSelect, 'email'> &
+  Record<'verificationUrl', string>
 
-export function EmailVerificationEmail({
-  email,
-  verificationUrl,
-}: EmailVerificationEmailProps) {
+export function EmailVerificationEmail({ email, verificationUrl }: EmailVerificationEmailProps) {
   const { body, container, heading, content, button, buttonContainer, link } =
     emailVerificationEmailStyles()
 
@@ -85,4 +81,3 @@ export function EmailVerificationEmail({
     </Html>
   )
 }
-

@@ -1,85 +1,59 @@
 import 'server-only'
 
 import type { Session } from 'better-auth'
-import type { InferRequestType, InferResponseType } from 'hono'
 import { cacheTag } from 'next/cache'
 import {
   GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
   GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY,
   GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY,
 } from '~/constants/cache-keys'
-import { upfetch } from '~/lib/fetcher'
-import { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
+import type { WeeklyReportModel } from '~/features/reports/weekly/api/model'
 
 export async function getWeeklyReportMissionsById(
-  params: InferRequestType<(typeof client.api.weeklies)[':weeklyReportId']['$get']>['param'],
+  params: WeeklyReportModel.getWeeklyReportByIdParams,
   userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_BY_ID_CACHE_KEY}-${params.weeklyReportId}`)
 
-  const url = client.api.weeklies[':weeklyReportId'].$url({
-    param: params,
-  })
-  type ResType = InferResponseType<(typeof client.api.weeklies)[':weeklyReportId']['$get'], 200>
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.weeklies({ weeklyReportId: params.weeklyReportId }).get({
     headers: {
       Authorization: userId,
     },
   })
 
-  return res
+  return res.data
 }
 
 export async function getWeeklyReportMissions(
-  params: InferRequestType<
-    (typeof client.api.weeklies)['current-user'][':year'][':week']['$get']
-  >['param'],
+  params: WeeklyReportModel.getCurrentUserWeeklyReportParams,
   userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)
 
-  const url = client.api.weeklies['current-user'][':year'][':week'].$url({
-    param: params,
-  })
-  type ResType = InferResponseType<
-    (typeof client.api.weeklies)['current-user'][':year'][':week']['$get'],
-    200
-  >
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.weeklies['current-user']({ year: params.year })({ week: params.week }).get({
     headers: {
       Authorization: userId,
     },
   })
 
-  return res
+  return res.data
 }
 
 export async function getLastWeeklyReportMissions(
-  params: InferRequestType<
-    (typeof client.api.weeklies)['last-week'][':year'][':week']['$get']
-  >['param'],
+  params: WeeklyReportModel.getLastWeekReportParams,
   userId: Session['userId'],
 ) {
   'use cache'
   cacheTag(`${GET_LAST_WEEKLY_REPORT_MISSIONS_CACHE_KEY}-${params.year}-${params.week}-${userId}`)
 
-  const url = client.api.weeklies['last-week'][':year'][':week'].$url({
-    param: params,
-  })
-  type ResType = InferResponseType<
-    (typeof client.api.weeklies)['last-week'][':year'][':week']['$get'],
-    200
-  >
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.weeklies['last-week']({ year: params.year })({ week: params.week }).get({
     headers: {
       Authorization: userId,
     },
   })
 
-  return res
+  return res.data
 }

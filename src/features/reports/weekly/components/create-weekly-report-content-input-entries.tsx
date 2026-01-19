@@ -1,5 +1,4 @@
 import { type FieldName, getInputProps } from '@conform-to/react'
-import type { InferResponseType } from 'hono'
 import { parseAsBoolean, parseAsJson } from 'nuqs'
 import type { JSX } from 'react'
 import { useFormStatus } from 'react-dom'
@@ -16,12 +15,13 @@ import {
   weeklyInputCountSearchParamsParsers,
   weeklyReportStateSchema,
 } from '~/features/reports/weekly/types/search-params/weekly-input-count-search-params-cache'
-import type { client } from '~/lib/rpc'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
+import { MissionModel } from '~/features/report-contexts/missions/api/model'
 
 type CreateWeeklyReportContentInputEntriesProps = {
   id?: string
-  projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
-  missions: InferResponseType<typeof client.api.missions.$get, 200>['missions']
+  projects: ProjectModel.getProjectsResponse['projects']
+  missions: MissionModel.getMissionsResponse['missions']
   lastWeeklyReportMissions?: Awaited<ReturnType<typeof getLastWeeklyReportMissions>>
   formId: string
   name: FieldName<CreateWeeklyReportSchema, CreateWeeklyReportFormSchema>

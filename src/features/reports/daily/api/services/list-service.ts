@@ -1,46 +1,35 @@
-import type { RouteHandler } from '@hono/zod-openapi'
 import { and, count, desc, eq, gte, inArray, like, lte, or } from 'drizzle-orm'
 import { QUERY_DEFAULT_PARAMS } from '~/constants'
 import { dailyReports, users } from '~/db/schema'
-import type { getDailyReportsListRoute } from '~/features/reports/daily/api/route'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { dateUtils } from '~/utils/date-utils'
+import type { DailyReportModel } from '~/features/reports/daily/api/model'
+import { DailyReportServiceError } from '~/features/reports/daily/api/errors'
 
-export class DailyReportServiceError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'DailyReportServiceError'
-  }
-}
-
-export class DailyReportListService {
-  async getDailyReportsList(
-    params: ReturnType<
-      Parameters<RouteHandler<typeof getDailyReportsListRoute>>[0]['req']['valid']
-    >,
-  ) {
-    const { userId, userNames, skip, limit, startDate, endDate } = params
-
-    const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
-    const limitNumber = Number(limit) || QUERY_DEFAULT_PARAMS.LIMIT
-
-    const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
-
-    const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
-    const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
-
-    const whereConditions = [
-      gte(dailyReports.reportDate, startDateUtc),
-      lte(dailyReports.reportDate, endDateUtc),
-    ]
-
-    if (userId) {
-      whereConditions.push(eq(dailyReports.userId, userId))
-    } else {
-      whereConditions.push(eq(dailyReports.release, true))
-    }
-
+export abstract class DailyReportListService {
+  static async getDailyReportsList(params: DailyReportModel.getDailyReportsQuery) {
     try {
+      const db = getDb()
+      const { userId, userNames, skip, limit, startDate, endDate } = params
+
+      const skipNumber = Number(skip) || QUERY_DEFAULT_PARAMS.SKIP
+      const limitNumber = Number(limit) || QUERY_DEFAULT_PARAMS.LIMIT
+
+      const { start, end } = dateUtils.getOneMonthAgoRangeByJST()
+
+      const startDateUtc = startDate ? dateUtils.convertJstDateToUtc(startDate, 'start') : start
+      const endDateUtc = endDate ? dateUtils.convertJstDateToUtc(endDate, 'end') : end
+
+      const whereConditions = [
+        gte(dailyReports.reportDate, startDateUtc),
+        lte(dailyReports.reportDate, endDateUtc),
+      ]
+
+      if (userId) {
+        whereConditions.push(eq(dailyReports.userId, userId))
+      } else {
+        whereConditions.push(eq(dailyReports.release, true))
+      }
       if (userNames) {
         const selectedUserNames = userNames.split(',').map((name) => name.trim())
         const targetUsers = await db.query.users.findMany({
@@ -57,9 +46,9 @@ export class DailyReportListService {
             dailyReports: [],
             skip: skipNumber,
             limit: limitNumber,
-            startDate,
-            endDate,
-            userId,
+            startDate: startDate ?? dateUtils.formatDateByJST(start),
+            endDate: endDate ?? dateUtils.formatDateByJST(end),
+            userId: userId ?? '',
             total: 0,
           }
         }
@@ -91,9 +80,9 @@ export class DailyReportListService {
           dailyReports: [],
           skip: skipNumber,
           limit: limitNumber,
-          startDate,
-          endDate,
-          userId,
+          startDate: startDate ?? dateUtils.formatDateByJST(start),
+          endDate: endDate ?? dateUtils.formatDateByJST(end),
+          userId: userId ?? '',
           total: 0,
         }
       }
@@ -132,12 +121,16 @@ export class DailyReportListService {
         dailyReports: formattedReports,
         skip: skipNumber,
         limit: limitNumber,
-        startDate,
-        endDate,
-        userId,
+        startDate: startDate ?? dateUtils.formatDateByJST(start),
+        endDate: endDate ?? dateUtils.formatDateByJST(end),
+        userId: userId ?? '',
         total: totalCount[0].count,
       }
     } catch (error) {
+      if (error instanceof DailyReportServiceError) {
+        throw error
+      }
+
       throw new DailyReportServiceError(
         `Failed to get daily reports list: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )

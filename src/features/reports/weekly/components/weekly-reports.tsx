@@ -1,7 +1,6 @@
 'use client'
 
 import type { Session } from 'better-auth'
-import type { InferRequestType } from 'hono'
 import { notFound } from 'next/navigation'
 import { type ReactNode, useRef } from 'react'
 import type { VirtuosoHandle } from 'react-virtuoso'
@@ -12,11 +11,11 @@ import { WeeklyReportsCardLoading } from '~/features/reports/weekly/components/w
 import { WeeklyReportsCards } from '~/features/reports/weekly/components/weekly-reports-cards'
 import { WeeklyReportsNavigationButton } from '~/features/reports/weekly/components/weekly-reports-navigation-button'
 import { fetchWeeklyReportsInfiniteQuery } from '~/features/reports/weekly/queries/fetcher'
-import type { client } from '~/lib/rpc'
 
-type WeeklyReportsProps = Pick<Session, 'userId'> &
-  InferRequestType<(typeof client.api.weeklies)['last-week'][':year'][':week']['$get']>['param'] &
-  Record<'children', ReactNode>
+type WeeklyReportsProps = Pick<Session, 'userId'> & { year: string; week: string } & Record<
+    'children',
+    ReactNode
+  >
 
 export function WeeklyReports({ userId, year, week, children }: WeeklyReportsProps) {
   const { use: useWeeklyReports } = fetchWeeklyReportsInfiniteQuery(

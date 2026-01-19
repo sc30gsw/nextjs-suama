@@ -7,25 +7,22 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type { InferResponseType } from 'hono'
 import { useQueryStates } from 'nuqs'
 import { Table } from '~/components/ui/intent-ui/table'
 import { EditMissionModal } from '~/features/report-contexts/missions/components/edit-mission-modal'
 import { MissionDeleteButton } from '~/features/report-contexts/missions/components/mission-delete-button'
+import { MissionModel } from '~/features/report-contexts/missions/api/model'
+import { ProjectModel } from '~/features/report-contexts/projects/api/model'
 import { missionSearchParamsParsers } from '~/features/report-contexts/missions/types/search-params/mission-search-params-cache'
-import type { client } from '~/lib/rpc'
 import { paginationSearchParamsParsers } from '~/types/search-params/pagination-search-params-cache'
 
 type MissionTableData = Pick<
-  InferResponseType<typeof client.api.missions.$get, 200>['missions'][number],
+  MissionModel.getMissionsResponse['missions'][number],
   'id' | 'name' | 'likeKeywords' | 'projectId' | 'isArchived'
 > &
-  Record<
-    'projectName',
-    InferResponseType<typeof client.api.missions.$get, 200>['missions'][number]['project']['name']
-  > &
+  Record<'projectName', MissionModel.getMissionsResponse['missions'][number]['project']['name']> &
   Record<'operate', string> &
-  Record<'projects', InferResponseType<typeof client.api.projects.$get, 200>['projects']>
+  Record<'projects', ProjectModel.getProjectsResponse['projects']>
 
 const columnHelper = createColumnHelper<MissionTableData>()
 
@@ -86,8 +83,8 @@ const COLUMNS = [
 ]
 
 type MissionsTableProps = {
-  data: InferResponseType<typeof client.api.missions.$get, 200>
-  projects: InferResponseType<typeof client.api.projects.$get, 200>['projects']
+  data: MissionModel.getMissionsResponse
+  projects: ProjectModel.getProjectsResponse['projects']
 }
 
 export function MissionsTable({ data, projects }: MissionsTableProps) {

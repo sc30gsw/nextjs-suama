@@ -32,8 +32,10 @@ import {
   SelectTrigger,
 } from '~/components/ui/intent-ui/select'
 
-interface CalendarProps<T extends DateValue>
-  extends Omit<CalendarPrimitiveProps<T>, 'visibleDuration'> {
+interface CalendarProps<T extends DateValue> extends Omit<
+  CalendarPrimitiveProps<T>,
+  'visibleDuration'
+> {
   errorMessage?: string
   className?: string
 }

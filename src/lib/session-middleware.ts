@@ -1,34 +1,69 @@
-import 'server-only'
-
 import { eq } from 'drizzle-orm'
-import { createMiddleware } from 'hono/factory'
+import { Elysia } from 'elysia'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { users } from '~/db/schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 
-type AdditionalContext = Record<
-  'Variables',
-  {
-    user: typeof users.$inferSelect
+class UnauthorizedError extends Error {
+  status = 401
+
+  constructor() {
+    super(ERROR_STATUS.UNAUTHORIZED)
+    this.name = 'UnauthorizedError'
   }
->
+}
 
-export const sessionMiddleware = createMiddleware<AdditionalContext>(async (c, next) => {
-  const userId = c.req.header('Authorization')
+class UserNotFoundError extends Error {
+  status = 404
 
-  if (!userId) {
-    return c.json({ error: { message: ERROR_STATUS.UNAUTHORIZED } }, 401)
+  constructor() {
+    super('User not found')
+    this.name = 'UserNotFoundError'
   }
+}
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.id, userId),
+export const sessionMiddleware = new Elysia({ name: 'session' })
+  .error({
+    UnauthorizedError,
+    UserNotFoundError,
   })
+  .onError(({ code, error, set }) => {
+    switch (code) {
+      case 'UnauthorizedError':
+        set.status = error.status
 
-  if (!user) {
-    return c.json({ error: { message: 'User not found' } }, 404)
-  }
+        return {
+          error: error.message,
+          code: 'UNAUTHORIZED',
+        }
 
-  c.set('user', user)
+      case 'UserNotFoundError':
+        set.status = error.status
 
-  await next()
-})
+        return {
+          error: error.message,
+          code: 'USER_NOT_FOUND',
+        }
+
+      default:
+        throw error
+    }
+  })
+  .derive(async ({ headers }) => {
+    const userId = headers.authorization
+
+    if (!userId) {
+      throw new UnauthorizedError()
+    }
+
+    const user = await getDb().query.users.findFirst({
+      where: eq(users.id, userId),
+    })
+
+    if (!user) {
+      throw new UserNotFoundError()
+    }
+
+    return { user }
+  })
+  .as('scoped')

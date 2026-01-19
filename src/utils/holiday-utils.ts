@@ -1,7 +1,6 @@
 import * as holiday_jp from '@holiday-jp/holiday_jp'
 
-
-export function getHolidayName(date: Date){
+export function getHolidayName(date: Date) {
   const holidays = holiday_jp.between(date, date)
 
   if (holidays.length > 0) {
@@ -11,10 +10,7 @@ export function getHolidayName(date: Date){
   return null
 }
 
-export function getHolidaysInRange(
-  startDate: Date,
-  endDate: Date,
-) {
+export function getHolidaysInRange(startDate: Date, endDate: Date) {
   const holidays = holiday_jp.between(startDate, endDate)
 
   return holidays.map((h) => ({
@@ -27,7 +23,7 @@ export function isSaturday(date: Date) {
   return date.getDay() === 6
 }
 
-export function isWeekend(date: Date){
+export function isWeekend(date: Date) {
   const day = date.getDay()
 
   return day === 0 || day === 6
@@ -41,7 +37,6 @@ export function isJapaneseHoliday(date: Date) {
   return holiday_jp.isHoliday(date)
 }
 
-export function isHolidayOrSunday(date: Date){
+export function isHolidayOrSunday(date: Date) {
   return isSunday(date) || isJapaneseHoliday(date)
 }
-

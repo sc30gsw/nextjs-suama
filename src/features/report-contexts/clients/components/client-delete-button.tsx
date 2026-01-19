@@ -1,5 +1,4 @@
 import { IconTrashEmpty } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { buttonStyles } from '~/components/ui/intent-ui/button'
@@ -9,11 +8,11 @@ import { ERROR_STATUS, TOAST_MESSAGES } from '~/constants/error-message'
 
 import { deleteClientAction } from '~/features/report-contexts/clients/actions/delete-client-action'
 import { Confirm } from '~/hooks/use-confirm'
-import type { client } from '~/lib/rpc'
+import { ClientModel } from '~/features/report-contexts/clients/api/model'
 import { isErrorStatus } from '~/utils'
 
 type ClientDeleteButtonProps = Pick<
-  InferResponseType<typeof client.api.clients.$get, 200>['clients'][number],
+  ClientModel.getClientsResponse['clients'][number],
   'id' | 'name'
 >
 
@@ -65,7 +64,7 @@ export function ClientDeleteButton({ id, name }: ClientDeleteButtonProps) {
         }
 
         toast.success(TOAST_MESSAGES.CLIENT.DELETE_SUCCESS)
-      } catch (_) {
+      } catch {
         toast.error(TOAST_MESSAGES.CLIENT.DELETE_FAILED)
       }
     })

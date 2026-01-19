@@ -8,7 +8,7 @@ import { ERROR_STATUS } from '~/constants/error-message'
 import { missions, projects } from '~/db/schema'
 import { createMissionInputSchema } from '~/features/report-contexts/missions/types/schemas/create-mission-input-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function createMissionAction(_: unknown, formData: FormData) {
@@ -29,6 +29,7 @@ export async function createMissionAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     const project = await db.query.projects.findFirst({
       where: eq(projects.id, submission.value.projectId),
     })
@@ -48,7 +49,7 @@ export async function createMissionAction(_: unknown, formData: FormData) {
     updateTag(GET_MISSIONS_CACHE_KEY)
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

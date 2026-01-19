@@ -1,17 +1,10 @@
-import type { InferResponseType } from 'hono'
-import type { client } from '~/lib/rpc'
+import { AppealModel } from '~/features/report-contexts/appeals/api/model'
+import { TroubleModel } from '~/features/report-contexts/troubles/api/model'
+import { DailyReportModel } from '~/features/reports/daily/api/model'
 
-export type AppealCategoriesResponse = InferResponseType<
-  typeof client.api.appeals.categories.$get,
-  200
->
+export type AppealCategoriesResponse = AppealModel.getAppealCategoriesResponse
 
-export type TroubleCategoriesResponse = InferResponseType<
-  typeof client.api.troubles.categories.$get,
-  200
->
+export type TroubleCategoriesResponse = TroubleModel.getTroubleCategoriesResponse
 
-export type WorkContentResponse = InferResponseType<
-  typeof client.api.dailies.$get,
-  200
->['dailyReports'][number]['workContents'][number]
+export type WorkContentResponse =
+  DailyReportModel.getDailyReportsResponse['dailyReports'][number]['workContents'][number]

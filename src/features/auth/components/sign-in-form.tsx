@@ -124,7 +124,7 @@ export function SignInForm({
               className="mt-2 text-blue-500 hover:text-blue-500/80"
             >
               パスワードをお忘れですか？
-            </Link> 
+            </Link>
           </div>
         </Card.Content>
         <Card.Footer className="flex w-full flex-col items-start gap-y-4">

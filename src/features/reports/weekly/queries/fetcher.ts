@@ -1,33 +1,35 @@
 import type { Session } from 'better-auth'
 import type { InferSelectModel } from 'drizzle-orm'
-import type { InferResponseType } from 'hono'
 import { QUERY_MAX_LIMIT_VALUES } from '~/constants'
 import { GET_WEEKLY_REPORTS_CACHE_KEY } from '~/constants/cache-keys'
 import type { users } from '~/db/schema'
-import { upfetch } from '~/lib/fetcher'
 import { createInfiniteQueryFactory } from '~/lib/query-factories'
-import { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
+import { WeeklyReportModel } from '~/features/reports/weekly/api/model'
 
-type ResType = InferResponseType<typeof client.api.weeklies.$get, 200>
+type ResType = WeeklyReportModel.getWeeklyReportsResponse
 
 export async function getWeeklyReports(
   userId: Session['userId'],
   params: Record<'year' | 'week', number>,
   offset: number,
 ) {
-  const url = client.api.weeklies.$url()
-
-  const res = await upfetch<ResType>(url, {
+  const res = await api.weeklies.get({
     headers: {
       Authorization: userId,
     },
-    params: {
-      ...params,
-      offset,
+    query: {
+      year: params.year.toString(),
+      week: params.week.toString(),
+      offset: offset.toString(),
     },
   })
 
-  return res
+  if (!res.data) {
+    throw new Error('Failed to fetch weekly reports')
+  }
+
+  return res.data
 }
 
 export const fetchWeeklyReportsInfiniteQuery = createInfiniteQueryFactory<

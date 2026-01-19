@@ -11,7 +11,7 @@ import { CSV_ERROR_MESSAGES } from '~/features/report-contexts/constants/csv-err
 import { uploadProjectCsvRowSchema } from '~/features/report-contexts/projects/types/schemas/upload-project-csv-schema'
 import { csvFileSchema } from '~/features/report-contexts/types/schemas/csv-file-schema'
 import { sanitizeKeywords } from '~/features/report-contexts/utils/sanitaize-keywords'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 type ProjectsInsert = typeof projects.$inferInsert
@@ -118,6 +118,7 @@ export async function uploadProjectsCsvAction(
           }
 
           try {
+            const db = getDb()
             await db.transaction(async (tx) => {
               for (let i = 0; i < rows.length; i++) {
                 const row = rows[i]

@@ -1,6 +1,7 @@
 # nextjs-suama (Work Hours Management & Reporting System)
 
 ## Metadata
+
 - **Version**: 1.0
 - **Created Date**: 2025-09-16
 - **Target AI**: Claude Code (claude.ai/code)
@@ -15,6 +16,7 @@ Kiro-style Spec Driven Development implementation using claude code slash comman
 ## Project Context
 
 ### Paths
+
 - Steering: `.kiro/steering/`
 - Specs: `.kiro/specs/`
 - Commands: `.claude/commands/`
@@ -25,30 +27,36 @@ Kiro-style Spec Driven Development implementation using claude code slash comman
 **Specs** (`.kiro/specs/`) - Formalize development process for individual features
 
 ### Active Specifications
+
 - Check `.kiro/specs/` for active specifications
 - Use `/kiro:spec-status [feature-name]` to check progress
 
 ## Development Guidelines
+
 - Think in English, generate responses in English
 
 ## Workflow
 
 ### Phase 0: Steering (Optional)
+
 `/kiro:steering` - Create/update steering documents
 `/kiro:steering-custom` - Create custom steering for specialized contexts
 
 Note: Optional for new features or small additions. You can proceed directly to spec-init.
 
 ### Phase 1: Specification Creation
+
 1. `/kiro:spec-init [detailed description]` - Initialize spec with detailed project description
 2. `/kiro:spec-requirements [feature]` - Generate requirements document
 3. `/kiro:spec-design [feature]` - Interactive: "Have you reviewed requirements.md? [y/N]"
 4. `/kiro:spec-tasks [feature]` - Interactive: Confirms both requirements and design review
 
 ### Phase 2: Progress Tracking
+
 `/kiro:spec-status [feature]` - Check current progress and phases
 
 ## Development Rules
+
 1. **Consider steering**: Run `/kiro:steering` before major development (optional for new features)
 2. **Follow 3-phase approval workflow**: Requirements → Design → Tasks → Implementation
 3. **Approval required**: Each phase requires human review (interactive prompt or manual)
@@ -60,14 +68,17 @@ Note: Optional for new features or small additions. You can proceed directly to 
 ## Steering Configuration
 
 ### Current Steering Files
+
 Managed by `/kiro:steering` command. Updates here reflect command changes.
 
 ### Active Steering Files
+
 - `product.md`: Always included - Product context and business objectives
 - `tech.md`: Always included - Technology stack and architectural decisions
 - `structure.md`: Always included - File organization and code patterns
 
 ### Custom Steering Files
+
 <!-- Added by /kiro:steering-custom command -->
 <!-- Format:
 - `filename.md`: Mode - Pattern(s) - Description
@@ -76,11 +87,10 @@ Managed by `/kiro:steering` command. Updates here reflect command changes.
 -->
 
 ### Inclusion Modes
+
 - **Always**: Loaded in every interaction (default)
-- **Conditional**: Loaded for specific file patterns (e.g., "*.test.js")
+- **Conditional**: Loaded for specific file patterns (e.g., "\*.test.js")
 - **Manual**: Reference with `@filename.md` syntax
-
-
 
 ## AI Operation Principles (Highest Priority)
 
@@ -94,17 +104,20 @@ Managed by `/kiro:steering` command. Updates here reflect command changes.
 ## Development Commands
 
 ### Development Server
+
 ```bash
 bun dev  # Start development server using Turbopack
 ```
 
 ### Build
+
 ```bash
 bun run build:clean  # Clean build (delete .next directory before build) [Required before PR]
 bun run build        # Standard production build
 ```
 
 ### Code Quality
+
 ```bash
 bun run format       # Format code with Biome
 bun run lint         # Run Biome linter with auto-fix
@@ -112,6 +125,7 @@ bun run check:biome  # Run Biome check with auto-apply
 ```
 
 ### Database
+
 ```bash
 bunx drizzle-kit push     # Push schema changes to Turso
 bunx drizzle-kit generate # Generate migrations
@@ -120,6 +134,7 @@ bunx @better-auth/cli generate  # Generate Better Auth schema
 ```
 
 ### Turso Branching
+
 ```bash
 turso db create new-db --from-db old-db  # Create new branch from existing database
 turso db destroy new-db                  # Manually delete unnecessary branches
@@ -131,26 +146,27 @@ turso db destroy new-db                  # Manually delete unnecessary branches
 
 ### Technology Stack
 
-| Category | Technology | Details/Notes |
-|---------|-----------|---------------|
-| **Framework** | Next.js with React Compiler | Experimental feature |
-| **Package Manager** | Bun | Do not use npm/yarn |
-| **Styling** | Tailwind CSS | Intent UI components |
-| **State Management** | TanStack Query (server state)<br>nuqs (URL state) | |
-| **Backend** | Hono | Backend framework |
-| **API** | up-fetch | fetch extension library |
-| **Database** | Drizzle with Turso | ORM (Edge SQLite) |
-| **Authentication** | Better Auth | passkey support |
-| **Forms** | Conform | form management library |
-| **Code Quality** | Biome | Do not use ESLint/Prettier |
-| **Validation** | Zod | validation schema definition |
-| **Utility** | Remeda | TypeScript utility library |
-| **Date** | date-fns | date manipulation library |
-| **UI** | TanStack Table | Unstyled UI table library |
-| **Virtualization** | React Virtuoso | virtualized rendering library |
-| **Dialog** | react-call | Confirm dialog management library |
+| Category             | Technology                                        | Details/Notes                     |
+| -------------------- | ------------------------------------------------- | --------------------------------- |
+| **Framework**        | Next.js with React Compiler                       | Experimental feature              |
+| **Package Manager**  | Bun                                               | Do not use npm/yarn               |
+| **Styling**          | Tailwind CSS                                      | Intent UI components              |
+| **State Management** | TanStack Query (server state)<br>nuqs (URL state) |                                   |
+| **Backend**          | Hono                                              | Backend framework                 |
+| **API**              | up-fetch                                          | fetch extension library           |
+| **Database**         | Drizzle with Turso                                | ORM (Edge SQLite)                 |
+| **Authentication**   | Better Auth                                       | passkey support                   |
+| **Forms**            | Conform                                           | form management library           |
+| **Code Quality**     | Biome                                             | Do not use ESLint/Prettier        |
+| **Validation**       | Zod                                               | validation schema definition      |
+| **Utility**          | Remeda                                            | TypeScript utility library        |
+| **Date**             | date-fns                                          | date manipulation library         |
+| **UI**               | TanStack Table                                    | Unstyled UI table library         |
+| **Virtualization**   | React Virtuoso                                    | virtualized rendering library     |
+| **Dialog**           | react-call                                        | Confirm dialog management library |
 
 ### Directory Structure (Bulletproof React Pattern)
+
 You must refer to @CODING-STANDARDS.md
 
 ## Development Guidelines
@@ -193,7 +209,7 @@ You must refer to @CODING-STANDARDS.md
 ### Code Quality Requirements
 
 - **TypeScript**: Enable strict mode
-- **Path Mapping**: Use ~/ for imports (./src/*)
+- **Path Mapping**: Use ~/ for imports (./src/\*)
 - **Biome Configuration**: 2-space indentation, single quotes for JS
 - **Build Verification**: Implementers must run `bun run build` or `bun run build:clean` before PR to confirm build passes
 - **Database Development**: When DB changes are needed in development, utilize Turso's "branching" feature to switch environments
@@ -220,20 +236,22 @@ You must refer to @CODING-STANDARDS.md
 
 ## Environment Variables
 
-| Variable Name | Value |
-|---------------|-------|
-| `NEXT_PUBLIC_APP_URL` | http://localhost:3000 |
-| `TURSO_DATABASE_URL` | {Shared in NotePM} |
-| `TURSO_AUTH_TOKEN` | {Shared in NotePM} |
-| `BETTER_AUTH_SECRET` | openssl rand -base64 32 |
-| `BETTER_AUTH_URL` | http://localhost:3000 |
+| Variable Name         | Value                   |
+| --------------------- | ----------------------- |
+| `NEXT_PUBLIC_APP_URL` | http://localhost:3000   |
+| `TURSO_DATABASE_URL`  | {Shared in NotePM}      |
+| `TURSO_AUTH_TOKEN`    | {Shared in NotePM}      |
+| `BETTER_AUTH_SECRET`  | openssl rand -base64 32 |
+| `BETTER_AUTH_URL`     | http://localhost:3000   |
 
 ## Additional Information Files
 
 ### Project conventions, directory structure, prohibitions
-@README.md 
+
+@README.md
 
 ### Coding standards
+
 @CODING-STANDARDS.md
 
 ## AI Assistant Instructions (High Priority)

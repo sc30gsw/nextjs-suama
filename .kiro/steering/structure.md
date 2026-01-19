@@ -24,6 +24,7 @@ nextjs-suama/
 ## Source Directory Structure (Bulletproof React Pattern)
 
 ### App Router Structure (`src/app/`)
+
 ```
 src/app/
 ├── layout.tsx               # Root layout
@@ -74,6 +75,7 @@ src/app/
 ```
 
 ### Features Directory (`src/features/`)
+
 ```
 src/features/
 ├── auth/                   # Authentication features
@@ -117,6 +119,7 @@ src/features/
 ```
 
 ### Shared Directories
+
 ```
 src/
 ├── components/            # Shared components
@@ -139,6 +142,7 @@ src/
 ## Code Organization Patterns
 
 ### Feature-Based Organization
+
 Each feature is managed in independent directories, maintaining the following structure:
 
 ```
@@ -155,11 +159,13 @@ feature/
 ```
 
 ### Component Organization
+
 - **Server Components**: Default, data fetching capable
 - **Client Components**: Explicitly marked with `"use client"`, event handling
 - **Shared Components**: Shared via `src/components/ui/`
 
 ### Data Fetching Colocation
+
 - **Execute data fetching in leaf components**
 - **Use React.cache in Server Components**
 - **Use TanStack Query in Client Components**
@@ -167,20 +173,25 @@ feature/
 ## File Naming Conventions
 
 ### Files and Directories
+
 - **Kebab-case**: File and directory names
 - **Exception**: Dynamic Routes `[id]`, `[...slug]`
 
 ### Components
+
 - **Kebab-case**: `user-search-form.tsx`
 - **PascalCase**: Function names `UserSearchForm`
 
 ### Functions and Variables
+
 - **camelCase**: `getUserData`, `searchParams`
 
 ### Constants
+
 - **SCREAMING_SNAKE_CASE**: `API_BASE_URL`, `MAX_FILE_SIZE`
 
 ### Files by Type
+
 ```
 actions/action-name.ts           # Server Action
 api/route.ts                     # API Route Handler
@@ -194,6 +205,7 @@ utils/util-function-name.ts     # Utility Function
 ## Import Organization
 
 ### Path Mapping
+
 ```typescript
 import { Component } from '~/components/ui/component'
 import { api } from '~/lib/api'
@@ -201,6 +213,7 @@ import type { User } from '~/types/user'
 ```
 
 ### Import Order
+
 1. **React-related**: React, Next.js
 2. **External libraries**: Third-party packages
 3. **Internal modules**: `~/` paths
@@ -208,6 +221,7 @@ import type { User } from '~/types/user'
 5. **Type imports**: `import type`
 
 ### Import Examples
+
 ```typescript
 // 1. React-related
 import { Suspense } from 'react'
@@ -232,31 +246,37 @@ import type { User } from '~/types/user'
 ## Key Architectural Principles
 
 ### 1. Single Source of Truth
+
 - **Type definitions**: Derived from Hono RPC types or Drizzle schemas
 - **Constants**: Define once, reference from multiple locations
 - **Configuration**: Centrally managed through environment variables
 
 ### 2. AHA Programming
+
 - **Avoid Hasty Abstraction**: Prevent premature abstraction
 - **Abstract on third pattern**: Consider abstraction when same code appears three times
 - **Prioritize concreteness**: Avoid overly abstract designs
 
 ### 3. Composition Pattern
+
 - **Small components**: Single responsibility principle
 - **Composable**: High reusability design
 - **Avoid Props Drilling**: Appropriate use of Context API
 
 ### 4. Data Fetching Strategy
+
 - **Colocation**: Fetch data where it's used
 - **Parallel fetching**: Optimize with Request Memoization
 - **Cache strategy**: Utilize cacheTag and cacheLife
 
 ### 5. Error Boundary Strategy
+
 - **Graduated error handling**: Page, layout, global levels
 - **User-friendly**: Appropriate error messages
 - **Developer experience**: Detailed error information (during development)
 
 ### 6. Performance First
+
 - **Prioritize Server Components**: Minimize Client Components
 - **Streaming SSR**: Progressive loading with Suspense
 - **Bundle Size**: Send minimal necessary JavaScript
@@ -264,16 +284,19 @@ import type { User } from '~/types/user'
 ## Directory Creation Guidelines
 
 ### When to Create New Directories
+
 1. **Adding new features**: New directory under features/
 2. **Common patterns**: When used three or more times
 3. **Separation of concerns**: When responsibilities are clearly separated
 
 ### Directory Naming Rules
+
 1. **Plural forms**: When containing multiple files (`components/`, `actions/`)
 2. **Singular forms**: Single concern (`api/`, `server/`)
 3. **Feature names**: Clear names representing functionality (`reports/`, `users/`)
 
 ### Forbidden Patterns
+
 - **Generic names**: `common/`, `shared/`, `helpers/`
 - **Technical types**: `containers/`, `presentational/`
 - **Mixed concerns**: Directories with multiple responsibilities

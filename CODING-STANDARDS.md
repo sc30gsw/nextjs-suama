@@ -1,8 +1,11 @@
 ## コーディング規約
+
 ### はじめに
+
 本コーディング規約はNext.jsのドキュメントはもちろん、[Next.jsの考え方](https://zenn.dev/akfm/books/nextjs-basic-principle/viewer/intro)に大いに着想を得ているため、一読することをお勧めします
 
 ### 共通
+
 - 本PRでは、Claude Codeをエージェントとして使用しており、Spec driven developmentを行うため、[cc-sdd](https://github.com/gotalab/cc-sdd)を導入している
   - したがって、Spec driven developmentを実施する場合、cc-sddのドキュメントに従って実施すること
   - また、適宜Steeringを実施し、ドキュメントの最新化を行うこと
@@ -15,28 +18,28 @@
   - 定数・型定義など真実の源となるものがある場合、それらを使用し、新たに自前で実装しないこと
 
 ### 命名について
+
 - ファイル名・フォルダ名（dynamic routesを除く）はケバブケースを、変数名や関数名はキャメルケースを使用する
 
 ### 型定義について
+
 **前提**
-1. 今回はAPI層ではHono RPCによるBFFを提供している
+
+1. 今回はAPI層ではElysia RPCによるBFFを提供している
 2. DB層ではDrizzleによるSchemaを提供している
 
 - 上記のため、大元となる型が存在する場合、上記の型から型を生成・使用すること
 
 以下のように大元となる型を
+
 ```ts
-import type { InferResponseType } from 'hono'
-import type { client } from '~/lib/rpc'
+import type { api } from '~/lib/rpc'
 import type { getMissions } from '~/features/report-contexts/missions/server/fetcher'
 import type { getProjects } from '~/features/report-contexts/projects/server/fetcher'
 import type { getLastWeeklyReportMissions } from '~/features/reports/weekly/server/fetcher'
 
 type DailyReportsInWeeklyReportListTableProps = {
-  data: InferResponseType<
-    typeof client.api.weeklies.$get,
-    200
-  >['reports'][number]['dailyReports'][number]['dailyReportMissions']
+  data: Awaited<ReturnType<typeof api.weeklies.get>>['reports'][number]['dailyReports'][number]['dailyReportMissions']
 }
 
 type CreateWeeklyReportFormProps = {
@@ -47,32 +50,37 @@ type CreateWeeklyReportFormProps = {
 }
 ```
 
-
-
 ### 関数定義について
+
 - propsなど、個々人の記述に差異がでないよう関数宣言を使用してください（例: export default async function sample() {}）
 
 ### コンポーネント・ディレクトリ戦略について
+
 - コンポーネント戦略は[AHA Programming](https://kentcdodds.com/blog/aha-programming)に従い、性急な抽象化は避けた設計を行うこと
 - ディレクトリ戦略は[bulletproof-react](https://github.com/alan2207/bulletproof-react)に従い、実装すること
   - ※ 具体的なディレクトリ構成は「ディレクトリ構成」の項に記載
 
 ### データフェッチについて
+
 - RequestMemorizationおよび、並列フェッチ・preloadを活用しデータフェッチのウォーターフォールを避けること
 - データフェッチはデータフェッチ コロケーションに従い、末端のリーフコンポーネントで行うこと
 - fetchには`src/lib/fetcher.ts`にてfetch関数を拡張した関数を使用すること
-  - 使用時は、HonoのPRCによる機能を使用し、urlと`InferResponseType`などで型安全なfetchを実現すること
+  - 使用時は、ElysiaのRPCによる機能を使用し、urlと`Awaited<ReturnType<typeof api.*>>`などで型安全なfetchを実現すること
 
 ### cacheについて
+
 - React.cacheやNext.jsの`use cache`を宣言し、適宜、`cacheTag`・`cacheLife`を使用し、On-demand Cacheとすること
 
 ### server actionsについて
+
 - Mutationの処理のみに使用してください
   - ※ 絶対にClient Componentでfetchの代替に使用しないでください（左記を実装する場合、[tanstack-query](https://tanstack.com/query/latest)や[SWR](https://swr.vercel.app/ja)などのClient Fetch Libraryの導入を検討してください）
 - [with-callback](https://zenn.dev/sc30gsw/articles/6b43b44e04e89e)によるハンドリングを可能な限り使用すること
 
 ## ディレクトリ構成
+
 ディレクトリ構成は[bulletproof-react](https://github.com/alan2207/bulletproof-react)に従い、以下の構成とします。
+
 ```
 /nextjs-suama
   ├ public : 画像などアセット類
@@ -80,7 +88,7 @@ type CreateWeeklyReportFormProps = {
   |  ├ app: ルーティング定義
   |  |  ├ api: Route Handler
   |  |  |  └[[...route]] : optional catch-all segmentsによるAPIルート
-  |  |  |     └ route.ts: HonoのAPI Route定義
+  |  |  |     └ route.ts: ElysiaのAPI Route定義
   |  |  ├ layout.tsx: ルートレイアウト
   |  |  ├ page.tsx : ルートページコンポーネント
   |  |  ├ loading.tsx: ルートローディングUI
@@ -132,7 +140,7 @@ type CreateWeeklyReportFormProps = {
   |  ├ types : アプリ全体で使われる型定義
   |  |   └ *.ts: 任意の型定義
   |  ├ constants : アプリ全体で使われる定数
-  |  ├ db 
+  |  ├ db
   |  |  └ schema.ts : テーブルSchema定義
   |  ├ hooks : アプリ全体で使われるカスタムフック(use-***.ts)
   |  ├ lib :アプリ全体で使用されるライブラリの設定定義や共通ヘルパー関数
@@ -145,13 +153,13 @@ type CreateWeeklyReportFormProps = {
   ├ tailwind.config.ts : tailwind cssの設定ファイル
   ├ postcss.config.mjs : postcssの設定ファイル（主にtailwind cssのプラグイン設定を記述）
   ├ package.json : パッケージマネージャーの設定ファイル
-  ├ biome.json : Linter・Formatterの設定ファイル
+  ├ oxc.json : Linter・Formatterの設定ファイル
   └ tsconfig.json : typescriptの設定ファイル
 ```
 
 ## 主要ライブラリ
-- [Hono](https://hono.dev/): バックエンドフレームワーク
-- [up-fetch](https://github.com/L-Blondy/up-fetch): fetch拡張ライブラリ
+
+- [Elysia](https://elysiajs.com/): バックエンドフレームワーク
 - [Tailwind CSS](https://tailwindcss.com/): スタイリングソリューション
 - [Intent UI](https://intentui.com/): コンポーネントライブラリ
 - [Drizzle](https://orm.drizzle.team/): ORM

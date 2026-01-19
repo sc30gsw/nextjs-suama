@@ -2,9 +2,7 @@ import type { Session } from 'better-auth'
 import { cacheTag } from 'next/cache'
 import 'server-only'
 import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
-import type { TroubleCategoriesResponse } from '~/features/reports/daily/types/api-response'
-import { upfetch } from '~/lib/fetcher'
-import { client } from '~/lib/rpc'
+import { api } from '~/lib/rpc'
 
 export async function getTroubleCategories(
   userId: Session['userId'],
@@ -13,8 +11,8 @@ export async function getTroubleCategories(
     limit?: number
     names?: string[]
     withData?: boolean
-    sortBy?: 'name' | 'status' | null
-    sortOrder?: 'asc' | 'desc' | null
+    sortBy?: 'name'
+    sortOrder?: 'asc' | 'desc'
   },
 ) {
   'use cache'
@@ -24,18 +22,19 @@ export async function getTroubleCategories(
     : GET_TROUBLE_CATEGORIES_CACHE_KEY
   cacheTag(cacheKey)
 
-  const url = client.api.troubles.categories.$url()
-
-  const res = await upfetch<TroubleCategoriesResponse>(url, {
+  const res = await api.troubles.categories.get({
     headers: {
       Authorization: userId,
     },
-    params: {
-      ...params,
-      sortBy: params?.sortBy ?? undefined,
-      sortOrder: params?.sortOrder ?? undefined,
+    query: {
+      skip: params?.skip?.toString(),
+      limit: params?.limit?.toString(),
+      names: params?.names?.join(','),
+      withData: params?.withData?.toString(),
+      sortBy: params?.sortBy,
+      sortOrder: params?.sortOrder,
     },
   })
 
-  return res
+  return res.data
 }

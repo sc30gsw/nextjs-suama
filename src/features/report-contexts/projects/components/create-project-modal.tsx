@@ -3,7 +3,6 @@
 import { getCollectionProps, getFormProps, getInputProps, useInputControl } from '@conform-to/react'
 import { getZodConstraint, parseWithZod } from '@conform-to/zod/v4'
 import { IconPlus, IconTriangleExclamation } from '@intentui/icons'
-import type { InferResponseType } from 'hono'
 import { useActionState, useState } from 'react'
 import type { Key } from 'react-stately'
 import { useToggle } from 'react-use'
@@ -23,12 +22,12 @@ import {
   createProjectInputSchema,
 } from '~/features/report-contexts/projects/types/schemas/create-project-input-schema'
 import { useSafeForm } from '~/hooks/use-safe-form'
-import type { client } from '~/lib/rpc'
+import { ClientModel } from '~/features/report-contexts/clients/api/model'
 import { isErrorStatus } from '~/utils'
 import { withCallbacks } from '~/utils/with-callbacks'
 
 type CreateProjectModalProps = {
-  clients: InferResponseType<typeof client.api.clients.$get, 200>['clients']
+  clients: ClientModel.getClientsResponse['clients']
 }
 
 export function CreateProjectModal({ clients }: CreateProjectModalProps) {

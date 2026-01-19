@@ -41,6 +41,10 @@ export function CreateWeeklyReportForm({
 }: CreateWeeklyReportFormProps) {
   const [projectsResponse, missionsResponse] = use(promises)
 
+  if (!projectsResponse || !missionsResponse) {
+    return null
+  }
+
   const initialWeeklyInputCountSearchParamsParsers = lastWeeklyReportMissions?.weeklyReport
     ? {
         weeklyReportEntry: parseAsJson(weeklyReportStateSchema.parse).withDefault({

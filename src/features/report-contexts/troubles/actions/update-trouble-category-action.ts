@@ -7,7 +7,7 @@ import { GET_TROUBLE_CATEGORIES_CACHE_KEY } from '~/constants/cache-keys'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { categoryOfTroubles } from '~/db/schema'
 import { editTroubleCategoryInputSchema } from '~/features/report-contexts/troubles/types/schemas/edit-trouble-category-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { getServerSession } from '~/lib/get-server-session'
 
 export async function updateTroubleCategoryAction(_: unknown, formData: FormData) {
@@ -28,6 +28,7 @@ export async function updateTroubleCategoryAction(_: unknown, formData: FormData
   }
 
   try {
+    const db = getDb()
     const category = await db.query.categoryOfTroubles.findFirst({
       where: eq(categoryOfTroubles.id, submission.value.id),
     })
@@ -48,7 +49,7 @@ export async function updateTroubleCategoryAction(_: unknown, formData: FormData
     updateTag(GET_TROUBLE_CATEGORIES_CACHE_KEY)
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })

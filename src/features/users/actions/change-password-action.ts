@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm'
 import { ERROR_STATUS } from '~/constants/error-message'
 import { accounts, users } from '~/db/schema'
 import { changePasswordInputSchema } from '~/features/users/types/schemas/change-password-input-schema'
-import { db } from '~/index'
+import { getDb } from '~/index'
 import { auth } from '~/lib/auth'
 import { getServerSession } from '~/lib/get-server-session'
 
@@ -27,6 +27,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
   }
 
   try {
+    const db = getDb()
     const user = await db.query.users.findFirst({
       where: eq(users.id, submission.value.id),
     })
@@ -47,7 +48,7 @@ export async function changePasswordAction(_: unknown, formData: FormData) {
       .where(eq(accounts.userId, user.id))
 
     return submission.reply()
-  } catch (_) {
+  } catch {
     return submission.reply({
       fieldErrors: { message: [ERROR_STATUS.SOMETHING_WENT_WRONG] },
     })
